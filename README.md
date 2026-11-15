@@ -1,10 +1,23 @@
-# ✦ AETHERIUM — Chroniques des Arcanes
+<h1 align="center">✦ AETHERIUM</h1>
+<p align="center"><em>Chroniques des Arcanes · Collectionne les légendes, révèle les archives.</em></p>
+<p align="center">
+  <a href="https://vaekiel.github.io/Aetherium/"><img src="https://img.shields.io/badge/%E2%96%B6_JOUER-EN_LIGNE-b89af0?style=for-the-badge&labelColor=15162a" alt="Jouer à AETHERIUM dans le navigateur"></a>
+</p>
+<p align="center"><strong>Jeu gratuit · PC, tablette et smartphone · aucune installation</strong></p>
+
+> **Mise en ligne :** après activation de GitHub Pages dans `Settings → Pages → Build and deployment → Source : GitHub Actions`, la publication est automatisée. Le lien ci-dessus devient utilisable lorsque le premier déploiement est terminé.
+
+---
 
 Jeu de collection **100 % gratuit**, jouable dans un navigateur et conçu pour Noctiloom Studio.
 
 **Boucle de jeu :** réussir des mini-jeux → gagner des Couronnes → ouvrir des boosters → compléter le Codex → découvrir des cartes rares et Shiny.
 
-## Jouer en local
+## ▶ Jouer en ligne
+
+**[▶ Lancer AETHERIUM](https://vaekiel.github.io/Aetherium/)** — fonctionne dans un navigateur moderne sur ordinateur, tablette et téléphone. La sauvegarde est locale à chaque navigateur.
+
+### Jouer en local
 
 Aucun package à installer. Le jeu utilise les modules JavaScript natifs et doit être servi par un serveur HTTP local :
 
@@ -14,7 +27,7 @@ python3 -m http.server 8000
 
 Ouvrir ensuite `http://localhost:8000`.
 
-Pour un hébergement statique (GitHub Pages, Netlify ou Vercel), publier **la racine du dépôt** sans étape de build.
+Le workflow `.github/workflows/pages.yml` valide les modules JavaScript et publie automatiquement la racine du dépôt sur GitHub Pages à chaque push sur `main`.
 
 ## Fonctionnalités de la première version
 
