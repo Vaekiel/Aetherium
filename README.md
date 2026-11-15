@@ -44,7 +44,7 @@ Le workflow `.github/workflows/pages.yml` valide les modules JavaScript et publi
 
 **Référence approuvée :** maquette finale AETHERIUM (collection au crépuscule). Fond bleu nuit / violet, accents or et lavande discrets, illustrations pixel art HD détaillées, navigation sans surcharge.
 
-**Important :** les illustrations incluses à ce stade sont des *placeholders procéduraux*, uniques mais encore loin du niveau HD définitif. Elles sont regroupées dans `src/art.js` et pourront être remplacées par des sprites conçus individuellement, sans changer la logique du jeu.
+**Important :** l'interface utilise à présent un décor et 12 illustrations de référence extraits de la maquette de collection validée (`assets/scenery/` et `assets/cards/`). **Ce sont des placeholders de direction artistique** : les 24 cartes ne disposent pas encore d'illustrations finales individuelles. L'atlas de référence est volontairement compressé ; pour atteindre le niveau pixel art HD de la maquette, il faudra produire puis intégrer des illustrations distinctes en résolution suffisante. `src/art.js` reste disponible comme rendu de secours.
 
 ## Organisation
 
