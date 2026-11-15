@@ -176,3 +176,25 @@ footer{background:#101326db;border-top:1px solid #8e6d6a82;color:#aaa3bd}
  .filter-group button,.tile,.primary,.secondary{min-height:44px}
 }
 @media(prefers-reduced-motion:reduce){.page,.card{animation:none;transition:none}}
+
+/* Artwork-aligned correction: the approved illustrated scenery replaces
+   the earlier geometric procedural background. */
+.ambient-landscape{background:linear-gradient(90deg,#0e1124 0%,#18182e 60%,#111426 100%);image-rendering:pixelated}
+.ambient-landscape:before{content:"";position:absolute;left:0;top:0;height:100%;width:clamp(120px,13vw,230px);background:url('../assets/scenery/reference-left.webp') left top/100% 100% no-repeat;opacity:.93}
+.ambient-landscape:after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent 0 9%,#11142633 18%,#101326aa 46%,#11142699 100%)}
+.ambient-landscape .landscape-sky,.ambient-landscape .landscape-moon,
+.ambient-landscape .landscape-island,.ambient-landscape .landscape-ruins,
+.ambient-landscape .landscape-foreground{display:none}
+.layout{max-width:1350px}
+.card img,.inspector img{background-color:#17172a}
+.card{border-color:var(--edge,#bcaebc);box-shadow:0 3px 12px #060a20b8}
+.card:before{font-size:12px;text-shadow:none}
+.card .info{background:#1b192c}
+.card:hover:not(:disabled){box-shadow:0 0 7px color-mix(in srgb,var(--edge) 25%,transparent),0 5px 16px #090e22}
+@media(min-width:1400px){
+ .layout{max-width:calc(100% - 170px);margin-left:155px;margin-right:15px}
+}
+@media(max-width:780px){
+ .ambient-landscape:before{opacity:.18;width:28vw}
+ .ambient-landscape:after{background:#10142699}
+}
