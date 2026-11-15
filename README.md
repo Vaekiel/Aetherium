@@ -63,4 +63,4 @@ Pas de compte, pas de cash shop, pas de données personnelles envoyées à un se
 
 ## Licence
 
-Voir [LICENSE](LICENSE).
+**AETHERIUM est un projet propriétaire — Tous droits réservés.** Le jeu est gratuit pour les joueurs, mais la reproduction, la redistribution, la modification ou l'exploitation du code et des ressources sans autorisation écrite préalable ne sont pas permises, sous réserve des exceptions légales et des éventuelles licences de tiers. Voir [LICENSE](LICENSE).
