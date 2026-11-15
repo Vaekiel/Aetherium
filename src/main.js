@@ -1,3 +1,4 @@
+import './scenery.js';
 import {CARDS,RARITIES,PACK_PRICE,drawPack} from './data.js';
 import {artFor} from './art.js';
 
