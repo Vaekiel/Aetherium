@@ -331,3 +331,69 @@
  }
  #page-collection .chromatic-showcase>summary:after{transition:none}
 }
+
+
+/* v1.4.2 — animated Chromatique border.
+   The prismatic light travels around the frame, BEHIND the unchanged HD art.
+   Transform-only animation avoids continuous image recoloring and heavy filters. */
+.card.is-chromatic .chromatic-art-window,
+#page-collection .inspector .inspector-art-shell.is-chromatic,
+#page-collection .chromatic-showcase-card.is-chromatic .chromatic-showcase-art{
+  position:relative;
+  overflow:hidden;
+  isolation:isolate;
+}
+.card.is-chromatic .chromatic-art-window{
+  padding:4px;
+  border:2px solid #edfcf3;
+  background:#161b31;
+  box-shadow:inset 0 0 0 1px #e5b9f0,0 0 10px #83dfe5a0;
+}
+#page-collection .inspector .inspector-art-shell.is-chromatic{padding:6px}
+#page-collection .chromatic-showcase-card.is-chromatic .chromatic-showcase-art{padding:5px}
+.card.is-chromatic .chromatic-art-window::before,
+#page-collection .inspector .inspector-art-shell.is-chromatic::before,
+#page-collection .chromatic-showcase-card.is-chromatic .chromatic-showcase-art::before{
+  content:"";
+  position:absolute;
+  inset:-95%;
+  z-index:0;
+  pointer-events:none;
+  background:conic-gradient(
+    from 5deg,
+    #f9e8bc 0deg,
+    #7cf4f1 47deg,
+    #9182f3 92deg,
+    #f5b4e3 140deg,
+    #81d2f2 190deg,
+    #ffe5a8 234deg,
+    #aa8ff7 286deg,
+    #92ffee 329deg,
+    #f9e8bc 360deg
+  );
+  animation:chromatic-rim-orbit 5.5s linear infinite;
+  transform-origin:center;
+}
+.card.is-chromatic .chromatic-art-window img,
+#page-collection .inspector .inspector-art-shell.is-chromatic img,
+#page-collection .chromatic-showcase-card.is-chromatic .chromatic-showcase-art img{
+  position:relative;
+  z-index:1;
+}
+/* The foil shimmer stays OVER the art; the animated rim stays BELOW it. */
+.card.is-chromatic:hover:not(:disabled) .chromatic-art-window::before,
+.card.is-chromatic:focus-visible .chromatic-art-window::before{
+  animation-duration:3.8s;
+}
+@keyframes chromatic-rim-orbit{
+  from{transform:rotate(0deg)}
+  to{transform:rotate(360deg)}
+}
+@media(prefers-reduced-motion:reduce){
+  .card.is-chromatic .chromatic-art-window::before,
+  #page-collection .inspector .inspector-art-shell.is-chromatic::before,
+  #page-collection .chromatic-showcase-card.is-chromatic .chromatic-showcase-art::before{
+    animation:none!important;
+    transform:rotate(20deg);
+  }
+}
