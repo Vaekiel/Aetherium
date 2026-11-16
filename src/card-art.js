@@ -2,7 +2,7 @@ import {artFor} from './art.js';
 
 // Source of truth for authored artwork. Add an entry for every approved card;
 // the remaining cards keep their temporary atlas visuals until replaced.
-// Dedicated artwork: 1–21 (Origines). Only 22–24 remain on reference art.
+// Dedicated artwork: all 24 cards in Origines.
 export const CARD_ART = Object.freeze({
   1: Object.freeze({
     thumbnail: './assets/cards/veilleuse-de-nacre-thumb.webp',
@@ -27,7 +27,10 @@ export const CARD_ART = Object.freeze({
   18: Object.freeze({thumbnail: './assets/cards/lion-d-obsidienne-thumb.webp', full: './assets/cards/lion-d-obsidienne.webp'}),
   19: Object.freeze({thumbnail: './assets/cards/eclipse-vivante-thumb.webp', full: './assets/cards/eclipse-vivante.webp'}),
   20: Object.freeze({thumbnail: './assets/cards/reine-des-ronces-thumb.webp', full: './assets/cards/reine-des-ronces.webp'}),
-  21: Object.freeze({thumbnail: './assets/cards/coeur-du-colosse-thumb.webp', full: './assets/cards/coeur-du-colosse.webp'})
+  21: Object.freeze({thumbnail: './assets/cards/coeur-du-colosse-thumb.webp', full: './assets/cards/coeur-du-colosse.webp'}),
+  22: Object.freeze({thumbnail: './assets/cards/astra-reine-fractale-thumb.webp', full: './assets/cards/astra-reine-fractale.webp'}),
+  23: Object.freeze({thumbnail: './assets/cards/vyrath-fleau-celeste-thumb.webp', full: './assets/cards/vyrath-fleau-celeste.webp'}),
+  24: Object.freeze({thumbnail: './assets/cards/derniere-etoile-thumb.webp', full: './assets/cards/derniere-etoile.webp'})
 });
 
 const REFERENCE_ART=[3,1,10,9,7,5,4,2,5,8,6,11,0,7,0,1,8,6,4,11,10,11,0,8];
@@ -51,7 +54,7 @@ export function applyCardIllustration(img,card,{shiny=false,size='thumbnail'}={}
   img.onerror=null;
   const approved=CARD_ART[card.id];
   if(approved){
-    img.src=(size==='full'?approved.full:approved.thumbnail)+(card.id>=12?'?v=origines-b02':'?v=20261116-unframed');
+    img.src=(size==='full'?approved.full:approved.thumbnail)+(card.id>=22?'?v=origines-b03':card.id>=12?'?v=origines-b02':'?v=20261116-unframed');
     img.onerror=()=>{
       img.onerror=null;
       img.style.filter='none';

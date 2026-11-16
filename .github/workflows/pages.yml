@@ -79,6 +79,13 @@ jobs:
           test -s assets/cards/reine-des-ronces-thumb.webp
           test -s assets/cards/coeur-du-colosse.webp
           test -s assets/cards/coeur-du-colosse-thumb.webp
+          test -s assets/cards/astra-reine-fractale.webp
+          test -s assets/cards/astra-reine-fractale-thumb.webp
+          test -s assets/cards/vyrath-fleau-celeste.webp
+          test -s assets/cards/vyrath-fleau-celeste-thumb.webp
+          test -s assets/cards/derniere-etoile.webp
+          test -s assets/cards/derniere-etoile-thumb.webp
+          grep -q '  24: Object.freeze' src/card-art.js
           node --check --input-type=module < src/main.js
           node --check --input-type=module < src/data.js
           node --check --input-type=module < src/art.js
