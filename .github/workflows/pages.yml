@@ -43,6 +43,8 @@ jobs:
           test -s src/shell.css
           test -s src/navigation.css
           test -s src/crafting.css
+          test -s src/chromatic.css
+          test -s tests/chromatic-smoke.mjs
           test -s src/crafting.js
           test -s tests/navigation-smoke.mjs
           test -s tests/crafting-smoke.mjs
@@ -71,6 +73,8 @@ jobs:
           grep -q 'src/shell.css' index.html
           grep -q 'src/navigation.css' index.html
           grep -q 'src/crafting.css' index.html
+          grep -q 'src/chromatic.css' index.html
+          grep -q 'data-finish="chromatic"' index.html
           grep -q 'id="atelier-confirm"' index.html
           grep -q 'src/alchemy.css' index.html
           test -s assets/cards/veilleuse-de-nacre.webp
@@ -132,6 +136,7 @@ jobs:
           node tests/interface-smoke.mjs
           node tests/navigation-smoke.mjs
           node tests/crafting-smoke.mjs
+          node tests/chromatic-smoke.mjs
           node --check --input-type=module < src/crafting.js
           node --check --input-type=module < src/data.js
           node --check --input-type=module < src/art.js

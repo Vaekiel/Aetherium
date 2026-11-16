@@ -13,7 +13,8 @@ for(const id of ['games','game-picker','buy','pulls','booster-summary','booster-
 }
 assert.ok(html.includes('src/shell.css'),'Nouvelle interface chargée');
 const styleLinks=[...html.matchAll(/href="\.\/src\/([^" ]+\.css)(?:\?[^" ]+)?"/g)].map(x=>x[1]);
-assert.equal(styleLinks.at(-1),'crafting.css','La Forge s’ajoute en dernier sans changer les thèmes des mini-jeux');
+assert.equal(styleLinks.at(-1),'chromatic.css','Les Chromatiques utilisent une surcouche visuelle non destructive');
+assert.ok(styleLinks.includes('crafting.css'),'La Forge existante est conservée');
 assert.ok(styleLinks.includes('navigation.css'),'La navigation validée reste intégrée');
 assert.ok(styleLinks.includes('shell.css'),'Le thème crépusculaire est préservé');
 for(const sheet of ['runes.css','memory.css','lock.css','mines.css','alchemy.css','booster.css']){

@@ -2,9 +2,12 @@ import {readFileSync} from 'node:fs';
 import assert from 'node:assert/strict';
 
 const read=path=>readFileSync(path,'utf8');
-const {CARDS,PACK_PRICE,drawPack,RARITIES}=await import('data:text/javascript;charset=utf-8,'+encodeURIComponent(read('src/data.js')));
+const {CARDS,PACK_PRICE,drawPack,RARITIES,CHROMATIC_RATE}=await import('data:text/javascript;charset=utf-8,'+encodeURIComponent(read('src/data.js')));
 assert.equal(CARDS.length,24,'Le set Origines doit comporter 24 cartes');
 assert.equal(PACK_PRICE,100,'Le prix doit rester à 100 Couronnes');
+assert.equal(CHROMATIC_RATE,0.03,'Le taux de Chromatique est fixé à 3 % par carte');
+assert.ok(drawPack(()=>0.02999).every(c=>c.shiny),'En dessous de 3 %, la carte est Chromatique');
+assert.ok(drawPack(()=>0.03).every(c=>!c.shiny),'La limite à 3 % n’est pas incluse');
 for(const sample of [0.001,0.2,0.49,0.72,0.92,0.999]){
   const cards=drawPack(()=>sample);
   assert.equal(cards.length,5,'Un booster contient cinq cartes');

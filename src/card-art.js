@@ -48,7 +48,8 @@ export function applyCardIllustration(img,card,{shiny=false,size='thumbnail'}={}
   img.style.backgroundSize='';
   img.style.backgroundPosition='';
   img.style.backgroundRepeat='';
-  img.style.filter=shiny?'hue-rotate(24deg) saturate(1.16) brightness(1.08)':'none';
+  // Preserve every original HD illustration. Chromatic foil is a separate CSS layer.
+  img.style.filter='none';
   img.style.imageRendering='auto';
   img.style.objectFit='cover';
   img.onerror=null;

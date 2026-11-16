@@ -11,7 +11,7 @@
 
 Jeu de collection **100 % gratuit**, jouable dans un navigateur et conçu pour Noctiloom Studio.
 
-**Boucle de jeu :** réussir des mini-jeux → gagner des Couronnes → ouvrir des boosters → compléter le Codex → découvrir des cartes rares et Shiny.
+**Boucle de jeu :** réussir des mini-jeux → gagner des Couronnes → ouvrir des boosters → compléter le Codex → découvrir des cartes rares et Chromatique.
 
 ## ▶ Jouer en ligne
 
@@ -29,9 +29,17 @@ Ouvrir ensuite `http://localhost:8000`.
 
 Le workflow `.github/workflows/pages.yml` valide les modules JavaScript et publie automatiquement la racine du dépôt sur GitHub Pages à chaque push sur `main`.
 
+## Chromatiques : variantes prismatiques (version 1.4)
+
+Les variantes anciennement appelées **Chromatique** portent désormais officiellement le nom **Chromatiques** dans toutes les pages du jeu. Il s'agit d'une finition prestigieuse et non d'une sixième rareté. Chaque carte ouverte a **3 %** de chance d'être Chromatique (au lieu de 5 %). Les probabilités de rareté d'Origines et la garantie du cinquième emplacement sont inchangées. Les versions Chromatiques restent **exclusives aux boosters** et ne peuvent pas être fabriquées dans l'Atelier.
+
+La DA conserve les **24 œuvres HD de référence**, sans recoloration de leur illustration : un cadre prismatique cyan/lilas/nacre/or, un sceau « CHROMATIQUE », un reflet lent et une distinction statique même lorsque les animations sont désactivées. L'ouverture ajoute un halo ceremonial lors de la révélation, sans retirer le contrôle « Carte suivante ». L'option système « réduction des mouvements » désactive les effets animés.
+
+Le **Codex** présente la progression des 24 cartes découvertes et un compteur indépendant des 24 variantes Chromatiques, des filtres `Toutes les variantes / Normales / Chromatiques`, et une inspection pouvant alterner les versions normales/chromatiques quand la variante est possédée. Les anciennes sauvegardes `aetherium-save-v1` et leurs valeurs `shiny` sont délibérément conservées en interne : les variantes précédemment acquises sont toujours disponibles et s'affichent comme Chromatiques sans migration destructive. Le test `tests/chromatic-smoke.mjs` vérifie notamment le taux, la reprise d'une vraie sauvegarde ancienne et les effets mobiles/réduction de mouvement.
+
 ## Forge des Arcanes : fabrication et carte convoitée (version 1.3)
 
-La fabrication est désormais **active** dans l'Atelier pour les cartes qui **manquent** au Codex. Le joueur sélectionne une carte dans une grille illustrée, filtre par rareté ou par cartes actuellement fabricables, puis confirme la transaction. L'opération est contrôlée dans le module pur `src/crafting.js`, qui vérifie la rareté, l'inventaire et le solde avant de produire une nouvelle sauvegarde. Les cartes créées sont **normales** : les Shiny demeurent réservées aux boosters. Les cartes déjà possédées ne sont jamais fabricables.
+La fabrication est désormais **active** dans l'Atelier pour les cartes qui **manquent** au Codex. Le joueur sélectionne une carte dans une grille illustrée, filtre par rareté ou par cartes actuellement fabricables, puis confirme la transaction. L'opération est contrôlée dans le module pur `src/crafting.js`, qui vérifie la rareté, l'inventaire et le solde avant de produire une nouvelle sauvegarde. Les cartes créées sont **normales** : les Chromatique demeurent réservées aux boosters. Les cartes déjà possédées ne sont jamais fabricables.
 
 | Rareté | Coût en Éclats | Doublons à 5 Éclats |
 | --- | ---: | ---: |
@@ -41,9 +49,9 @@ La fabrication est désormais **active** dans l'Atelier pour les cartes qui **ma
 | Épique | 220 | 44 |
 | Légendaire | 450 | 90 |
 
-La **carte convoitée** est un objectif facultatif et enregistré dans la sauvegarde locale existante `aetherium-save-v1` (champ additionnel `goalId`). L'Atelier montre la progression en Éclats et le montant manquant. L'objectif se retire automatiquement lorsque la carte est obtenue, que ce soit via forge ou booster. Les anciennes sauvegardes continuent de fonctionner sans migration destructive. Une fenêtre de confirmation précède chaque dépense, et l'inventaire ainsi que le solde sont enregistrés ensemble. Les probabilités des boosters, les récompenses des mini-jeux, les 24 cartes du set Origines et le système Shiny ne changent pas.
+La **carte convoitée** est un objectif facultatif et enregistré dans la sauvegarde locale existante `aetherium-save-v1` (champ additionnel `goalId`). L'Atelier montre la progression en Éclats et le montant manquant. L'objectif se retire automatiquement lorsque la carte est obtenue, que ce soit via forge ou booster. Les anciennes sauvegardes continuent de fonctionner sans migration destructive. Une fenêtre de confirmation précède chaque dépense, et l'inventaire ainsi que le solde sont enregistrés ensemble. Les probabilités des boosters, les récompenses des mini-jeux, les 24 cartes du set Origines et le système Chromatique ne changent pas.
 
-Un test dédié `tests/crafting-smoke.mjs` contrôle chaque rareté, les soldes insuffisants, le refus des doublons, l'absence de Shiny fabriqué, le maintien des autres ressources et le fonctionnement du suivi d'objectif. Le rendu conserve la DA pixel art HD, avec galerie de recettes sur PC et fiche de fabrication placée avant la galerie sur téléphone.
+Un test dédié `tests/crafting-smoke.mjs` contrôle chaque rareté, les soldes insuffisants, le refus des doublons, l'absence de Chromatique fabriqué, le maintien des autres ressources et le fonctionnement du suivi d'objectif. Le rendu conserve la DA pixel art HD, avec galerie de recettes sur PC et fiche de fabrication placée avant la galerie sur téléphone.
 
 ## Navigation et Atelier des Arcanes (version 1.2)
 
@@ -123,14 +131,14 @@ Cinquième épreuve et dernière étape de la refonte graphique : **atelier d'al
 - **Collection** : grille à deux cartes sur téléphone (trois sur tablette compacte), recherche, filtres dans un tiroir et galerie d'aperçus facultative.
 - **Inspection** : fiche de carte plein écran, fermable avec le bouton ✕, le voile ou la touche Échap ; retour à la grille sans perdre sa position.
 - **Mini-jeux** : sélecteur horizontal et une épreuve visible à la fois ; toutes les parties en cours restent en mémoire de session.
-- **Boosters** : paquet illustré Origines, sceau animé, cinq cartes révélées progressivement, bouton « Tout révéler », et bilan nouvelles cartes / doublons / Shiny.
+- **Boosters** : paquet illustré Origines, sceau animé, cinq cartes révélées progressivement, bouton « Tout révéler », et bilan nouvelles cartes / doublons / Chromatique.
 - **Accessibilité** : cibles tactiles confortables, gestion du focus et prise en charge des préférences de réduction des animations.
 
 La mise en page desktop et **la clé de sauvegarde `aetherium-save-v1`** ne changent pas. Les sauvegardes existantes restent compatibles.
 
 ## Ouverture des boosters (version 0.5)
 
-Le paquet Origines possède un habillage spécifique inspiré du Codex, sans interface supplémentaire encombrante. Un clic sur **Desceller** débite une seule fois les 100 Couronnes et sauvegarde **immédiatement** le tirage. Après une courte animation du sceau, **une seule carte face cachée** apparaît au centre, devant une pile de cartes. Le joueur la retourne puis profite de son illustration et de sa rareté. Il choisit ensuite **Carte suivante** pour découvrir la suivante, jusqu'à la cinquième carte ; les cinq cartes n'apparaissent ensemble qu'au **récapitulatif final**. Les Légendaires, Épiques et Shiny bénéficient de reflets discrets. **Tout révéler** permet d'accéder directement au récapitulatif. En mode réduction des animations du système, les transitions sont supprimées mais la révélation carte par carte reste possible.
+Le paquet Origines possède un habillage spécifique inspiré du Codex, sans interface supplémentaire encombrante. Un clic sur **Desceller** débite une seule fois les 100 Couronnes et sauvegarde **immédiatement** le tirage. Après une courte animation du sceau, **une seule carte face cachée** apparaît au centre, devant une pile de cartes. Le joueur la retourne puis profite de son illustration et de sa rareté. Il choisit ensuite **Carte suivante** pour découvrir la suivante, jusqu'à la cinquième carte ; les cinq cartes n'apparaissent ensemble qu'au **récapitulatif final**. Les Légendaires, Épiques et Chromatique bénéficient de reflets discrets. **Tout révéler** permet d'accéder directement au récapitulatif. En mode réduction des animations du système, les transitions sont supprimées mais la révélation carte par carte reste possible.
 
 Les **probabilités, garanties, Éclats de doublons et sauvegardes** restent identiques aux versions précédentes ; seule la présentation change.
 
@@ -140,7 +148,7 @@ Les **probabilités, garanties, Éclats de doublons et sauvegardes** restent ide
 - Cinq mini-jeux : chemin runique, mémoire, serrure numérique, fouilles à pièges et laboratoire.
 - Progression libre sans limite d'énergie ; récompenses attribuées aux défis réussis.
 - Booster standard de cinq cartes pour 100 Couronnes, avec garantie d'une Inhabituelle au minimum.
-- 24 cartes réparties en cinq raretés ; variantes Shiny et Éclats de doublons.
+- 24 cartes réparties en cinq raretés ; variantes Chromatique et Éclats de doublons.
 - Recherche et filtres dans la collection ; panneau permettant d'admirer la carte agrandie.
 - Sauvegarde locale automatique via `localStorage` ; contrôle de validation des données chargées.
 - Succès liés à la progression.
@@ -149,7 +157,7 @@ Les **probabilités, garanties, Éclats de doublons et sauvegardes** restent ide
 
 **Référence approuvée :** maquette finale AETHERIUM (collection au crépuscule). Fond bleu nuit / violet, accents or et lavande discrets, illustrations pixel art HD détaillées, navigation sans surcharge.
 
-**Illustration modèle intégrée :** la carte commune **Veilleuse de Nacre** (archive 001) utilise sa **version rapprochée validée**, dans la collection, les boosters et le panneau d'inspection. Deux fichiers optimisés sont fournis : [miniature 348 × 423](assets/cards/veilleuse-de-nacre-thumb.webp) pour les grilles et [illustration HD 1138 × 1382](assets/cards/veilleuse-de-nacre.webp) pour la vue détaillée. L'aperçu de l'archive 001 est accessible sans obtenir la carte et ne change pas le contenu des sauvegardes. En attendant sa variante Shiny dédiée, un traitement colorimétrique léger est utilisé.
+**Illustration modèle intégrée :** la carte commune **Veilleuse de Nacre** (archive 001) utilise sa **version rapprochée validée**, dans la collection, les boosters et le panneau d'inspection. Deux fichiers optimisés sont fournis : [miniature 348 × 423](assets/cards/veilleuse-de-nacre-thumb.webp) pour les grilles et [illustration HD 1138 × 1382](assets/cards/veilleuse-de-nacre.webp) pour la vue détaillée. L'aperçu de l'archive 001 est accessible sans obtenir la carte et ne change pas le contenu des sauvegardes. En attendant sa variante Chromatique dédiée, un traitement colorimétrique léger est utilisé.
 
 **Lot d'illustrations n°1 — cartes 002 à 011 :** Sylve, l’Éclaireuse ; Golem de Rouille ; Floraison Cendrée ; Épée de Brume ; Feu Follet ; Archiviste Nocturne ; Cerf des Lueurs ; Méduse d’Éther ; Lame Prismatique ; Chant des Cendres. Chaque carte possède un fichier WebP et une miniature. **Les neuf illustrations tirées de la planche sont maintenant recadrées sans cadre intégré, pictogramme ni bandeau de titre** : le jeu dessine lui-même son cadre et son texte. Sylve conserve son illustration individuelle HD. La version sans cadre du Chant des Cendres représente une lyre enchantée. Ces visuels restent une première passe à affiner individuellement.
 
@@ -179,7 +187,7 @@ src/style.css     Design responsive
 | Épique | 5 % |
 | Légendaire | 1 % |
 
-La cinquième carte est garantie **Inhabituelle ou mieux** (65 % / 25 % / 8 % / 2 %). Chaque carte a **5 %** de chances d'être Shiny. Ces taux sont indépendants de la collection possédée ; les doublons donnent 5 Éclats.
+La cinquième carte est garantie **Inhabituelle ou mieux** (65 % / 25 % / 8 % / 2 %). Chaque carte a **3 %** de chances d'être Chromatique. Ces taux sont indépendants de la collection possédée ; les doublons donnent 5 Éclats.
 
 ## Suite du développement
 

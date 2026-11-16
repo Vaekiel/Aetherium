@@ -27,5 +27,6 @@ const definitions=[
 ];
 export const CARDS=definitions.map(([name,type,rarity,lore],i)=>({id:i+1,name,type,rarity,lore,attack:3+Math.floor(i*1.4),health:5+Math.floor(i*1.2),series:'Origines'}));
 export const PACK_PRICE=100;
+export const CHROMATIC_RATE=0.03;
 export function rollRarity(rng=Math.random,guaranteed=false){let pool=guaranteed?[['uncommon',65],['rare',25],['epic',8],['legendary',2]]:Object.entries(RARITIES).map(([k,v])=>[k,v.weight]);let value=rng()*100;for(const [rarity,weight] of pool){value-=weight;if(value<0)return rarity;}return 'common'}
-export function drawPack(rng=Math.random){return Array.from({length:5},(_,i)=>{const rarity=rollRarity(rng,i===4);const available=CARDS.filter(c=>c.rarity===rarity);return {id:available[Math.floor(rng()*available.length)].id,shiny:rng()<.05}})}
+export function drawPack(rng=Math.random){return Array.from({length:5},(_,i)=>{const rarity=rollRarity(rng,i===4);const available=CARDS.filter(c=>c.rarity===rarity);return {id:available[Math.floor(rng()*available.length)].id,shiny:rng()<CHROMATIC_RATE}})}
