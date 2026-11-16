@@ -44,6 +44,8 @@ Le workflow `.github/workflows/pages.yml` valide les modules JavaScript et publi
 
 **Référence approuvée :** maquette finale AETHERIUM (collection au crépuscule). Fond bleu nuit / violet, accents or et lavande discrets, illustrations pixel art HD détaillées, navigation sans surcharge.
 
+**Illustration modèle intégrée :** la carte commune **Veilleuse de Nacre** (archive 001) utilise désormais une véritable illustration pixel art au format portrait, stockée dans [`assets/cards/veilleuse-de-nacre.webp`](assets/cards/veilleuse-de-nacre.webp). Elle est consultable en aperçu dans le Codex même avant de l'obtenir, sans modifier la progression du joueur. Sa version Shiny utilise temporairement un filtre de couleur.
+
 **Important :** l'interface utilise à présent un décor et 12 illustrations de référence extraits de la maquette de collection validée (`assets/scenery/` et `assets/cards/`). **Ce sont des placeholders de direction artistique** : les 24 cartes ne disposent pas encore d'illustrations finales individuelles. L'atlas de référence est volontairement compressé ; pour atteindre le niveau pixel art HD de la maquette, il faudra produire puis intégrer des illustrations distinctes en résolution suffisante. `src/art.js` reste disponible comme rendu de secours.
 
 ## Organisation

@@ -32,6 +32,7 @@ jobs:
           test -f src/art.js
           test -f src/scenery.js
           test -f src/theme.css
+          test -s assets/cards/veilleuse-de-nacre.webp
           node --check --input-type=module < src/main.js
           node --check --input-type=module < src/data.js
           node --check --input-type=module < src/art.js
