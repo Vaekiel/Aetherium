@@ -35,6 +35,26 @@ jobs:
           test -f src/theme.css
           test -s assets/cards/veilleuse-de-nacre.webp
           test -s assets/cards/veilleuse-de-nacre-thumb.webp
+          test -s assets/cards/sylve-eclaireuse.webp
+          test -s assets/cards/sylve-eclaireuse-thumb.webp
+          test -s assets/cards/golem-de-rouille.webp
+          test -s assets/cards/golem-de-rouille-thumb.webp
+          test -s assets/cards/floraison-cendree.webp
+          test -s assets/cards/floraison-cendree-thumb.webp
+          test -s assets/cards/epee-de-brume.webp
+          test -s assets/cards/epee-de-brume-thumb.webp
+          test -s assets/cards/feu-follet.webp
+          test -s assets/cards/feu-follet-thumb.webp
+          test -s assets/cards/archiviste-nocturne.webp
+          test -s assets/cards/archiviste-nocturne-thumb.webp
+          test -s assets/cards/cerf-des-lueurs.webp
+          test -s assets/cards/cerf-des-lueurs-thumb.webp
+          test -s assets/cards/meduse-d-ether.webp
+          test -s assets/cards/meduse-d-ether-thumb.webp
+          test -s assets/cards/lame-prismatique.webp
+          test -s assets/cards/lame-prismatique-thumb.webp
+          test -s assets/cards/chant-des-cendres.webp
+          test -s assets/cards/chant-des-cendres-thumb.webp
           node --check --input-type=module < src/main.js
           node --check --input-type=module < src/data.js
           node --check --input-type=module < src/art.js

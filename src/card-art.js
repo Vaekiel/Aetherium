@@ -2,12 +2,22 @@ import {artFor} from './art.js';
 
 // Source of truth for authored artwork. Add an entry for every approved card;
 // the remaining cards keep their temporary atlas visuals until replaced.
-// 1 = Veilleuse de Nacre (common, Origins).
+// Original artwork references: 1–11 (Origins). Other cards use the reference atlas.
 export const CARD_ART = Object.freeze({
   1: Object.freeze({
     thumbnail: './assets/cards/veilleuse-de-nacre-thumb.webp',
     full: './assets/cards/veilleuse-de-nacre.webp'
-  })
+  }),
+  2: Object.freeze({thumbnail: './assets/cards/sylve-eclaireuse-thumb.webp', full: './assets/cards/sylve-eclaireuse.webp'}),
+  3: Object.freeze({thumbnail: './assets/cards/golem-de-rouille-thumb.webp', full: './assets/cards/golem-de-rouille.webp'}),
+  4: Object.freeze({thumbnail: './assets/cards/floraison-cendree-thumb.webp', full: './assets/cards/floraison-cendree.webp'}),
+  5: Object.freeze({thumbnail: './assets/cards/epee-de-brume-thumb.webp', full: './assets/cards/epee-de-brume.webp'}),
+  6: Object.freeze({thumbnail: './assets/cards/feu-follet-thumb.webp', full: './assets/cards/feu-follet.webp'}),
+  7: Object.freeze({thumbnail: './assets/cards/archiviste-nocturne-thumb.webp', full: './assets/cards/archiviste-nocturne.webp'}),
+  8: Object.freeze({thumbnail: './assets/cards/cerf-des-lueurs-thumb.webp', full: './assets/cards/cerf-des-lueurs.webp'}),
+  9: Object.freeze({thumbnail: './assets/cards/meduse-d-ether-thumb.webp', full: './assets/cards/meduse-d-ether.webp'}),
+  10: Object.freeze({thumbnail: './assets/cards/lame-prismatique-thumb.webp', full: './assets/cards/lame-prismatique.webp'}),
+  11: Object.freeze({thumbnail: './assets/cards/chant-des-cendres-thumb.webp', full: './assets/cards/chant-des-cendres.webp'})
 });
 
 const REFERENCE_ART=[3,1,10,9,7,5,4,2,5,8,6,11,0,7,0,1,8,6,4,11,10,11,0,8];
