@@ -39,6 +39,12 @@ La grille de quatre colonnes comprend des numéros lisibles, une jauge de progre
 
 La seconde épreuve est reconstruite dans la même DA fantasy que Chemin runique : **tablettes d'archives**, dos à sceau doré, huit symboles runiques HD tirés de la planche d'illustrations déjà intégrée, effets de retournement courts, halos cyan sur les paires et petit compteur de progression. Sur téléphone, la grille tactile comporte **16 tablettes (4 × 4)**. Le joueur trouve **8 paires**, en conservant le montant de récompense de **45 Couronnes**. L'ancienne limite de dix essais (prévue pour quatre paires) ne s'applique plus dans cette version ; le nombre de coups et d'erreurs est indiqué. Un bouton « Nouvelle table » réinitialise l'épreuve et annule les retournements précédents. L'option d'accessibilité « Réduire les animations » reste prise en compte. Les boosters, la collection et la sauvegarde ne changent pas.
 
+## Serrure d’Éther en pixel art HD (version 0.8)
+
+La troisième épreuve dispose maintenant d'un **verrou astral circulaire illustré** avec ornements de pierre ancienne et or, et de **six cristaux HD** (Azur, Améthyste, Ambre, Émeraude, Givre et Prisme). Les six cristaux et les états visuels du verrou (scellé / ouvert / brisé) sont issus d'un atlas WebP unique optimisé pour les téléphones.
+
+**Règles conservées :** sélectionner exactement 3 cristaux parmi 6 et atteindre la somme cible en **3 tentatives** pour gagner **50 Couronnes**. L'interface affiche la somme en cours, les trois emplacements sélectionnés et les essais restants. Au succès, le verrou s'illumine et s'ouvre ; au troisième échec, il se fissure. Le joueur peut lancer un nouveau mécanisme sans perdre ses autres progressions. Les animations sont discrètes, désactivables avec la préférence système. Aucun changement aux probabilités des boosters, aux cartes ni aux données de sauvegarde.
+
 ## Expérience mobile (version 0.4)
 
 - **Navigation principale au pouce** : quatre onglets permanents en bas de l'écran, avec gestion des zones de sécurité iOS/Android.

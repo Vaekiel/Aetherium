@@ -319,7 +319,139 @@ function startMemory(){
   g.actions.replaceChildren(button('✧ Nouvelle table',startMemory));
 }
 
-function startLock(){const g=mini[2];g.ended=false;const solution=Array.from({length:3},()=>2+Math.floor(Math.random()*9));const target=solution.reduce((a,b)=>a+b,0);const numbers=shuffle([...solution,...Array.from({length:3},()=>1+Math.floor(Math.random()*10))]);let selected=[],tries=0;g.status.textContent='Cible : '+target+' · 3 essais';tileGrid(g.board,numbers,3,(_,i,b)=>{if(g.ended)return;const p=selected.indexOf(i);if(p>=0){selected.splice(p,1);b.classList.remove('selected')}else if(selected.length<3){selected.push(i);b.classList.add('selected')}});g.actions.replaceChildren(button('Valider',()=>{if(g.ended)return;if(selected.length!==3){g.status.textContent='Sélectionne exactement trois cristaux.';return}const sum=selected.reduce((n,i)=>n+numbers[i],0);if(sum===target)complete(2,'Serrure ouverte !');else{tries++;g.status.textContent='Somme '+sum+' · cible '+target+' · '+(3-tries)+' essai(s)';if(tries===3){g.ended=true;g.status.textContent='Serrure verrouillée. Recommence.'}}selected=[];$$('.tile',g.board).forEach(b=>b.classList.remove('selected'))},'primary'),button('Nouveau défi',startLock))}
+/* Serrure d'Éther — a three-crystal sum lock with authentic illustrated sprites. */
+function startLock(){
+  const g=mini[2];
+  g.ended=false;
+  g.card.classList.add('lock-trial');
+  g.board.classList.add('ether-lock-board');
+  g.status.classList.add('ether-lock-status');
+  g.status.classList.remove('is-complete','is-failed');
+
+  // The three hidden solution stones guarantee at least one possible combination.
+  const solution=Array.from({length:3},()=>2+Math.floor(Math.random()*9));
+  const target=solution.reduce((a,b)=>a+b,0);
+  const numbers=shuffle([...solution,...Array.from({length:3},()=>1+Math.floor(Math.random()*10))]);
+  let selected=[],tries=0;
+  const totalAttempts=3;
+
+  let hud=g.card.querySelector('.ether-lock-hud');
+  if(!hud){
+    hud=el('div','ether-lock-hud');
+    const dial=el('div','ether-lock-dial');
+    dial.setAttribute('aria-hidden','true');
+    const readout=el('div','ether-lock-readout');
+    const label=el('span','ether-label','OBJECTIF DU SCEAU');
+    const objective=el('strong','ether-target');
+    const counters=el('div','ether-counters');
+    counters.append(el('span','ether-sum'),el('span','ether-attempts'));
+    const slots=el('div','ether-slots');
+    slots.setAttribute('aria-label','Trois emplacements pour les cristaux sélectionnés');
+    for(let i=0;i<3;i++)slots.append(el('span','ether-slot','◇'));
+    readout.append(label,objective,counters,slots);
+    hud.append(dial,readout);
+    g.board.before(hud);
+  }
+  const dial=$('.ether-lock-dial',hud);
+  dial.classList.remove('is-open','is-broken','is-warning');
+  const targetEl=$('.ether-target',hud);
+  targetEl.textContent=String(target);
+  const sumEl=$('.ether-sum',hud);
+  const attemptsEl=$('.ether-attempts',hud);
+  const slots=$$('.ether-slot',hud);
+
+  let validateButton;
+  const updateHud=()=>{
+    const sum=selected.reduce((n,i)=>n+numbers[i],0);
+    sumEl.textContent='Somme : '+sum+' / '+target;
+    attemptsEl.textContent='Essais : '+(totalAttempts-tries)+' / '+totalAttempts;
+    slots.forEach((slot,i)=>{
+      const filled=i<selected.length;
+      slot.classList.toggle('filled',filled);
+      slot.textContent=filled?String(numbers[selected[i]]):'◇';
+    });
+    if(validateButton)validateButton.disabled=g.ended||selected.length!==3;
+  };
+  const updateChoice=(index,element)=>{
+    if(g.ended)return;
+    dial.classList.remove('is-warning');
+    const existing=selected.indexOf(index);
+    if(existing!==-1){
+      selected.splice(existing,1);
+      element.classList.remove('selected');
+      element.setAttribute('aria-pressed','false');
+    }else if(selected.length<3){
+      selected.push(index);
+      element.classList.add('selected');
+      element.setAttribute('aria-pressed','true');
+    }else{
+      g.status.textContent='Trois cristaux maximum : retire une pierre pour en choisir une autre.';
+      return;
+    }
+    updateHud();
+    g.status.textContent=selected.length===3
+      ?'Trois cristaux prêts : active le mécanisme.'
+      :'Choisis '+(3-selected.length)+' cristal'+(3-selected.length>1?'s':'')+' supplémentaire'+(3-selected.length>1?'s':'')+'.';
+  };
+
+  g.board.replaceChildren();
+  g.board.setAttribute('role','group');
+  g.board.setAttribute('aria-label','Six cristaux numérotés, choisis-en trois pour atteindre le nombre cible');
+  g.board.style.setProperty('--cols',3);
+  const crystalTypes=['Azur','Améthyste','Ambre','Émeraude','Givre','Prisme'];
+  numbers.forEach((value,index)=>{
+    const crystal=el('button','tile ether-crystal');
+    crystal.type='button';
+    crystal.setAttribute('aria-pressed','false');
+    crystal.setAttribute('aria-label','Cristal '+crystalTypes[index]+' de valeur '+value);
+    crystal.style.setProperty('--ether-x',((index+1)%3/2*100)+'%');
+    crystal.style.setProperty('--ether-y',(Math.floor((index+1)/3)/2*100)+'%');
+    const artwork=el('span','ether-crystal-art');
+    artwork.setAttribute('aria-hidden','true');
+    const number=el('span','ether-crystal-value',String(value));
+    number.setAttribute('aria-hidden','true');
+    crystal.append(artwork,number);
+    crystal.addEventListener('click',()=>updateChoice(index,crystal));
+    g.board.append(crystal);
+  });
+
+  validateButton=button('✦ Activer le sceau',()=>{
+    if(g.ended||selected.length!==3)return;
+    const sum=selected.reduce((n,i)=>n+numbers[i],0);
+    if(sum===target){
+      dial.classList.add('is-open');
+      g.card.classList.add('lock-solved');
+      g.status.classList.add('is-complete');
+      validateButton.disabled=true;
+      complete(2,'Serrure d’Éther ouverte ! Les trois cristaux sont alignés.');
+      return;
+    }
+    tries++;
+    selected=[];
+    $$('.ether-crystal',g.board).forEach(crystal=>{
+      crystal.classList.remove('selected');
+      crystal.setAttribute('aria-pressed','false');
+    });
+    if(tries>=totalAttempts){
+      g.ended=true;
+      g.status.classList.add('is-failed');
+      dial.classList.remove('is-warning');
+      dial.classList.add('is-broken');
+      g.status.textContent='Le mécanisme s’est figé. Relance une nouvelle serrure.';
+    }else{
+      dial.classList.remove('is-warning');
+      void dial.offsetWidth;
+      dial.classList.add('is-warning');
+      g.status.textContent='Énergie '+sum+' au lieu de '+target+' : encore '+(totalAttempts-tries)+' essai'+(totalAttempts-tries>1?'s':'')+'.';
+    }
+    updateHud();
+  },'primary');
+  g.actions.replaceChildren(validateButton,button('Nouveau mécanisme',()=>{g.card.classList.remove('lock-solved');startLock()}));
+  g.card.classList.remove('lock-solved');
+  updateHud();
+  g.status.textContent='Sélectionne trois cristaux et aligne leur énergie sur le nombre cible.';
+}
+
 function startMines(){const g=mini[3];g.ended=false;const bombs=new Set(shuffle(Array.from({length:25},(_,i)=>i)).slice(0,5));let safe=0;g.status.textContent='0/10 cases sûres · 5 pièges';tileGrid(g.board,Array(25).fill('◇'),5,(_,i,b)=>{if(g.ended||b.disabled)return;if(bombs.has(i)){b.textContent='✕';g.ended=true;g.status.textContent='Piège déclenché ! Recommence.';return}const x=i%5,y=Math.floor(i/5);let adjacent=0;for(let dy=-1;dy<=1;dy++)for(let dx=-1;dx<=1;dx++){const xx=x+dx,yy=y+dy;if(xx>=0&&xx<5&&yy>=0&&yy<5&&bombs.has(yy*5+xx))adjacent++}b.textContent=adjacent?String(adjacent):'·';b.disabled=true;b.classList.add('done');safe++;if(safe===10)complete(3,'Fouille accomplie !');else g.status.textContent=safe+'/10 cases sûres · 5 pièges'});g.actions.replaceChildren(button('Nouvelle fouille',startMines))}
 const ingredients=[['☘','Mousse'],['☀','Soleil'],['◈','Cristal'],['☾','Lune'],['✿','Fleur'],['❄','Givre']];
 const recipes=[['Élixir de Vie',[0,4]],['Sérum solaire',[1,2]],['Souffle lunaire',[3,5]],['Sève d’Aurore',[0,1]],['Nectar cristallin',[2,4]]];
