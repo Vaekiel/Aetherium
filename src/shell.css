@@ -1,0 +1,400 @@
+/* AETHERIUM — The Dusk Archive · definitive application shell v1.1
+   Builds on the approved 'Collection au crépuscule' direction, not a generic dashboard.
+   Uses the existing 24 HD artworks + magical sprite atlases: no additional requests. */
+:root{
+  --ui-ink:#0c1023;
+  --ui-night:#11142b;
+  --ui-panel:#181b35;
+  --ui-panel-raised:#24223c;
+  --ui-lilac:#c8aae8;
+  --ui-gold:#d6ae79;
+  --ui-gold-soft:#a78b72;
+  --ui-ivory:#fff0da;
+  --ui-cyan:#9aebf4;
+  --ui-line:#9c7a8a8c;
+}
+html{scrollbar-color:#67547f #121426}
+body{background:#10132a;color:#f7e9e8}
+#app{background:transparent}
+/* Approved concept art framing the page, with generous dark center space. */
+.ambient-landscape{
+ background:linear-gradient(180deg,#12132b 0%,#17182f 38%,#272443 70%,#111426 100%);
+ background-attachment:scroll;
+}
+.ambient-landscape:before{
+ content:"";position:absolute;inset:0 auto 0 0;width:clamp(90px,14vw,230px);height:100%;
+ background:url('../assets/scenery/reference-left.webp') left top/100% 100% no-repeat;
+ opacity:.84;
+}
+.ambient-landscape:after{
+ content:"";position:absolute;inset:0;
+ background:
+  linear-gradient(0deg,#0c1023b0 0%,transparent 26%),
+  linear-gradient(90deg,transparent 0%,#10132770 17%,#12172c55 50%,#10132670 82%,transparent 100%);
+}
+#app::before{
+ content:"";pointer-events:none;position:absolute;top:110px;right:0;bottom:160px;
+ width:clamp(95px,13vw,180px);opacity:.86;z-index:-1;
+ background:url('../assets/scenery/dusk-right.webp') right top/100% 100% no-repeat;
+}
+#app::after{
+ content:"";pointer-events:none;position:absolute;left:0;right:0;bottom:0;height:90px;opacity:.6;z-index:-1;
+ background:url('../assets/scenery/dusk-horizon.webp') center bottom/auto 100% repeat-x;
+}
+/* Header — illuminated runestone iconography and a clean in-game wallet. */
+#app>.top{
+ position:relative;z-index:5;gap:clamp(14px,2vw,30px);
+ min-height:92px;padding:0 max(23px,calc((100vw - 1510px)/2));
+ border-bottom:1px solid #e0b08382;
+ background:linear-gradient(180deg,#111227fa,#171629f5);
+ box-shadow:0 9px 24px #070a1b80,inset 0 -1px 0 #e6b27e23;
+}
+.top-ornament{width:11px;height:11px;bottom:-6px;border:1px solid #ebc690;background:#b18be2;box-shadow:0 0 13px #ba90f2a6}
+.top .brand{
+ display:flex;flex-direction:column;justify-content:center;
+ flex:0 0 auto;min-width:max-content;
+ color:#efe3fb;font-size:clamp(24px,2.9vw,40px);font-weight:400;
+ line-height:1.02;font-variant:small-caps;letter-spacing:.035em;
+ text-shadow:0 2px 0 #0c0c25,0 0 22px #9e78dc48;
+}
+.top .brand::after{
+ content:"";height:7px;width:70%;margin:4px auto 0;
+ background:linear-gradient(90deg,transparent,#e2b980 24%,#fff0ca 50%,#e2b980 76%,transparent);
+ clip-path:polygon(0 50%,43% 50%,50% 0,57% 50%,100% 50%,100% 70%,57% 70%,50% 100%,43% 70%,0 70%);
+}
+.top .brand small{
+ color:#d8bfa2;letter-spacing:.06em;font-size:10px;margin-top:2px;
+}
+.top nav{align-self:stretch;display:flex;align-items:stretch;justify-content:center;gap:1px;flex:1;min-width:0}
+.top nav button{
+ position:relative;flex:0 1 116px;min-width:80px;min-height:88px;
+ border:1px solid transparent;border-bottom:3px solid transparent;
+ padding:8px 10px;color:#e3d7e7;background:transparent;
+ display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;
+ font:16px/1.18 Georgia,serif;transition:background .18s,border-color .18s,color .18s;
+}
+.top nav button:hover{background:linear-gradient(#4e396034,#38294e56)}
+.top nav button.active{
+ color:var(--ui-ivory);border-color:#8c6c994d;border-bottom-color:#f0d092;
+ background:linear-gradient(180deg,#5634777b,#422354d9);
+ box-shadow:inset 0 -8px 20px #ad70d53a,0 0 17px #b86af51c;
+}
+.top nav button.active::after{
+ content:"";position:absolute;bottom:-7px;left:calc(50% - 5px);height:10px;width:10px;
+ background:#ffdaa0;border:1px solid #e5b06d;transform:rotate(45deg);
+ box-shadow:0 0 10px #f7b7f8;
+}
+.top nav .nav-icon{
+ width:31px;height:31px;display:block;flex:0 0 31px;
+ background-image:url('../assets/minigames/runes-origines-compact.webp');
+ background-repeat:no-repeat;background-size:400% 300%;
+ font-size:0!important;line-height:0;color:transparent!important;
+ filter:drop-shadow(0 2px 4px #06091f) saturate(1.06);
+}
+.top nav [data-page="jouer"] .nav-icon{background-position:66.6667% 50%}
+.top nav [data-page="boosters"] .nav-icon{background-position:100% 50%}
+.top nav [data-page="collection"] .nav-icon{background-position:100% 0%}
+.top nav [data-page="succes"] .nav-icon{background-position:0% 0%}
+.top nav button.active .nav-icon{filter:drop-shadow(0 0 8px #dcc0ff) brightness(1.19)}
+.top .wallet{display:flex;align-items:center;gap:8px;font-size:15px}
+.top .wallet span{
+ padding:9px 12px;border:1px solid #c3a078bb;border-radius:22px;
+ background:linear-gradient(180deg,#151729f7,#252139ed);
+ box-shadow:inset 0 1px #ffdfaf22,0 0 0 1px #04071f80;
+ color:#f4cd82;white-space:nowrap;
+}
+.top .wallet span+span{color:#e1b4fc;border-color:#a080ad99}
+.top .wallet b{font-variant-numeric:tabular-nums;font-weight:500;color:#fff0da;margin-left:5px}
+/* App stage: one clear focal area, not a grid of competing panels. */
+.layout{width:100%;max-width:1450px;margin:0 auto;min-height:calc(100vh - 160px);padding:32px 25px 100px}
+.page{min-width:0;animation:ui-stage-enter .2s ease-out}
+@keyframes ui-stage-enter{from{opacity:.65;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.page>.heading{margin:0 0 22px;padding:0 0 15px;border-bottom:1px solid #9773876b}
+.page>.heading h1,.page>.heading h2{font-variant:small-caps;font-size:clamp(25px,2.4vw,34px);letter-spacing:.01em}
+.page>.heading>span{font:12px/1.5 Georgia,serif;color:#e0c4a4}
+.kicker{font:11px/1.3 Georgia,serif;letter-spacing:.18em;color:#e6be8f}
+/* Home: cinematic, readable invitation, with a real artwork from the set. */
+#page-jouer .intro{
+ isolation:isolate;position:relative;overflow:hidden;min-height:220px;
+ display:flex;align-items:center;justify-content:flex-start;
+ padding:34px 40px;margin-bottom:29px;
+ border:1px solid #b59179ae;border-radius:3px;
+ background:
+  linear-gradient(90deg,#121527fa 3%,#191a30f5 42%,#171b36b8 66%,#11142828 100%),
+  url('../assets/cards/pluie-astrale-thumb.webp') right 41%/390px auto no-repeat,
+  linear-gradient(120deg,#171a32,#34284b);
+ box-shadow:0 9px 33px #060a1f94,inset 0 0 0 5px #12152655;
+}
+#page-jouer .intro::before{
+ content:"✦";position:absolute;z-index:-1;right:27%;top:18%;color:#ffdba469;
+ font:70px Georgia,serif;text-shadow:0 0 20px #d2a0ffb6;
+}
+#page-jouer .intro::after{content:"";position:absolute;inset:9px;border:1px solid #dbb28a48;pointer-events:none;display:block}
+#page-jouer .intro>div:first-child{position:relative;z-index:1;max-width:620px}
+#page-jouer .intro h1{color:#fff0d9;font-size:clamp(32px,3.6vw,48px);font-variant:small-caps;line-height:1.08;letter-spacing:.013em;margin:6px 0 10px}
+#page-jouer .intro p:not(.kicker){font:15px/1.6 Georgia,serif;max-width:565px;color:#d5c6d5;margin:0}
+#page-jouer .intro .moon{display:none}
+#page-jouer .heading{padding-bottom:11px}
+#page-jouer .heading h2{font-size:26px}
+#page-jouer .heading span{font:12px Georgia,serif;color:#d7c2a8}
+/* The trial picker remains touch-friendly and becomes a visual horizontal library. */
+#page-jouer .game-picker{
+ display:grid;grid-template-columns:repeat(5,minmax(150px,1fr));gap:12px;
+ margin:0 0 22px;padding:3px 3px 10px;overflow-x:auto;scrollbar-width:thin;
+ scrollbar-color:#6b567a transparent;
+}
+#page-jouer .game-picker .game-choice{
+ position:relative;isolation:isolate;min-width:0;min-height:112px;
+ display:flex;align-items:flex-start;justify-content:end;flex-direction:column;gap:5px;
+ padding:14px 13px 12px 83px;text-align:left;white-space:normal;
+ border-radius:3px;border:1px solid #8b70889b;
+ background:linear-gradient(115deg,#1c2038,#22203d);
+ color:#f4e6e3;box-shadow:0 5px 13px #080c228a,inset 0 0 0 4px #0e12252d;
+ font:15px/1.1 Georgia,serif;
+ transition:border-color .17s,transform .17s,background .17s;
+}
+#page-jouer .game-picker .game-choice::before{
+ content:"";position:absolute;top:13px;bottom:12px;left:8px;width:68px;max-height:76px;
+ background-image:url('../assets/minigames/runes-origines-compact.webp');background-repeat:no-repeat;
+ background-size:400% 300%;background-position:66.6667% 50%;
+ filter:drop-shadow(0 5px 6px #050919a1);
+}
+#page-jouer .game-picker .game-choice:nth-child(2)::before{background-position:100% 0%}
+#page-jouer .game-picker .game-choice:nth-child(3)::before{background-image:url('../assets/minigames/ether-lock-atlas.webp');background-position:0 0;background-size:300% 300%}
+#page-jouer .game-picker .game-choice:nth-child(4)::before{background-image:url('../assets/minigames/excavation-atlas.webp');background-position:100% 100%;background-size:300% 300%}
+#page-jouer .game-picker .game-choice:nth-child(5)::before{background-image:url('../assets/minigames/alchemy-atlas.webp');background-position:0 100%;background-size:300% 300%}
+#page-jouer .game-picker .game-choice:hover{transform:translateY(-2px);border-color:#dabd9d}
+#page-jouer .game-picker .game-choice.active{
+ border-color:#d9b886;background:linear-gradient(120deg,#312544,#33254a);
+ box-shadow:0 0 13px #9270d16b,inset 0 0 0 3px #d2a77b2b;
+}
+#page-jouer .game-picker .game-choice.active::after{
+ content:"";position:absolute;bottom:-5px;left:calc(50% - 5px);
+ width:9px;height:9px;transform:rotate(45deg);background:#e6c48c;box-shadow:0 0 9px #db9ae0;
+}
+#page-jouer .game-choice-name{display:block;color:#f7e8da;font-size:15px;font-weight:600;line-height:1.1}
+#page-jouer .game-choice-hint{color:#c7b9d2;font:10px/1.25 system-ui,sans-serif;letter-spacing:.05em}
+#page-jouer .play-stage{display:grid;grid-template-columns:minmax(0,1fr) minmax(235px,295px);gap:20px;align-items:start}
+#page-jouer .games{display:block;min-width:0}
+#page-jouer .games .game{display:none;min-width:0}
+#page-jouer .games .game.mobile-active{display:block}
+#page-jouer .games .game{
+ padding:22px clamp(18px,3vw,35px) 28px;
+ border:1px solid #b49380aa;border-radius:3px;
+ background:linear-gradient(155deg,#212038f2,#12192df4);
+ box-shadow:0 12px 26px #070b2294;
+}
+#page-jouer .games .game h3{font-size:clamp(23px,2.1vw,29px)}
+#page-jouer .games .game p{min-height:0}
+.play-lore{
+ position:sticky;top:22px;min-width:0;overflow:hidden;
+ padding:22px 20px 25px;border:1px solid #886c8298;border-radius:3px;
+ background:linear-gradient(160deg,#211c34f3,#101a30f3);
+ box-shadow:0 9px 27px #060a2294;
+}
+.play-lore::before{content:"";position:absolute;inset:7px;border:1px solid #e1bc7d30;pointer-events:none}
+.play-lore .lore-icon{
+ display:block;width:118px;max-width:100%;aspect-ratio:1/1;margin:0 auto 12px;
+ background:url('../assets/minigames/excavation-atlas.webp') 100% 100%/300% 300% no-repeat;
+ filter:drop-shadow(0 0 12px #56bfed6e);
+}
+.play-lore h3{font-size:24px;font-variant:small-caps;color:#f4ddae;margin:5px 0 8px;text-align:center}
+.play-lore p{font:13px/1.65 Georgia,serif;color:#cbbfce}
+.play-lore .lore-separator{height:1px;margin:16px 0;background:linear-gradient(90deg,transparent,#bb987c,transparent)}
+.play-lore .lore-tip{display:flex;align-items:center;gap:10px;margin:11px 0;color:#e1c7df;font:12px/1.5 system-ui,sans-serif}
+.play-lore .lore-tip::before{content:"✧";color:#e2c089;font-size:19px;flex:none}
+/* Boutique: crafted display area, clear rewards, no intrusive overlay. */
+#page-boosters .shop{grid-template-columns:minmax(225px,300px) minmax(0,1fr);gap:22px;align-items:start}
+#page-boosters .pack-side,#page-boosters .opening{
+ border:1px solid #b38d75ac;border-radius:3px;
+ box-shadow:0 10px 26px #080b228a,inset 0 0 0 4px #d5b37d14;
+ background:linear-gradient(155deg,#211d36ec,#12172af3)
+}
+#page-boosters .pack-side{padding:23px 22px 25px}
+#page-boosters .pack-side h2{font-size:24px;font-variant:small-caps}
+#page-boosters .pack-side .primary{width:100%;margin:9px 0 6px;font-size:15px;font-variant:small-caps;border:1px solid #deba90}
+#page-boosters .opening{min-height:475px;padding:25px 27px}
+#page-boosters .opening h2{color:#f5deb8;font-size:clamp(22px,2vw,28px)}
+#page-boosters #pack-msg{font:13px/1.5 Georgia,serif}
+/* Collection: approved three-column Codex, generous card portraits. */
+.collection-header{
+ display:flex;justify-content:space-between;align-items:center;gap:14px;margin-bottom:17px;
+ border-bottom:1px solid #ab887e6b;padding-bottom:14px;
+}
+.collection-header h1{display:flex;gap:9px;align-items:center;margin:1px 0;font-size:clamp(25px,2.5vw,34px);font-variant:small-caps}
+.collection-header h1::before{content:"▣";color:#dfbef0;font-size:.75em}
+.collection-header p{margin:3px 0;color:#c6b9cb;font:12px Georgia,serif}
+.collection-header .collection-edition{color:#e7c9a1;font:12px/1.6 Georgia,serif;white-space:nowrap;padding:7px 11px;border:1px solid #8f728b8a;background:#181a2ddb}
+#page-collection .collection-layout{grid-template-columns:minmax(190px,235px) minmax(0,1fr) minmax(270px,325px);gap:18px;align-items:start}
+#page-collection .filters,#page-collection .inspector-shell{
+ position:relative;min-width:0;box-shadow:0 9px 25px #070a2297;
+ border:1px solid #ae887fa9;border-radius:3px;
+ background:linear-gradient(164deg,#211d37f5,#12182cf5)
+}
+#page-collection .filters{padding:14px 13px 25px}
+#page-collection .collection-side-title{border-bottom-color:#8a6e82}
+#page-collection .filter-group button{font-size:14px;min-height:38px}
+#page-collection .filter-group button.active{border-color:#cdaae6;background:linear-gradient(100deg,#6d4a8c,#312743)}
+#page-collection .gallery{min-width:0}
+#page-collection .collection-toolbar{gap:9px;margin:0 0 17px}
+#page-collection .search-wrap{border-color:#967993}
+#page-collection .gallery .cards{grid-template-columns:repeat(3,minmax(0,1fr));gap:15px}
+#page-collection .card{
+ border-color:var(--edge,#bba1a6);padding:5px;outline:1px solid #fae2ac36;outline-offset:-4px;
+ background:linear-gradient(150deg,#281f3b,#141a2e);
+ box-shadow:0 6px 18px #030817aa;
+}
+#page-collection .card img{display:block;aspect-ratio:112/136;object-fit:cover;image-rendering:pixelated}
+#page-collection .card .info{border-top:1px solid #bda17b52}
+#page-collection .card .name{font-size:clamp(11px,.9vw,14px);min-height:32px}
+#page-collection .card .meta{font-size:10px}
+#page-collection .card:hover:not(:disabled),#page-collection .card:focus-visible{box-shadow:0 0 15px color-mix(in srgb,var(--edge) 36%,transparent),0 10px 25px #07091ce0}
+#page-collection .inspector-shell{position:sticky;top:18px;padding:8px}
+#page-collection .inspector{border:none;box-shadow:none;background:transparent;padding:12px}
+#page-collection .inspector img{width:min(100%,275px);border:3px solid var(--edge,#dec6a6);outline:1px solid #ffd5a773}
+#page-collection .inspector h2{font-size:clamp(19px,2vw,27px)}
+#page-collection .inspector p{color:#d8c9d4}
+#page-collection .inspector .stats{background:#1b1b32dd;border-color:#8f7184;padding:13px 3px;margin-top:16px}
+/* Achievements: records of the journey, not plain dashboard rows. */
+#page-succes .achievements{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+#page-succes .achievement{
+ min-height:155px;position:relative;overflow:hidden;padding:24px 23px 22px 90px;
+ border:1px solid #aa8583ab;border-radius:3px;
+ background:linear-gradient(155deg,#211e38f5,#10192df2);
+ box-shadow:0 7px 22px #070b227f;
+}
+#page-succes .achievement::before{
+ content:"";position:absolute;top:25px;left:16px;width:62px;height:62px;
+ background:url('../assets/minigames/runes-origines-compact.webp') 100% 50%/400% 300% no-repeat;
+ filter:drop-shadow(0 4px 7px #050917a8);
+}
+#page-succes .achievement:nth-child(3n+2)::before{background-position:0 0}
+#page-succes .achievement:nth-child(3n+3)::before{background-position:66.6667% 50%}
+#page-succes .achievement h3{color:#f3dcb4;font-size:22px;line-height:1.17}
+#page-succes .achievement p{font:13px/1.5 Georgia,serif;color:#d0c4d7}
+#page-succes .achievement.locked{opacity:.63;filter:saturate(.65)}
+#app>footer{margin-top:5px;padding:23px 20px 30px;border-top:1px solid #ab88755a;background:#101426c2;color:#b5a5bd}
+#toast{border-color:#d5b98b;box-shadow:0 8px 25px #06091ccc}
+/* Short viewport and tablet refinements. */
+@media(max-width:1220px) and (min-width:851px){
+ #app>.top{gap:10px;padding:0 17px}
+ .top .brand{font-size:28px}
+ .top nav button{min-width:68px;flex-basis:92px;padding:6px}
+ .top .wallet span{padding:8px 9px}
+ .layout{padding:24px 18px 86px}
+ #page-collection .collection-layout{grid-template-columns:175px minmax(0,1fr) 250px;gap:10px}
+ #page-collection .gallery .cards{gap:10px}
+ #page-jouer .play-stage{grid-template-columns:minmax(0,1fr) 250px;gap:12px}
+ #page-jouer .game-picker{grid-template-columns:repeat(5,150px)}
+ #page-jouer .game-picker .game-choice{padding-left:65px;font-size:12px}
+ #page-jouer .game-picker .game-choice::before{width:55px;left:7px;top:20px;bottom:12px}
+}
+@media(max-width:980px) and (min-width:851px){
+ #page-collection .collection-layout{grid-template-columns:175px minmax(0,1fr)}
+ #page-collection .inspector-shell{grid-column:2;position:relative;width:100%;max-width:510px}
+ #page-collection .gallery .cards{grid-template-columns:repeat(3,minmax(0,1fr))}
+ #page-jouer .play-stage{grid-template-columns:1fr}
+ #page-jouer .play-lore{display:none}
+ #page-succes .achievements{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:850px){
+ #app{min-height:100svh}
+ .ambient-landscape:before{opacity:.13;width:50vw}
+ .ambient-landscape:after{background:#11172ad9}
+ #app::before{width:25vw;opacity:.18;top:0;bottom:0}
+ #app::after{opacity:.17;height:75px}
+ #app>.top{
+  position:sticky!important;top:0;min-height:0;display:flex;align-items:center;flex-wrap:nowrap;
+  padding:9px max(11px,env(safe-area-inset-right)) 9px max(11px,env(safe-area-inset-left));
+  gap:6px;background:#111529f8;border-bottom:1px solid #987a85a6;z-index:50;
+ }
+ .top .brand{font-size:clamp(18px,4.9vw,26px);min-width:0;white-space:nowrap;flex:0 1 auto}
+ .top .brand::after{height:4px;margin-top:3px}
+ .top .brand small{font-size:9px}
+ .top .wallet{gap:5px;font-size:11px}
+ .top .wallet span{padding:6px 7px;border-radius:13px;font-size:12px}
+ .top .wallet b{margin-left:2px}
+ .top nav{
+  position:fixed;z-index:95;bottom:0;left:0;right:0;top:auto;width:100%;height:calc(64px + env(safe-area-inset-bottom));
+  display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:2px;align-items:stretch;
+  padding:4px max(6px,env(safe-area-inset-left)) env(safe-area-inset-bottom) max(6px,env(safe-area-inset-right));
+  border-top:1px solid #ad8c8fa6;box-shadow:0 -6px 26px #070916c2;background:#17182df9;
+ }
+ .top nav button{min-height:54px;min-width:0;flex:none;padding:3px 1px;border:none;border-top:2px solid transparent;font:11px/1.2 system-ui,sans-serif;gap:2px}
+ .top nav button.active{border-color:#cfa9e8;border-top-color:#eac8ab;border-bottom:0;background:linear-gradient(#4e376fa6,#28233f76);box-shadow:inset 0 0 12px #b88aed27}
+ .top nav button.active::after{content:none}
+ .top nav .nav-icon{width:28px;height:28px;flex-basis:28px}
+ .top nav button span:not(.nav-icon){font-size:11px}
+ .layout{max-width:none;width:100%;margin:0;padding:15px 12px calc(96px + env(safe-area-inset-bottom));min-height:calc(100svh - 55px)}
+ #page-jouer .intro{min-height:165px;padding:19px 17px;margin:0 0 19px;background:
+  linear-gradient(90deg,#15172be9 0%,#1c1b36dd 60%,#15182b91),
+  url('../assets/cards/pluie-astrale-thumb.webp') right 44%/160px auto no-repeat,#17182f;
+ }
+ #page-jouer .intro h1{font-size:clamp(25px,6.6vw,34px)}
+ #page-jouer .intro p:not(.kicker){font:12px/1.5 Georgia,serif;max-width:300px}
+ #page-jouer .intro::before{display:none}
+ #page-jouer .intro::after{inset:6px}
+ #page-jouer .heading{border-bottom:0;margin:0 0 10px;padding:0}
+ #page-jouer .heading h2{font-size:22px}
+ #page-jouer .heading span{font-size:11px}
+ #page-jouer .game-picker{display:flex;grid-template-columns:none;gap:8px;margin:0 -2px 11px;padding:2px 2px 11px;overflow-x:auto;scroll-snap-type:x proximity}
+ #page-jouer .game-picker .game-choice{
+  flex:0 0 auto;min-width:168px;min-height:66px;padding:9px 11px 8px 61px;
+  gap:2px;border-radius:4px;scroll-snap-align:start;
+ }
+ #page-jouer .game-picker .game-choice::before{top:8px;bottom:8px;left:6px;width:48px;max-height:50px}
+ #page-jouer .game-choice-name{font-size:13px}
+ #page-jouer .game-choice-hint{font-size:10px}
+ #page-jouer .play-stage{display:block}
+ #page-jouer .play-lore{display:none}
+ #page-jouer .games{display:block}
+ #page-jouer .games .game{display:none;padding:16px 14px 20px}
+ #page-jouer .games .game.mobile-active{display:block}
+ #page-boosters .shop{display:block}
+ #page-boosters>.heading{border-bottom:1px solid #8a667e80;padding-bottom:12px}
+ #page-boosters>.heading h1{font-size:25px}
+ #page-boosters .pack-side{padding:14px}
+ #page-boosters .pack-side h2{font-size:19px}
+ #page-boosters .pack-side .primary{margin:2px 0 0}
+ #page-boosters .opening{min-height:170px;padding:14px 11px}
+ #page-boosters .opening h2{font-size:20px}
+ #page-collection .collection-header{display:none}
+ #page-collection .collection-layout{display:block!important}
+ #page-collection .gallery .cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}
+ #page-collection .collection-toolbar{gap:9px;margin-bottom:13px}
+ #page-collection .filters{position:fixed!important;display:block!important;left:0;top:0;bottom:0;width:min(88vw,345px)!important;max-width:345px;margin:0;z-index:120;
+  border-radius:0 14px 14px 0;background:#1b1932;padding:calc(15px + env(safe-area-inset-top)) 16px calc(22px + env(safe-area-inset-bottom));
+  transform:translateX(-105%);visibility:hidden;transition:transform .2s,visibility .2s;overflow-y:auto;
+ }
+ #page-collection .filters.is-open{transform:translateX(0);visibility:visible}
+ #page-collection .inspector-shell{position:fixed!important;inset:0;display:none;z-index:121;width:100%;height:100dvh;max-width:none;overflow-y:auto;padding:calc(10px + env(safe-area-inset-top)) 14px calc(24px + env(safe-area-inset-bottom));background:linear-gradient(#202039,#13162b);border:none}
+ #page-collection .inspector-shell.is-open{display:block}
+ #page-collection .inspector{border:none;box-shadow:none;background:transparent;padding:10px 14px 25px}
+ #page-collection .inspector img{width:min(100%,380px)}
+ #page-collection .gallery .card{padding:4px}
+ #page-collection .gallery .card .name{font-size:clamp(12px,3.5vw,15px)}
+ #page-succes .achievements{grid-template-columns:1fr;gap:10px}
+ #page-succes .achievement{min-height:125px;padding:20px 17px 18px 84px}
+ #page-succes .achievement::before{top:21px;left:12px;width:62px;height:62px}
+ #app>footer{padding:15px 12px calc(90px + env(safe-area-inset-bottom));font-size:11px}
+}
+@media(min-width:590px) and (max-width:850px){
+ #page-collection .gallery .cards{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+@media(max-width:360px){
+ .top .brand{font-size:17px}
+ .top .wallet span{font-size:11px;padding:5px}
+ #page-jouer .game-picker .game-choice{min-width:151px;padding-left:55px}
+ #page-jouer .game-picker .game-choice::before{width:44px}
+ #page-succes .achievement h3{font-size:19px}
+}
+@media(prefers-reduced-motion:reduce){.page,.top nav button,#page-jouer .game-choice{animation:none!important;transition:none!important}}
+/* Final polish: spacing and category sigils. */
+@media(min-width:851px){
+ #page-jouer .play-stage{max-width:1160px;margin:0 auto;grid-template-columns:minmax(0,800px) minmax(235px,290px)}
+}
+#type-filters [data-type]::before{content:'✧';display:inline-block;width:24px;color:#e0c292}
+#type-filters [data-type='Héros']::before{content:'♜';color:#e0bf93}
+#type-filters [data-type='Créature']::before{content:'♞';color:#d6b8ef}
+#type-filters [data-type='Sort']::before{content:'✦';color:#c9a3ed}
+#type-filters [data-type='Artefact']::before{content:'◈';color:#84ddec}

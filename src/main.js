@@ -733,8 +733,12 @@ function startAlchemy(){
 [startRunes,startMemory,startLock,startMines,startAlchemy].forEach(fn=>fn());
 const picker=$('#game-picker');
 let selectedGame=0;
+const trialSubtitles=['Ordre & observation','Mémoire & association','Logique des cristaux','Exploration & prudence','Recettes & alchimie'];
 definitions.forEach((entry,index)=>{
-  const control=button((index+1)+' · '+entry.name,()=>selectGame(index),'game-choice');
+  const control=button('',()=>selectGame(index),'game-choice');
+  control.append(el('span','game-choice-name',(index+1)+' · '+entry.name),
+    el('span','game-choice-hint',trialSubtitles[index]));
+  control.setAttribute('aria-label','Choisir '+entry.name);
   control.setAttribute('aria-pressed',String(index===0));
   picker.append(control);
 });

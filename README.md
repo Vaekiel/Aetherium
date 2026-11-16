@@ -29,6 +29,19 @@ Ouvrir ensuite `http://localhost:8000`.
 
 Le workflow `.github/workflows/pages.yml` valide les modules JavaScript et publie automatiquement la racine du dépôt sur GitHub Pages à chaque push sur `main`.
 
+## Interface AETHERIUM « Au crépuscule » (version 1.1)
+
+L'interface générale suit la maquette validée **« collection_aetherium_au_crépuscule »**, tout en restant une application réellement jouable et responsive.
+
+- **Navigation :** en-tête fantasy violet nuit, or doux et quatre icônes en pixel art HD réutilisant les pierres runiques. Sur téléphone, navigation basse au pouce et respect des zones de sécurité.
+- **Jouer :** bannière de chapitre illustrée, cinq sélecteurs d'épreuves graphiques et **une seule épreuve à la fois**, également sur ordinateur ; panneau narratif sur grand écran.
+- **Boosters :** présentation de boutique/rituel du Codex ; révélation individuelle validée préservée.
+- **Collection :** Codex avec trois zones (catégories, cartes, inspection) sur écran large, cadres dorés discrets et plus grandes illustrations. Sur téléphone, les filtres latéraux et l'inspection plein écran restent disponibles.
+- **Succès :** présentation de registre ornée d'insignes et de cadres runiques.
+- **Décors :** nouveau bord droit aux cascades et horizon crépusculaire, découpés depuis la maquette artistique approuvée, soit deux petits WebP (environ 60 Ko cumulés). Réutilisation des assets déjà présents.
+
+Le thème final `src/shell.css` est chargé **en dernier** afin d'harmoniser les cinq mini-jeux sans modifier leur mécanique. Le jeu conserve ses sauvegardes, les 24 cartes d'Origines, les probabilités de booster et l'économie. Les animations restent discrètes et respectent les réglages d'accessibilité.
+
 ## Chemin runique en pixel art HD (version 0.6)
 
 Première épreuve retravaillée selon la direction artistique AETHERIUM : **12 pierres runiques illustrées** (soleil, lune, constellations, œil, spirale, arbre, boussole, étoiles, montagne, vagues, sablier et flamme), gravures de pierre, lueurs magiques et détails dorés. Toutes les images proviennent d'une planche WebP de **704 × 528 pixels**, optimisée pour éviter douze chargements d'images séparés.
