@@ -16,9 +16,9 @@ assert.ok(html.includes('class="mobile-chronicles-shortcut"'),'Codex offers Chro
 assert.ok(html.includes('class="chronicles-shortcut"'),'Codex offers Chroniques on desktop');
 assert.ok(html.includes('id="atelier-dust"')&&html.includes('id="atelier-duplicates"')&&html.includes('id="atelier-collected"'),'Atelier values have dedicated live counters');
 assert.ok(html.includes('id="page-atelier"'),'A separate Atelier screen exists');
-assert.ok(html.includes('atelier-craft-disabled" disabled'),'Crafting is explicitly disabled until costs are defined');
-assert.ok(html.includes('Aucun Éclat n\'est dépensé'),'Atelier explains that spending is not implemented');
-assert.ok(!html.includes('id="craft-confirm"'),'No unimplemented spending control');
+assert.ok(html.includes('id="atelier-card-list"')&&html.includes('id="atelier-card-details"'),'Forge presents missing cards and a live recipe');
+assert.ok(html.includes('id="atelier-confirm"'),'Forge presents a confirmation dialog before spending');
+assert.ok(html.includes('id="atelier-goal-summary"'),'Atelier retains persistent desired-card progress');
 assert.ok(js.includes("const MAIN_PAGES=['jouer','boosters','collection','atelier'];"),'Navigation page list includes Atelier');
 assert.ok(js.includes("const APP_PAGES=[...MAIN_PAGES,'succes'];"),'Legacy #succes route remains supported');
 assert.ok(js.includes("APP_PAGES.includes(location.hash.slice(1))"),'Deep link to Atelier and Chroniques works');
@@ -28,7 +28,7 @@ assert.ok(js.includes('function renderAtelier()'),'Atelier resource display upda
 assert.ok(js.includes('state.dust.toLocaleString'),'Displayed Éclats are drawn from saved resource balance');
 assert.ok(js.includes('Object.values(state.owned).reduce'),'Duplicate count is calculated from owned copies');
 assert.ok(js.includes("const SAVE='aetherium-save-v1'"),'Existing save format is unchanged');
-assert.ok(!js.includes('state.dust-='),'Resource spending is not enabled prematurely');
+assert.ok(js.includes('const result=craftCard(state,card)'),'Validated crafting is enabled through a central rules module');
 for(const key of ['function startRunes()','function startMemory()','function startLock()','function startMines()','function startAlchemy()','function openOriginesBooster()'])
  assert.ok(js.includes(key),'Gameplay retained: '+key);
 assert.ok(css.includes('.atelier-layout')&&css.includes('.atelier-forge-scene'),'Forge is illustrated in the existing DA');

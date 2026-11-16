@@ -1,0 +1,213 @@
+/* AETHERIUM — Forge des Arcanes v1.3
+   Extends the accepted HD pixel-art dusk theme and Atelier shell. */
+
+#page-atelier .atelier-coming{
+  color:#e7d4af;border-color:#c6a277b5;background:linear-gradient(140deg,#41314a,#30283e);
+}
+#page-atelier .atelier-jump{
+  display:block;width:min(100%,360px);min-height:49px;margin:14px auto 0;
+  font:15px Georgia,serif;cursor:pointer;
+}
+#page-atelier .atelier-jump:focus-visible{
+  outline:2px solid #efcb9a;outline-offset:4px;
+}
+#page-atelier .atelier-goal-summary{
+  display:block!important;border:0!important;padding:0!important;
+  color:#d8cadd;font:13px/1.55 Georgia,serif;
+}
+.atelier-goal-summary .atelier-goal-name{
+  display:block;color:#f3dcbe;font:19px/1.4 Georgia,serif;
+}
+.atelier-goal-summary p{color:#bfc2d7;font:12px/1.6 system-ui,sans-serif}
+.atelier-goal-summary .atelier-goal-meter{
+  height:9px;margin:14px 0 8px;overflow:hidden;border:1px solid #a18b967c;
+  border-radius:6px;background:#0c162a;
+}
+.atelier-goal-summary .atelier-goal-meter>span,
+.atelier-detail-meter>span{
+  display:block;height:100%;border-radius:inherit;min-width:0;
+  background:linear-gradient(90deg,#7655ad,#8a9fd8,#b3e8e9);
+  box-shadow:0 0 14px #b4b6eb9c;
+  transition:width .2s ease;
+}
+.atelier-goal-placeholder{margin:4px 0;color:#bbb0c3;font:13px/1.55 Georgia,serif}
+.atelier-catalogue{
+  max-width:1250px;margin:22px auto 0;padding:19px 19px 22px;
+  border:1px solid #9b7d82aa;border-radius:3px;
+  background:linear-gradient(160deg,#1c1b34ef,#11182df5);
+  box-shadow:0 10px 28px #06091680;
+}
+.atelier-catalogue-head{
+  display:flex;align-items:end;justify-content:space-between;gap:14px;
+  margin-bottom:17px;padding-bottom:16px;border-bottom:1px solid #a991856c;
+}
+.atelier-catalogue-head h2{
+  color:#f0dcb6;margin:4px 0 5px;
+  font:small-caps clamp(25px,2.35vw,32px)/1.2 Georgia,serif;
+}
+.atelier-catalogue-head p:not(.kicker){
+  max-width:720px;margin:3px 0;color:#cbbdd0;font:13px/1.6 Georgia,serif;
+}
+.atelier-filter-label{
+  display:flex;flex-direction:column;gap:6px;flex:0 0 238px;
+  color:#dfc39b;font:12px Georgia,serif;
+}
+#atelier-filter{
+  min-height:44px;padding:9px 33px 9px 11px;max-width:100%;
+  border:1px solid #92788cb3;border-radius:3px;
+  color:#f1e3e6;background:#26233e;
+  font:13px Georgia,serif;cursor:pointer;
+}
+#atelier-filter:focus-visible{
+  outline:2px solid #ebc791;outline-offset:2px;
+}
+.atelier-crafting-layout{
+  display:grid;grid-template-columns:minmax(0,1fr) minmax(280px,340px);
+  align-items:start;gap:18px;
+}
+.atelier-list-wrap{min-width:0}
+.atelier-card-list{
+  display:grid;grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:11px;align-items:stretch;
+}
+.atelier-craft-tile{
+  position:relative;display:flex;flex-direction:column;align-items:stretch;
+  min-width:0;min-height:220px;overflow:hidden;
+  padding:8px 8px 10px;border:1px solid #827386b8;border-radius:3px;
+  background:linear-gradient(160deg,#29243e,#171c33);
+  box-shadow:0 6px 15px #06091684,inset 0 0 0 3px #0c1427aa;
+  color:#eedfe8;text-align:center;cursor:pointer;
+  transition:border-color .15s,transform .15s,box-shadow .15s;
+}
+.atelier-craft-tile:hover{
+  border-color:#d3b68e;transform:translateY(-2px);
+}
+.atelier-craft-tile:focus-visible{
+  outline:2px solid #ebcb9b;outline-offset:2px;
+}
+.atelier-craft-tile.is-selected{
+  border-color:#eac68d;
+  box-shadow:0 0 0 1px #b89d80,0 0 18px #bda0db80,inset 0 0 0 3px #12172a9c;
+}
+.atelier-craft-tile.is-affordable .atelier-craft-cost{color:#b6ecdf}
+.atelier-craft-art{
+  display:block;width:100%;aspect-ratio:112/136;object-fit:cover;
+  border:2px solid var(--rarity-color,#977b99);
+  background:#12172c;image-rendering:pixelated;
+  box-shadow:inset 0 0 12px #070b1b;
+}
+.atelier-craft-name{
+  display:block;min-height:2.7em;margin-top:9px;
+  font:13px/1.35 Georgia,serif;color:#f3e5d4;
+  overflow-wrap:anywhere;
+}
+.atelier-craft-cost{
+  margin:auto 0 0;padding-top:6px;
+  color:#d2a8ea;font:11px/1.3 system-ui,sans-serif;
+}
+.atelier-wish-badge{
+  position:absolute;top:11px;left:11px;right:11px;
+  padding:3px 4px;background:#26203ddf;border:1px solid #efc383aa;
+  color:#fff0c9;font:9px/1.2 system-ui,sans-serif;letter-spacing:.1em;
+}
+.atelier-empty{padding:25px;color:#cfbed5;text-align:center;font:14px/1.5 Georgia,serif}
+.atelier-card-details{
+  position:sticky;top:20px;min-width:0;
+  display:flex;flex-direction:column;align-items:stretch;
+  padding:17px;border:1px solid #af8c7faa;border-radius:3px;
+  background:linear-gradient(148deg,#28243eea,#161b32fa);
+  box-shadow:0 8px 24px #060b2099;
+  scroll-margin-top:78px;
+}
+.atelier-card-details>.kicker{margin:0 0 12px}
+.atelier-card-details h3{
+  font:small-caps 25px/1.2 Georgia,serif;color:#f0dcbc;
+  text-align:center;margin:14px 0 4px;overflow-wrap:anywhere;
+}
+.atelier-detail-frame{
+  width:min(100%,205px);margin:0 auto;aspect-ratio:112/136;
+  border:3px solid var(--rarity-color,#987b99);
+  background:#101627;box-shadow:0 9px 22px #070b20aa,0 0 15px #8b71a448;
+}
+.atelier-detail-art{display:block;width:100%;height:100%;object-fit:cover;image-rendering:pixelated}
+.atelier-detail-rarity{
+  margin:4px 0 8px;text-align:center;color:#ccaddf;
+  font:13px/1.5 Georgia,serif;
+}
+.atelier-detail-lore{
+  min-height:2.5em;margin:4px 0 14px;
+  text-align:center;color:#cbbccc;font:13px/1.5 Georgia,serif;
+}
+.atelier-detail-count{text-align:center;color:#eed9be;font:14px/1.4 Georgia,serif}
+.atelier-detail-meter{
+  height:11px;margin:11px 0 5px;overflow:hidden;border:1px solid #887991;
+  border-radius:6px;background:#10142a;
+}
+.atelier-detail-progress{text-align:center;margin:8px 0 14px;color:#b7adca;font:12px/1.5 system-ui,sans-serif}
+.atelier-card-details .atelier-craft-action,
+.atelier-card-details .atelier-goal-action{
+  display:block;width:100%;min-height:46px;margin:4px 0;
+  font:14px/1.3 Georgia,serif;
+}
+.atelier-card-details .atelier-craft-action:disabled{
+  cursor:not-allowed;opacity:.47;
+}
+.atelier-goal-action[aria-pressed="true"]{border-color:#c6ae83;color:#f8dbad}
+.atelier-detail-placeholder{font:14px/1.6 Georgia,serif;color:#c3b9ca}
+.atelier-detail-link{display:block;width:100%;min-height:45px;margin-top:12px}
+.atelier-rarity-note{margin:20px 0 0;color:#b8a9bf;text-align:center;font:12px/1.5 Georgia,serif}
+.atelier-result{
+  padding:12px 15px;margin:0 0 15px;
+  border:1px solid #b6cb9caa;background:#29343bdd;color:#d5f6de;
+  font:14px/1.4 Georgia,serif;text-align:center;
+}
+#atelier-catalogue-title{scroll-margin-top:80px}
+.atelier-confirm{
+  color:#f3e3de;background:linear-gradient(160deg,#2b2440,#12192f);
+  border:2px solid #d2b281;border-radius:4px;
+  width:min(440px,calc(100vw - 28px));max-height:calc(100dvh - 40px);
+  padding:0;box-shadow:0 20px 100px #040814c9;
+}
+.atelier-confirm::backdrop{background:#060717c7;backdrop-filter:blur(4px)}
+.atelier-confirm-inner{padding:24px}
+.atelier-confirm h2{margin:10px 0;color:#f2d6ab;font:small-caps 27px Georgia,serif}
+.atelier-confirm p{font:14px/1.6 Georgia,serif;color:#e6d7de}
+.atelier-confirm .atelier-confirm-warning{color:#c4b5c9;font-size:12px}
+.atelier-confirm-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:18px}
+.atelier-confirm-actions button{min-height:48px;font:13px/1.3 Georgia,serif}
+@media(max-width:1200px) and (min-width:851px){
+  .atelier-card-list{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .atelier-crafting-layout{grid-template-columns:minmax(0,1fr) 290px;gap:12px}
+}
+@media(max-width:850px){
+  .atelier-catalogue{margin:13px auto 0;padding:13px}
+  .atelier-catalogue-head{align-items:stretch;flex-direction:column;gap:13px}
+  .atelier-catalogue-head h2{font-size:27px}
+  .atelier-filter-label{flex-basis:auto;width:100%}
+  #atelier-filter{min-height:48px;font-size:15px}
+  .atelier-crafting-layout{display:flex;flex-direction:column;gap:14px}
+  .atelier-card-details{
+    order:-1;position:static;top:auto;width:100%;
+    scroll-margin-top:72px;
+  }
+  .atelier-list-wrap{width:100%}
+  .atelier-card-list{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+  .atelier-craft-tile{min-height:220px;padding:8px}
+  .atelier-craft-name{font-size:13px}
+  .atelier-detail-frame{width:min(100%,200px)}
+  .atelier-card-details h3{font-size:24px}
+  .atelier-rarity-note{font-size:11px}
+}
+@media(min-width:590px) and (max-width:850px){
+  .atelier-card-list{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+@media(max-width:380px){
+  .atelier-card-list{gap:7px}
+  .atelier-craft-tile{padding:6px;min-height:200px}
+  .atelier-craft-name{font-size:12px}
+  .atelier-craft-cost{font-size:10px}
+  .atelier-confirm-inner{padding:17px}
+}
+@media(prefers-reduced-motion:reduce){
+  .atelier-craft-tile,.atelier-goal-meter>span,.atelier-detail-meter>span{transition:none!important}
+}

@@ -29,13 +29,29 @@ Ouvrir ensuite `http://localhost:8000`.
 
 Le workflow `.github/workflows/pages.yml` valide les modules JavaScript et publie automatiquement la racine du dépôt sur GitHub Pages à chaque push sur `main`.
 
+## Forge des Arcanes : fabrication et carte convoitée (version 1.3)
+
+La fabrication est désormais **active** dans l'Atelier pour les cartes qui **manquent** au Codex. Le joueur sélectionne une carte dans une grille illustrée, filtre par rareté ou par cartes actuellement fabricables, puis confirme la transaction. L'opération est contrôlée dans le module pur `src/crafting.js`, qui vérifie la rareté, l'inventaire et le solde avant de produire une nouvelle sauvegarde. Les cartes créées sont **normales** : les Shiny demeurent réservées aux boosters. Les cartes déjà possédées ne sont jamais fabricables.
+
+| Rareté | Coût en Éclats | Doublons à 5 Éclats |
+| --- | ---: | ---: |
+| Commune | 20 | 4 |
+| Inhabituelle | 45 | 9 |
+| Rare | 100 | 20 |
+| Épique | 220 | 44 |
+| Légendaire | 450 | 90 |
+
+La **carte convoitée** est un objectif facultatif et enregistré dans la sauvegarde locale existante `aetherium-save-v1` (champ additionnel `goalId`). L'Atelier montre la progression en Éclats et le montant manquant. L'objectif se retire automatiquement lorsque la carte est obtenue, que ce soit via forge ou booster. Les anciennes sauvegardes continuent de fonctionner sans migration destructive. Une fenêtre de confirmation précède chaque dépense, et l'inventaire ainsi que le solde sont enregistrés ensemble. Les probabilités des boosters, les récompenses des mini-jeux, les 24 cartes du set Origines et le système Shiny ne changent pas.
+
+Un test dédié `tests/crafting-smoke.mjs` contrôle chaque rareté, les soldes insuffisants, le refus des doublons, l'absence de Shiny fabriqué, le maintien des autres ressources et le fonctionnement du suivi d'objectif. Le rendu conserve la DA pixel art HD, avec galerie de recettes sur PC et fiche de fabrication placée avant la galerie sur téléphone.
+
 ## Navigation et Atelier des Arcanes (version 1.2)
 
 La navigation principale est structurée en quatre actions complémentaires : **Épreuves** (cinq mini-jeux), **Boosters** (ouvrir les paquets), **Codex** (collection et inspection) et **Atelier** (préparation du futur artisanat). Les quatre icônes utilisent un même ensemble d'emblèmes en pixel art HD. **Chroniques & Succès** restent disponibles via un bouton secondaire dans l'en-tête, ainsi que depuis le Codex et l'Atelier. L'ancienne adresse `#succes` reste valide.
 
 Les compteurs de **Couronnes** et d'**Éclats** dans l'en-tête sont désormais des boutons conduisant respectivement aux Boosters et à l'Atelier.
 
-L'**Atelier des Arcanes** dispose d'une interface responsive dans la DA validée, avec un visuel de forge, un aperçu du circuit Éclats → Forge → Carte, et des compteurs connectés à la sauvegarde actuelle : Éclats possédés, cartes différentes, exemplaires en double. **La fabrication de cartes n'est pas encore activée** : le bouton est explicitement désactivé et aucun Éclat ne peut être dépensé avant la définition des coûts et des règles d'artisanat. Les données sauvegardées, les probabilités des boosters et toutes les mécaniques des cinq mini-jeux sont inchangées.
+L'**Atelier des Arcanes** dispose d'une interface responsive dans la DA validée, avec un visuel de forge, un aperçu du circuit Éclats → Forge → Carte, et des compteurs connectés à la sauvegarde actuelle : Éclats possédés, cartes différentes, exemplaires en double. **La fabrication de cartes est maintenant active** avec les coûts détaillés ci-dessus, après une confirmation du joueur. Les données sauvegardées, les probabilités des boosters et toutes les mécaniques des cinq mini-jeux sont inchangées.
 
 ## Navigation : losange de l'onglet actif (version 1.1.5)
 
@@ -167,7 +183,7 @@ La cinquième carte est garantie **Inhabituelle ou mieux** (65 % / 25 % / 8 % / 
 
 ## Suite du développement
 
-Créer les illustrations de cartes définitives, approfondir les mini-jeux, ajouter des albums et objectifs de collection, rendre les Éclats utilisables pour fabriquer des cartes, ajouter des effets d'ouverture et renforcer les tests automatisés.
+Créer les illustrations de cartes définitives, approfondir les mini-jeux, ajouter des albums et objectifs de collection, ajouter des effets d'ouverture et renforcer les tests automatisés.
 
 Pas de compte, pas de cash shop, pas de données personnelles envoyées à un serveur.
 

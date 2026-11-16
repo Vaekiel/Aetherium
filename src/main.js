@@ -1,4 +1,5 @@
 import {CARDS,RARITIES,PACK_PRICE,drawPack} from './data.js';
+import {CRAFT_COSTS,getCraftCost,craftCard} from './crafting.js';
 import {applyCardIllustration,hasApprovedArt,CARD_ART} from './card-art.js';
 
 const $=(q,root=document)=>root.querySelector(q);
@@ -74,24 +75,185 @@ mobileView.addEventListener('change',syncMobileSheets);
 // approved Collection mockup. These are *visual placeholders*, not final art
 // for the corresponding 24 catalogue entries. All gameplay/save data is unchanged.
 const SAVE='aetherium-save-v1';
-const fresh=()=>({coins:300,dust:0,owned:{},shiny:{},wins:0,earned:0,opened:0});
-function load(){try{const raw=JSON.parse(localStorage.getItem(SAVE));if(!raw||typeof raw!=='object')return fresh();const s=fresh();for(const field of ['coins','dust','wins','earned','opened'])if(Number.isSafeInteger(raw[field])&&raw[field]>=0&&raw[field]<1e9)s[field]=raw[field];for(const c of CARDS){const n=raw.owned?.[c.id];if(Number.isSafeInteger(n)&&n>0&&n<1e6)s.owned[c.id]=n;if(raw.shiny?.[c.id]===true&&s.owned[c.id])s.shiny[c.id]=true}return s}catch{return fresh()}}
+const fresh=()=>({coins:300,dust:0,owned:{},shiny:{},wins:0,earned:0,opened:0,goalId:null});
+function load(){try{const raw=JSON.parse(localStorage.getItem(SAVE));if(!raw||typeof raw!=='object')return fresh();const s=fresh();for(const field of ['coins','dust','wins','earned','opened'])if(Number.isSafeInteger(raw[field])&&raw[field]>=0&&raw[field]<1e9)s[field]=raw[field];for(const c of CARDS){const n=raw.owned?.[c.id];if(Number.isSafeInteger(n)&&n>0&&n<1e6)s.owned[c.id]=n;if(raw.shiny?.[c.id]===true&&s.owned[c.id])s.shiny[c.id]=true}if(Number.isSafeInteger(raw.goalId)&&CARDS.some(c=>c.id===raw.goalId)&&!s.owned[raw.goalId])s.goalId=raw.goalId;return s}catch{return fresh()}}
 let state=load();
 let boosterBusy=false;
 function save(){try{localStorage.setItem(SAVE,JSON.stringify(state))}catch{notify('Sauvegarde indisponible dans ce navigateur.')}}
 let toastTimer;
 function notify(message){const el=$('#toast');el.textContent=message;el.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove('show'),3000)}
-function update(){save();$('#coins').textContent=state.coins.toLocaleString('fr-FR');$('#dust').textContent=state.dust.toLocaleString('fr-FR');$('#buy').disabled=state.coins<PACK_PRICE||boosterBusy;$('#collection-progress').textContent=Object.keys(state.owned).length+' / '+CARDS.length;
+function update(){if(state.goalId&&state.owned[state.goalId])state.goalId=null;save();$('#coins').textContent=state.coins.toLocaleString('fr-FR');$('#dust').textContent=state.dust.toLocaleString('fr-FR');$('#buy').disabled=state.coins<PACK_PRICE||boosterBusy;$('#collection-progress').textContent=Object.keys(state.owned).length+' / '+CARDS.length;
 $('#mobile-collection-progress').textContent=Object.keys(state.owned).length+' / '+CARDS.length+' obtenues';renderAchievements();renderAtelier()}
 function grant(value){state.coins+=value;state.earned+=value;state.wins++;update();notify('+'+value+' Couronnes remportées !')}
 const MAIN_PAGES=['jouer','boosters','collection','atelier'];
 const APP_PAGES=[...MAIN_PAGES,'succes'];
+let forgeSelectedId=null;
+let forgeFilter='all';
+let pendingCraftId=null;
+
 function renderAtelier(){
   $('#atelier-dust').textContent=state.dust.toLocaleString('fr-FR');
   $('#atelier-collected').textContent=Object.keys(state.owned).length+' / '+CARDS.length;
   const duplicates=Object.values(state.owned).reduce((sum,n)=>sum+Math.max(0,n-1),0);
   $('#atelier-duplicates').textContent=duplicates.toLocaleString('fr-FR');
+
+  // Keep a wanted card visible between sessions, even after a page reload.
+  const goal=CARDS.find(card=>card.id===state.goalId&&!state.owned[card.id]);
+  const summary=$('#atelier-goal-summary');
+  summary.replaceChildren();
+  if(goal){
+    const cost=getCraftCost(goal);
+    const remaining=Math.max(0,cost-state.dust);
+    summary.append(el('strong','atelier-goal-name',goal.name));
+    const progress=el('div','atelier-goal-meter');
+    progress.setAttribute('role','progressbar');
+    progress.setAttribute('aria-label','Progression vers '+goal.name);
+    progress.setAttribute('aria-valuemin','0');
+    progress.setAttribute('aria-valuemax',String(cost));
+    progress.setAttribute('aria-valuenow',String(Math.min(state.dust,cost)));
+    const fill=el('span');
+    fill.style.width=Math.min(100,(state.dust/cost)*100)+'%';
+    progress.append(fill);
+    summary.append(progress,el('p','',remaining?remaining+' Éclats manquants sur '+cost:'Tu peux fabriquer cette carte !'));
+    summary.append(button('Voir mon objectif ›',()=>{
+      forgeSelectedId=goal.id;
+      forgeFilter='all';
+      $('#atelier-filter').value='all';
+      renderAtelier();
+      $('#atelier-card-details').scrollIntoView({behavior:'smooth',block:'nearest'});
+    },'secondary atelier-side-link'));
+  }else summary.append(el('p','atelier-goal-placeholder','Choisis une carte manquante et désigne-la comme objectif. Ta progression sera conservée.'));
+
+  const missing=CARDS.filter(card=>!state.owned[card.id]);
+  const visible=missing.filter(card=>
+    forgeFilter==='all'||(forgeFilter==='affordable'?state.dust>=getCraftCost(card):card.rarity===forgeFilter));
+  const chooseFrom=visible.find(c=>c.id===forgeSelectedId)
+    ||visible.find(c=>c.id===state.goalId)
+    ||visible[0]||null;
+  forgeSelectedId=chooseFrom?.id??null;
+  const gallery=$('#atelier-card-list');
+  gallery.replaceChildren();
+  $('#atelier-empty').hidden=visible.length>0;
+  $('#atelier-empty').textContent=missing.length===0
+    ?'Ton Codex est complet ! Tu possèdes les 24 cartes des Origines.'
+    :'Aucune carte manquante ne correspond à ce filtre.';
+  for(const card of visible){
+    const selected=card.id===forgeSelectedId;
+    const wish=card.id===state.goalId;
+    const cost=getCraftCost(card);
+    const tile=el('button','atelier-craft-tile'+(selected?' is-selected':'')+(wish?' is-wished':''));
+    tile.type='button';
+    tile.dataset.cardId=String(card.id);
+    tile.setAttribute('aria-pressed',String(selected));
+    tile.setAttribute('aria-label',card.name+', '+RARITIES[card.rarity].label+', '+cost+' Éclats'+(wish?', carte convoitée':''));
+    tile.style.setProperty('--rarity-color',RARITIES[card.rarity].color);
+    const art=el('img','atelier-craft-art');
+    applyCardIllustration(art,card,{shiny:false,size:'thumbnail'});
+    art.alt='';
+    const label=el('span','atelier-craft-name',card.name);
+    const costLine=el('span','atelier-craft-cost','✦ '+cost+' Éclats');
+    tile.append(art,label,costLine);
+    if(wish)tile.append(el('span','atelier-wish-badge','✧ OBJECTIF'));
+    if(state.dust>=cost)tile.classList.add('is-affordable');
+    tile.addEventListener('click',()=>{
+      forgeSelectedId=card.id;
+      renderAtelier();
+      if(mobileView.matches)$('#atelier-card-details').scrollIntoView({behavior:'smooth',block:'start'});
+      else gallery.querySelector('[data-card-id="'+card.id+'"]')?.focus({preventScroll:true});
+    });
+    gallery.append(tile);
+  }
+
+  const details=$('#atelier-card-details');
+  details.replaceChildren();
+  if(!chooseFrom){
+    const text=missing.length===0
+      ?'Toutes les cartes des Origines ont rejoint ton Codex. Les versions Shiny restent à découvrir en booster.'
+      :'Modifie le filtre pour choisir une carte à fabriquer.';
+    details.append(el('p','kicker','LES FORGES DES ARCHIVES'),el('h3','',missing.length?'Aucune recette affichée':'Le Codex est complet'),el('p','atelier-detail-placeholder',text));
+    if(missing.length===0)details.append(button('Explorer mon Codex ›',()=>navigate('collection'),'secondary atelier-detail-link'));
+    return;
+  }
+  const cost=getCraftCost(chooseFrom);
+  const remaining=Math.max(0,cost-state.dust);
+  const art=el('img','atelier-detail-art');
+  applyCardIllustration(art,chooseFrom,{shiny:false,size:'full'});
+  art.alt='Illustration de '+chooseFrom.name;
+  const frame=el('div','atelier-detail-frame');
+  frame.style.setProperty('--rarity-color',RARITIES[chooseFrom.rarity].color);
+  frame.append(art);
+  const meter=el('div','atelier-detail-meter');
+  meter.setAttribute('role','progressbar');
+  meter.setAttribute('aria-label','Éclats pour fabriquer '+chooseFrom.name);
+  meter.setAttribute('aria-valuemin','0');
+  meter.setAttribute('aria-valuemax',String(cost));
+  meter.setAttribute('aria-valuenow',String(Math.min(cost,state.dust)));
+  const fill=el('span');fill.style.width=Math.min(100,state.dust/cost*100)+'%';
+  meter.append(fill);
+  const craft=button('Forger · '+cost+' Éclats',()=>askCraft(chooseFrom.id),'primary atelier-craft-action');
+  craft.disabled=state.dust<cost;
+  craft.title=remaining?'Encore '+remaining+' Éclats nécessaires':'Forger cette carte et dépenser '+cost+' Éclats';
+  const goalButton=button(state.goalId===chooseFrom.id?'Retirer mon objectif':'✧ Choisir comme objectif',()=>{
+    const added=state.goalId!==chooseFrom.id;
+    state.goalId=added?chooseFrom.id:null;
+    update();
+    notify(added?'Carte convoitée : '+chooseFrom.name:'Objectif retiré.');
+  },'secondary atelier-goal-action');
+  goalButton.setAttribute('aria-pressed',String(state.goalId===chooseFrom.id));
+  const count=el('div','atelier-detail-count','✦ '+state.dust+' / '+cost+' Éclats');
+  const message=el('p','atelier-detail-progress',remaining?remaining+' Éclats encore nécessaires':'La Forge peut accueillir cette carte.');
+  details.append(el('p','kicker','FICHE DE FABRICATION'),frame,
+    el('h3','',chooseFrom.name),
+    el('p','atelier-detail-rarity',RARITIES[chooseFrom.rarity].label+' · '+chooseFrom.type),
+    el('p','atelier-detail-lore','« '+chooseFrom.lore+' »'),
+    count,meter,message,craft,goalButton);
 }
+
+function askCraft(cardId){
+  const card=CARDS.find(c=>c.id===cardId&&!state.owned[c.id]);
+  if(!card)return notify('Cette carte se trouve déjà dans ton Codex.');
+  const cost=getCraftCost(card);
+  if(state.dust<cost)return notify('Tu ne possèdes pas encore assez d’Éclats.');
+  pendingCraftId=card.id;
+  $('#atelier-confirm-text').textContent='Fabriquer « '+card.name+' » pour '+cost+' Éclats ? Solde actuel : '+state.dust+' Éclats.';
+  const modal=$('#atelier-confirm');
+  if(typeof modal.showModal==='function')modal.showModal();
+  else if(window.confirm('Fabriquer '+card.name+' pour '+cost+' Éclats ?'))completeCraft();
+  else pendingCraftId=null;
+}
+
+function completeCraft(){
+  const cardId=pendingCraftId;
+  pendingCraftId=null;
+  const modal=$('#atelier-confirm');
+  if(modal.open)modal.close();
+  const card=CARDS.find(c=>c.id===cardId);
+  const result=craftCard(state,card);
+  if(!result.ok)return notify(result.reason);
+  state=result.state;
+  forgeSelectedId=null;
+  update(); // Saves the new card and the spent Éclats in one state update.
+  renderCollection();
+  const report=$('#atelier-result');
+  report.hidden=false;
+  report.textContent='✧ '+card.name+' rejoint ton Codex ! −'+result.cost+' Éclats.';
+  notify('Carte fabriquée : '+card.name+' !');
+}
+$('#atelier-filter').addEventListener('change',event=>{
+  forgeFilter=event.target.value;
+  forgeSelectedId=null;
+  renderAtelier();
+});
+$('#atelier-jump').addEventListener('click',()=>{
+  $('#atelier-catalogue-title').scrollIntoView({behavior:'smooth',block:'start'});
+  $('#atelier-catalogue-title').focus({preventScroll:true});
+});
+$('#atelier-confirm-cancel').addEventListener('click',()=>{
+  pendingCraftId=null;
+  $('#atelier-confirm').close();
+});
+$('#atelier-confirm-accept').addEventListener('click',completeCraft);
+$('#atelier-confirm').addEventListener('close',()=>{pendingCraftId=null});
 function navigate(page){
   if(!APP_PAGES.includes(page))return;
   closeSheets(false);
@@ -978,7 +1140,7 @@ nextPullButton.addEventListener('click',advanceBoosterCard);
 
 const success=[['Premiers pas','Terminer une épreuve',()=>state.wins>=1],['Explorateur','Terminer 10 épreuves',()=>state.wins>=10],['Archéologue','Terminer 50 épreuves',()=>state.wins>=50],['Curieux','Ouvrir son premier booster',()=>state.opened>=1],['Collectionneur','Découvrir 12 cartes',()=>Object.keys(state.owned).length>=12],['Archiviste','Découvrir les 24 cartes',()=>Object.keys(state.owned).length>=24],['Éclat rare','Trouver une carte Shiny',()=>Object.keys(state.shiny).length>=1],['Pactole','Gagner 1 000 Couronnes',()=>state.earned>=1000],['Chasseur de légendes','Obtenir une carte légendaire',()=>CARDS.some(c=>c.rarity==='legendary'&&state.owned[c.id])]];
 function renderAchievements(){const root=$('#achievements');root.replaceChildren();for(const [title,description,test] of success){const done=test();const box=el('article','achievement'+(done?'':' locked'));box.append(el('h3','',done?'✦ '+title:'◇ '+title),el('p','',description),el('small','muted',done?'Accompli':'À découvrir'));root.append(box)}}
-$('#reset').addEventListener('click',()=>{if(!confirm('Effacer définitivement les cartes et la progression sauvegardées sur cet appareil ?'))return;clearBoosterScene();state=fresh();selectedCard=null;$('#inspector').replaceChildren(el('p','muted','Sélectionne une carte découverte pour l’admirer.'));$('#pulls').replaceChildren();$('#pack-title').textContent='Les archives attendent leur voyageur.';$('#pack-msg').textContent='Gagne des Couronnes en jouant pour ouvrir des boosters.';update();renderCollection();notify('Progression réinitialisée.')});
+$('#reset').addEventListener('click',()=>{if(!confirm('Effacer définitivement les cartes et la progression sauvegardées sur cet appareil ?'))return;clearBoosterScene();state=fresh();selectedCard=null;forgeSelectedId=null;forgeFilter='all';$('#atelier-filter').value='all';$('#atelier-result').hidden=true;$('#inspector').replaceChildren(el('p','muted','Sélectionne une carte découverte pour l’admirer.'));$('#pulls').replaceChildren();$('#pack-title').textContent='Les archives attendent leur voyageur.';$('#pack-msg').textContent='Gagne des Couronnes en jouant pour ouvrir des boosters.';update();renderCollection();notify('Progression réinitialisée.')});
 syncMobileSheets();
 update();
 navigate(APP_PAGES.includes(location.hash.slice(1))?location.hash.slice(1):'jouer');

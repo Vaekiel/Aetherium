@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#101322"><meta name="description" content="Aetherium, jeu gratuit de collection de cartes fantastiques et de mini-jeux."><title>AETHERIUM · Chroniques des Arcanes</title><link rel="stylesheet" href="./src/style.css"><link rel="stylesheet" href="./src/theme.css"><link rel="stylesheet" href="./src/mobile.css"><link rel="stylesheet" href="./src/booster.css"><link rel="stylesheet" href="./src/runes.css"><link rel="stylesheet" href="./src/memory.css"><link rel="stylesheet" href="./src/lock.css"><link rel="stylesheet" href="./src/mines.css"><link rel="stylesheet" href="./src/alchemy.css"><link rel="stylesheet" href="./src/shell.css?v=onglet-actif-1"><link rel="stylesheet" href="./src/navigation.css?v=navigation-atelier-1"></head>
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#101322"><meta name="description" content="Aetherium, jeu gratuit de collection de cartes fantastiques et de mini-jeux."><title>AETHERIUM · Chroniques des Arcanes</title><link rel="stylesheet" href="./src/style.css"><link rel="stylesheet" href="./src/theme.css"><link rel="stylesheet" href="./src/mobile.css"><link rel="stylesheet" href="./src/booster.css"><link rel="stylesheet" href="./src/runes.css"><link rel="stylesheet" href="./src/memory.css"><link rel="stylesheet" href="./src/lock.css"><link rel="stylesheet" href="./src/mines.css"><link rel="stylesheet" href="./src/alchemy.css"><link rel="stylesheet" href="./src/shell.css?v=onglet-actif-1"><link rel="stylesheet" href="./src/navigation.css?v=navigation-atelier-1"><link rel="stylesheet" href="./src/crafting.css?v=forge-active-1"></head>
 <body><div id="app"><div class="ambient-landscape" aria-hidden="true"><div class="landscape-sky"></div><div class="landscape-moon"></div><div class="landscape-island island-left"></div><div class="landscape-island island-right"></div><div class="landscape-ruins"></div><div class="landscape-foreground"></div></div>
 <header class="top"><a class="brand" href="#jouer">AETHERIUM <small>Chroniques des Arcanes</small></a><nav aria-label="Navigation principale"><button type="button" data-page="jouer" class="active" aria-current="page"><span class="nav-icon" aria-hidden="true">✧</span><span>Épreuves</span></button><button type="button" data-page="boosters"><span class="nav-icon" aria-hidden="true">◈</span><span>Boosters</span></button><button type="button" data-page="collection"><span class="nav-icon" aria-hidden="true">▣</span><span>Codex</span></button><button type="button" data-page="atelier"><span class="nav-icon" aria-hidden="true">✦</span><span>Atelier</span></button></nav><div class="wallet" aria-label="Ressources"><button type="button" class="wallet-link" data-go="boosters" title="Utiliser les Couronnes dans les Boosters" aria-label="Couronnes — aller aux Boosters">♛ <b id="coins">300</b></button><button type="button" class="wallet-link" data-go="atelier" title="Consulter les Éclats dans l’Atelier" aria-label="Éclats — aller à l’Atelier">✦ <b id="dust">0</b></button></div><button type="button" id="chroniques-link" class="chronicles-link" data-go="succes" aria-label="Ouvrir les Chroniques et les Succès" title="Chroniques et Succès"><span class="chronicles-icon" aria-hidden="true">✧</span><span class="chronicles-label">Chroniques</span></button></header>
 <main class="layout">
@@ -11,11 +11,11 @@
 <div class="heading"><h1 id="atelier-title">Atelier des Arcanes</h1><span>Transforme tes découvertes en nouvelles possibilités</span></div>
 <div class="atelier-layout">
   <article class="atelier-forge">
-    <div class="atelier-forge-top"><span class="kicker">LE SANCTUAIRE DES ÉCLATS</span><span class="atelier-coming">Fabrication à venir</span></div>
+    <div class="atelier-forge-top"><span class="kicker">LE SANCTUAIRE DES ÉCLATS</span><span class="atelier-coming">Forge éveillée</span></div>
     <div class="atelier-forge-scene" role="img" aria-label="Un artéfact arcanique et des cristaux lumineux sur un autel de pierre">
       <div class="atelier-forge-crest" aria-hidden="true"></div><div class="atelier-forge-runes" aria-hidden="true">✧ &nbsp; ◈ &nbsp; ✧</div>
     </div>
-    <div class="atelier-forge-copy"><h2>La Forge du Codex</h2><p>Les doublons obtenus dans les boosters te rapportent des Éclats. Bientôt, tu pourras les réunir ici pour fabriquer les cartes qui manquent à ta collection.</p></div>
+    <div class="atelier-forge-copy"><h2>La Forge du Codex</h2><p>Les doublons obtenus dans les boosters te rapportent des Éclats. Réunis-les et façonne les cartes qui manquent à ton Codex.</p></div>
     <div class="atelier-recipe-preview" aria-label="Aperçu de la future fabrication">
       <div class="atelier-recipe-node"><span aria-hidden="true">✦</span><strong>Éclats</strong></div>
       <span class="atelier-recipe-arrow" aria-hidden="true">›</span>
@@ -23,14 +23,45 @@
       <span class="atelier-recipe-arrow" aria-hidden="true">›</span>
       <div class="atelier-recipe-node"><span aria-hidden="true">▣</span><strong>Carte</strong></div>
     </div>
-    <button type="button" class="primary atelier-craft-disabled" disabled aria-describedby="atelier-craft-help">Fabrication bientôt disponible</button>
-    <p id="atelier-craft-help" class="atelier-footnote">Aucun Éclat n'est dépensé sur cet écran. Les coûts et recettes seront définis lors de la prochaine étape.</p>
+    <button type="button" id="atelier-jump" class="primary atelier-jump">Choisir une carte à fabriquer ↓</button>
+    <p class="atelier-footnote">Seules les cartes manquantes sont fabricables. Les versions Shiny restent exclusives aux boosters.</p>
   </article>
   <aside class="atelier-sidebar" aria-label="Ressources et progression">
     <section class="atelier-resource-card"><span class="kicker">TON TRÉSOR ARCANIQUE</span><span class="atelier-resource-icon" aria-hidden="true">✦</span><strong id="atelier-dust" class="atelier-resource-value">0</strong><span class="atelier-resource-label">Éclats disponibles</span><p>Chaque carte déjà possédée obtenue de nouveau rapporte <strong>5 Éclats</strong>.</p><button type="button" class="secondary atelier-side-link" data-go="boosters">Ouvrir les Boosters ›</button></section>
     <section class="atelier-progress-card"><p class="kicker">REGISTRE DES ARCHIVES</p><div><span>Cartes différentes</span><strong id="atelier-collected">0 / 24</strong></div><div><span>Exemplaires en double</span><strong id="atelier-duplicates">0</strong></div><p class="atelier-side-note">Les Éclats sont conservés dans ta sauvegarde locale, comme tes cartes et tes Couronnes.</p></section>
+    <section class="atelier-progress-card atelier-goal-card"><p class="kicker">CARTE CONVOITÉE</p><div id="atelier-goal-summary" class="atelier-goal-summary" aria-live="polite"><p>Aucun objectif sélectionné pour le moment.</p></div></section>
     <section class="atelier-progress-card atelier-chronicles-card"><p class="kicker">HISTOIRE DU VOYAGEUR</p><p>Retrouve tes succès et l'avancée de ton aventure dans les Chroniques.</p><button type="button" class="secondary atelier-side-link" data-go="succes">Voir les Chroniques ›</button></section>
   </aside>
-</div></section>
+</div><section class="atelier-catalogue" id="atelier-catalogue" aria-labelledby="atelier-catalogue-title">
+  <div class="atelier-catalogue-head">
+    <div><p class="kicker">LES RECETTES DU CODEX</p><h2 id="atelier-catalogue-title" tabindex="-1">La Salle des Reliques</h2><p>Choisis une carte que tu ne possèdes pas encore. Chaque fabrication est définitive et coûte des Éclats.</p></div>
+    <label class="atelier-filter-label">Afficher
+      <select id="atelier-filter" aria-label="Filtrer les cartes à fabriquer">
+        <option value="all">Toutes les cartes manquantes</option>
+        <option value="affordable">Fabricables maintenant</option>
+        <option value="common">Communes</option>
+        <option value="uncommon">Inhabituelles</option>
+        <option value="rare">Rares</option>
+        <option value="epic">Épiques</option>
+        <option value="legendary">Légendaires</option>
+      </select>
+    </label>
+  </div>
+  <p id="atelier-result" class="atelier-result" role="status" aria-live="polite" hidden></p>
+  <div class="atelier-crafting-layout">
+    <div class="atelier-list-wrap"><div class="atelier-card-list" id="atelier-card-list" role="group" aria-label="Cartes manquantes disponibles à la fabrication"></div><p class="atelier-empty" id="atelier-empty" hidden>Aucune carte ne correspond à ce filtre.</p></div>
+    <aside class="atelier-card-details" id="atelier-card-details" aria-label="Carte sélectionnée et fabrication"></aside>
+  </div>
+  <p class="atelier-rarity-note">Coûts : Commune 20 · Inhabituelle 45 · Rare 100 · Épique 220 · Légendaire 450 Éclats.</p>
+</section>
+<dialog id="atelier-confirm" class="atelier-confirm" aria-labelledby="atelier-confirm-title" aria-describedby="atelier-confirm-text">
+  <div class="atelier-confirm-inner"><span class="kicker">LE SERMENT DE LA FORGE</span>
+    <h2 id="atelier-confirm-title">Confirmer la fabrication</h2>
+    <p id="atelier-confirm-text"></p>
+    <p class="atelier-confirm-warning">Les Éclats seront immédiatement dépensés. Tu recevras la carte normale, sans variante Shiny.</p>
+    <div class="atelier-confirm-actions"><button type="button" id="atelier-confirm-cancel" class="secondary">Annuler</button><button type="button" id="atelier-confirm-accept" class="primary">Forger cette carte</button></div>
+  </div>
+</dialog>
+</section>
 <section id="page-succes" class="page"><p class="kicker">LE REGISTRE DES EXPLORATEURS</p><div class="heading"><h1>Chroniques & Succès</h1><span>Les traces de ton aventure dans les Archives</span></div><div id="achievements" class="achievements"></div></section>
 </main><div id="sheet-scrim" class="sheet-scrim" hidden></div><footer>Noctiloom Studio · AETHERIUM — jeu de collection gratuit · <button id="reset" class="text-button">Réinitialiser la sauvegarde</button></footer><div id="toast" role="status" aria-live="polite"></div></div><script type="module" src="./src/main.js"></script></body></html>
