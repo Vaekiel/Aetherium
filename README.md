@@ -44,9 +44,9 @@ Le workflow `.github/workflows/pages.yml` valide les modules JavaScript et publi
 
 **Référence approuvée :** maquette finale AETHERIUM (collection au crépuscule). Fond bleu nuit / violet, accents or et lavande discrets, illustrations pixel art HD détaillées, navigation sans surcharge.
 
-**Illustration modèle intégrée :** la carte commune **Veilleuse de Nacre** (archive 001) utilise désormais une véritable illustration pixel art au format portrait, stockée dans [`assets/cards/veilleuse-de-nacre.webp`](assets/cards/veilleuse-de-nacre.webp). Elle est consultable en aperçu dans le Codex même avant de l'obtenir, sans modifier la progression du joueur. Sa version Shiny utilise temporairement un filtre de couleur.
+**Illustration modèle intégrée :** la carte commune **Veilleuse de Nacre** (archive 001) utilise sa **version rapprochée validée**, dans la collection, les boosters et le panneau d'inspection. Deux fichiers optimisés sont fournis : [miniature 348 × 423](assets/cards/veilleuse-de-nacre-thumb.webp) pour les grilles et [illustration HD 1138 × 1382](assets/cards/veilleuse-de-nacre.webp) pour la vue détaillée. L'aperçu de l'archive 001 est accessible sans obtenir la carte et ne change pas le contenu des sauvegardes. En attendant sa variante Shiny dédiée, un traitement colorimétrique léger est utilisé.
 
-**Important :** l'interface utilise à présent un décor et 12 illustrations de référence extraits de la maquette de collection validée (`assets/scenery/` et `assets/cards/`). **Ce sont des placeholders de direction artistique** : les 24 cartes ne disposent pas encore d'illustrations finales individuelles. L'atlas de référence est volontairement compressé ; pour atteindre le niveau pixel art HD de la maquette, il faudra produire puis intégrer des illustrations distinctes en résolution suffisante. `src/art.js` reste disponible comme rendu de secours.
+**Catalogue d'illustrations :** le module `src/card-art.js` associe un ID stable de carte à ses fichiers `thumbnail` et `full`. Pour la prochaine carte, ajouter ses deux images à `assets/cards/`, puis une entrée dans `CARD_ART`. Les autres cartes affichent encore les éléments provisoires de la maquette.\n\n**Important :** l'interface utilise à présent un décor et 12 illustrations de référence extraits de la maquette de collection validée (`assets/scenery/` et `assets/cards/`). **Ce sont des placeholders de direction artistique** : les 24 cartes ne disposent pas encore d'illustrations finales individuelles. L'atlas de référence est volontairement compressé ; pour atteindre le niveau pixel art HD de la maquette, il faudra produire puis intégrer des illustrations distinctes en résolution suffisante. `src/art.js` reste disponible comme rendu de secours.
 
 ## Organisation
 
@@ -54,7 +54,7 @@ Le workflow `.github/workflows/pages.yml` valide les modules JavaScript et publi
 index.html        Interface / point d'entrée
 src/main.js       Navigation, sauvegarde, mini-jeux, collection, boutique
 src/data.js       Catalogue de cartes et probabilités des boosters
-src/art.js        Illustrations temporaires en pixel art
+src/art.js        Illustrations de secours en pixel art\nsrc/card-art.js   Registre des illustrations HD par carte\nassets/cards/     Miniatures et illustrations plein format
 src/style.css     Design responsive
 ```
 

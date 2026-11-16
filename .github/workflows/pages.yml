@@ -30,12 +30,15 @@ jobs:
           test -f src/style.css
           test -f src/data.js
           test -f src/art.js
+          test -f src/card-art.js
           test -f src/scenery.js
           test -f src/theme.css
           test -s assets/cards/veilleuse-de-nacre.webp
+          test -s assets/cards/veilleuse-de-nacre-thumb.webp
           node --check --input-type=module < src/main.js
           node --check --input-type=module < src/data.js
           node --check --input-type=module < src/art.js
+          node --check --input-type=module < src/card-art.js
           node --check --input-type=module < src/scenery.js
       - name: Configure Pages
         uses: actions/configure-pages@v5
