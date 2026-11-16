@@ -2,7 +2,7 @@ import {CARDS,RARITIES,PACK_PRICE,drawPack} from './data.js';
 import {applyCardIllustration,hasApprovedArt,CARD_ART} from './card-art.js';
 
 const $=(q,root=document)=>root.querySelector(q);
-const $=(q,root=document)=>Array.from(root.querySelectorAll(q));
+const $$=(q,root=document)=>Array.from(root.querySelectorAll(q));
 const mobileView=window.matchMedia('(max-width:850px)');
 const sheetScrim=$('#sheet-scrim'), filterDrawer=$('#collection-filters'), inspectorShell=$('#inspector-shell');
 let sheetReturnFocus=null;
@@ -62,7 +62,7 @@ document.addEventListener('keydown',event=>{
   if(event.key==='Escape'){event.preventDefault();closeSheets();return}
   if(event.key!=='Tab')return;
   const active=filterDrawer.classList.contains('is-open')?filterDrawer:inspectorShell;
-  const items=$('button:not([disabled]),input:not([disabled]),a[href]',active).filter(x=>!x.hidden);
+  const items=$$('button:not([disabled]),input:not([disabled]),a[href]',active).filter(x=>!x.hidden);
   if(!items.length)return;
   const first=items[0],last=items[items.length-1];
   if(event.shiftKey&&document.activeElement===first){event.preventDefault();last.focus()}
@@ -83,7 +83,7 @@ function notify(message){const el=$('#toast');el.textContent=message;el.classLis
 function update(){save();$('#coins').textContent=state.coins.toLocaleString('fr-FR');$('#dust').textContent=state.dust.toLocaleString('fr-FR');$('#buy').disabled=state.coins<PACK_PRICE;$('#collection-progress').textContent=Object.keys(state.owned).length+' / '+CARDS.length;
 $('#mobile-collection-progress').textContent=Object.keys(state.owned).length+' / '+CARDS.length+' obtenues';renderAchievements()}
 function grant(value){state.coins+=value;state.earned+=value;state.wins++;update();notify('+'+value+' Couronnes remportées !')}
-function navigate(page){closeSheets(false);$('.page').forEach(el=>el.classList.toggle('active',el.id==='page-'+page));$$('nav [data-page]').forEach(el=>el.classList.toggle('active',el.dataset.page===page));if(page==='collection')renderCollection();if(page==='succes')renderAchievements();history.replaceState(null,'','#'+page);if(mobileView.matches)window.scrollTo(0,0)}
+function navigate(page){closeSheets(false);$$('.page').forEach(el=>el.classList.toggle('active',el.id==='page-'+page));$$('nav [data-page]').forEach(el=>el.classList.toggle('active',el.dataset.page===page));if(page==='collection')renderCollection();if(page==='succes')renderAchievements();history.replaceState(null,'','#'+page);if(mobileView.matches)window.scrollTo(0,0)}
 $$('nav [data-page]').forEach(b=>b.addEventListener('click',()=>navigate(b.dataset.page)));
 function shuffle(a){a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
 function el(tag,className,text){const node=document.createElement(tag);if(className)node.className=className;if(text!==undefined)node.textContent=text;return node}
@@ -117,7 +117,7 @@ definitions.forEach((entry,index)=>{
 function selectGame(index){
   selectedGame=index;
   mini.forEach((item,i)=>item.card.classList.toggle('mobile-active',i===index));
-  $('.game-choice',picker).forEach((b,i)=>{
+  $$('.game-choice',picker).forEach((b,i)=>{
     b.classList.toggle('active',i===index);
     b.setAttribute('aria-pressed',String(i===index));
   });
