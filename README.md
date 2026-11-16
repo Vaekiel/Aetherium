@@ -29,6 +29,14 @@ Ouvrir ensuite `http://localhost:8000`.
 
 Le workflow `.github/workflows/pages.yml` valide les modules JavaScript et publie automatiquement la racine du dépôt sur GitHub Pages à chaque push sur `main`.
 
+## Navigation et Atelier des Arcanes (version 1.2)
+
+La navigation principale est structurée en quatre actions complémentaires : **Épreuves** (cinq mini-jeux), **Boosters** (ouvrir les paquets), **Codex** (collection et inspection) et **Atelier** (préparation du futur artisanat). Les quatre icônes utilisent un même ensemble d'emblèmes en pixel art HD. **Chroniques & Succès** restent disponibles via un bouton secondaire dans l'en-tête, ainsi que depuis le Codex et l'Atelier. L'ancienne adresse `#succes` reste valide.
+
+Les compteurs de **Couronnes** et d'**Éclats** dans l'en-tête sont désormais des boutons conduisant respectivement aux Boosters et à l'Atelier.
+
+L'**Atelier des Arcanes** dispose d'une interface responsive dans la DA validée, avec un visuel de forge, un aperçu du circuit Éclats → Forge → Carte, et des compteurs connectés à la sauvegarde actuelle : Éclats possédés, cartes différentes, exemplaires en double. **La fabrication de cartes n'est pas encore activée** : le bouton est explicitement désactivé et aucun Éclat ne peut être dépensé avant la définition des coûts et des règles d'artisanat. Les données sauvegardées, les probabilités des boosters et toutes les mécaniques des cinq mini-jeux sont inchangées.
+
 ## Navigation : losange de l'onglet actif (version 1.1.5)
 
 L'en-tête contenait deux losanges : un décor `top-ornament` fixé au milieu du bandeau, et un indicateur `::after` rattaché au bouton de navigation actif. Le décor fixe a été retiré ; l'indicateur restant est maintenant **centré exclusivement sous l'onglet actif** et suit déjà la classe `active` mise à jour à chaque changement de page. Sur téléphone, l'indicateur reste la bordure supérieure du bouton actif, sans losange additionnel. Le CSS chargé est versionné pour éviter un cache obsolète.

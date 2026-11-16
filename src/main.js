@@ -82,10 +82,35 @@ function save(){try{localStorage.setItem(SAVE,JSON.stringify(state))}catch{notif
 let toastTimer;
 function notify(message){const el=$('#toast');el.textContent=message;el.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove('show'),3000)}
 function update(){save();$('#coins').textContent=state.coins.toLocaleString('fr-FR');$('#dust').textContent=state.dust.toLocaleString('fr-FR');$('#buy').disabled=state.coins<PACK_PRICE||boosterBusy;$('#collection-progress').textContent=Object.keys(state.owned).length+' / '+CARDS.length;
-$('#mobile-collection-progress').textContent=Object.keys(state.owned).length+' / '+CARDS.length+' obtenues';renderAchievements()}
+$('#mobile-collection-progress').textContent=Object.keys(state.owned).length+' / '+CARDS.length+' obtenues';renderAchievements();renderAtelier()}
 function grant(value){state.coins+=value;state.earned+=value;state.wins++;update();notify('+'+value+' Couronnes remportées !')}
-function navigate(page){closeSheets(false);$$('.page').forEach(el=>el.classList.toggle('active',el.id==='page-'+page));$$('nav [data-page]').forEach(el=>el.classList.toggle('active',el.dataset.page===page));if(page==='collection')renderCollection();if(page==='succes')renderAchievements();history.replaceState(null,'','#'+page);if(mobileView.matches)window.scrollTo(0,0)}
+const MAIN_PAGES=['jouer','boosters','collection','atelier'];
+const APP_PAGES=[...MAIN_PAGES,'succes'];
+function renderAtelier(){
+  $('#atelier-dust').textContent=state.dust.toLocaleString('fr-FR');
+  $('#atelier-collected').textContent=Object.keys(state.owned).length+' / '+CARDS.length;
+  const duplicates=Object.values(state.owned).reduce((sum,n)=>sum+Math.max(0,n-1),0);
+  $('#atelier-duplicates').textContent=duplicates.toLocaleString('fr-FR');
+}
+function navigate(page){
+  if(!APP_PAGES.includes(page))return;
+  closeSheets(false);
+  $$('.page').forEach(el=>el.classList.toggle('active',el.id==='page-'+page));
+  $$('nav [data-page]').forEach(el=>{
+    const active=el.dataset.page===page;
+    el.classList.toggle('active',active);
+    if(active)el.setAttribute('aria-current','page');
+    else el.removeAttribute('aria-current');
+  });
+  $('#chroniques-link').classList.toggle('active',page==='succes');
+  if(page==='collection')renderCollection();
+  if(page==='atelier')renderAtelier();
+  if(page==='succes')renderAchievements();
+  history.replaceState(null,'','#'+page);
+  if(mobileView.matches)window.scrollTo(0,0);
+}
 $$('nav [data-page]').forEach(b=>b.addEventListener('click',()=>navigate(b.dataset.page)));
+$$('[data-go]').forEach(b=>b.addEventListener('click',()=>navigate(b.dataset.go)));
 function shuffle(a){a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
 function el(tag,className,text){const node=document.createElement(tag);if(className)node.className=className;if(text!==undefined)node.textContent=text;return node}
 function button(text,handler,className='secondary'){const b=el('button',className,text);b.type='button';b.addEventListener('click',handler);return b}
@@ -956,8 +981,8 @@ function renderAchievements(){const root=$('#achievements');root.replaceChildren
 $('#reset').addEventListener('click',()=>{if(!confirm('Effacer définitivement les cartes et la progression sauvegardées sur cet appareil ?'))return;clearBoosterScene();state=fresh();selectedCard=null;$('#inspector').replaceChildren(el('p','muted','Sélectionne une carte découverte pour l’admirer.'));$('#pulls').replaceChildren();$('#pack-title').textContent='Les archives attendent leur voyageur.';$('#pack-msg').textContent='Gagne des Couronnes en jouant pour ouvrir des boosters.';update();renderCollection();notify('Progression réinitialisée.')});
 syncMobileSheets();
 update();
-navigate(['jouer','boosters','collection','succes'].includes(location.hash.slice(1))?location.hash.slice(1):'jouer');
+navigate(APP_PAGES.includes(location.hash.slice(1))?location.hash.slice(1):'jouer');
 window.addEventListener('hashchange',()=>{
   const page=location.hash.slice(1);
-  if(['jouer','boosters','collection','succes'].includes(page)&&!$('#page-'+page).classList.contains('active'))navigate(page);
+  if(APP_PAGES.includes(page)&&!$('#page-'+page).classList.contains('active'))navigate(page);
 });

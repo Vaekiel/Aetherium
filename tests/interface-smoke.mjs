@@ -3,17 +3,18 @@ import assert from 'node:assert/strict';
 
 const read=path=>readFileSync(path,'utf8');
 const html=read('index.html'),main=read('src/main.js'),css=read('src/shell.css');
-const pages=['jouer','boosters','collection','succes'];
-for(const page of pages){
- assert.ok(html.includes('id="page-'+page+'"'),`Onglet ${page} présent`);
- assert.ok(html.includes('data-page="'+page+'"'),`Bouton de navigation ${page} présent`);
-}
+const mainPages=['jouer','boosters','collection','atelier'];
+for(const page of [...mainPages,'succes'])assert.ok(html.includes('id="page-'+page+'"'),`Écran ${page} présent`);
+for(const page of mainPages)assert.ok(html.includes('data-page="'+page+'"'),`Onglet ${page} présent`);
+assert.ok(!html.includes('data-page="succes"'),'Chroniques n’occupe plus un onglet principal');
+assert.ok(html.includes('id="chroniques-link"')&&html.includes('data-go="succes"'),'Chroniques restent accessibles séparément');
 for(const id of ['games','game-picker','buy','pulls','booster-summary','booster-step','next-pull','collection-filters','card-grid','search','preview-art','inspector','inspector-shell','filter-close','filter-open','achievements','toast','coins','dust','reset']){
  assert.ok(html.includes('id="'+id+'"'),`Contrôle préservé : ${id}`);
 }
 assert.ok(html.includes('src/shell.css'),'Nouvelle interface chargée');
 const styleLinks=[...html.matchAll(/href="\.\/src\/([^" ]+\.css)(?:\?[^" ]+)?"/g)].map(x=>x[1]);
-assert.equal(styleLinks.at(-1),'shell.css','La DA a priorité sur les feuilles précédentes');
+assert.equal(styleLinks.at(-1),'navigation.css','La navigation et l’Atelier complètent la DA sans toucher aux cinq mini-jeux');
+assert.ok(styleLinks.includes('shell.css'),'Le thème crépusculaire est préservé');
 for(const sheet of ['runes.css','memory.css','lock.css','mines.css','alchemy.css','booster.css']){
  assert.ok(styleLinks.includes(sheet),`CSS des mini-jeux inchangé : ${sheet}`);
 }
