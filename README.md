@@ -29,6 +29,10 @@ Ouvrir ensuite `http://localhost:8000`.
 
 Le workflow `.github/workflows/pages.yml` valide les modules JavaScript et publie automatiquement la racine du dépôt sur GitHub Pages à chaque push sur `main`.
 
+## Cadres Chromatiques en mouvement (correctif 1.4.2)
+
+La différence avec la version normale est maintenant visible **sur le cadre lui-même** : un dégradé nacré, cyan et violet circule continuellement dans le liseré intérieur, sur la grille, les boosters et l'inspection HD. La lueur reste contenue dans le cadre, derrière l'illustration inchangée ; les contours et le sceau Chromatique demeurent identifiables même sans animation. Effet léger fondé sur une rotation CSS et désactivé lorsque l'utilisateur préfère réduire les mouvements. Les probabilités, la progression et les sauvegardes restent intactes.
+
 ## Codex : comparaison Normale / Chromatique (correctif 1.4.1)
 
 Le Codex montre désormais une comparaison côte à côte de la **même illustration** en version normale et en finition Chromatique, y compris lorsqu'aucune variante n'a encore été obtenue. Elle apparaît dans un panneau repliable ouvert par défaut, clairement indiqué comme **aperçu sans déblocage**. L'inspection d'une carte permet aussi de prévisualiser sa finition Chromatique même sans la posséder, avec la mention « APERÇU · NON POSSÉDÉ ». Aucune carte n'est ajoutée à la sauvegarde et les compteurs restent basés uniquement sur les variantes réellement acquises.
