@@ -29,6 +29,18 @@ Ouvrir ensuite `http://localhost:8000`.
 
 Le workflow `.github/workflows/pages.yml` valide les modules JavaScript et publie automatiquement la racine du dépôt sur GitHub Pages à chaque push sur `main`.
 
+## Expérience mobile (version 0.4)
+
+- **Navigation principale au pouce** : quatre onglets permanents en bas de l'écran, avec gestion des zones de sécurité iOS/Android.
+- **En-tête réduit** : identité et monnaies restent visibles sans prendre une rangée complète pour le menu.
+- **Collection** : grille à deux cartes sur téléphone (trois sur tablette compacte), recherche, filtres dans un tiroir et galerie d'aperçus facultative.
+- **Inspection** : fiche de carte plein écran, fermable avec le bouton ✕, le voile ou la touche Échap ; retour à la grille sans perdre sa position.
+- **Mini-jeux** : sélecteur horizontal et une épreuve visible à la fois ; toutes les parties en cours restent en mémoire de session.
+- **Boosters** : présentation compacte et résultats adaptés à l'écran.
+- **Accessibilité** : cibles tactiles confortables, gestion du focus et prise en charge des préférences de réduction des animations.
+
+La mise en page desktop et **la clé de sauvegarde `aetherium-save-v1`** ne changent pas. Les sauvegardes existantes restent compatibles.
+
 ## Fonctionnalités de la première version
 
 - Interface française, responsive, légère, avec quatre sections : Jouer, Boosters, Collection, Succès.

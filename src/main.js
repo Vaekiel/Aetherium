@@ -2,7 +2,73 @@ import {CARDS,RARITIES,PACK_PRICE,drawPack} from './data.js';
 import {applyCardIllustration,hasApprovedArt,CARD_ART} from './card-art.js';
 
 const $=(q,root=document)=>root.querySelector(q);
-const $$=(q,root=document)=>Array.from(root.querySelectorAll(q));
+const $=(q,root=document)=>Array.from(root.querySelectorAll(q));
+const mobileView=window.matchMedia('(max-width:850px)');
+const sheetScrim=$('#sheet-scrim'), filterDrawer=$('#collection-filters'), inspectorShell=$('#inspector-shell');
+let sheetReturnFocus=null;
+function closeSheets(restoreFocus=true){
+  document.body.classList.remove('sheet-open');
+  sheetScrim.hidden=true;
+  filterDrawer.classList.remove('is-open');
+  inspectorShell.classList.remove('is-open');
+  $('#filter-open').setAttribute('aria-expanded','false');
+  if(mobileView.matches){
+    filterDrawer.inert=true;
+    inspectorShell.inert=true;
+    filterDrawer.setAttribute('aria-hidden','true');
+    inspectorShell.setAttribute('aria-hidden','true');
+  }
+  if(restoreFocus&&sheetReturnFocus?.isConnected)sheetReturnFocus.focus({preventScroll:true});
+  sheetReturnFocus=null;
+}
+function openSheet(kind){
+  if(!mobileView.matches)return;
+  const previousFocus=document.activeElement;
+  closeSheets(false);
+  sheetReturnFocus=previousFocus;
+  const target=kind==='filters'?filterDrawer:inspectorShell;
+  target.inert=false;
+  target.setAttribute('aria-hidden','false');
+  target.classList.add('is-open');
+  sheetScrim.hidden=false;
+  document.body.classList.add('sheet-open');
+  if(kind==='filters')$('#filter-open').setAttribute('aria-expanded','true');
+  (kind==='filters'?$('#filter-close'):$('#inspect-close')).focus({preventScroll:true});
+}
+function syncMobileSheets(){
+  closeSheets(false);
+  for(const target of [filterDrawer,inspectorShell]){
+    if(mobileView.matches){
+      target.setAttribute('role','dialog');
+      target.setAttribute('aria-modal','true');
+      target.setAttribute('aria-hidden','true');
+      target.inert=true;
+    }else{
+      target.removeAttribute('role');
+      target.removeAttribute('aria-modal');
+      target.removeAttribute('aria-hidden');
+      target.inert=false;
+    }
+  }
+  selectGame(selectedGame);
+}
+$('#filter-open').addEventListener('click',()=>openSheet('filters'));
+$('#filter-close').addEventListener('click',()=>closeSheets());
+$('#filter-done').addEventListener('click',()=>closeSheets());
+$('#inspect-close').addEventListener('click',()=>closeSheets());
+sheetScrim.addEventListener('click',()=>closeSheets());
+document.addEventListener('keydown',event=>{
+  if(!document.body.classList.contains('sheet-open'))return;
+  if(event.key==='Escape'){event.preventDefault();closeSheets();return}
+  if(event.key!=='Tab')return;
+  const active=filterDrawer.classList.contains('is-open')?filterDrawer:inspectorShell;
+  const items=$('button:not([disabled]),input:not([disabled]),a[href]',active).filter(x=>!x.hidden);
+  if(!items.length)return;
+  const first=items[0],last=items[items.length-1];
+  if(event.shiftKey&&document.activeElement===first){event.preventDefault();last.focus()}
+  else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first.focus()}
+});
+mobileView.addEventListener('change',syncMobileSheets);
 
 // The first art atlas uses twelve reference illustrations cropped from the
 // approved Collection mockup. These are *visual placeholders*, not final art
@@ -14,9 +80,10 @@ let state=load();
 function save(){try{localStorage.setItem(SAVE,JSON.stringify(state))}catch{notify('Sauvegarde indisponible dans ce navigateur.')}}
 let toastTimer;
 function notify(message){const el=$('#toast');el.textContent=message;el.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove('show'),3000)}
-function update(){save();$('#coins').textContent=state.coins.toLocaleString('fr-FR');$('#dust').textContent=state.dust.toLocaleString('fr-FR');$('#buy').disabled=state.coins<PACK_PRICE;$('#collection-progress').textContent=Object.keys(state.owned).length+' / '+CARDS.length;renderAchievements()}
+function update(){save();$('#coins').textContent=state.coins.toLocaleString('fr-FR');$('#dust').textContent=state.dust.toLocaleString('fr-FR');$('#buy').disabled=state.coins<PACK_PRICE;$('#collection-progress').textContent=Object.keys(state.owned).length+' / '+CARDS.length;
+$('#mobile-collection-progress').textContent=Object.keys(state.owned).length+' / '+CARDS.length+' obtenues';renderAchievements()}
 function grant(value){state.coins+=value;state.earned+=value;state.wins++;update();notify('+'+value+' Couronnes remportées !')}
-function navigate(page){$$('.page').forEach(el=>el.classList.toggle('active',el.id==='page-'+page));$$('nav [data-page]').forEach(el=>el.classList.toggle('active',el.dataset.page===page));if(page==='collection')renderCollection();if(page==='succes')renderAchievements();history.replaceState(null,'','#'+page)}
+function navigate(page){closeSheets(false);$('.page').forEach(el=>el.classList.toggle('active',el.id==='page-'+page));$$('nav [data-page]').forEach(el=>el.classList.toggle('active',el.dataset.page===page));if(page==='collection')renderCollection();if(page==='succes')renderAchievements();history.replaceState(null,'','#'+page);if(mobileView.matches)window.scrollTo(0,0)}
 $$('nav [data-page]').forEach(b=>b.addEventListener('click',()=>navigate(b.dataset.page)));
 function shuffle(a){a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
 function el(tag,className,text){const node=document.createElement(tag);if(className)node.className=className;if(text!==undefined)node.textContent=text;return node}
@@ -30,7 +97,7 @@ const definitions=[
 {name:'Laboratoire arcanique',description:'Reproduis trois recettes. Trois mauvaises préparations terminent l’épreuve.',reward:60}
 ];
 const mini=[];
-definitions.forEach((d,i)=>{const card=el('article','game');card.append(el('h3','',String(i+1).padStart(2,'0')+' · '+d.name),el('p','',d.description),el('div','reward','♛ +'+d.reward+' Couronnes'));const status=el('div','status');status.setAttribute('aria-live','polite');const board=el('div','board');const actions=el('div','small-actions');card.append(board,status,actions);$('#games').append(card);mini.push({board,status,actions,reward:d.reward,won:false,ended:false});});
+definitions.forEach((d,i)=>{const card=el('article','game');card.append(el('h3','',String(i+1).padStart(2,'0')+' · '+d.name),el('p','',d.description),el('div','reward','♛ +'+d.reward+' Couronnes'));const status=el('div','status');status.setAttribute('aria-live','polite');const board=el('div','board');const actions=el('div','small-actions');card.append(board,status,actions);$('#games').append(card);mini.push({card,board,status,actions,reward:d.reward,won:false,ended:false});});
 function complete(i,description){const g=mini[i];if(g.ended)return;g.ended=true;g.status.textContent='✓ '+description;grant(g.reward)}
 function startRunes(){const g=mini[0];g.ended=false;let next=1,errors=0;g.status.textContent='Prochaine rune : 1 · erreurs : 0/3';tileGrid(g.board,shuffle(Array.from({length:12},(_,i)=>i+1)),4,(v,i,b)=>{if(g.ended||b.disabled)return;if(v===next){b.disabled=true;b.classList.add('done');next++;if(next===13)complete(0,'Sceau restauré !')}else{errors++;if(errors>=3){g.ended=true;g.status.textContent='Sceau brisé. Recommence.'}}if(!g.ended)g.status.textContent='Prochaine rune : '+next+' · erreurs : '+errors+'/3'});g.actions.replaceChildren(button('Nouvelle grille',startRunes))}
 function startMemory(){const g=mini[1];g.ended=false;let open=[],matched=0,tries=0,busy=false;const glyphs=shuffle(['☾','✦','◈','◆','☾','✦','◈','◆']);g.status.textContent='0/4 paires · 0/10 essais';tileGrid(g.board,glyphs.map(()=>'?'),4,(_,i,b)=>{if(g.ended||busy||b.disabled||open.some(x=>x.i===i))return;b.textContent=glyphs[i];b.classList.add('selected');open.push({i,b});if(open.length===2){tries++;const pair=open;open=[];if(glyphs[pair[0].i]===glyphs[pair[1].i]){matched++;pair.forEach(x=>{x.b.disabled=true;x.b.classList.add('done')});if(matched===4)complete(1,'Mémoire restaurée !')}else{busy=true;setTimeout(()=>{pair.forEach(x=>{x.b.textContent='?';x.b.classList.remove('selected')});busy=false},700)}if(tries>=10&&matched!==4){g.ended=true;g.status.textContent='Mémoire épuisée. Recommence.'}else if(!g.ended)g.status.textContent=matched+'/4 paires · '+tries+'/10 essais'}});g.actions.replaceChildren(button('Recommencer',startMemory))}
@@ -40,10 +107,28 @@ const ingredients=[['☘','Mousse'],['☀','Soleil'],['◈','Cristal'],['☾','L
 const recipes=[['Élixir de Vie',[0,4]],['Sérum solaire',[1,2]],['Souffle lunaire',[3,5]],['Sève d’Aurore',[0,1]],['Nectar cristallin',[2,4]]];
 function startAlchemy(){const g=mini[4];g.ended=false;let round=0,errors=0;function next(){if(g.ended)return;const [name,required]=recipes[Math.floor(Math.random()*recipes.length)];let selected=[];g.status.textContent='Potion '+(round+1)+'/3 · '+name+' : '+required.map(i=>ingredients[i][1]).join(' + ')+' · erreurs '+errors+'/3';tileGrid(g.board,ingredients.map(([icon,name])=>icon+' '+name),3,(_,i,b)=>{if(g.ended)return;const index=selected.indexOf(i);if(index>=0){selected.splice(index,1);b.classList.remove('selected')}else if(selected.length<2){selected.push(i);b.classList.add('selected')}if(selected.length===2){if(selected.every(x=>required.includes(x))){round++;if(round===3)complete(4,'Alchimie maîtrisée !');else next()}else{errors++;if(errors===3){g.ended=true;g.status.textContent='Mélange instable. Recommence.'}else next()}}})}g.actions.replaceChildren(button('Recommencer',startAlchemy));next()}
 [startRunes,startMemory,startLock,startMines,startAlchemy].forEach(fn=>fn());
+const picker=$('#game-picker');
+let selectedGame=0;
+definitions.forEach((entry,index)=>{
+  const control=button((index+1)+' · '+entry.name,()=>selectGame(index),'game-choice');
+  control.setAttribute('aria-pressed',String(index===0));
+  picker.append(control);
+});
+function selectGame(index){
+  selectedGame=index;
+  mini.forEach((item,i)=>item.card.classList.toggle('mobile-active',i===index));
+  $('.game-choice',picker).forEach((b,i)=>{
+    b.classList.toggle('active',i===index);
+    b.setAttribute('aria-pressed',String(i===index));
+  });
+}
+selectGame(0);
 function makeCard(c,isShiny=false,locked=false){const preview=locked&&(c.id===1||(previewArt&&hasApprovedArt(c.id)));const reallyLocked=locked&&!preview;const b=el('button','card'+(reallyLocked?' locked':''));b.type='button';b.style.setProperty('--edge',RARITIES[c.rarity].color);const img=el('img');applyCardIllustration(img,c,{shiny:isShiny,size:'thumbnail'});b.append(img);const meta=el('div','info');meta.append(el('div','name',reallyLocked?'Carte inconnue':c.name),el('div','meta',RARITIES[c.rarity].label+' · '+c.type));b.append(meta);if(!locked&&state.owned[c.id])b.append(el('span','amount','×'+state.owned[c.id]));if(isShiny)b.append(el('span','shine','✦ SHINY'));if(preview){b.append(el('span','shine','APERÇU'));b.setAttribute('aria-label','Voir l’illustration de '+c.name+' sans posséder cette carte')}if(reallyLocked)b.disabled=true;else b.addEventListener('click',()=>{if($('#page-boosters').classList.contains('active'))navigate('collection');inspect(c,isShiny)});return b}
 let filterType='all',filterRarity='all',selectedCard=null,previewArt=false;
-function inspect(c,shiny=false,scroll=true){selectedCard={id:c.id,shiny};const panel=$('#inspector');panel.replaceChildren();panel.style.setProperty('--edge',RARITIES[c.rarity].color);const img=el('img');applyCardIllustration(img,c,{shiny,size:'full'});const kicker=el('p','kicker','ARCHIVE '+String(c.id).padStart(3,'0')+' · '+RARITIES[c.rarity].label);const title=el('h2','',c.name);const desc=el('p','', '« '+c.lore+' »');const stats=el('div','stats');stats.append(el('span','','⚔ '+c.attack),el('span','','♥ '+c.health),el('span','','×'+(state.owned[c.id]||0)));panel.append(img,kicker,title,el('p','muted',c.type+(shiny?' · ✦ Shiny':'')+(state.owned[c.id]?'':' · Aperçu non possédé')),desc,stats);if(state.shiny[c.id])panel.append(button(shiny?'Voir la carte normale':'Voir la version Shiny',()=>inspect(c,!shiny)));if(scroll&&matchMedia('(max-width:1050px)').matches)panel.scrollIntoView({behavior:'smooth',block:'nearest'})}
-function renderCollection(){const q=$('#search').value.trim().toLocaleLowerCase('fr');const gallery=$('#card-grid');gallery.replaceChildren();const cards=CARDS.filter(c=>(filterType==='all'||c.type===filterType)&&(filterRarity==='all'||c.rarity===filterRarity||(filterRarity==='shiny'&&state.shiny[c.id]))&&c.name.toLocaleLowerCase('fr').includes(q));for(const c of cards)gallery.append(makeCard(c,!!state.shiny[c.id],!state.owned[c.id]));$('#empty').textContent=cards.length?'':'Aucune carte ne correspond à la recherche.';if(!selectedCard)inspect(CARDS[0],false,false);else if(selectedCard?.id&&(state.owned[selectedCard.id]||selectedCard.id===1||(previewArt&&hasApprovedArt(selectedCard.id))))inspect(CARDS.find(c=>c.id===selectedCard.id),selectedCard.shiny,false);update()}
+function inspect(c,shiny=false,scroll=true){selectedCard={id:c.id,shiny};const panel=$('#inspector');panel.replaceChildren();panel.style.setProperty('--edge',RARITIES[c.rarity].color);const img=el('img');applyCardIllustration(img,c,{shiny,size:'full'});const kicker=el('p','kicker','ARCHIVE '+String(c.id).padStart(3,'0')+' · '+RARITIES[c.rarity].label);const title=el('h2','',c.name);const desc=el('p','', '« '+c.lore+' »');const stats=el('div','stats');stats.append(el('span','','⚔ '+c.attack),el('span','','♥ '+c.health),el('span','','×'+(state.owned[c.id]||0)));panel.append(img,kicker,title,el('p','muted',c.type+(shiny?' · ✦ Shiny':'')+(state.owned[c.id]?'':' · Aperçu non possédé')),desc,stats);if(state.shiny[c.id])panel.append(button(shiny?'Voir la carte normale':'Voir la version Shiny',()=>inspect(c,!shiny)));if(scroll){if(mobileView.matches)openSheet('inspector');else if(matchMedia('(max-width:1050px)').matches)panel.scrollIntoView({behavior:'smooth',block:'nearest'})}}
+function renderCollection(){const q=$('#search').value.trim().toLocaleLowerCase('fr');const gallery=$('#card-grid');gallery.replaceChildren();const cards=CARDS.filter(c=>(filterType==='all'||c.type===filterType)&&(filterRarity==='all'||c.rarity===filterRarity||(filterRarity==='shiny'&&state.shiny[c.id]))&&c.name.toLocaleLowerCase('fr').includes(q));for(const c of cards)gallery.append(makeCard(c,!!state.shiny[c.id],!state.owned[c.id]));$('#empty').textContent=cards.length?'':'Aucune carte ne correspond à la recherche.';
+const appliedFilters=(filterType!=='all'?1:0)+(filterRarity!=='all'?1:0);
+const filterCount=$('#filter-count');filterCount.hidden=appliedFilters===0;filterCount.textContent=String(appliedFilters);if(!selectedCard)inspect(CARDS[0],false,false);else if(selectedCard?.id&&(state.owned[selectedCard.id]||selectedCard.id===1||(previewArt&&hasApprovedArt(selectedCard.id))))inspect(CARDS.find(c=>c.id===selectedCard.id),selectedCard.shiny,false);update()}
 $('#search').addEventListener('input',renderCollection);
 const previewToggle=$('#preview-art');
 function syncPreviewToggle(){
@@ -65,4 +150,10 @@ $('#buy').addEventListener('click',()=>{if(state.coins<PACK_PRICE)return;state.c
 const success=[['Premiers pas','Terminer une épreuve',()=>state.wins>=1],['Explorateur','Terminer 10 épreuves',()=>state.wins>=10],['Archéologue','Terminer 50 épreuves',()=>state.wins>=50],['Curieux','Ouvrir son premier booster',()=>state.opened>=1],['Collectionneur','Découvrir 12 cartes',()=>Object.keys(state.owned).length>=12],['Archiviste','Découvrir les 24 cartes',()=>Object.keys(state.owned).length>=24],['Éclat rare','Trouver une carte Shiny',()=>Object.keys(state.shiny).length>=1],['Pactole','Gagner 1 000 Couronnes',()=>state.earned>=1000],['Chasseur de légendes','Obtenir une carte légendaire',()=>CARDS.some(c=>c.rarity==='legendary'&&state.owned[c.id])]];
 function renderAchievements(){const root=$('#achievements');root.replaceChildren();for(const [title,description,test] of success){const done=test();const box=el('article','achievement'+(done?'':' locked'));box.append(el('h3','',done?'✦ '+title:'◇ '+title),el('p','',description),el('small','muted',done?'Accompli':'À découvrir'));root.append(box)}}
 $('#reset').addEventListener('click',()=>{if(!confirm('Effacer définitivement les cartes et la progression sauvegardées sur cet appareil ?'))return;state=fresh();selectedCard=null;$('#inspector').replaceChildren(el('p','muted','Sélectionne une carte découverte pour l’admirer.'));$('#pulls').replaceChildren();$('#pack-title').textContent='Les archives attendent leur voyageur.';$('#pack-msg').textContent='Gagne des Couronnes en jouant pour ouvrir des boosters.';update();renderCollection();notify('Progression réinitialisée.')});
-update();navigate(['jouer','boosters','collection','succes'].includes(location.hash.slice(1))?location.hash.slice(1):'jouer');
+syncMobileSheets();
+update();
+navigate(['jouer','boosters','collection','succes'].includes(location.hash.slice(1))?location.hash.slice(1):'jouer');
+window.addEventListener('hashchange',()=>{
+  const page=location.hash.slice(1);
+  if(['jouer','boosters','collection','succes'].includes(page)&&!$('#page-'+page).classList.contains('active'))navigate(page);
+});

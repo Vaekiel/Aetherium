@@ -33,6 +33,10 @@ jobs:
           test -f src/card-art.js
           test -f src/scenery.js
           test -f src/theme.css
+          test -f src/mobile.css
+          grep -q 'id="filter-open"' index.html
+          grep -q 'id="inspect-close"' index.html
+          grep -q 'id="game-picker"' index.html
           test -s assets/cards/veilleuse-de-nacre.webp
           test -s assets/cards/veilleuse-de-nacre-thumb.webp
           test -s assets/cards/sylve-eclaireuse.webp
