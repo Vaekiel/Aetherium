@@ -452,7 +452,123 @@ function startLock(){
   g.status.textContent='Sélectionne trois cristaux et aligne leur énergie sur le nombre cible.';
 }
 
-function startMines(){const g=mini[3];g.ended=false;const bombs=new Set(shuffle(Array.from({length:25},(_,i)=>i)).slice(0,5));let safe=0;g.status.textContent='0/10 cases sûres · 5 pièges';tileGrid(g.board,Array(25).fill('◇'),5,(_,i,b)=>{if(g.ended||b.disabled)return;if(bombs.has(i)){b.textContent='✕';g.ended=true;g.status.textContent='Piège déclenché ! Recommence.';return}const x=i%5,y=Math.floor(i/5);let adjacent=0;for(let dy=-1;dy<=1;dy++)for(let dx=-1;dx<=1;dx++){const xx=x+dx,yy=y+dy;if(xx>=0&&xx<5&&yy>=0&&yy<5&&bombs.has(yy*5+xx))adjacent++}b.textContent=adjacent?String(adjacent):'·';b.disabled=true;b.classList.add('done');safe++;if(safe===10)complete(3,'Fouille accomplie !');else g.status.textContent=safe+'/10 cases sûres · 5 pièges'});g.actions.replaceChildren(button('Nouvelle fouille',startMines))}
+/* Fouilles interdites: 25 sealed excavation sites, five traps, ten safe discoveries. */
+function startMines(){
+  const g=mini[3];
+  g.ended=false;
+  g.card.classList.add('excavation-trial');
+  g.board.classList.add('excavation-board');
+  g.status.classList.add('excavation-status');
+  g.status.classList.remove('is-complete','is-failed');
+
+  const bombs=new Set(shuffle(Array.from({length:25},(_,i)=>i)).slice(0,5));
+  let safe=0;
+  const countNearby=i=>{
+    const x=i%5,y=Math.floor(i/5);
+    let count=0;
+    for(let dy=-1;dy<=1;dy++)for(let dx=-1;dx<=1;dx++){
+      if(!dx&&!dy)continue;
+      const xx=x+dx,yy=y+dy;
+      if(xx>=0&&xx<5&&yy>=0&&yy<5&&bombs.has(yy*5+xx))count++;
+    }
+    return count;
+  };
+  const setArtwork=(tile,index)=>{
+    tile.style.setProperty('--exc-x',((index%3)/2*100)+'%');
+    tile.style.setProperty('--exc-y',(Math.floor(index/3)/2*100)+'%');
+  };
+
+  let hud=g.card.querySelector('.excavation-hud');
+  if(!hud){
+    hud=el('div','excavation-hud');
+    const relic=el('div','excavation-relic');
+    relic.setAttribute('aria-hidden','true');
+    const stats=el('div','excavation-stats');
+    stats.append(
+      el('span','excavation-kicker','FOUILLES DES ARCHIVES'),
+      el('div','excavation-counter'),
+      el('span','excavation-danger','5 pièges dissimulés')
+    );
+    hud.append(relic,stats);
+    const meter=el('div','excavation-meter');
+    meter.setAttribute('aria-hidden','true');
+    for(let i=0;i<10;i++)meter.append(el('span'));
+    g.board.before(hud,meter);
+  }
+  const relic=$('.excavation-relic',hud);
+  relic.classList.remove('is-victorious','is-failed');
+  const meter=g.card.querySelector('.excavation-meter');
+  const updateHud=()=>{
+    $('.excavation-counter',hud).textContent=safe+' / 10 cases sûres';
+    $('.excavation-danger',hud).textContent=g.ended
+      ?(safe===10?'Fouille accomplie':'Piège déclenché'):'5 pièges dissimulés';
+    [...meter.children].forEach((node,index)=>node.classList.toggle('filled',index<safe));
+  };
+
+  g.board.replaceChildren();
+  g.board.style.setProperty('--cols',5);
+  g.board.setAttribute('role','group');
+  g.board.setAttribute('aria-label','Site de fouilles : vingt-cinq dalles, cinq pièges dissimulés');
+  const tiles=[];
+  for(let i=0;i<25;i++){
+    const tile=el('button','tile excavation-tile');
+    tile.type='button';
+    tile.setAttribute('aria-label','Fouiller la dalle '+(i+1));
+    tile.setAttribute('title','Dalle '+(i+1));
+    setArtwork(tile,0);
+    const sprite=el('span','excavation-art');
+    sprite.setAttribute('aria-hidden','true');
+    tile.append(sprite);
+    tile.addEventListener('click',()=>{
+      if(g.ended||tile.disabled)return;
+      tile.disabled=true;
+      tile.classList.add('is-dug');
+      if(bombs.has(i)){
+        g.ended=true;
+        relic.classList.add('is-failed');
+        g.status.classList.add('is-failed');
+        // After a failure reveal the hidden traps, but do not alter prior discoveries.
+        for(const position of bombs){
+          const dangerTile=tiles[position];
+          dangerTile.disabled=true;
+          dangerTile.classList.add('is-trap');
+          if(position===i)dangerTile.classList.add('is-triggered');
+          setArtwork(dangerTile,3);
+          dangerTile.setAttribute('aria-label','Dalle '+(position+1)+' : piège runique');
+        }
+        tiles.forEach(b=>b.disabled=true);
+        updateHud();
+        g.status.textContent='Une rune corrompue s’est éveillée. Les cinq pièges sont révélés : recommence une fouille.';
+        return;
+      }
+      const adjacent=countNearby(i);
+      // Empty sites occasionally display a glowing discovery; numbered clues remain crystal-clear.
+      const discoveries=[1,2,4,5,6];
+      setArtwork(tile,adjacent===0?discoveries[(i*7)%discoveries.length]:1);
+      tile.classList.add('is-safe');
+      tile.setAttribute('aria-label','Dalle '+(i+1)+' fouillée : '+(adjacent?adjacent+' piège'+(adjacent>1?'s':'')+' voisin'+(adjacent>1?'s':''):'aucun piège voisin'));
+      if(adjacent){
+        const clue=el('span','excavation-clue',String(adjacent));
+        clue.setAttribute('aria-hidden','true');
+        tile.append(clue);
+      }
+      safe++;
+      updateHud();
+      if(safe===10){
+        relic.classList.add('is-victorious');
+        g.status.classList.add('is-complete');
+        tiles.forEach(b=>b.disabled=true);
+        complete(3,'Fouille accomplie ! Dix dalles sûres ont été explorées.');
+      }else g.status.textContent='Dalle '+(i+1)+' : '+(adjacent?adjacent+' piège(s) voisin(s).':'aucun piège adjacent.')+' Continue la fouille.';
+    });
+    g.board.append(tile);
+    tiles.push(tile);
+  }
+  updateHud();
+  g.status.textContent='Soulève les dalles. Les nombres révèlent combien de pièges entourent une case.';
+  g.actions.replaceChildren(button('✧ Nouvelle fouille',startMines));
+}
+
 const ingredients=[['☘','Mousse'],['☀','Soleil'],['◈','Cristal'],['☾','Lune'],['✿','Fleur'],['❄','Givre']];
 const recipes=[['Élixir de Vie',[0,4]],['Sérum solaire',[1,2]],['Souffle lunaire',[3,5]],['Sève d’Aurore',[0,1]],['Nectar cristallin',[2,4]]];
 function startAlchemy(){const g=mini[4];g.ended=false;let round=0,errors=0;function next(){if(g.ended)return;const [name,required]=recipes[Math.floor(Math.random()*recipes.length)];let selected=[];g.status.textContent='Potion '+(round+1)+'/3 · '+name+' : '+required.map(i=>ingredients[i][1]).join(' + ')+' · erreurs '+errors+'/3';tileGrid(g.board,ingredients.map(([icon,name])=>icon+' '+name),3,(_,i,b)=>{if(g.ended)return;const index=selected.indexOf(i);if(index>=0){selected.splice(index,1);b.classList.remove('selected')}else if(selected.length<2){selected.push(i);b.classList.add('selected')}if(selected.length===2){if(selected.every(x=>required.includes(x))){round++;if(round===3)complete(4,'Alchimie maîtrisée !');else next()}else{errors++;if(errors===3){g.ended=true;g.status.textContent='Mélange instable. Recommence.'}else next()}}})}g.actions.replaceChildren(button('Recommencer',startAlchemy));next()}

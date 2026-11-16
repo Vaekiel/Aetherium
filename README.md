@@ -45,6 +45,12 @@ La troisième épreuve dispose maintenant d'un **verrou astral circulaire illust
 
 **Règles conservées :** sélectionner exactement 3 cristaux parmi 6 et atteindre la somme cible en **3 tentatives** pour gagner **50 Couronnes**. L'interface affiche la somme en cours, les trois emplacements sélectionnés et les essais restants. Au succès, le verrou s'illumine et s'ouvre ; au troisième échec, il se fissure. Le joueur peut lancer un nouveau mécanisme sans perdre ses autres progressions. Les animations sont discrètes, désactivables avec la préférence système. Aucun changement aux probabilités des boosters, aux cartes ni aux données de sauvegarde.
 
+## Fouilles interdites en pixel art HD (version 0.9)
+
+La quatrième épreuve se déroule dans un **site de fouilles arcanique** aux textures de pierre ancienne, mousse, cristaux et reliques. Les **25 dalles** de la grille 5 × 5 utilisent un atlas WebP HD unique et optimisé. Un sceau indique la progression (0 à 10 cases sûres) ; les chiffres affichés sur les dalles ouvertes donnent le nombre exact de pièges voisins. Les cases sans piège adjacent montrent parfois une découverte illustrée. En cas de piège, les cinq runes dangereuses apparaissent en rouge, tandis qu'un succès illumine le sceau de victoire. Les commandes sont adaptées aux écrans tactiles et à la préférence de réduction des animations.
+
+**Règles et économie inchangées :** ouvrir dix cases sûres en évitant cinq pièges dissimulés, puis gagner **65 Couronnes**. Le mini-jeu n'ajoute pas de dépense, ne modifie pas les cartes, les boosters ou les sauvegardes existantes.
+
 ## Expérience mobile (version 0.4)
 
 - **Navigation principale au pouce** : quatre onglets permanents en bas de l'écran, avec gestion des zones de sécurité iOS/Android.
