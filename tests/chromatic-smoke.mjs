@@ -32,7 +32,7 @@ assert.ok(main.includes('item.shiny?950:420'),'Reveals remain player-controlled 
 assert.ok(main.includes('drawSummary.shinyCount+\' Chromatique(s)\''),'Booster recap announces Chromatiques');
 assert.ok(html.includes('data-finish="chromatic"')&&html.includes('data-finish="normal"'),'Variant filter options exist');
 assert.ok(html.includes('Chromatique : 3 % par carte'),'Booster odds are visible to players');
-assert.ok(html.includes('src/chromatic.css?v=chromatiques-3'),'Enhanced foil CSS is cache-busted');
+assert.ok(html.includes('src/chromatic.css?v=chromatiques-4'),'Enhanced foil CSS is cache-busted');
 assert.ok(html.includes('src/main.js?v=chromatiques-2'),'Chromatic Codex JS is cache-busted');
 assert.ok(css.includes('.card.is-chromatic')&&css.includes('var(--chrom-edge)'),'Static foil border is present');
 assert.ok(css.includes('.inspector-art-shell.is-chromatic'),'Full inspector displays prismatic art frame');
@@ -57,6 +57,12 @@ assert.ok(css.includes('.chromatic-art-window::before'),'Chromatic collection an
 assert.ok(css.includes('.inspector-art-shell.is-chromatic::before'),'Full-size inspector has an animated rim');
 assert.ok(css.includes('.chromatic-showcase-art::before'),'Comparison example has an animated rim');
 assert.ok(css.includes('animation:none!important;'),'Reduced-motion keeps a static chromatic border');
+assert.ok(main.includes("front.append(boosterCardArtwork(item))"),'The booster face-up view uses the same Chromatique artwork and frame');
+assert.ok(css.includes('.booster-single .pull-front .card.is-chromatic .chromatic-art-window'),'Revealed booster card has its own visible prismatic rim');
+assert.ok(css.includes('animation:chromatic-rim-orbit 2.6s linear infinite'),'The booster rim visibly orbits faster');
+assert.ok(css.includes('.pull-flip.is-chromatic.is-revealed .pull-front .card.is-chromatic'),'The booster halo is limited to revealed Chromatiques');
+assert.ok(css.includes('@keyframes chromatic-booster-halo'),'The booster halo keeps moving while the card is face-up');
+assert.ok(css.includes('animation:none!important;'),'Reduced-motion disables the booster effects');
 assert.ok(css.includes('chromatic-pulse'),'Reveal halo is present');
 assert.ok(css.includes('@media(prefers-reduced-motion:reduce)'),'Reduced motion is supported');
 assert.ok(art.includes("img.style.filter='none'"),'All 24 final artworks are not hue-rotated by the effect');
