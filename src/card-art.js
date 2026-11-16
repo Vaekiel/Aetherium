@@ -41,7 +41,7 @@ export function applyCardIllustration(img,card,{shiny=false,size='thumbnail'}={}
   img.onerror=null;
   const approved=CARD_ART[card.id];
   if(approved){
-    img.src=size==='full'?approved.full:approved.thumbnail;
+    img.src=(size==='full'?approved.full:approved.thumbnail)+'?v=20261116-unframed';
     img.onerror=()=>{
       img.onerror=null;
       img.style.filter='none';
