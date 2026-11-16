@@ -952,7 +952,13 @@ function makeCard(c,isShiny=false,locked=false){
   b.style.setProperty('--edge',RARITIES[c.rarity].color);
   const img=el('img');
   applyCardIllustration(img,c,{shiny:chromatic,size:'thumbnail'});
-  b.append(img);
+  // Wrap only Chromatiques so the prism can live above the art without
+  // tinting or replacing the original pixel-art illustration.
+  if(chromatic){
+    const art=el('span','chromatic-art-window');
+    art.append(img);
+    b.append(art);
+  }else b.append(img);
   const meta=el('div','info');
   meta.append(el('div','name',reallyLocked?'Carte inconnue':c.name),
     el('div','meta',RARITIES[c.rarity].label+' · '+c.type));
@@ -973,11 +979,18 @@ function makeCard(c,isShiny=false,locked=false){
   }
   return b;
 }
+// The side-by-side Codex guide deliberately uses the same approved artwork:
+// this is a visual demonstration and NEVER grants a Chromatique.
+const comparisonCard=CARDS[0];
+applyCardIllustration($('#chromatic-example-normal'),comparisonCard,{shiny:false,size:'full'});
+applyCardIllustration($('#chromatic-example-special'),comparisonCard,{shiny:false,size:'full'});
 let filterType='all',filterRarity='all',filterFinish='all',selectedCard=null,previewArt=false;
-function inspect(c,shiny=false,scroll=true){
+function inspect(c,shiny=false,scroll=true,chromaticPreview=false){
   // Kept under the same save key: legacy "shiny" flags are now Chromatiques.
-  const chromatic=!!shiny&&!!state.shiny[c.id];
-  selectedCard={id:c.id,shiny:chromatic};
+  const ownedChromatic=!!state.shiny[c.id];
+  const previewChromatic=!!shiny&&!ownedChromatic&&!!chromaticPreview;
+  const chromatic=!!shiny&&(ownedChromatic||previewChromatic);
+  selectedCard={id:c.id,shiny:chromatic,preview:previewChromatic};
   const panel=$('#inspector');
   panel.replaceChildren();
   panel.classList.toggle('is-chromatic',chromatic);
@@ -987,7 +1000,10 @@ function inspect(c,shiny=false,scroll=true){
   img.alt='Illustration de '+c.name+(chromatic?', version Chromatique':'');
   const artwork=el('div','inspector-art-shell'+(chromatic?' is-chromatic':''));
   artwork.append(img);
-  if(chromatic)artwork.append(el('span','inspector-chromatic-seal','✧ CHROMATIQUE'));
+  if(chromatic){
+    artwork.append(el('span','inspector-chromatic-seal','✧ CHROMATIQUE'));
+    if(previewChromatic)artwork.append(el('span','inspector-chromatic-preview','APERÇU · NON POSSÉDÉ'));
+  }
   const kicker=el('p','kicker','ARCHIVE '+String(c.id).padStart(3,'0')+' · '+RARITIES[c.rarity].label);
   const title=el('h2','',c.name);
   const desc=el('p','','« '+c.lore+' »');
@@ -995,9 +1011,18 @@ function inspect(c,shiny=false,scroll=true){
   stats.append(el('span','','⚔ '+c.attack),el('span','','♥ '+c.health),el('span','','×'+(state.owned[c.id]||0)));
   panel.append(artwork,kicker,title,el('p','muted',c.type+
     (chromatic?' · ✧ Version Chromatique':' · Version normale')+
-    (state.owned[c.id]?'':' · Aperçu non possédé')),desc,stats);
-  if(state.shiny[c.id])panel.append(button(chromatic?'Voir la version normale':'Voir la version Chromatique',
-    ()=>inspect(c,!chromatic),'secondary chromatic-toggle'));
+    (previewChromatic?' · Aperçu uniquement':state.owned[c.id]?'':' · Aperçu non possédé')),desc,stats);
+  if(ownedChromatic){
+    panel.append(button(chromatic?'Voir la version normale':'Voir la version Chromatique',
+      ()=>inspect(c,!chromatic,false),'secondary chromatic-toggle'));
+  }else if(state.owned[c.id]||previewArt||c.id===1){
+    const toggle=button(chromatic?'Voir la version normale':'✧ Prévisualiser en Chromatique',
+      ()=>inspect(c,!chromatic,false,!chromatic),'secondary chromatic-toggle');
+    toggle.setAttribute('aria-label',chromatic?'Revenir à la carte normale':'Voir une simulation Chromatique sans débloquer cette carte');
+    panel.append(toggle);
+    if(!chromatic)panel.append(el('p','chromatic-inspector-hint',
+      'Tu ne possèdes pas cette variante : aperçu visuel sans déblocage.'));
+  }
   if(scroll){
     if(mobileView.matches)openSheet('inspector');
     else if(matchMedia('(max-width:1050px)').matches)panel.scrollIntoView({behavior:'smooth',block:'nearest'});
@@ -1028,7 +1053,8 @@ function renderCollection(){
     const chromatic=filterFinish==='normal'?false:
       filterFinish==='chromatic'?!!state.shiny[next.id]:
       (selectedCard?.id===next.id?selectedCard.shiny:!!state.shiny[next.id]);
-    inspect(next,chromatic,false);
+    inspect(next,chromatic,false,
+      !!(selectedCard?.id===next.id&&selectedCard?.preview&&chromatic));
   }else if(!selectedCard)inspect(CARDS[0],false,false);
   update();
 }

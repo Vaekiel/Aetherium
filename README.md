@@ -29,6 +29,12 @@ Ouvrir ensuite `http://localhost:8000`.
 
 Le workflow `.github/workflows/pages.yml` valide les modules JavaScript et publie automatiquement la racine du dépôt sur GitHub Pages à chaque push sur `main`.
 
+## Codex : comparaison Normale / Chromatique (correctif 1.4.1)
+
+Le Codex montre désormais une comparaison côte à côte de la **même illustration** en version normale et en finition Chromatique, y compris lorsqu'aucune variante n'a encore été obtenue. Elle apparaît dans un panneau repliable ouvert par défaut, clairement indiqué comme **aperçu sans déblocage**. L'inspection d'une carte permet aussi de prévisualiser sa finition Chromatique même sans la posséder, avec la mention « APERÇU · NON POSSÉDÉ ». Aucune carte n'est ajoutée à la sauvegarde et les compteurs restent basés uniquement sur les variantes réellement acquises.
+
+La grille et la fiche détaillée ont des reflets prismatiques plus visibles, une bordure plus large et une fenêtre d'art indépendante : **l'illustration HD d'origine est strictement conservée**, le reflet est un calque CSS. La finition reste reconnaissable quand l'animation est désactivée. Le CSS `chromatic.css` et le module `main.js` ont leur URL versionnée pour éviter les anciennes versions en cache sur GitHub Pages. Cette correction ne modifie ni le tirage de 3 %, ni les boosters, ni l'économie, ni les sauvegardes.
+
 ## Chromatiques : variantes prismatiques (version 1.4)
 
 Les variantes anciennement appelées **Chromatique** portent désormais officiellement le nom **Chromatiques** dans toutes les pages du jeu. Il s'agit d'une finition prestigieuse et non d'une sixième rareté. Chaque carte ouverte a **3 %** de chance d'être Chromatique (au lieu de 5 %). Les probabilités de rareté d'Origines et la garantie du cinquième emplacement sont inchangées. Les versions Chromatiques restent **exclusives aux boosters** et ne peuvent pas être fabriquées dans l'Atelier.
