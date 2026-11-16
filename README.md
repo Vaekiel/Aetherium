@@ -29,6 +29,10 @@ Ouvrir ensuite `http://localhost:8000`.
 
 Le workflow `.github/workflows/pages.yml` valide les modules JavaScript et publie automatiquement la racine du dépôt sur GitHub Pages à chaque push sur `main`.
 
+## Navigation : losange de l'onglet actif (version 1.1.5)
+
+L'en-tête contenait deux losanges : un décor `top-ornament` fixé au milieu du bandeau, et un indicateur `::after` rattaché au bouton de navigation actif. Le décor fixe a été retiré ; l'indicateur restant est maintenant **centré exclusivement sous l'onglet actif** et suit déjà la classe `active` mise à jour à chaque changement de page. Sur téléphone, l'indicateur reste la bordure supérieure du bouton actif, sans losange additionnel. Le CSS chargé est versionné pour éviter un cache obsolète.
+
 ## Bandeau d'accueil : suppression de la ligne traversante (version 1.1.4)
 
 La ligne horizontale qui apparaissait au milieu du titre **« Les ruines s'éveillent »** et se prolongeait dans l'illustration est supprimée à la source : les pseudo-éléments décoratifs `::before` et `::after` du bandeau n'affichent plus de motif ni de bordure. **Le vrai cadre extérieur, le texte, le dégradé et l'illustration de Pluie Astrale sont conservés.** Une nouvelle version de l'URL de `shell.css` permet d'éviter les feuilles de style mises en cache. Le fond PC corrigé, les cinq logos et le gameplay ne changent pas.

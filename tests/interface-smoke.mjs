@@ -54,7 +54,7 @@ assert.ok(fixV2.includes('(hover: hover) and (pointer: fine)'), 'Narrow desktop 
 assert.ok(fixV2.includes('#app > .ambient-landscape'), 'Targets the actual illustrated backdrop element');
 assert.ok(fixV2.includes('display: none !important'), 'Hides the entire illustrated layer');
 assert.ok(fixV2.includes('linear-gradient(180deg'), 'The app has a dark quiet replacement');
-assert.ok(html.includes('shell.css?v=bandeau-sans-ligne-1'), 'Fresh style URL picks up hero overlay removal');
+assert.ok(html.includes('shell.css?v=onglet-actif-1'), 'Header navigation correction is not hidden by stale CSS');
 
 const selectorBegin=css.indexOf('/* The trial picker');
 const selectorEnd=css.indexOf('#page-jouer .game-picker .game-choice:hover',selectorBegin);
@@ -76,4 +76,13 @@ assert.ok(heroRules.includes('content:none!important')&&heroRules.includes('disp
 assert.ok(!heroRules.includes('inset:9px;border:1px solid #dbb28a48'),'Old horizontal line border removed');
 assert.ok(heroRules.includes("pluie-astrale-thumb.webp"),'Illustrated hero art remains present');
 assert.ok(heroRules.includes('border:1px solid #b59179ae'),'Hero exterior frame remains');
+// One active-tab diamond: the former fixed header ornament was positioned
+// at 50% of the whole header, independently of which page was selected.
+assert.ok(!html.includes('top-ornament'), 'Fixed header diamond must be removed');
+assert.ok(!css.includes('.top-ornament{'), 'No obsolete fixed diamond styling');
+assert.ok(css.includes('.top nav button.active::after{'), 'Active tab provides the only desktop diamond');
+const tabDiamond=css.slice(css.indexOf('.top nav button.active::after{'),css.indexOf('.top nav .nav-icon{'));
+assert.ok(tabDiamond.includes('position:absolute')&&tabDiamond.includes('left:calc(50% - 5px)'),'Diamond is centered on active nav button');
+assert.ok(main.includes("el.classList.toggle('active',el.dataset.page===page)"), 'Page navigation updates active tab');
+assert.ok(css.includes('.top nav button.active::after{content:none}'), 'Mobile uses its existing active border, not a desktop diamond');
 console.log('AETHERIUM interface : fond illustré PC supprimé, mobile préservé');

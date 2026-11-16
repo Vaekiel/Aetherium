@@ -49,7 +49,7 @@ body{background:#10132a;color:#f7e9e8}
  background:linear-gradient(180deg,#111227fa,#171629f5);
  box-shadow:0 9px 24px #070a1b80,inset 0 -1px 0 #e6b27e23;
 }
-.top-ornament{width:11px;height:11px;bottom:-6px;border:1px solid #ebc690;background:#b18be2;box-shadow:0 0 13px #ba90f2a6}
+/* Only the active navigation item draws the diamond. */
 .top .brand{
  display:flex;flex-direction:column;justify-content:center;
  flex:0 0 auto;min-width:max-content;
