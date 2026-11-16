@@ -92,7 +92,7 @@ function button(text,handler,className='secondary'){const b=el('button',classNam
 function tileGrid(host,values,columns,handler){host.replaceChildren();host.style.setProperty('--cols',columns);for(let i=0;i<values.length;i++){const t=button(String(values[i]),()=>handler(values[i],i,t),'tile');host.append(t)}}
 const definitions=[
 {name:'Chemin runique',description:'Active 12 runes dans l’ordre. Trois erreurs et le sceau se brise.',reward:35},
-{name:'Mémoire ancienne',description:'Retrouve quatre paires de glyphes en dix essais maximum.',reward:45},
+{name:'Mémoire ancienne',description:'Retourne les tablettes des Archives et retrouve les huit paires runiques.',reward:45},
 {name:'Serrure d’Éther',description:'Choisis trois cristaux pour atteindre la valeur cible en trois tentatives.',reward:50},
 {name:'Fouilles interdites',description:'Ouvre dix cases sans déclencher les cinq pièges cachés. Les nombres donnent les pièges voisins.',reward:65},
 {name:'Laboratoire arcanique',description:'Reproduis trois recettes. Trois mauvaises préparations terminent l’épreuve.',reward:60}
@@ -169,7 +169,156 @@ function startRunes(){
   g.status.textContent='Active les pierres dans l’ordre des numéros, de 1 à 12.';
   g.actions.replaceChildren(button('✧ Nouvelle grille',startRunes));
 }
-function startMemory(){const g=mini[1];g.ended=false;let open=[],matched=0,tries=0,busy=false;const glyphs=shuffle(['☾','✦','◈','◆','☾','✦','◈','◆']);g.status.textContent='0/4 paires · 0/10 essais';tileGrid(g.board,glyphs.map(()=>'?'),4,(_,i,b)=>{if(g.ended||busy||b.disabled||open.some(x=>x.i===i))return;b.textContent=glyphs[i];b.classList.add('selected');open.push({i,b});if(open.length===2){tries++;const pair=open;open=[];if(glyphs[pair[0].i]===glyphs[pair[1].i]){matched++;pair.forEach(x=>{x.b.disabled=true;x.b.classList.add('done')});if(matched===4)complete(1,'Mémoire restaurée !')}else{busy=true;setTimeout(()=>{pair.forEach(x=>{x.b.textContent='?';x.b.classList.remove('selected')});busy=false},700)}if(tries>=10&&matched!==4){g.ended=true;g.status.textContent='Mémoire épuisée. Recommence.'}else if(!g.ended)g.status.textContent=matched+'/4 paires · '+tries+'/10 essais'}});g.actions.replaceChildren(button('Recommencer',startMemory))}
+const memoryRunes=[
+  {id:'sun',label:'Soleil',sprite:1},
+  {id:'moon',label:'Lune',sprite:2},
+  {id:'stars',label:'Constellations',sprite:3},
+  {id:'eye',label:'Œil ancien',sprite:4},
+  {id:'spiral',label:'Spirale',sprite:5},
+  {id:'tree',label:'Arbre-mémoire',sprite:6},
+  {id:'compass',label:'Rose des vents',sprite:7},
+  {id:'flare',label:'Étoiles jumelles',sprite:8}
+];
+
+let memorySession=0;
+let memoryTurnTimer=null;
+function startMemory(){
+  const g=mini[1];
+  const session=++memorySession;
+  if(memoryTurnTimer!==null){clearTimeout(memoryTurnTimer);memoryTurnTimer=null;}
+  g.ended=false;
+  g.card.classList.add('memory-trial');
+  g.board.classList.add('memory-board');
+  g.status.classList.add('memory-statusline');
+  g.status.classList.remove('is-complete','is-failed');
+
+  let first=null, second=null, lock=false, moves=0, matches=0, mistakes=0;
+
+  let hud=g.card.querySelector('.memory-hud');
+  if(!hud){
+    hud=el('div','memory-hud');
+    const stats=el('div','memory-stats');
+    stats.append(
+      el('span','memory-label','Paires : '),
+      el('strong','memory-pairs','0 / 8'),
+      el('span','memory-gap',' · '),
+      el('span','memory-label','Coups : '),
+      el('strong','memory-moves','0')
+    );
+    const faults=el('span','memory-faults','Erreurs : 0');
+    hud.append(stats,faults);
+    const meter=el('div','memory-meter');
+    meter.setAttribute('aria-hidden','true');
+    for(let i=0;i<8;i++)meter.append(el('span'));
+    g.board.before(hud,meter);
+  }
+  const meter=g.card.querySelector('.memory-meter');
+  const updateHud=()=>{
+    $('.memory-pairs',hud).textContent=`${matches} / 8`;
+    $('.memory-moves',hud).textContent=String(moves);
+    $('.memory-faults',hud).textContent=`Erreurs : ${mistakes}`;
+    [...meter.children].forEach((node,i)=>node.classList.toggle('filled',i<matches));
+  };
+
+  const tiles=shuffle(memoryRunes.flatMap(r=>[
+    {...r,key:`${r.id}-a`},
+    {...r,key:`${r.id}-b`}
+  ]));
+
+  const reveal=(button)=>{
+    button.disabled=true;
+    button.classList.add('is-revealed');
+    button.setAttribute('aria-pressed','true');
+    button.setAttribute('aria-label',button.dataset.label+' — révélée');
+  };
+  const conceal=(button)=>{
+    button.disabled=false;
+    button.classList.remove('is-revealed');
+    button.setAttribute('aria-pressed','false');
+    button.setAttribute('aria-label',button.dataset.hiddenLabel);
+  };
+  const markMatched=(a,b)=>{
+    a.classList.add('is-matched');
+    b.classList.add('is-matched');
+    a.setAttribute('aria-label',a.dataset.label+' — paire trouvée');
+    b.setAttribute('aria-label',b.dataset.label+' — paire trouvée');
+  };
+
+  g.board.replaceChildren();
+  g.board.style.setProperty('--cols',4);
+  g.board.setAttribute('role','group');
+  g.board.setAttribute('aria-label','Table de mémoire : seize tablettes runiques à associer en huit paires');
+
+  tiles.forEach((item,index)=>{
+    const buttonTile=el('button','tile memory-tile');
+    buttonTile.type='button';
+    buttonTile.dataset.id=item.id;
+    buttonTile.dataset.label=item.label;
+    buttonTile.dataset.sprite=String(item.sprite);
+    buttonTile.dataset.hiddenLabel=`Tuile mémoire ${index+1} : face cachée`;
+    buttonTile.setAttribute('aria-label',buttonTile.dataset.hiddenLabel);
+    buttonTile.setAttribute('aria-pressed','false');
+    buttonTile.style.setProperty('--sprite-x',((item.sprite-1)%4/3*100)+'%');
+    buttonTile.style.setProperty('--sprite-y',(Math.floor((item.sprite-1)/4)/2*100)+'%');
+
+    const shell=el('span','memory-shell');
+    const back=el('span','memory-face memory-back');
+    back.append(el('span','memory-back-glyph','✧'));
+    const front=el('span','memory-face memory-front');
+    front.append(el('span','memory-front-art'));
+    shell.append(back,front);
+    buttonTile.append(shell);
+
+    buttonTile.addEventListener('click',()=>{
+      if(g.ended||lock||buttonTile.classList.contains('is-revealed')||buttonTile.classList.contains('is-matched'))return;
+      reveal(buttonTile);
+
+      if(!first){
+        first=buttonTile;
+        g.status.textContent='Choisis une seconde tablette pour retrouver le symbole.';
+        return;
+      }
+
+      second=buttonTile;
+      lock=true;
+      moves++;
+      updateHud();
+
+      if(first.dataset.id===second.dataset.id){
+        markMatched(first,second);
+        matches++;
+        g.status.textContent=`Paire trouvée : ${first.dataset.label}.`;
+        first=null; second=null; lock=false;
+        updateHud();
+
+        if(matches===8){
+          g.status.classList.add('is-complete');
+          complete(1,'La Mémoire ancienne est restaurée ! Les huit paires scintillent de nouveau.');
+        }
+      }else{
+        mistakes++;
+        g.status.textContent='Les deux reliques ne résonnent pas ensemble.';
+        g.card.querySelector('.memory-faults').textContent=`Erreurs : ${mistakes}`;
+        const pair=[first,second];
+        pair.forEach(tile=>tile.classList.add('is-wrong'));
+        memoryTurnTimer=setTimeout(()=>{
+          memoryTurnTimer=null;
+          if(session!==memorySession)return;
+          pair.forEach(tile=>{tile.classList.remove('is-wrong');conceal(tile)});
+          first=null;second=null;lock=false;
+          g.status.textContent='Observe bien les symboles et retrouve leurs paires.';
+        },560);
+      }
+    });
+
+    g.board.append(buttonTile);
+  });
+
+  updateHud();
+  g.status.textContent='Retourne les tablettes runiques et recompose les huit paires anciennes.';
+  g.actions.replaceChildren(button('✧ Nouvelle table',startMemory));
+}
+
 function startLock(){const g=mini[2];g.ended=false;const solution=Array.from({length:3},()=>2+Math.floor(Math.random()*9));const target=solution.reduce((a,b)=>a+b,0);const numbers=shuffle([...solution,...Array.from({length:3},()=>1+Math.floor(Math.random()*10))]);let selected=[],tries=0;g.status.textContent='Cible : '+target+' · 3 essais';tileGrid(g.board,numbers,3,(_,i,b)=>{if(g.ended)return;const p=selected.indexOf(i);if(p>=0){selected.splice(p,1);b.classList.remove('selected')}else if(selected.length<3){selected.push(i);b.classList.add('selected')}});g.actions.replaceChildren(button('Valider',()=>{if(g.ended)return;if(selected.length!==3){g.status.textContent='Sélectionne exactement trois cristaux.';return}const sum=selected.reduce((n,i)=>n+numbers[i],0);if(sum===target)complete(2,'Serrure ouverte !');else{tries++;g.status.textContent='Somme '+sum+' · cible '+target+' · '+(3-tries)+' essai(s)';if(tries===3){g.ended=true;g.status.textContent='Serrure verrouillée. Recommence.'}}selected=[];$$('.tile',g.board).forEach(b=>b.classList.remove('selected'))},'primary'),button('Nouveau défi',startLock))}
 function startMines(){const g=mini[3];g.ended=false;const bombs=new Set(shuffle(Array.from({length:25},(_,i)=>i)).slice(0,5));let safe=0;g.status.textContent='0/10 cases sûres · 5 pièges';tileGrid(g.board,Array(25).fill('◇'),5,(_,i,b)=>{if(g.ended||b.disabled)return;if(bombs.has(i)){b.textContent='✕';g.ended=true;g.status.textContent='Piège déclenché ! Recommence.';return}const x=i%5,y=Math.floor(i/5);let adjacent=0;for(let dy=-1;dy<=1;dy++)for(let dx=-1;dx<=1;dx++){const xx=x+dx,yy=y+dy;if(xx>=0&&xx<5&&yy>=0&&yy<5&&bombs.has(yy*5+xx))adjacent++}b.textContent=adjacent?String(adjacent):'·';b.disabled=true;b.classList.add('done');safe++;if(safe===10)complete(3,'Fouille accomplie !');else g.status.textContent=safe+'/10 cases sûres · 5 pièges'});g.actions.replaceChildren(button('Nouvelle fouille',startMines))}
 const ingredients=[['☘','Mousse'],['☀','Soleil'],['◈','Cristal'],['☾','Lune'],['✿','Fleur'],['❄','Givre']];

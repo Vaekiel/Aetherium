@@ -36,6 +36,7 @@ jobs:
           test -f src/mobile.css
           test -s src/booster.css
           test -s src/runes.css
+          test -s src/memory.css
           test -s assets/minigames/runes-origines-compact.webp
           test -s tests/runes-smoke.mjs
           test -f tests/booster-smoke.mjs
@@ -98,6 +99,7 @@ jobs:
           node --check --input-type=module < src/main.js
           node tests/booster-smoke.mjs
           node tests/runes-smoke.mjs
+          node tests/memory-smoke.mjs
           node --check --input-type=module < src/data.js
           node --check --input-type=module < src/art.js
           node --check --input-type=module < src/card-art.js

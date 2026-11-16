@@ -1,0 +1,125 @@
+/* AETHERIUM — Mémoire ancienne */
+.game.memory-trial{
+  position:relative;overflow:hidden;
+  background:
+    radial-gradient(ellipse at 50% 0%,#43417066 0,transparent 40%),
+    linear-gradient(170deg,#211d39fa,#13192c 68%,#121422);
+  border:1px solid #bc9c6ca6;
+  box-shadow:0 10px 26px #070c20a8,inset 0 0 0 1px #efe4bd16;
+}
+.game.memory-trial::before{
+  content:"";position:absolute;inset:9px;border:1px solid #e9c68c22;pointer-events:none;
+}
+.game.memory-trial h3{
+  color:#f5e2bd;font-size:clamp(21px,2vw,25px);
+  font-variant:small-caps;letter-spacing:.025em;
+  text-shadow:0 2px 10px #d9b87038;
+  margin:4px 0 6px;
+}
+.game.memory-trial h3::before{content:"✦";color:#aeefff;display:inline-block;margin-right:8px;font-size:18px}
+.game.memory-trial p{color:#cfc7d5;min-height:0;margin:0 0 10px;font:12px/1.5 system-ui,sans-serif}
+.memory-hud{
+  display:flex;justify-content:space-between;align-items:center;gap:10px;
+  border-top:1px solid #8e769264;padding:12px 3px 8px;
+  color:#eee0cf;font:12px Georgia,serif;flex-wrap:wrap;
+}
+.memory-hud strong{color:#b9f3ff;font-variant-numeric:tabular-nums}
+.memory-faults{color:#dfb18a;white-space:nowrap;font-variant-numeric:tabular-nums}
+.memory-meter{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:4px;margin:0 3px 12px}
+.memory-meter span{display:block;height:7px;border:1px solid #6a6581;background:linear-gradient(#33314d,#23243a);transform:skew(-8deg);border-radius:1px}
+.memory-meter span.filled{border-color:#a9eaff;background:linear-gradient(90deg,#3d86a9,#85e7f3);box-shadow:0 0 7px #76c4ef8c}
+.memory-board{
+  display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:clamp(6px,.95vw,10px);
+  padding:clamp(9px,1vw,14px);margin:0 -4px;
+  background:
+    radial-gradient(ellipse at center,#26334d 0%,#171c34 55%,#0c1227 95%),
+    repeating-linear-gradient(90deg,transparent 0 31px,#a19dbd0b 31px 32px);
+  border:2px solid #746b84;
+  box-shadow:inset 0 0 0 3px #12162a,inset 0 8px 25px #07091fd4,0 8px 22px #080b20c2;
+  border-radius:3px;
+}
+.memory-tile{
+  position:relative;display:block;aspect-ratio:1/1;width:100%;padding:0;border:0!important;
+  background:none!important;box-shadow:none!important;cursor:pointer;touch-action:manipulation;
+  min-width:0;min-height:0!important;overflow:visible;transition:transform .18s ease,filter .18s ease;
+}
+.memory-tile:hover:not(:disabled),.memory-tile:focus-visible:not(:disabled){transform:translateY(-3px);filter:brightness(1.15)}
+.memory-tile:focus-visible{outline:2px solid #f0c27f;outline-offset:3px}
+.memory-shell{position:absolute;inset:0;display:block;transform-style:preserve-3d;transition:transform .42s cubic-bezier(.2,.72,.28,1)}
+.memory-face{
+  position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:3px;
+}
+.memory-back{
+  background:
+    radial-gradient(circle at 50% 40%,#6d5fa147 0%,#2b264870 40%,#171a2d 80%),
+    repeating-linear-gradient(135deg,#282242 0 8px,#34274d 8px 12px);
+  border:2px solid #ba9671;
+  box-shadow:inset 0 0 0 5px #17172b,inset 0 0 0 6px #b9a07d90,0 7px 13px #080a2088;
+}
+.memory-back::before{
+  content:"";position:absolute;inset:10px;border:1px solid #e0c18f55;
+}
+.memory-back-glyph{
+  display:grid;place-items:center;width:40px;height:40px;border:1px solid #ecc98f;
+  transform:rotate(45deg);color:#f4d9aa;background:#11182ee8;box-shadow:0 0 12px #79d9eb33;
+  font:700 20px/1 Georgia,serif;text-shadow:0 0 12px #a57fe0;
+}
+.memory-back-glyph::before{content:"";position:absolute;width:56px;height:56px;border:1px solid #75dfee33;border-radius:50%}
+.memory-front{
+  transform:rotateY(180deg);
+  background:linear-gradient(180deg,#2b2845,#181a2c);
+  border:2px solid #d9bc8e;
+  box-shadow:0 10px 18px #080b20b8,inset 0 0 0 5px #141628,inset 0 0 0 6px #9c806d;
+}
+.memory-front::before{
+  content:"";position:absolute;inset:7px;border:1px solid #e5cc9f66;pointer-events:none;
+}
+.memory-front-art{
+  position:absolute;inset:9px;display:block;
+  background-image:url('../assets/minigames/runes-origines-compact.webp');
+  background-repeat:no-repeat;background-size:400% 300%;
+  background-position:var(--sprite-x) var(--sprite-y);
+  image-rendering:auto;
+  filter:drop-shadow(1px 4px 2px #080b1bbd);
+}
+.memory-tile.is-revealed .memory-shell,
+.memory-tile.is-matched .memory-shell{transform:rotateY(180deg)}
+.memory-tile.is-matched{cursor:default;filter:brightness(1.12)}
+.memory-tile.is-matched .memory-front{box-shadow:0 0 15px #74d9e1a8,inset 0 0 0 5px #1b2432,inset 0 0 0 6px #8de7ea}
+.memory-tile.is-matched::after{
+  content:"✓";position:absolute;top:4px;left:5px;z-index:3;display:grid;place-items:center;
+  width:19px;height:19px;color:#effeff;background:#1e617ccb;border:1px solid #8ee6ea;
+  font:700 13px system-ui,sans-serif;border-radius:50%;
+}
+.memory-tile.is-wrong{animation:memory-error .27s ease-out}
+@keyframes memory-error{0%,100%{transform:translateX(0)}30%{transform:translateX(-4px)}65%{transform:translateX(4px)}}
+.memory-statusline{color:#b8cedc!important;min-height:30px;margin:10px 0!important;font-size:12px!important}
+.memory-statusline.is-complete{color:#9cefcf!important}
+.memory-statusline.is-failed{color:#f1a6a9!important}
+.memory-trial .small-actions button{
+  flex:1;min-height:46px;border:1px solid #b99a72;background:linear-gradient(180deg,#34314c,#24213d);
+  color:#f4ddbd;border-radius:3px;font-variant:small-caps;
+}
+.memory-trial .small-actions button:hover{background:#433855}
+@media(max-width:850px){
+ .game.memory-trial{padding:16px!important}
+ .game.memory-trial h3{font-size:24px}
+ .memory-board{margin:0;padding:9px;gap:6px}
+ .memory-hud{font-size:13px}
+}
+@media(max-width:365px){
+ .memory-board{padding:6px;gap:4px}
+ .memory-back-glyph{width:34px;height:34px;font-size:17px}
+ .memory-tile.is-matched::after{width:16px;height:16px;font-size:11px}
+}
+@media(prefers-reduced-motion:reduce){
+ .memory-tile,.memory-shell{transition:none!important}
+ .memory-tile.is-wrong{animation:none!important}
+}
+
+/* Avoid inherited disabled opacity dimming face-up or matched tablets. */
+.memory-tile:disabled{opacity:1!important}
+.memory-front{border:0;box-shadow:0 8px 14px #090e20b8}
+.memory-front::before{display:none}
+.memory-front-art{inset:0}

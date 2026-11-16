@@ -35,6 +35,10 @@ Première épreuve retravaillée selon la direction artistique AETHERIUM : **12 
 
 La grille de quatre colonnes comprend des numéros lisibles, une jauge de progression 12 étapes, un compteur d'erreurs, des états lumineux et une version adaptée aux écrans tactiles. **Les règles sont identiques** : activer les runes 1 à 12 dans l'ordre, trois erreurs maximum, puis gagner 35 Couronnes. Le style est pensé comme modèle visuel pour les quatre autres mini-jeux. Les commandes de réduction des animations sont respectées.
 
+## Mémoire ancienne en pixel art HD (version 0.7)
+
+La seconde épreuve est reconstruite dans la même DA fantasy que Chemin runique : **tablettes d'archives**, dos à sceau doré, huit symboles runiques HD tirés de la planche d'illustrations déjà intégrée, effets de retournement courts, halos cyan sur les paires et petit compteur de progression. Sur téléphone, la grille tactile comporte **16 tablettes (4 × 4)**. Le joueur trouve **8 paires**, en conservant le montant de récompense de **45 Couronnes**. L'ancienne limite de dix essais (prévue pour quatre paires) ne s'applique plus dans cette version ; le nombre de coups et d'erreurs est indiqué. Un bouton « Nouvelle table » réinitialise l'épreuve et annule les retournements précédents. L'option d'accessibilité « Réduire les animations » reste prise en compte. Les boosters, la collection et la sauvegarde ne changent pas.
+
 ## Expérience mobile (version 0.4)
 
 - **Navigation principale au pouce** : quatre onglets permanents en bas de l'écran, avec gestion des zones de sécurité iOS/Android.
