@@ -1,0 +1,27 @@
+import {readFileSync,statSync} from 'node:fs';
+import assert from 'node:assert/strict';
+
+const read=path=>readFileSync(path,'utf8');
+const main=read('src/main.js');
+const html=read('index.html');
+const css=read('src/runes.css');
+assert.ok(html.includes('src/runes.css'),'La feuille de style des runes doit être chargée');
+assert.ok(css.includes('runes-origines-compact.webp'),'Les runes doivent employer les nouveaux visuels');
+assert.ok(css.includes('.rune-board'),'La grille runique doit avoir son propre habillage');
+assert.ok(css.includes('@media(max-width:850px)'),'La mise en page mobile doit être prise en charge');
+assert.ok(css.includes('prefers-reduced-motion'),'Animations désactivables');
+assert.ok(statSync('assets/minigames/runes-origines-compact.webp').size>100_000);
+const start=main.indexOf('function startRunes()');
+const end=main.indexOf('function startMemory()',start);
+assert.ok(start>=0&&end>start,'Le Chemin runique doit exister');
+const code=main.slice(start,end);
+assert.ok(main.includes("const runeNames=['Soleil'"),'Symboles runiques nommés');
+assert.ok(code.includes('Array.from({length:12}'),'Douze runes dans une grille');
+assert.ok(code.includes("g.board.style.setProperty('--cols',4)"),'Grille de quatre colonnes');
+assert.ok(code.includes("if(value===next)"),'Validation de l’ordre des runes conservée');
+assert.ok(code.includes('if(next===13)'), 'Victoire après la douzième rune');
+assert.ok(code.includes('if(errors>=3)'), 'Trois erreurs provoquent une défaite');
+assert.ok(code.includes("complete(0,'Sceau restauré !"),'Récompense existante conservée');
+assert.ok(main.includes('reward:35'),'Gain du Chemin runique inchangé');
+assert.ok(code.includes("setAttribute('aria-label'"),'Chaque rune doit être accessible au lecteur d’écran');
+console.log('AETHERIUM — tests du Chemin runique HD : OK');

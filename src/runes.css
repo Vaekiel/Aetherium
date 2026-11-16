@@ -1,0 +1,125 @@
+/* AETHERIUM: Chemin runique — HD pixel-art mini-game design system v1. */
+.game.rune-trial{
+  --rune-gold:#e2bb7d; --rune-cyan:#75dfee;
+  position:relative;overflow:hidden;
+  background:
+    radial-gradient(ellipse at 50% 6%,#4c457b80 0,transparent 40%),
+    linear-gradient(170deg,#221f3cfa,#13192e 70%,#141525);
+  border:1px solid #bd9a69a8;
+  box-shadow:0 10px 26px #070c20a8,inset 0 0 0 1px #efe4bd16;
+}
+.game.rune-trial::before{
+  content:"";position:absolute;inset:9px;right:9px;top:9px;
+  border:1px solid #e9c68c22;pointer-events:none;
+  font-size:0;
+}
+.rune-trial::after{
+  content:"";position:absolute;right:12px;top:12px;width:40px;height:40px;
+  border:1px solid #f2d09b54;
+  background:radial-gradient(circle,#7ac4de28 0%,transparent 68%);
+  transform:rotate(45deg);pointer-events:none;
+}
+.game.rune-trial h3{
+  color:#f5e2bd;font-size:clamp(21px,2vw,25px);
+  font-variant:small-caps;letter-spacing:.025em;
+  text-shadow:0 2px 10px #d9b87038;
+  padding-right:42px;margin:4px 0 6px;
+}
+.game.rune-trial h3::before{content:"✧";color:#aeefff;display:inline-block;margin-right:8px;font-size:20px}
+.game.rune-trial p{
+  color:#cfc7d5;min-height:0;margin:0 0 10px;font:12px/1.5 system-ui,sans-serif;
+}
+.game.rune-trial .reward{
+  display:inline-flex;align-items:center;gap:7px;
+  padding:5px 10px;background:#26233e;border:1px solid #9e7d608a;
+  color:#f3d8a6;border-radius:3px;font:12px system-ui,sans-serif;margin-bottom:11px;
+}
+.rune-hud{
+  display:flex;justify-content:space-between;align-items:center;gap:9px;
+  border-top:1px solid #8e769264;padding:12px 3px 8px;
+  color:#eee0cf;font:12px Georgia,serif;
+}
+.rune-hud strong{color:#b9f3ff;font-variant-numeric:tabular-nums}
+.rune-hud .rune-faults{color:#dfb18a;white-space:nowrap;font-variant-numeric:tabular-nums}
+.rune-meter{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:3px;margin:0 3px 12px}
+.rune-meter span{
+  display:block;height:7px;border:1px solid #6a6581;
+  background:linear-gradient(#33314d,#23243a);
+  transform:skew(-8deg);border-radius:1px;
+}
+.rune-meter span.filled{
+  border-color:#a9eaff;
+  background:linear-gradient(90deg,#3d86a9,#85e7f3);
+  box-shadow:0 0 7px #76c4ef8c;
+}
+.rune-trial .board.rune-board{
+  --cols:4;
+  display:grid;grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:clamp(4px,.9vw,9px);margin:0 -4px;
+  padding:clamp(9px,1vw,14px);
+  background:
+    radial-gradient(ellipse at center,#26334d 0%,#171c34 55%,#0c1227 95%),
+    repeating-linear-gradient(90deg,transparent 0 31px,#a19dbd0b 31px 32px);
+  border:2px solid #746b84;
+  box-shadow:inset 0 0 0 3px #12162a,inset 0 8px 25px #07091fd4,0 8px 22px #080b20c2;
+  border-radius:3px;
+}
+.rune-trial .rune-tile{
+  position:relative;display:block;aspect-ratio:1/1;width:100%;height:auto;
+  min-height:0!important;min-width:0;overflow:visible;
+  padding:0;margin:0;
+  border:0!important;border-radius:0;
+  background:none!important;box-shadow:none!important;
+  cursor:pointer;touch-action:manipulation;
+  transition:transform .16s ease,filter .16s ease;
+}
+.rune-trial .rune-tile .rune-art{
+  display:block;position:absolute;inset:0;
+  background-image:url('../assets/minigames/runes-origines-compact.webp');
+  background-repeat:no-repeat;background-size:400% 300%;
+  background-position:var(--rune-x) var(--rune-y);
+  image-rendering:auto;
+  filter:drop-shadow(1px 4px 2px #080b1bbd);
+}
+.rune-trial .rune-tile .rune-number{
+  position:absolute;bottom:3px;right:3px;z-index:1;
+  display:grid;place-items:center;
+  min-width:21px;min-height:21px;padding:1px 3px;
+  border:1px solid #dec490;background:#101930e6;color:#fff0c7;
+  font:700 clamp(10px,1vw,12px)/1 system-ui,sans-serif;
+  border-radius:2px;text-shadow:0 1px #040716;
+  box-shadow:0 1px 6px #060a1ecc;
+}
+.rune-trial .rune-tile:hover:not(:disabled),.rune-trial .rune-tile:focus-visible:not(:disabled){transform:translateY(-3px);filter:brightness(1.2)}
+.rune-trial .rune-tile:focus-visible{outline:2px solid #f0c27f;outline-offset:3px}
+.rune-trial .rune-tile.done{opacity:1;cursor:default;filter:brightness(1.16) drop-shadow(0 0 9px #4ebadaae)}
+.rune-trial .rune-tile.done::after{
+  content:"✓";position:absolute;top:4px;left:5px;z-index:2;
+  display:grid;place-items:center;width:19px;height:19px;
+  color:#effeff;background:#1e617ccb;border:1px solid #8ee6ea;
+  font:700 13px system-ui,sans-serif;border-radius:50%;
+}
+.rune-trial .rune-tile.wrong{filter:drop-shadow(0 0 9px #f27183) brightness(1.18);animation:rune-error .27s ease-out}
+@keyframes rune-error{0%,100%{transform:translateX(0)}30%{transform:translateX(-4px)}65%{transform:translateX(4px)}}
+.rune-trial .rune-statusline{color:#b8cedc!important;min-height:30px;margin:10px 0!important;font-size:12px!important}
+.rune-trial .rune-statusline.is-complete{color:#9cefcf!important}
+.rune-trial .rune-statusline.is-failed{color:#f1a6a9!important}
+.rune-trial .small-actions button{
+  flex:1;min-height:46px;
+  border:1px solid #b99a72;background:linear-gradient(180deg,#34314c,#24213d);
+  color:#f4ddbd;border-radius:3px;font-variant:small-caps;
+}
+.rune-trial .small-actions button:hover{background:#433855}
+@media(max-width:850px){
+ .game.rune-trial{padding:16px!important}
+ .game.rune-trial h3{font-size:24px}
+ .rune-trial .board.rune-board{margin:0;padding:9px;gap:5px}
+ .rune-trial .rune-tile .rune-number{min-width:20px;min-height:20px;font-size:11px}
+ .rune-hud{font-size:13px}
+}
+@media(max-width:365px){
+ .rune-trial .board.rune-board{padding:6px;gap:3px}
+ .rune-trial .rune-tile .rune-number{min-width:17px;min-height:17px;right:1px;bottom:1px;font-size:10px}
+ .rune-trial .rune-tile.done::after{width:16px;height:16px;font-size:11px}
+}
+@media(prefers-reduced-motion:reduce){.rune-trial .rune-tile{transition:none!important}.rune-trial .rune-tile.wrong{animation:none!important}}

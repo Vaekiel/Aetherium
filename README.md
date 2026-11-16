@@ -29,6 +29,12 @@ Ouvrir ensuite `http://localhost:8000`.
 
 Le workflow `.github/workflows/pages.yml` valide les modules JavaScript et publie automatiquement la racine du dépôt sur GitHub Pages à chaque push sur `main`.
 
+## Chemin runique en pixel art HD (version 0.6)
+
+Première épreuve retravaillée selon la direction artistique AETHERIUM : **12 pierres runiques illustrées** (soleil, lune, constellations, œil, spirale, arbre, boussole, étoiles, montagne, vagues, sablier et flamme), gravures de pierre, lueurs magiques et détails dorés. Toutes les images proviennent d'une planche WebP de **704 × 528 pixels**, optimisée pour éviter douze chargements d'images séparés.
+
+La grille de quatre colonnes comprend des numéros lisibles, une jauge de progression 12 étapes, un compteur d'erreurs, des états lumineux et une version adaptée aux écrans tactiles. **Les règles sont identiques** : activer les runes 1 à 12 dans l'ordre, trois erreurs maximum, puis gagner 35 Couronnes. Le style est pensé comme modèle visuel pour les quatre autres mini-jeux. Les commandes de réduction des animations sont respectées.
+
 ## Expérience mobile (version 0.4)
 
 - **Navigation principale au pouce** : quatre onglets permanents en bas de l'écran, avec gestion des zones de sécurité iOS/Android.

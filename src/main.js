@@ -100,7 +100,75 @@ const definitions=[
 const mini=[];
 definitions.forEach((d,i)=>{const card=el('article','game');card.append(el('h3','',String(i+1).padStart(2,'0')+' · '+d.name),el('p','',d.description),el('div','reward','♛ +'+d.reward+' Couronnes'));const status=el('div','status');status.setAttribute('aria-live','polite');const board=el('div','board');const actions=el('div','small-actions');card.append(board,status,actions);$('#games').append(card);mini.push({card,board,status,actions,reward:d.reward,won:false,ended:false});});
 function complete(i,description){const g=mini[i];if(g.ended)return;g.ended=true;g.status.textContent='✓ '+description;grant(g.reward)}
-function startRunes(){const g=mini[0];g.ended=false;let next=1,errors=0;g.status.textContent='Prochaine rune : 1 · erreurs : 0/3';tileGrid(g.board,shuffle(Array.from({length:12},(_,i)=>i+1)),4,(v,i,b)=>{if(g.ended||b.disabled)return;if(v===next){b.disabled=true;b.classList.add('done');next++;if(next===13)complete(0,'Sceau restauré !')}else{errors++;if(errors>=3){g.ended=true;g.status.textContent='Sceau brisé. Recommence.'}}if(!g.ended)g.status.textContent='Prochaine rune : '+next+' · erreurs : '+errors+'/3'});g.actions.replaceChildren(button('Nouvelle grille',startRunes))}
+const runeNames=['Soleil','Lune','Constellations','Œil','Spirale','Arbre','Rose des vents','Étoiles','Montagne','Vagues','Sablier','Flamme'];
+function startRunes(){
+  const g=mini[0];
+  g.ended=false;
+  g.card.classList.add('rune-trial');
+  g.board.classList.add('rune-board');
+  g.status.classList.add('rune-statusline');
+  g.status.classList.remove('is-complete','is-failed');
+  let next=1,errors=0;
+  let hud=g.card.querySelector('.rune-hud');
+  if(!hud){
+    hud=el('div','rune-hud');
+    const left=el('div','rune-goal');
+    left.append(el('span','', 'Rune suivante : '),el('strong','rune-target'));
+    hud.append(left,el('span','rune-faults'));
+    const meter=el('div','rune-meter');
+    meter.setAttribute('aria-hidden','true');
+    for(let index=0;index<12;index++)meter.append(el('span'));
+    g.board.before(hud,meter);
+  }
+  const meter=g.card.querySelector('.rune-meter');
+  const updateHud=()=>{
+    $('.rune-target',hud).textContent=next>12?'12 / 12 ✓':String(next).padStart(2,'0')+' / 12';
+    $('.rune-faults',hud).textContent='Erreurs : '+errors+' / 3';
+    [...meter.children].forEach((node,i)=>node.classList.toggle('filled',i<next-1));
+  };
+  g.board.replaceChildren();
+  g.board.style.setProperty('--cols',4);
+  const order=shuffle(Array.from({length:12},(_,i)=>i+1));
+  for(const value of order){
+    const b=button('',()=>{},'tile rune-tile');
+    b.setAttribute('aria-label','Rune '+value+' sur 12 : '+runeNames[value-1]);
+    b.setAttribute('title','Rune '+value+' · '+runeNames[value-1]);
+    b.style.setProperty('--rune-x',((value-1)%4/3*100)+'%');
+    b.style.setProperty('--rune-y',(Math.floor((value-1)/4)/2*100)+'%');
+    const art=el('span','rune-art');
+    art.setAttribute('aria-hidden','true');
+    b.append(art,el('span','rune-number',String(value).padStart(2,'0')));
+    b.addEventListener('click',()=>{
+      if(g.ended||b.disabled)return;
+      if(value===next){
+        b.disabled=true;
+        b.classList.add('done');
+        next++;
+        updateHud();
+        if(next===13){
+          g.status.classList.add('is-complete');
+          complete(0,'Sceau restauré ! Les douze runes brillent de nouveau.');
+        }else g.status.textContent='Rune '+value+' activée · cherche la '+next+'.';
+      }else{
+        errors++;
+        b.classList.remove('wrong');
+        void b.offsetWidth;
+        b.classList.add('wrong');
+        setTimeout(()=>b.classList.remove('wrong'),360);
+        updateHud();
+        if(errors>=3){
+          g.ended=true;
+          g.status.classList.add('is-failed');
+          g.status.textContent='Le sceau s’est brisé. Relance une grille pour réessayer.';
+        }else g.status.textContent='Ce n’est pas la rune '+next+' · '+errors+'/3 erreurs.';
+      }
+    });
+    g.board.append(b);
+  }
+  updateHud();
+  g.status.textContent='Active les pierres dans l’ordre des numéros, de 1 à 12.';
+  g.actions.replaceChildren(button('✧ Nouvelle grille',startRunes));
+}
 function startMemory(){const g=mini[1];g.ended=false;let open=[],matched=0,tries=0,busy=false;const glyphs=shuffle(['☾','✦','◈','◆','☾','✦','◈','◆']);g.status.textContent='0/4 paires · 0/10 essais';tileGrid(g.board,glyphs.map(()=>'?'),4,(_,i,b)=>{if(g.ended||busy||b.disabled||open.some(x=>x.i===i))return;b.textContent=glyphs[i];b.classList.add('selected');open.push({i,b});if(open.length===2){tries++;const pair=open;open=[];if(glyphs[pair[0].i]===glyphs[pair[1].i]){matched++;pair.forEach(x=>{x.b.disabled=true;x.b.classList.add('done')});if(matched===4)complete(1,'Mémoire restaurée !')}else{busy=true;setTimeout(()=>{pair.forEach(x=>{x.b.textContent='?';x.b.classList.remove('selected')});busy=false},700)}if(tries>=10&&matched!==4){g.ended=true;g.status.textContent='Mémoire épuisée. Recommence.'}else if(!g.ended)g.status.textContent=matched+'/4 paires · '+tries+'/10 essais'}});g.actions.replaceChildren(button('Recommencer',startMemory))}
 function startLock(){const g=mini[2];g.ended=false;const solution=Array.from({length:3},()=>2+Math.floor(Math.random()*9));const target=solution.reduce((a,b)=>a+b,0);const numbers=shuffle([...solution,...Array.from({length:3},()=>1+Math.floor(Math.random()*10))]);let selected=[],tries=0;g.status.textContent='Cible : '+target+' · 3 essais';tileGrid(g.board,numbers,3,(_,i,b)=>{if(g.ended)return;const p=selected.indexOf(i);if(p>=0){selected.splice(p,1);b.classList.remove('selected')}else if(selected.length<3){selected.push(i);b.classList.add('selected')}});g.actions.replaceChildren(button('Valider',()=>{if(g.ended)return;if(selected.length!==3){g.status.textContent='Sélectionne exactement trois cristaux.';return}const sum=selected.reduce((n,i)=>n+numbers[i],0);if(sum===target)complete(2,'Serrure ouverte !');else{tries++;g.status.textContent='Somme '+sum+' · cible '+target+' · '+(3-tries)+' essai(s)';if(tries===3){g.ended=true;g.status.textContent='Serrure verrouillée. Recommence.'}}selected=[];$$('.tile',g.board).forEach(b=>b.classList.remove('selected'))},'primary'),button('Nouveau défi',startLock))}
 function startMines(){const g=mini[3];g.ended=false;const bombs=new Set(shuffle(Array.from({length:25},(_,i)=>i)).slice(0,5));let safe=0;g.status.textContent='0/10 cases sûres · 5 pièges';tileGrid(g.board,Array(25).fill('◇'),5,(_,i,b)=>{if(g.ended||b.disabled)return;if(bombs.has(i)){b.textContent='✕';g.ended=true;g.status.textContent='Piège déclenché ! Recommence.';return}const x=i%5,y=Math.floor(i/5);let adjacent=0;for(let dy=-1;dy<=1;dy++)for(let dx=-1;dx<=1;dx++){const xx=x+dx,yy=y+dy;if(xx>=0&&xx<5&&yy>=0&&yy<5&&bombs.has(yy*5+xx))adjacent++}b.textContent=adjacent?String(adjacent):'·';b.disabled=true;b.classList.add('done');safe++;if(safe===10)complete(3,'Fouille accomplie !');else g.status.textContent=safe+'/10 cases sûres · 5 pièges'});g.actions.replaceChildren(button('Nouvelle fouille',startMines))}
