@@ -29,6 +29,10 @@ Ouvrir ensuite `http://localhost:8000`.
 
 Le workflow `.github/workflows/pages.yml` valide les modules JavaScript et publie automatiquement la racine du dépôt sur GitHub Pages à chaque push sur `main`.
 
+## Animation Chromatique visible dans les boosters (correctif 1.4.3)
+
+Lorsqu'une carte Chromatique est révélée pendant l'ouverture d'un booster, le liseré autour de l'illustration est plus épais et ses couleurs tournent plus vite. Un halo cyan/violet pulse doucement autour de la carte jusqu'à l'action « Carte suivante ». Le dos reste normal pour ne pas révéler à l'avance le tirage. L'animation est adaptée aux petits écrans et s'immobilise si la réduction des mouvements est active. Aucun changement aux illustrations, taux de tirage, sauvegardes ou récompenses.
+
 ## Cadres Chromatiques en mouvement (correctif 1.4.2)
 
 La différence avec la version normale est maintenant visible **sur le cadre lui-même** : un dégradé nacré, cyan et violet circule continuellement dans le liseré intérieur, sur la grille, les boosters et l'inspection HD. La lueur reste contenue dans le cadre, derrière l'illustration inchangée ; les contours et le sceau Chromatique demeurent identifiables même sans animation. Effet léger fondé sur une rotation CSS et désactivé lorsque l'utilisateur préfère réduire les mouvements. Les probabilités, la progression et les sauvegardes restent intactes.
