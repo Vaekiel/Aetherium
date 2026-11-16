@@ -60,13 +60,17 @@ La mise en page desktop et **la clé de sauvegarde `aetherium-save-v1`** ne chan
 
 **Lot d'illustrations n°1 — cartes 002 à 011 :** Sylve, l’Éclaireuse ; Golem de Rouille ; Floraison Cendrée ; Épée de Brume ; Feu Follet ; Archiviste Nocturne ; Cerf des Lueurs ; Méduse d’Éther ; Lame Prismatique ; Chant des Cendres. Chaque carte possède un fichier WebP et une miniature. **Les neuf illustrations tirées de la planche sont maintenant recadrées sans cadre intégré, pictogramme ni bandeau de titre** : le jeu dessine lui-même son cadre et son texte. Sylve conserve son illustration individuelle HD. La version sans cadre du Chant des Cendres représente une lyre enchantée. Ces visuels restent une première passe à affiner individuellement.
 
+**Lot d'illustrations n°2 — cartes 012 à 021 :** Gardienne de Jade, Roi des Lucioles, Horloge du Néant, Dragon de Cristal, Oracle des Marées, Pluie Astrale, Lion d'Obsidienne, Éclipse Vivante, Reine des Ronces, Cœur du Colosse. Ces **10 illustrations individuelles** au format portrait HD (1138 × 1382 px) sont livrées sans cadre ni titre intégré, avec des miniatures légères (350 × 425 px). Elles apparaissent dans les boosters, la Collection et le panneau d'inspection, y compris en mode aperçu sans modifier la sauvegarde. **21 cartes illustrées sur 24** ; restent les légendaires 022–024.
+
 ## Organisation
 
 ```text
 index.html        Interface / point d'entrée
 src/main.js       Navigation, sauvegarde, mini-jeux, collection, boutique
 src/data.js       Catalogue de cartes et probabilités des boosters
-src/art.js        Illustrations de secours en pixel art\nsrc/card-art.js   Registre des illustrations HD par carte\nassets/cards/     Miniatures et illustrations plein format
+src/art.js        Illustrations de secours en pixel art
+src/card-art.js   Registre des illustrations HD par carte
+assets/cards/     Miniatures et illustrations plein format
 src/style.css     Design responsive
 ```
 

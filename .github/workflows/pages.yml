@@ -59,6 +59,26 @@ jobs:
           test -s assets/cards/lame-prismatique-thumb.webp
           test -s assets/cards/chant-des-cendres.webp
           test -s assets/cards/chant-des-cendres-thumb.webp
+          test -s assets/cards/gardienne-de-jade.webp
+          test -s assets/cards/gardienne-de-jade-thumb.webp
+          test -s assets/cards/roi-des-lucioles.webp
+          test -s assets/cards/roi-des-lucioles-thumb.webp
+          test -s assets/cards/horloge-du-neant.webp
+          test -s assets/cards/horloge-du-neant-thumb.webp
+          test -s assets/cards/dragon-de-cristal.webp
+          test -s assets/cards/dragon-de-cristal-thumb.webp
+          test -s assets/cards/oracle-des-marees.webp
+          test -s assets/cards/oracle-des-marees-thumb.webp
+          test -s assets/cards/pluie-astrale.webp
+          test -s assets/cards/pluie-astrale-thumb.webp
+          test -s assets/cards/lion-d-obsidienne.webp
+          test -s assets/cards/lion-d-obsidienne-thumb.webp
+          test -s assets/cards/eclipse-vivante.webp
+          test -s assets/cards/eclipse-vivante-thumb.webp
+          test -s assets/cards/reine-des-ronces.webp
+          test -s assets/cards/reine-des-ronces-thumb.webp
+          test -s assets/cards/coeur-du-colosse.webp
+          test -s assets/cards/coeur-du-colosse-thumb.webp
           node --check --input-type=module < src/main.js
           node --check --input-type=module < src/data.js
           node --check --input-type=module < src/art.js

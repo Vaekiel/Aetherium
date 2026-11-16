@@ -2,7 +2,7 @@ import {artFor} from './art.js';
 
 // Source of truth for authored artwork. Add an entry for every approved card;
 // the remaining cards keep their temporary atlas visuals until replaced.
-// Original artwork references: 1–11 (Origins). Other cards use the reference atlas.
+// Dedicated artwork: 1–21 (Origines). Only 22–24 remain on reference art.
 export const CARD_ART = Object.freeze({
   1: Object.freeze({
     thumbnail: './assets/cards/veilleuse-de-nacre-thumb.webp',
@@ -17,7 +17,17 @@ export const CARD_ART = Object.freeze({
   8: Object.freeze({thumbnail: './assets/cards/cerf-des-lueurs-thumb.webp', full: './assets/cards/cerf-des-lueurs.webp'}),
   9: Object.freeze({thumbnail: './assets/cards/meduse-d-ether-thumb.webp', full: './assets/cards/meduse-d-ether.webp'}),
   10: Object.freeze({thumbnail: './assets/cards/lame-prismatique-thumb.webp', full: './assets/cards/lame-prismatique.webp'}),
-  11: Object.freeze({thumbnail: './assets/cards/chant-des-cendres-thumb.webp', full: './assets/cards/chant-des-cendres.webp'})
+  11: Object.freeze({thumbnail: './assets/cards/chant-des-cendres-thumb.webp', full: './assets/cards/chant-des-cendres.webp'}),
+  12: Object.freeze({thumbnail: './assets/cards/gardienne-de-jade-thumb.webp', full: './assets/cards/gardienne-de-jade.webp'}),
+  13: Object.freeze({thumbnail: './assets/cards/roi-des-lucioles-thumb.webp', full: './assets/cards/roi-des-lucioles.webp'}),
+  14: Object.freeze({thumbnail: './assets/cards/horloge-du-neant-thumb.webp', full: './assets/cards/horloge-du-neant.webp'}),
+  15: Object.freeze({thumbnail: './assets/cards/dragon-de-cristal-thumb.webp', full: './assets/cards/dragon-de-cristal.webp'}),
+  16: Object.freeze({thumbnail: './assets/cards/oracle-des-marees-thumb.webp', full: './assets/cards/oracle-des-marees.webp'}),
+  17: Object.freeze({thumbnail: './assets/cards/pluie-astrale-thumb.webp', full: './assets/cards/pluie-astrale.webp'}),
+  18: Object.freeze({thumbnail: './assets/cards/lion-d-obsidienne-thumb.webp', full: './assets/cards/lion-d-obsidienne.webp'}),
+  19: Object.freeze({thumbnail: './assets/cards/eclipse-vivante-thumb.webp', full: './assets/cards/eclipse-vivante.webp'}),
+  20: Object.freeze({thumbnail: './assets/cards/reine-des-ronces-thumb.webp', full: './assets/cards/reine-des-ronces.webp'}),
+  21: Object.freeze({thumbnail: './assets/cards/coeur-du-colosse-thumb.webp', full: './assets/cards/coeur-du-colosse.webp'})
 });
 
 const REFERENCE_ART=[3,1,10,9,7,5,4,2,5,8,6,11,0,7,0,1,8,6,4,11,10,11,0,8];
@@ -41,7 +51,7 @@ export function applyCardIllustration(img,card,{shiny=false,size='thumbnail'}={}
   img.onerror=null;
   const approved=CARD_ART[card.id];
   if(approved){
-    img.src=(size==='full'?approved.full:approved.thumbnail)+'?v=20261116-unframed';
+    img.src=(size==='full'?approved.full:approved.thumbnail)+(card.id>=12?'?v=origines-b02':'?v=20261116-unframed');
     img.onerror=()=>{
       img.onerror=null;
       img.style.filter='none';
