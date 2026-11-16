@@ -12,7 +12,7 @@ for(const id of ['games','game-picker','buy','pulls','booster-summary','booster-
  assert.ok(html.includes('id="'+id+'"'),`Contrôle préservé : ${id}`);
 }
 assert.ok(html.includes('src/shell.css'),'Nouvelle interface chargée');
-const styleLinks=[...html.matchAll(/href="\.\/src\/([^" ]+\.css)"/g)].map(x=>x[1]);
+const styleLinks=[...html.matchAll(/href="\.\/src\/([^" ]+\.css)(?:\?[^" ]+)?"/g)].map(x=>x[1]);
 assert.equal(styleLinks.at(-1),'shell.css','La DA a priorité sur les feuilles précédentes');
 for(const sheet of ['runes.css','memory.css','lock.css','mines.css','alchemy.css','booster.css']){
  assert.ok(styleLinks.includes(sheet),`CSS des mini-jeux inchangé : ${sheet}`);
@@ -48,4 +48,11 @@ for(const selector of ['#app .ambient-landscape::before', '#app .ambient-landsca
 }
 assert.ok(desktopFix.includes('content: none !important'), 'Desktop scenery is disabled');
 assert.ok(!desktopFix.includes('url('), 'Desktop background avoids all images');
-console.log('AETHERIUM interface DA crépuscule : tests de structure et fond PC OK');
+const fixV2=css.slice(css.indexOf('/* PC background hotfix v1.1.2'));
+assert.ok(fixV2.includes('(min-width: 851px)'), 'Background corrected for desktop widths');
+assert.ok(fixV2.includes('(hover: hover) and (pointer: fine)'), 'Narrow desktop windows covered');
+assert.ok(fixV2.includes('#app > .ambient-landscape'), 'Targets the actual illustrated backdrop element');
+assert.ok(fixV2.includes('display: none !important'), 'Hides the entire illustrated layer');
+assert.ok(fixV2.includes('linear-gradient(180deg'), 'The app has a dark quiet replacement');
+assert.ok(html.includes('shell.css?v=pc-fond-sobre-2'), 'Fresh stylesheet URL avoids stale browser CSS cache');
+console.log('AETHERIUM interface : fond illustré PC supprimé, mobile préservé');

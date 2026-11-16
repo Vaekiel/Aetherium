@@ -423,3 +423,25 @@ body{background:#10132a;color:#f7e9e8}
     background: none !important;
   }
 }
+
+/* PC background hotfix v1.1.2.
+   The left-hand cascade from reference-left.webp is part of .ambient-landscape.
+   Hide the entire scenery layer on desktop rather than only its pseudo-elements.
+   The second query catches narrow desktop windows with mouse input.
+   Touch devices keep their previously approved backdrop. */
+@media (min-width: 851px), (hover: hover) and (pointer: fine) {
+  #app {
+    background:
+      radial-gradient(ellipse 55% 34% at 52% -10%, rgba(94, 74, 133, .11), transparent 80%),
+      linear-gradient(180deg, #14172c 0%, #101629 52%, #0b1121 100%) !important;
+  }
+  #app > .ambient-landscape {
+    display: none !important;
+  }
+  #app::before,
+  #app::after {
+    display: none !important;
+    content: none !important;
+    background-image: none !important;
+  }
+}
