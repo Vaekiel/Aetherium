@@ -29,6 +29,10 @@ Ouvrir ensuite `http://localhost:8000`.
 
 Le workflow `.github/workflows/pages.yml` valide les modules JavaScript et publie automatiquement la racine du dépôt sur GitHub Pages à chaque push sur `main`.
 
+## Emblèmes homogènes des cinq épreuves (version 1.1.3)
+
+Le sélecteur de mini-jeux utilise cinq emblèmes **pixel art HD** inédits, produits en une seule série cohérente : même cadre en pierre ancienne, pierres moussues, ornements dorés, gemmes cyan et volumes identiques. Seul le symbole central change : rose runique (Chemin runique), tablettes jumelles (Mémoire ancienne), serrure circulaire (Serrure d'Éther), cristal de fouilles (Fouilles interdites) et chaudron arcanique (Laboratoire arcanique). Les cinq emblèmes sont réunis dans l'atlas compact `assets/minigames/minigame-emblems.webp`, utilisé sur PC et mobile. Les vignettes n'utilisent plus d'images hétérogènes découpées dans quatre planches différentes. Les mini-jeux, leur déroulement et les règles demeurent inchangés.
+
 ## Correctif complémentaire : suppression de la bande illustrée PC (version 1.1.2)
 
 La bande de cascade et de fleurs signalée dans la capture d'écran est fournie par le pseudo-élément de `.ambient-landscape` utilisant `reference-left.webp`. La première correction masquait uniquement les pseudo-éléments à grande largeur, mais la bande persistait chez certains utilisateurs. Cette fois, **le conteneur illustré entier est masqué sur PC**, y compris lorsqu'une fenêtre est étroite et qu'un pointeur souris est présent. L'arrière-plan est remplacé par un dégradé très sombre appliqué directement à `#app`. La feuille de style porte une **nouvelle URL versionnée**, pour contourner les anciennes feuilles CSS mises en cache. La présentation sur téléphone à écran tactile n'est pas modifiée.

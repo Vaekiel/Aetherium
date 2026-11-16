@@ -153,16 +153,19 @@ body{background:#10132a;color:#f7e9e8}
  font:15px/1.1 Georgia,serif;
  transition:border-color .17s,transform .17s,background .17s;
 }
+/* Five emblem sprites were drawn as one visual family for the game selector. */
 #page-jouer .game-picker .game-choice::before{
- content:"";position:absolute;top:13px;bottom:12px;left:8px;width:68px;max-height:76px;
- background-image:url('../assets/minigames/runes-origines-compact.webp');background-repeat:no-repeat;
- background-size:400% 300%;background-position:66.6667% 50%;
+ content:"";position:absolute;left:8px;top:50%;bottom:auto;
+ width:70px;height:auto;aspect-ratio:1/1;max-height:none;
+ transform:translateY(-50%);pointer-events:none;
+ background-image:url('../assets/minigames/minigame-emblems.webp');
+ background-repeat:no-repeat;background-size:300% 200%;background-position:0% 0%;
  filter:drop-shadow(0 5px 6px #050919a1);
 }
-#page-jouer .game-picker .game-choice:nth-child(2)::before{background-position:100% 0%}
-#page-jouer .game-picker .game-choice:nth-child(3)::before{background-image:url('../assets/minigames/ether-lock-atlas.webp');background-position:0 0;background-size:300% 300%}
-#page-jouer .game-picker .game-choice:nth-child(4)::before{background-image:url('../assets/minigames/excavation-atlas.webp');background-position:100% 100%;background-size:300% 300%}
-#page-jouer .game-picker .game-choice:nth-child(5)::before{background-image:url('../assets/minigames/alchemy-atlas.webp');background-position:0 100%;background-size:300% 300%}
+#page-jouer .game-picker .game-choice:nth-child(2)::before{background-position:50% 0%}
+#page-jouer .game-picker .game-choice:nth-child(3)::before{background-position:100% 0%}
+#page-jouer .game-picker .game-choice:nth-child(4)::before{background-position:0% 100%}
+#page-jouer .game-picker .game-choice:nth-child(5)::before{background-position:50% 100%}
 #page-jouer .game-picker .game-choice:hover{transform:translateY(-2px);border-color:#dabd9d}
 #page-jouer .game-picker .game-choice.active{
  border-color:#d9b886;background:linear-gradient(120deg,#312544,#33254a);
@@ -287,7 +290,7 @@ body{background:#10132a;color:#f7e9e8}
  #page-jouer .play-stage{grid-template-columns:minmax(0,1fr) 250px;gap:12px}
  #page-jouer .game-picker{grid-template-columns:repeat(5,150px)}
  #page-jouer .game-picker .game-choice{padding-left:65px;font-size:12px}
- #page-jouer .game-picker .game-choice::before{width:55px;left:7px;top:20px;bottom:12px}
+ #page-jouer .game-picker .game-choice::before{width:55px;left:7px;top:50%;bottom:auto}
 }
 @media(max-width:980px) and (min-width:851px){
  #page-collection .collection-layout{grid-template-columns:175px minmax(0,1fr)}
@@ -342,7 +345,7 @@ body{background:#10132a;color:#f7e9e8}
   flex:0 0 auto;min-width:168px;min-height:66px;padding:9px 11px 8px 61px;
   gap:2px;border-radius:4px;scroll-snap-align:start;
  }
- #page-jouer .game-picker .game-choice::before{top:8px;bottom:8px;left:6px;width:48px;max-height:50px}
+ #page-jouer .game-picker .game-choice::before{top:50%;bottom:auto;left:6px;width:48px;max-height:none}
  #page-jouer .game-choice-name{font-size:13px}
  #page-jouer .game-choice-hint{font-size:10px}
  #page-jouer .play-stage{display:block}

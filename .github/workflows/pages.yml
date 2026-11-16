@@ -51,6 +51,7 @@ jobs:
           test -s assets/minigames/ether-lock-atlas.webp
           test -s tests/lock-smoke.mjs
           test -s assets/minigames/runes-origines-compact.webp
+          test -s assets/minigames/minigame-emblems.webp
           test -s tests/runes-smoke.mjs
           test -f tests/booster-smoke.mjs
           grep -q 'id="filter-open"' index.html

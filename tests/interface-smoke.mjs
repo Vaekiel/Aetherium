@@ -54,5 +54,19 @@ assert.ok(fixV2.includes('(hover: hover) and (pointer: fine)'), 'Narrow desktop 
 assert.ok(fixV2.includes('#app > .ambient-landscape'), 'Targets the actual illustrated backdrop element');
 assert.ok(fixV2.includes('display: none !important'), 'Hides the entire illustrated layer');
 assert.ok(fixV2.includes('linear-gradient(180deg'), 'The app has a dark quiet replacement');
-assert.ok(html.includes('shell.css?v=pc-fond-sobre-2'), 'Fresh stylesheet URL avoids stale browser CSS cache');
+assert.ok(html.includes('shell.css?v=emblemes-origines-1'), 'Updated stylesheet URL forces the five emblem icons to refresh');
+
+const selectorBegin=css.indexOf('/* The trial picker');
+const selectorEnd=css.indexOf('#page-jouer .game-picker .game-choice:hover',selectorBegin);
+assert.ok(selectorBegin>=0&&selectorEnd>selectorBegin,'Mini-game selector rules available');
+const pickerCSS=css.slice(selectorBegin,selectorEnd);
+assert.ok(pickerCSS.includes('minigame-emblems.webp'),'Five logos use the same purpose-made pixel-art atlas');
+assert.ok(pickerCSS.includes('background-size:300% 200%'),'All icons share an identical crop scale');
+for(const position of ['50% 0%','100% 0%','0% 100%','50% 100%'])
+ assert.ok(pickerCSS.includes('background-position:'+position),'Separate art is assigned for all five games');
+for(const oldAtlas of ['runes-origines-compact.webp','ether-lock-atlas.webp','excavation-atlas.webp','alchemy-atlas.webp'])
+ assert.ok(!pickerCSS.includes(oldAtlas),'No mixed legacy mini-game logos: '+oldAtlas);
+assert.ok(css.includes('aspect-ratio:1/1'),'All logos are square, with no stretch');
+assert.ok(css.includes('top:50%;bottom:auto;left:6px;width:48px'),'Phone logo alignment is retained');
+assert.ok(statSync('assets/minigames/minigame-emblems.webp').size>30000,'New five-emblem atlas shipped');
 console.log('AETHERIUM interface : fond illustré PC supprimé, mobile préservé');
