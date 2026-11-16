@@ -34,9 +34,14 @@ jobs:
           test -f src/scenery.js
           test -f src/theme.css
           test -f src/mobile.css
+          test -s src/booster.css
+          test -f tests/booster-smoke.mjs
           grep -q 'id="filter-open"' index.html
           grep -q 'id="inspect-close"' index.html
           grep -q 'id="game-picker"' index.html
+          grep -q 'id="booster-progress"' index.html
+          grep -q 'id="reveal-all"' index.html
+          grep -q 'src/booster.css' index.html
           test -s assets/cards/veilleuse-de-nacre.webp
           test -s assets/cards/veilleuse-de-nacre-thumb.webp
           test -s assets/cards/sylve-eclaireuse.webp
@@ -87,6 +92,7 @@ jobs:
           test -s assets/cards/derniere-etoile-thumb.webp
           grep -q '  24: Object.freeze' src/card-art.js
           node --check --input-type=module < src/main.js
+          node tests/booster-smoke.mjs
           node --check --input-type=module < src/data.js
           node --check --input-type=module < src/art.js
           node --check --input-type=module < src/card-art.js

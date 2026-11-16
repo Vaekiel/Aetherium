@@ -77,10 +77,11 @@ const SAVE='aetherium-save-v1';
 const fresh=()=>({coins:300,dust:0,owned:{},shiny:{},wins:0,earned:0,opened:0});
 function load(){try{const raw=JSON.parse(localStorage.getItem(SAVE));if(!raw||typeof raw!=='object')return fresh();const s=fresh();for(const field of ['coins','dust','wins','earned','opened'])if(Number.isSafeInteger(raw[field])&&raw[field]>=0&&raw[field]<1e9)s[field]=raw[field];for(const c of CARDS){const n=raw.owned?.[c.id];if(Number.isSafeInteger(n)&&n>0&&n<1e6)s.owned[c.id]=n;if(raw.shiny?.[c.id]===true&&s.owned[c.id])s.shiny[c.id]=true}return s}catch{return fresh()}}
 let state=load();
+let boosterBusy=false;
 function save(){try{localStorage.setItem(SAVE,JSON.stringify(state))}catch{notify('Sauvegarde indisponible dans ce navigateur.')}}
 let toastTimer;
 function notify(message){const el=$('#toast');el.textContent=message;el.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove('show'),3000)}
-function update(){save();$('#coins').textContent=state.coins.toLocaleString('fr-FR');$('#dust').textContent=state.dust.toLocaleString('fr-FR');$('#buy').disabled=state.coins<PACK_PRICE;$('#collection-progress').textContent=Object.keys(state.owned).length+' / '+CARDS.length;
+function update(){save();$('#coins').textContent=state.coins.toLocaleString('fr-FR');$('#dust').textContent=state.dust.toLocaleString('fr-FR');$('#buy').disabled=state.coins<PACK_PRICE||boosterBusy;$('#collection-progress').textContent=Object.keys(state.owned).length+' / '+CARDS.length;
 $('#mobile-collection-progress').textContent=Object.keys(state.owned).length+' / '+CARDS.length+' obtenues';renderAchievements()}
 function grant(value){state.coins+=value;state.earned+=value;state.wins++;update();notify('+'+value+' Couronnes remportées !')}
 function navigate(page){closeSheets(false);$$('.page').forEach(el=>el.classList.toggle('active',el.id==='page-'+page));$$('nav [data-page]').forEach(el=>el.classList.toggle('active',el.dataset.page===page));if(page==='collection')renderCollection();if(page==='succes')renderAchievements();history.replaceState(null,'','#'+page);if(mobileView.matches)window.scrollTo(0,0)}
@@ -146,10 +147,143 @@ syncPreviewToggle();
 
 $$('[data-type]').forEach(b=>b.addEventListener('click',()=>{filterType=b.dataset.type;$$('[data-type]').forEach(x=>x.classList.toggle('active',x===b));renderCollection()}));
 $$('[data-rarity]').forEach(b=>b.addEventListener('click',()=>{filterRarity=b.dataset.rarity;$$('[data-rarity]').forEach(x=>x.classList.toggle('active',x===b));renderCollection()}));
-$('#buy').addEventListener('click',()=>{if(state.coins<PACK_PRICE)return;state.coins-=PACK_PRICE;state.opened++;let freshCount=0,shinyCount=0;const results=drawPack();const grid=$('#pulls');grid.replaceChildren();for(const item of results){const c=CARDS.find(x=>x.id===item.id);if(state.owned[c.id])state.dust+=5;else freshCount++;state.owned[c.id]=(state.owned[c.id]||0)+1;if(item.shiny){state.shiny[c.id]=true;shinyCount++}grid.append(makeCard(c,item.shiny))}$('#pack-title').textContent='Archive ouverte · '+state.opened;$('#pack-msg').textContent=freshCount+' nouvelle(s) carte(s), '+shinyCount+' Shiny, '+(5-freshCount)+' doublon(s). Clique sur une carte pour la consulter dans le Codex.';update();notify('Booster ouvert !')});
+
+/* Origines booster presentation. The purchase is committed and saved immediately.
+   Animations reveal only existing results; they never re-roll or charge twice. */
+const boosterArt=$('#booster-pack'),boosterOpening=$('#booster-opening');
+const boosterGrid=$('#pulls'),boosterProgress=$('#booster-progress'),boosterProgressFill=$('#booster-progress span');
+const boosterActions=$('#booster-actions'),boosterSummary=$('#booster-summary'),revealAllButton=$('#reveal-all');
+const reducedMotion=window.matchMedia('(prefers-reduced-motion: reduce)');
+const boosterTimers=new Set();
+let revealTiles=[],currentDraw=[],revealedCount=0,drawSummary=null;
+function afterBooster(ms,action){
+  const id=setTimeout(()=>{boosterTimers.delete(id);action()},ms);
+  boosterTimers.add(id);
+}
+function cancelBoosterTimers(){for(const id of boosterTimers)clearTimeout(id);boosterTimers.clear()}
+function clearBoosterScene(){
+  cancelBoosterTimers();
+  boosterBusy=false;
+  revealTiles=[];currentDraw=[];revealedCount=0;drawSummary=null;
+  boosterArt.classList.remove('is-opening');
+  boosterOpening.classList.remove('is-unsealing');
+  boosterGrid.classList.remove('booster-pulls');
+  boosterGrid.replaceChildren();
+  boosterProgress.hidden=true;
+  boosterProgressFill.style.width='0%';
+  boosterActions.hidden=true;
+  boosterSummary.hidden=true;
+  boosterSummary.replaceChildren();
+}
+function completeBoosterReveal(){
+  if(!boosterBusy)return;
+  cancelBoosterTimers();
+  boosterBusy=false;
+  boosterArt.classList.remove('is-opening');
+  boosterOpening.classList.remove('is-unsealing');
+  boosterActions.hidden=true;
+  boosterSummary.hidden=false;
+  boosterSummary.replaceChildren(
+    el('span','',drawSummary.newCount+' nouvelle(s)'),
+    el('span','',drawSummary.duplicates+' doublon(s) · +'+(drawSummary.duplicates*5)+' Éclats'),
+    el('span',drawSummary.shinyCount?'booster-star':'',drawSummary.shinyCount+' Shiny')
+  );
+  $('#pack-title').textContent='Archive ouverte · '+state.opened;
+  $('#pack-msg').textContent='Les cinq cartes ont été révélées. Touche une carte pour la retrouver dans le Codex.';
+  boosterProgressFill.style.width='100%';
+  update();
+}
+function revealBoosterCard(index){
+  const tile=revealTiles[index];
+  if(!tile||tile.classList.contains('is-revealed'))return;
+  tile.classList.add('is-revealed');
+  const back=tile.querySelector('.pull-back'),front=tile.querySelector('.pull-front');
+  back.disabled=true;
+  back.tabIndex=-1;
+  back.setAttribute('aria-hidden','true');
+  front.inert=false;
+  front.removeAttribute('aria-hidden');
+  revealedCount++;
+  boosterProgressFill.style.width=(revealedCount/5*100)+'%';
+  if(revealedCount===revealTiles.length)completeBoosterReveal();
+}
+function revealBoosterAll(){
+  cancelBoosterTimers();
+  for(let i=0;i<revealTiles.length;i++)revealBoosterCard(i);
+}
+function prepareBoosterCards(items){
+  revealTiles=[];revealedCount=0;
+  boosterGrid.replaceChildren();
+  boosterGrid.classList.add('booster-pulls');
+  for(let i=0;i<items.length;i++){
+    const item=items[i];
+    const tile=el('div','pull-flip');
+    tile.dataset.rarity=item.card.rarity;
+    tile.style.setProperty('--pull-edge',RARITIES[item.card.rarity].color);
+    tile.classList.toggle('is-shiny',item.shiny);
+    const frame=el('div','pull-frame');
+    const back=el('button','pull-back');
+    back.type='button';
+    back.setAttribute('aria-label','Révéler la carte '+(i+1)+' sur cinq');
+    back.append(el('span','back-glyph','✧'),el('span','back-caption','ARCHIVE I'));
+    back.addEventListener('click',()=>{revealBoosterCard(i);front.querySelector('button')?.focus({preventScroll:true})});
+    const front=el('div','pull-front');
+    front.inert=true;
+    front.setAttribute('aria-hidden','true');
+    front.append(makeCard(item.card,item.shiny));
+    frame.append(back,front);
+    const tag=el('div','pull-tag'+(item.shiny?' is-shiny':item.isNew?' is-new':' is-duplicate'),
+      item.shiny?'✦ Shiny':item.isNew?'✧ Nouvelle':'+5 Éclats');
+    tile.append(frame,tag);
+    boosterGrid.append(tile);
+    revealTiles.push(tile);
+  }
+}
+function openOriginesBooster(){
+  if(boosterBusy||state.coins<PACK_PRICE)return;
+  cancelBoosterTimers();
+  boosterBusy=true;
+  // Use the exact same draw and economic rules as before this visual update.
+  const results=drawPack();
+  state.coins-=PACK_PRICE;
+  state.opened++;
+  let newCount=0,duplicates=0,shinyCount=0;
+  currentDraw=results.map(item=>{
+    const card=CARDS[item.id-1];
+    const isNew=!state.owned[card.id];
+    if(isNew)newCount++;
+    else{duplicates++;state.dust+=5}
+    state.owned[card.id]=(state.owned[card.id]||0)+1;
+    if(item.shiny){state.shiny[card.id]=true;shinyCount++}
+    return {...item,card,isNew};
+  });
+  drawSummary={newCount,duplicates,shinyCount};
+  update(); // Persists the purchase before any animation or navigation.
+  prepareBoosterCards(currentDraw);
+  boosterSummary.hidden=true;
+  boosterSummary.replaceChildren();
+  boosterActions.hidden=false;
+  boosterProgress.hidden=false;
+  boosterProgressFill.style.width='0%';
+  boosterOpening.classList.add('is-unsealing');
+  boosterArt.classList.add('is-opening');
+  $('#pack-title').textContent='Le sceau des Origines s’éveille…';
+  $('#pack-msg').textContent='Cinq cartes mystérieuses attendent de révéler leurs secrets.';
+  if(reducedMotion.matches){revealBoosterAll();return}
+  afterBooster(550,()=>{
+    boosterArt.classList.remove('is-opening');
+    boosterOpening.classList.remove('is-unsealing');
+    if(mobileView.matches&&$('#page-boosters').classList.contains('active'))
+      boosterOpening.scrollIntoView({behavior:'smooth',block:'start'});
+    for(let i=0;i<currentDraw.length;i++)afterBooster(220+i*410,()=>revealBoosterCard(i));
+  });
+}
+$('#buy').addEventListener('click',openOriginesBooster);
+revealAllButton.addEventListener('click',revealBoosterAll);
+
 const success=[['Premiers pas','Terminer une épreuve',()=>state.wins>=1],['Explorateur','Terminer 10 épreuves',()=>state.wins>=10],['Archéologue','Terminer 50 épreuves',()=>state.wins>=50],['Curieux','Ouvrir son premier booster',()=>state.opened>=1],['Collectionneur','Découvrir 12 cartes',()=>Object.keys(state.owned).length>=12],['Archiviste','Découvrir les 24 cartes',()=>Object.keys(state.owned).length>=24],['Éclat rare','Trouver une carte Shiny',()=>Object.keys(state.shiny).length>=1],['Pactole','Gagner 1 000 Couronnes',()=>state.earned>=1000],['Chasseur de légendes','Obtenir une carte légendaire',()=>CARDS.some(c=>c.rarity==='legendary'&&state.owned[c.id])]];
 function renderAchievements(){const root=$('#achievements');root.replaceChildren();for(const [title,description,test] of success){const done=test();const box=el('article','achievement'+(done?'':' locked'));box.append(el('h3','',done?'✦ '+title:'◇ '+title),el('p','',description),el('small','muted',done?'Accompli':'À découvrir'));root.append(box)}}
-$('#reset').addEventListener('click',()=>{if(!confirm('Effacer définitivement les cartes et la progression sauvegardées sur cet appareil ?'))return;state=fresh();selectedCard=null;$('#inspector').replaceChildren(el('p','muted','Sélectionne une carte découverte pour l’admirer.'));$('#pulls').replaceChildren();$('#pack-title').textContent='Les archives attendent leur voyageur.';$('#pack-msg').textContent='Gagne des Couronnes en jouant pour ouvrir des boosters.';update();renderCollection();notify('Progression réinitialisée.')});
+$('#reset').addEventListener('click',()=>{if(!confirm('Effacer définitivement les cartes et la progression sauvegardées sur cet appareil ?'))return;clearBoosterScene();state=fresh();selectedCard=null;$('#inspector').replaceChildren(el('p','muted','Sélectionne une carte découverte pour l’admirer.'));$('#pulls').replaceChildren();$('#pack-title').textContent='Les archives attendent leur voyageur.';$('#pack-msg').textContent='Gagne des Couronnes en jouant pour ouvrir des boosters.';update();renderCollection();notify('Progression réinitialisée.')});
 syncMobileSheets();
 update();
 navigate(['jouer','boosters','collection','succes'].includes(location.hash.slice(1))?location.hash.slice(1):'jouer');

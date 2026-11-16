@@ -1,0 +1,115 @@
+/* Origines — booster ritual. Tiny motion, rich cards; no extra image downloads. */
+#page-boosters .shop{align-items:start}
+#page-boosters .pack-side{overflow:hidden}
+#page-boosters .pack{
+  position:relative;isolation:isolate;overflow:hidden;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:4px;flex-shrink:0;
+  background:
+    radial-gradient(ellipse at 49% 44%,#6e4eab22 0%,#10112dc2 75%),
+    linear-gradient(160deg,#16152bab,#29204488),
+    url('../assets/cards/derniere-etoile-thumb.webp') center/cover;
+  border:2px solid #e0bf82;outline:2px solid #63517a;
+  box-shadow:inset 0 0 0 5px #17142bcc,inset 0 0 0 7px #cda67673,0 14px 26px #08091c9c,0 0 25px #ad89cf27;
+  border-radius:4px;
+}
+#page-boosters .pack::before{
+  content:"";position:absolute;inset:10px 8px 12px;z-index:-1;
+  border:1px solid #efd6a677;background:linear-gradient(160deg,#15143070,#1c1530bc);
+  box-shadow:inset 0 0 30px #0a0e2ed1;pointer-events:none;
+}
+#page-boosters .pack::after{
+  content:"";position:absolute;top:0;left:0;right:0;height:11px;
+  background:repeating-linear-gradient(90deg,#d7ad79 0 3px,#473459 3px 11px,#e6c898 11px 13px);
+  border-bottom:1px solid #f4d0a7;opacity:.85;pointer-events:none;
+}
+#page-boosters .pack .pack-foil{
+  position:absolute;inset:19px 14px 20px;border:1px solid #deb88761;
+  clip-path:polygon(0 0,100% 0,100% 100%,0 100%);
+  pointer-events:none;
+}
+#page-boosters .pack .pack-foil::before,#page-boosters .pack .pack-foil::after{
+  content:"✧";position:absolute;font:20px Georgia,serif;color:#f3d6a2;opacity:.88;
+}
+#page-boosters .pack .pack-foil::before{top:0;left:0}
+#page-boosters .pack .pack-foil::after{bottom:0;right:0}
+#page-boosters .pack span{font-size:clamp(49px,5vw,70px);line-height:1.1;z-index:1;color:#f1cf97;text-shadow:0 0 9px #f1b678,0 0 28px #bda2ff}
+#page-boosters .pack strong,#page-boosters .pack small{z-index:1;color:#fff0da;text-shadow:0 1px 8px #030818;letter-spacing:.12em}
+#page-boosters .pack small{color:#d9b6ef}
+#page-boosters #buy{touch-action:manipulation}
+#page-boosters .opening{min-height:265px}
+#page-boosters .opening h2{margin:0 0 7px;font-variant:small-caps}
+#page-boosters #pack-msg{min-height:30px;line-height:1.45}
+#page-boosters .booster-progress{height:2px;width:100%;margin:17px 0 13px;background:#5a4766;overflow:hidden;border-radius:4px}
+#page-boosters .booster-progress>span{display:block;width:0;height:100%;background:linear-gradient(90deg,#8c70bd,#ecc18c);transition:width .24s ease-out}
+#page-boosters .booster-actions{display:flex;gap:8px;justify-content:flex-end;margin-bottom:12px}
+#page-boosters .booster-actions button{min-height:42px;border:1px solid #977ab6;background:#302641;color:#eddfec;padding:9px 13px;border-radius:3px;font:13px Georgia,serif}
+#page-boosters .booster-actions button:hover{background:#49365e}
+#page-boosters .booster-summary{padding:10px 12px;margin-top:14px;display:flex;gap:9px;flex-wrap:wrap;align-items:center;justify-content:center;
+ border:1px solid #816e8180;background:#222139cc;color:#e9d9e8;font:12px Georgia,serif;border-radius:3px}
+#page-boosters .booster-summary span{padding:5px 8px;border:1px solid #ffffff25;border-radius:12px}
+#page-boosters .booster-summary .booster-star{color:#edca87}
+#page-boosters .opening.is-unsealing{border-color:#bfa076}
+#page-boosters .pack.is-opening{animation:aetherium-unseal .56s ease-out both}
+@keyframes aetherium-unseal{
+  0%{transform:translateY(0) rotate(0);filter:brightness(1)}
+  27%{transform:translateY(-4px) rotate(-2deg);filter:brightness(1.12)}
+  58%{transform:translateY(-6px) rotate(2deg);filter:brightness(1.35)}
+  100%{transform:translateY(0) rotate(0);filter:brightness(1)}
+}
+#page-boosters .pack.is-opening span{animation:aetherium-sigil .56s ease-in-out both}
+@keyframes aetherium-sigil{50%{text-shadow:0 0 15px #fff0cb,0 0 35px #f1c785,0 0 55px #be7deb}}
+/* Flipping each result: the card art itself remains the centerpiece. */
+#page-boosters .opening .cards.booster-pulls{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:11px}
+#page-boosters .pull-flip{min-width:0;position:relative;perspective:700px;--pull-edge:#a7a2b5}
+#page-boosters .pull-frame{position:relative;width:100%;aspect-ratio:112/168;transform-style:preserve-3d}
+#page-boosters .pull-back,#page-boosters .pull-front{
+ position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;
+ transition:transform .46s cubic-bezier(.25,.75,.35,1),opacity .46s ease;
+}
+#page-boosters .pull-back{z-index:2;width:100%;height:100%;padding:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;
+ border:2px solid #ba9671;border-radius:3px;background:
+  radial-gradient(ellipse at 50% 48%,#7c64b55c,#28233f8c 53%,#19172d 85%),
+  repeating-linear-gradient(135deg,#272240 0 6px,#342546 6px 9px);
+ box-shadow:inset 0 0 0 5px #17172b,inset 0 0 0 6px #b9a07d90,0 7px 13px #080a2088;
+ cursor:pointer;touch-action:manipulation;
+}
+#page-boosters .pull-back .back-glyph{font-size:clamp(34px,4vw,61px);line-height:1;color:#dfc49a;text-shadow:0 0 17px #ab7bdf93}
+#page-boosters .pull-back .back-caption{font:10px Georgia,serif;letter-spacing:.13em;color:#cec0df}
+#page-boosters .pull-front{display:flex;flex-direction:column;transform:rotateY(-180deg);pointer-events:none;opacity:0}
+#page-boosters .pull-front .card{flex:1;display:flex;flex-direction:column;height:100%;width:100%;padding:4px;min-width:0}
+#page-boosters .pull-front .card img{aspect-ratio:112/136;width:100%;min-height:0;flex:1;object-fit:cover}
+#page-boosters .pull-front .card .info{flex:0 0 auto}
+#page-boosters .pull-front .card .name{line-height:1.12}
+#page-boosters .pull-flip.is-revealed .pull-back{transform:rotateY(180deg);opacity:0;pointer-events:none}
+#page-boosters .pull-flip.is-revealed .pull-front{transform:rotateY(0);opacity:1;pointer-events:auto}
+#page-boosters .pull-flip.is-revealed[data-rarity="epic"] .pull-front .card{box-shadow:0 0 11px #a57acf9a}
+#page-boosters .pull-flip.is-revealed[data-rarity="legendary"] .pull-front .card{box-shadow:0 0 18px #e8b774bb,0 0 4px #ffe9bd}
+#page-boosters .pull-flip.is-revealed.is-shiny .pull-front .card{box-shadow:0 0 15px #e1acffcf}
+#page-boosters .pull-tag{display:block;min-height:19px;margin-top:5px;text-align:center;color:#cdbfd4;font:11px Georgia,serif}
+#page-boosters .pull-tag.is-new{color:#a3e5c5}
+#page-boosters .pull-tag.is-shiny{color:#ecd5ff}
+#page-boosters .pull-tag.is-duplicate{color:#dcc19b}
+#page-boosters .pull-flip:not(.is-revealed) .pull-tag{opacity:0}
+#page-boosters .pull-back:focus-visible{outline:3px solid #efd0a6;outline-offset:3px}
+@media(max-width:850px){
+ #page-boosters .pack-side .pack{height:134px;width:98px;grid-row:1/5;grid-column:1}
+ #page-boosters .pack-side .pack span{font-size:44px}
+ #page-boosters .opening{min-height:160px}
+ #page-boosters .opening .cards.booster-pulls{grid-template-columns:repeat(3,minmax(0,1fr));gap:11px}
+ #page-boosters .pull-frame{aspect-ratio:112/168}
+ #page-boosters .pull-back .back-caption{font-size:10px}
+ #page-boosters .booster-actions{justify-content:center}
+ #page-boosters .booster-actions button{min-height:46px;flex:1}
+ #page-boosters .booster-summary{font-size:11px;gap:6px}
+}
+@media(max-width:420px){
+ #page-boosters .opening .cards.booster-pulls{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+ #page-boosters .pack-side .pack{height:119px;width:84px}
+ #page-boosters .pack-side .pack span{font-size:37px}
+ #page-boosters .pull-back .back-glyph{font-size:50px}
+}
+@media(prefers-reduced-motion:reduce){
+ #page-boosters .pack.is-opening,#page-boosters .pack.is-opening span{animation:none!important}
+ #page-boosters .pull-back,#page-boosters .pull-front{transition:none!important}
+ #page-boosters .booster-progress>span{transition:none!important}
+}

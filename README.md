@@ -36,10 +36,16 @@ Le workflow `.github/workflows/pages.yml` valide les modules JavaScript et publi
 - **Collection** : grille à deux cartes sur téléphone (trois sur tablette compacte), recherche, filtres dans un tiroir et galerie d'aperçus facultative.
 - **Inspection** : fiche de carte plein écran, fermable avec le bouton ✕, le voile ou la touche Échap ; retour à la grille sans perdre sa position.
 - **Mini-jeux** : sélecteur horizontal et une épreuve visible à la fois ; toutes les parties en cours restent en mémoire de session.
-- **Boosters** : présentation compacte et résultats adaptés à l'écran.
+- **Boosters** : paquet illustré Origines, sceau animé, cinq cartes révélées progressivement, bouton « Tout révéler », et bilan nouvelles cartes / doublons / Shiny.
 - **Accessibilité** : cibles tactiles confortables, gestion du focus et prise en charge des préférences de réduction des animations.
 
 La mise en page desktop et **la clé de sauvegarde `aetherium-save-v1`** ne changent pas. Les sauvegardes existantes restent compatibles.
+
+## Ouverture des boosters (version 0.5)
+
+Le paquet Origines possède un habillage spécifique inspiré du Codex, sans interface supplémentaire encombrante. Un clic sur **Desceller** débite une seule fois les 100 Couronnes et sauvegarde **immédiatement** le tirage, puis lance une courte animation de rupture du sceau et de retournement progressif des cinq cartes. Chaque carte est consultable dans le Codex ; l'effet de brillance reste discret, avec des reflets supplémentaires sur les Épiques, Légendaires et Shiny. Le bouton **Tout révéler** permet d'ignorer la présentation. En mode réduction des animations du système, les cartes sont révélées directement.
+
+Les **probabilités, garanties, Éclats de doublons et sauvegardes** restent identiques aux versions précédentes ; seule la présentation change.
 
 ## Fonctionnalités de la première version
 
