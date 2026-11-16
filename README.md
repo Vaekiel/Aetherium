@@ -51,6 +51,14 @@ La quatrième épreuve se déroule dans un **site de fouilles arcanique** aux te
 
 **Règles et économie inchangées :** ouvrir dix cases sûres en évitant cinq pièges dissimulés, puis gagner **65 Couronnes**. Le mini-jeu n'ajoute pas de dépense, ne modifie pas les cartes, les boosters ou les sauvegardes existantes.
 
+## Laboratoire arcanique en pixel art HD (version 1.0)
+
+Cinquième épreuve et dernière étape de la refonte graphique : **atelier d'alchimie fantasy** avec six ingrédients illustrés individuellement (Mousse, Soleil, Cristal, Lune, Fleur, Givre) et un **chaudron d'Archives** disposant de trois états pixel art HD : au repos, brassage réussi en cyan et mélange instable en violet/rouge. Les neuf visuels sont issus d'un seul atlas WebP optimisé pour téléphone. Un panneau de grimoire donne la recette en cours, deux emplacements affichent les ingrédients sélectionnés, et une jauge suit les trois potions réussies.
+
+**Règles :** le joueur prépare trois recettes parmi les cinq recettes d'origine, à l'aide de deux ingrédients, sans dépasser trois mélanges incorrects. Il touche les ingrédients puis confirme avec **✦ Mélanger** ; une courte animation du chaudron affiche le résultat et l'épreuve suivante. En cas d'erreur, la recette reste disponible pour être retentée. La victoire rapporte toujours **60 Couronnes**, comme auparavant. La remise à zéro interrompt proprement les animations précédentes et le système respecte les préférences de réduction des animations.
+
+**Les cinq mini-jeux d'Origines disposent désormais d'une direction artistique HD cohérente**. Le prix des boosters, les probabilités, les cartes et la clé de sauvegarde ne sont pas modifiés.
+
 ## Expérience mobile (version 0.4)
 
 - **Navigation principale au pouce** : quatre onglets permanents en bas de l'écran, avec gestion des zones de sécurité iOS/Android.

@@ -39,6 +39,9 @@ jobs:
           test -s src/memory.css
           test -s src/lock.css
           test -s src/mines.css
+          test -s src/alchemy.css
+          test -s assets/minigames/alchemy-atlas.webp
+          test -s tests/alchemy-smoke.mjs
           test -s assets/minigames/excavation-atlas.webp
           test -s tests/mines-smoke.mjs
           test -s assets/minigames/ether-lock-atlas.webp
@@ -55,6 +58,7 @@ jobs:
           grep -q 'src/runes.css' index.html
           grep -q 'src/lock.css' index.html
           grep -q 'src/mines.css' index.html
+          grep -q 'src/alchemy.css' index.html
           test -s assets/cards/veilleuse-de-nacre.webp
           test -s assets/cards/veilleuse-de-nacre-thumb.webp
           test -s assets/cards/sylve-eclaireuse.webp
@@ -110,6 +114,7 @@ jobs:
           node tests/memory-smoke.mjs
           node tests/lock-smoke.mjs
           node tests/mines-smoke.mjs
+          node tests/alchemy-smoke.mjs
           node --check --input-type=module < src/data.js
           node --check --input-type=module < src/art.js
           node --check --input-type=module < src/card-art.js

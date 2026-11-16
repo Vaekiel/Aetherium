@@ -571,7 +571,165 @@ function startMines(){
 
 const ingredients=[['☘','Mousse'],['☀','Soleil'],['◈','Cristal'],['☾','Lune'],['✿','Fleur'],['❄','Givre']];
 const recipes=[['Élixir de Vie',[0,4]],['Sérum solaire',[1,2]],['Souffle lunaire',[3,5]],['Sève d’Aurore',[0,1]],['Nectar cristallin',[2,4]]];
-function startAlchemy(){const g=mini[4];g.ended=false;let round=0,errors=0;function next(){if(g.ended)return;const [name,required]=recipes[Math.floor(Math.random()*recipes.length)];let selected=[];g.status.textContent='Potion '+(round+1)+'/3 · '+name+' : '+required.map(i=>ingredients[i][1]).join(' + ')+' · erreurs '+errors+'/3';tileGrid(g.board,ingredients.map(([icon,name])=>icon+' '+name),3,(_,i,b)=>{if(g.ended)return;const index=selected.indexOf(i);if(index>=0){selected.splice(index,1);b.classList.remove('selected')}else if(selected.length<2){selected.push(i);b.classList.add('selected')}if(selected.length===2){if(selected.every(x=>required.includes(x))){round++;if(round===3)complete(4,'Alchimie maîtrisée !');else next()}else{errors++;if(errors===3){g.ended=true;g.status.textContent='Mélange instable. Recommence.'}else next()}}})}g.actions.replaceChildren(button('Recommencer',startAlchemy));next()}
+/* Laboratoire arcanique: three recipes, two ingredients each, three mistakes maximum.
+   HD sprites are presentation only; the five original recipes and reward are retained. */
+let alchemySession=0;
+let alchemyTimer=null;
+function startAlchemy(){
+  const g=mini[4];
+  const session=++alchemySession;
+  if(alchemyTimer!==null){clearTimeout(alchemyTimer);alchemyTimer=null}
+  g.ended=false;
+  g.card.classList.add('alchemy-trial');
+  g.board.classList.add('alchemy-board');
+  g.status.classList.add('alchemy-status');
+  g.status.classList.remove('is-complete','is-failed');
+  const reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const selectedRecipes=shuffle([...recipes]).slice(0,3);
+  let round=0,errors=0,selected=[],busy=false;
+
+  let hud=g.card.querySelector('.alchemy-hud');
+  if(!hud){
+    hud=el('div','alchemy-hud');
+    const cauldron=el('div','alchemy-cauldron');
+    cauldron.setAttribute('aria-hidden','true');
+    const panel=el('div','alchemy-recipe');
+    panel.append(
+      el('span','alchemy-kicker','GRIMOIRE DES ARCHIVES'),
+      el('strong','alchemy-name'),
+      el('span','alchemy-requirement'),
+      el('div','alchemy-counters'),
+      el('div','alchemy-slots')
+    );
+    const counters=$('.alchemy-counters',panel);
+    counters.append(el('span','alchemy-round'),el('span','alchemy-errors'));
+    const slots=$('.alchemy-slots',panel);
+    slots.setAttribute('aria-label','Deux ingrédients sélectionnés');
+    for(let i=0;i<2;i++)slots.append(el('span','alchemy-slot','◇'));
+    hud.append(cauldron,panel);
+    const meter=el('div','alchemy-meter');
+    meter.setAttribute('aria-hidden','true');
+    for(let i=0;i<3;i++)meter.append(el('span'));
+    g.board.before(hud,meter);
+  }
+  const cauldron=$('.alchemy-cauldron',hud);
+  const meter=g.card.querySelector('.alchemy-meter');
+  const slots=$$('.alchemy-slot',hud);
+  const ingredientNames=ingredients.map(item=>item[1]);
+  const symbols=['Mousse','Soleil','Cristal','Lune','Fleur','Givre'];
+  const ingredientButtons=[];
+  let mixButton;
+
+  const updateHud=()=>{
+    const [name,required]=selectedRecipes[Math.min(round,2)];
+    $('.alchemy-name',hud).textContent=name;
+    $('.alchemy-requirement',hud).textContent='Ingrédients : '+required.map(i=>ingredientNames[i]).join(' + ');
+    $('.alchemy-round',hud).textContent='Potion '+Math.min(round+1,3)+' / 3';
+    $('.alchemy-errors',hud).textContent='Erreurs '+errors+' / 3';
+    [...meter.children].forEach((node,i)=>node.classList.toggle('filled',i<round));
+    slots.forEach((slot,i)=>{
+      const filled=i<selected.length;
+      slot.classList.toggle('filled',filled);
+      slot.textContent=filled?ingredientNames[selected[i]]:'◇';
+    });
+    ingredientButtons.forEach((button,index)=>{
+      const active=selected.includes(index);
+      button.classList.toggle('selected',active);
+      button.setAttribute('aria-pressed',String(active));
+    });
+    if(mixButton)mixButton.disabled=g.ended||busy||selected.length!==2;
+  };
+
+  g.board.replaceChildren();
+  g.board.setAttribute('role','group');
+  g.board.setAttribute('aria-label','Six ingrédients magiques : choisis deux ingrédients pour chaque potion');
+  g.board.style.setProperty('--cols',3);
+  for(let i=0;i<ingredients.length;i++){
+    const tile=el('button','tile alchemy-ingredient');
+    tile.type='button';
+    tile.setAttribute('aria-label','Sélectionner '+ingredientNames[i]);
+    tile.setAttribute('aria-pressed','false');
+    tile.style.setProperty('--alchemy-x',((i%3)/2*100)+'%');
+    tile.style.setProperty('--alchemy-y',(Math.floor(i/3)/2*100)+'%');
+    const artwork=el('span','alchemy-art');
+    artwork.setAttribute('aria-hidden','true');
+    tile.append(artwork,el('span','alchemy-ingredient-name',symbols[i]));
+    tile.addEventListener('click',()=>{
+      if(g.ended||busy)return;
+      const prior=selected.indexOf(i);
+      if(prior!==-1)selected.splice(prior,1);
+      else if(selected.length<2)selected.push(i);
+      else{
+        g.status.textContent='Deux ingrédients maximum : retire une sélection pour la remplacer.';
+        return;
+      }
+      updateHud();
+      g.status.textContent=selected.length===2
+        ?'Les ingrédients sont prêts : mélange-les dans le chaudron.'
+        :'Sélectionne deux ingrédients pour préparer la potion.';
+    });
+    ingredientButtons.push(tile);
+    g.board.append(tile);
+  }
+  const showRecipe=()=>{
+    if(g.ended)return;
+    selected=[];busy=false;
+    cauldron.classList.remove('is-success','is-error','is-brewing');
+    g.status.classList.remove('is-complete','is-failed');
+    updateHud();
+    g.status.textContent='Reproduis la recette du grimoire, puis mélange les deux ingrédients.';
+  };
+  const mix=()=>{
+    if(g.ended||busy||selected.length!==2)return;
+    busy=true;
+    updateHud();
+    cauldron.classList.remove('is-success','is-error');
+    cauldron.classList.add('is-brewing');
+    g.status.textContent='Le mélange entre en résonance…';
+    const choice=[...selected];
+    const [name,required]=selectedRecipes[round];
+    alchemyTimer=setTimeout(()=>{
+      alchemyTimer=null;
+      if(session!==alchemySession||g.ended)return;
+      cauldron.classList.remove('is-brewing');
+      const success=choice.every(i=>required.includes(i));
+      if(success){
+        round++;
+        cauldron.classList.add('is-success');
+        updateHud();
+        if(round===3){
+          g.status.classList.add('is-complete');
+          ingredientButtons.forEach(button=>button.disabled=true);
+          complete(4,'Alchimie maîtrisée ! Trois potions créées dans les Archives.');
+          if(mixButton)mixButton.disabled=true;
+          return;
+        }
+        g.status.textContent='✓ '+name+' réussie ! Préparation de la potion suivante…';
+      }else{
+        errors++;
+        cauldron.classList.add('is-error');
+        updateHud();
+        if(errors===3){
+          g.ended=true;
+          g.status.classList.add('is-failed');
+          ingredientButtons.forEach(button=>button.disabled=true);
+          g.status.textContent='Mélange instable : le laboratoire est scellé. Recommence une nouvelle session.';
+          if(mixButton)mixButton.disabled=true;
+          return;
+        }
+        g.status.textContent='Mélange instable : il reste '+(3-errors)+' erreur'+(3-errors>1?'s':'')+' possible'+(3-errors>1?'s':'')+'.';
+      }
+      alchemyTimer=setTimeout(()=>{
+        alchemyTimer=null;
+        if(session===alchemySession)showRecipe();
+      },reduced?170:850);
+    },reduced?30:570);
+  };
+  mixButton=button('✦ Mélanger',mix,'primary');
+  g.actions.replaceChildren(mixButton,button('Nouvelle session',startAlchemy));
+  showRecipe();
+}
+
 [startRunes,startMemory,startLock,startMines,startAlchemy].forEach(fn=>fn());
 const picker=$('#game-picker');
 let selectedGame=0;
