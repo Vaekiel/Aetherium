@@ -10,7 +10,7 @@ assert.ok(css.includes('prefers-reduced-motion'),'Reduced motion supported');
 assert.ok(css.includes('.memory-tile:disabled{opacity:1'),'Matched tiles remain legible');
 assert.ok(statSync('assets/minigames/runes-origines-compact.webp').size>100_000,'Runes art exists');
 assert.ok(main.includes('reward:45'),'Original 45-Crown reward preserved');
-assert.ok(main.includes("Retrouve les huit paires runiques."),'Description matches new rules');
+assert.ok(main.includes("retrouve les huit paires runiques."),'Description matches new rules');
 const start=main.indexOf('const memoryRunes='),end=main.indexOf('function startLock()',start);
 assert.ok(start>=0&&end>start,'Memory logic present');
 const logic=main.slice(start,end);
