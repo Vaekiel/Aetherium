@@ -32,7 +32,7 @@ assert.ok(main.includes('item.shiny?950:420'),'Reveals remain player-controlled 
 assert.ok(main.includes('drawSummary.shinyCount+\' Chromatique(s)\''),'Booster recap announces Chromatiques');
 assert.ok(html.includes('data-finish="chromatic"')&&html.includes('data-finish="normal"'),'Variant filter options exist');
 assert.ok(html.includes('Chromatique : 3 % par carte'),'Booster odds are visible to players');
-assert.ok(html.includes('src/chromatic.css?v=chromatiques-2'),'Enhanced foil CSS is cache-busted');
+assert.ok(html.includes('src/chromatic.css?v=chromatiques-3'),'Enhanced foil CSS is cache-busted');
 assert.ok(html.includes('src/main.js?v=chromatiques-2'),'Chromatic Codex JS is cache-busted');
 assert.ok(css.includes('.card.is-chromatic')&&css.includes('var(--chrom-edge)'),'Static foil border is present');
 assert.ok(css.includes('.inspector-art-shell.is-chromatic'),'Full inspector displays prismatic art frame');
@@ -51,6 +51,12 @@ assert.ok(css.includes('.card.is-chromatic .chromatic-art-window:after'),'Prisma
 assert.ok(css.includes('.chromatic-showcase-card.is-chromatic .chromatic-showcase-art'),'Preview has a strong Chromatic frame');
 assert.ok(css.includes('border-width:3px!important'),'Chromatic thumbnails are distinct even when still');
 assert.ok(css.includes('@media(max-width:850px)'),'Comparison stays responsive on phones');
+assert.ok(css.includes('@keyframes chromatic-rim-orbit'),'Chromatique has a visibly rotating border');
+assert.ok(css.includes('animation:chromatic-rim-orbit 5.5s linear infinite'),'Prismatic frame movement is continuous');
+assert.ok(css.includes('.chromatic-art-window::before'),'Chromatic collection and booster frames have an animated rim');
+assert.ok(css.includes('.inspector-art-shell.is-chromatic::before'),'Full-size inspector has an animated rim');
+assert.ok(css.includes('.chromatic-showcase-art::before'),'Comparison example has an animated rim');
+assert.ok(css.includes('animation:none!important;'),'Reduced-motion keeps a static chromatic border');
 assert.ok(css.includes('chromatic-pulse'),'Reveal halo is present');
 assert.ok(css.includes('@media(prefers-reduced-motion:reduce)'),'Reduced motion is supported');
 assert.ok(art.includes("img.style.filter='none'"),'All 24 final artworks are not hue-rotated by the effect');
