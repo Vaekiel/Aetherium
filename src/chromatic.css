@@ -397,3 +397,54 @@
     transform:rotate(20deg);
   }
 }
+
+
+/* v1.4.3 — booster reveal: make the Chromatique unmistakable while face-up.
+   A brighter, thicker moving rim and a gentle breathing halo appear ONLY
+   for an actually revealed Chromatique; never on the face-down pack. */
+#page-boosters .booster-single .pull-front .card.is-chromatic .chromatic-art-window{
+  flex:1 1 auto;
+  min-height:0;
+  aspect-ratio:auto;
+  padding:7px;
+  border:2px solid #f1fff8;
+  box-shadow:inset 0 0 0 1px #e9b5ff,0 0 14px #8edffdba;
+}
+#page-boosters .booster-single .pull-front .card.is-chromatic .chromatic-art-window::before{
+  inset:-90%;
+  background:conic-gradient(
+    from 0deg,
+    #fffbe4 0deg 13deg,
+    #67f6fb 39deg,
+    #786af1 86deg,
+    #f6a4ef 129deg,
+    #83d9ff 178deg,
+    #fff0b0 221deg,
+    #9a83ff 265deg,
+    #80fff0 317deg,
+    #fffbe4 360deg
+  );
+  animation:chromatic-rim-orbit 2.6s linear infinite;
+}
+#page-boosters .booster-single .pull-flip.is-chromatic.is-revealed .pull-front .card.is-chromatic{
+  animation:chromatic-booster-halo 2.6s ease-in-out infinite;
+}
+@keyframes chromatic-booster-halo{
+  0%,100%{
+    filter:drop-shadow(0 0 4px #65dff1a8)
+           drop-shadow(0 0 7px #b594f080);
+  }
+  50%{
+    filter:drop-shadow(0 0 10px #8afff3d4)
+           drop-shadow(0 0 16px #c795f7b5);
+  }
+}
+@media(prefers-reduced-motion:reduce){
+  #page-boosters .booster-single .pull-front .card.is-chromatic .chromatic-art-window::before,
+  #page-boosters .booster-single .pull-flip.is-chromatic.is-revealed .pull-front .card.is-chromatic{
+    animation:none!important;
+  }
+  #page-boosters .booster-single .pull-flip.is-chromatic.is-revealed .pull-front .card.is-chromatic{
+    filter:drop-shadow(0 0 6px #8fdcef9e);
+  }
+}
