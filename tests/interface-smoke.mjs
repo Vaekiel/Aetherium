@@ -54,7 +54,7 @@ assert.ok(fixV2.includes('(hover: hover) and (pointer: fine)'), 'Narrow desktop 
 assert.ok(fixV2.includes('#app > .ambient-landscape'), 'Targets the actual illustrated backdrop element');
 assert.ok(fixV2.includes('display: none !important'), 'Hides the entire illustrated layer');
 assert.ok(fixV2.includes('linear-gradient(180deg'), 'The app has a dark quiet replacement');
-assert.ok(html.includes('shell.css?v=emblemes-origines-1'), 'Updated stylesheet URL forces the five emblem icons to refresh');
+assert.ok(html.includes('shell.css?v=bandeau-sans-ligne-1'), 'Fresh style URL picks up hero overlay removal');
 
 const selectorBegin=css.indexOf('/* The trial picker');
 const selectorEnd=css.indexOf('#page-jouer .game-picker .game-choice:hover',selectorBegin);
@@ -69,4 +69,11 @@ for(const oldAtlas of ['runes-origines-compact.webp','ether-lock-atlas.webp','ex
 assert.ok(css.includes('aspect-ratio:1/1'),'All logos are square, with no stretch');
 assert.ok(css.includes('top:50%;bottom:auto;left:6px;width:48px'),'Phone logo alignment is retained');
 assert.ok(statSync('assets/minigames/minigame-emblems.webp').size>30000,'New five-emblem atlas shipped');
+// The user-visible horizontal line came from a pseudo-element crossing the hero.
+const heroRules=css.slice(css.indexOf('/* Home: cinematic'),css.indexOf('/* The trial picker'));
+assert.ok(heroRules.includes('#page-jouer .intro::before,')&&heroRules.includes('#page-jouer .intro::after{'),'Hero overlays are explicitly targeted');
+assert.ok(heroRules.includes('content:none!important')&&heroRules.includes('display:none!important'),'Hero decorative line and diamond cannot render');
+assert.ok(!heroRules.includes('inset:9px;border:1px solid #dbb28a48'),'Old horizontal line border removed');
+assert.ok(heroRules.includes("pluie-astrale-thumb.webp"),'Illustrated hero art remains present');
+assert.ok(heroRules.includes('border:1px solid #b59179ae'),'Hero exterior frame remains');
 console.log('AETHERIUM interface : fond illustré PC supprimé, mobile préservé');

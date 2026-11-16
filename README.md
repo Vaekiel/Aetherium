@@ -29,6 +29,10 @@ Ouvrir ensuite `http://localhost:8000`.
 
 Le workflow `.github/workflows/pages.yml` valide les modules JavaScript et publie automatiquement la racine du dépôt sur GitHub Pages à chaque push sur `main`.
 
+## Bandeau d'accueil : suppression de la ligne traversante (version 1.1.4)
+
+La ligne horizontale qui apparaissait au milieu du titre **« Les ruines s'éveillent »** et se prolongeait dans l'illustration est supprimée à la source : les pseudo-éléments décoratifs `::before` et `::after` du bandeau n'affichent plus de motif ni de bordure. **Le vrai cadre extérieur, le texte, le dégradé et l'illustration de Pluie Astrale sont conservés.** Une nouvelle version de l'URL de `shell.css` permet d'éviter les feuilles de style mises en cache. Le fond PC corrigé, les cinq logos et le gameplay ne changent pas.
+
 ## Emblèmes homogènes des cinq épreuves (version 1.1.3)
 
 Le sélecteur de mini-jeux utilise cinq emblèmes **pixel art HD** inédits, produits en une seule série cohérente : même cadre en pierre ancienne, pierres moussues, ornements dorés, gemmes cyan et volumes identiques. Seul le symbole central change : rose runique (Chemin runique), tablettes jumelles (Mémoire ancienne), serrure circulaire (Serrure d'Éther), cristal de fouilles (Fouilles interdites) et chaudron arcanique (Laboratoire arcanique). Les cinq emblèmes sont réunis dans l'atlas compact `assets/minigames/minigame-emblems.webp`, utilisé sur PC et mobile. Les vignettes n'utilisent plus d'images hétérogènes découpées dans quatre planches différentes. Les mini-jeux, leur déroulement et les règles demeurent inchangés.

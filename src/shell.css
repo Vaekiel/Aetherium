@@ -125,11 +125,16 @@ body{background:#10132a;color:#f7e9e8}
   linear-gradient(120deg,#171a32,#34284b);
  box-shadow:0 9px 33px #060a1f94,inset 0 0 0 5px #12152655;
 }
-#page-jouer .intro::before{
- content:"✦";position:absolute;z-index:-1;right:27%;top:18%;color:#ffdba469;
- font:70px Georgia,serif;text-shadow:0 0 20px #d2a0ffb6;
+/* The hero image must not be crossed by decorative overlays. */
+#page-jouer .intro::before,
+#page-jouer .intro::after{
+ content:none!important;
+ display:none!important;
+ border:0!important;
+ background:none!important;
+ box-shadow:none!important;
 }
-#page-jouer .intro::after{content:"";position:absolute;inset:9px;border:1px solid #dbb28a48;pointer-events:none;display:block}
+
 #page-jouer .intro>div:first-child{position:relative;z-index:1;max-width:620px}
 #page-jouer .intro h1{color:#fff0d9;font-size:clamp(32px,3.6vw,48px);font-variant:small-caps;line-height:1.08;letter-spacing:.013em;margin:6px 0 10px}
 #page-jouer .intro p:not(.kicker){font:15px/1.6 Georgia,serif;max-width:565px;color:#d5c6d5;margin:0}
@@ -335,8 +340,7 @@ body{background:#10132a;color:#f7e9e8}
  }
  #page-jouer .intro h1{font-size:clamp(25px,6.6vw,34px)}
  #page-jouer .intro p:not(.kicker){font:12px/1.5 Georgia,serif;max-width:300px}
- #page-jouer .intro::before{display:none}
- #page-jouer .intro::after{inset:6px}
+
  #page-jouer .heading{border-bottom:0;margin:0 0 10px;padding:0}
  #page-jouer .heading h2{font-size:22px}
  #page-jouer .heading span{font-size:11px}
