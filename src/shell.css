@@ -398,3 +398,28 @@ body{background:#10132a;color:#f7e9e8}
 #type-filters [data-type='Créature']::before{content:'♞';color:#d6b8ef}
 #type-filters [data-type='Sort']::before{content:'✦';color:#c9a3ed}
 #type-filters [data-type='Artefact']::before{content:'◈';color:#84ddec}
+
+/* Desktop background v1.1.1 — intentionally restrained.
+   Decorative vertical murals were being stretched to the entire page height.
+   Keep illustrated cards, banners and panels, but make the page background quiet.
+   Mobile rules are unchanged: this override only applies from 851px upwards. */
+@media (min-width: 851px) {
+  #app {
+    background: #0e1222;
+  }
+  #app .ambient-landscape {
+    background:
+      radial-gradient(ellipse 42% 24% at 50% 0%, rgba(93, 71, 120, .13), transparent 100%),
+      radial-gradient(ellipse 34% 28% at 98% 26%, rgba(38, 62, 99, .065), transparent 100%),
+      linear-gradient(180deg, #14162b 0%, #111629 35%, #0e1425 72%, #0b1020 100%);
+    background-attachment: scroll;
+  }
+  #app .ambient-landscape::before,
+  #app .ambient-landscape::after,
+  #app::before,
+  #app::after {
+    content: none !important;
+    display: none !important;
+    background: none !important;
+  }
+}

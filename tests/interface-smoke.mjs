@@ -38,4 +38,14 @@ assert.ok(css.includes('prefers-reduced-motion'),'Accessibilité des animations 
 for(const image of ['assets/scenery/dusk-right.webp','assets/scenery/dusk-horizon.webp']){
  assert.ok(statSync(image).size>1000,`Décor approuvé intégré : ${image}`);
 }
-console.log('AETHERIUM interface DA crépuscule : tests de structure OK');
+// Desktop-only background regression: no stretched edge murals.
+const desktopFix=css.slice(css.indexOf('/* Desktop background v1.1.1'));
+assert.ok(desktopFix.includes('@media (min-width: 851px)'), 'Background adjustment restricted to desktop widths');
+assert.ok(desktopFix.includes('#app .ambient-landscape'), 'Desktop backdrop is explicitly styled');
+assert.ok(desktopFix.includes('linear-gradient(180deg'), 'Desktop uses dark gradient rather than stretched imagery');
+for(const selector of ['#app .ambient-landscape::before', '#app .ambient-landscape::after', '#app::before', '#app::after']){
+ assert.ok(desktopFix.includes(selector), 'Remove decorative pseudo-element: '+selector);
+}
+assert.ok(desktopFix.includes('content: none !important'), 'Desktop scenery is disabled');
+assert.ok(!desktopFix.includes('url('), 'Desktop background avoids all images');
+console.log('AETHERIUM interface DA crépuscule : tests de structure et fond PC OK');

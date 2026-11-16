@@ -29,6 +29,10 @@ Ouvrir ensuite `http://localhost:8000`.
 
 Le workflow `.github/workflows/pages.yml` valide les modules JavaScript et publie automatiquement la racine du dépôt sur GitHub Pages à chaque push sur `main`.
 
+## Correctif de fond PC (version 1.1.1)
+
+Le fond des écrans de largeur **851 px et plus** adopte une ambiance nocturne sobre avec des dégradés très doux. Les colonnes d'illustration étirées sur toute la hauteur (gauche, droite et horizon) sont désactivées sur ordinateur pour éviter un rendu déformé ou chargé. Les illustrations des cartes, les bannières, la navigation et les panneaux ne changent pas. **Aucune règle mobile n'est modifiée** ; cette correction est isolée dans une media query desktop, en fin de `src/shell.css`.
+
 ## Interface AETHERIUM « Au crépuscule » (version 1.1)
 
 L'interface générale suit la maquette validée **« collection_aetherium_au_crépuscule »**, tout en restant une application réellement jouable et responsive.
