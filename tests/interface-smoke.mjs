@@ -84,6 +84,6 @@ assert.ok(!css.includes('.top-ornament{'), 'No obsolete fixed diamond styling');
 assert.ok(css.includes('.top nav button.active::after{'), 'Active tab provides the only desktop diamond');
 const tabDiamond=css.slice(css.indexOf('.top nav button.active::after{'),css.indexOf('.top nav .nav-icon{'));
 assert.ok(tabDiamond.includes('position:absolute')&&tabDiamond.includes('left:calc(50% - 5px)'),'Diamond is centered on active nav button');
-assert.ok(main.includes("el.classList.toggle('active',el.dataset.page===page)"), 'Page navigation updates active tab');
+assert.ok(main.includes('const active=el.dataset.page===page;') && main.includes("el.classList.toggle('active',active)"), 'Page navigation updates active tab');
 assert.ok(css.includes('.top nav button.active::after{content:none}'), 'Mobile uses its existing active border, not a desktop diamond');
 console.log('AETHERIUM interface : fond illustré PC supprimé, mobile préservé');
