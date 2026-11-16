@@ -148,14 +148,15 @@ syncPreviewToggle();
 $$('[data-type]').forEach(b=>b.addEventListener('click',()=>{filterType=b.dataset.type;$$('[data-type]').forEach(x=>x.classList.toggle('active',x===b));renderCollection()}));
 $$('[data-rarity]').forEach(b=>b.addEventListener('click',()=>{filterRarity=b.dataset.rarity;$$('[data-rarity]').forEach(x=>x.classList.toggle('active',x===b));renderCollection()}));
 
-/* Origines booster presentation. The purchase is committed and saved immediately.
-   Animations reveal only existing results; they never re-roll or charge twice. */
+/* Origines booster: one sealed card at a time, from a five-card stack.
+   A purchase is saved before presentation; revealing never re-rolls or charges. */
 const boosterArt=$('#booster-pack'),boosterOpening=$('#booster-opening');
 const boosterGrid=$('#pulls'),boosterProgress=$('#booster-progress'),boosterProgressFill=$('#booster-progress span');
-const boosterActions=$('#booster-actions'),boosterSummary=$('#booster-summary'),revealAllButton=$('#reveal-all');
+const boosterActions=$('#booster-actions'),boosterSummary=$('#booster-summary');
+const revealAllButton=$('#reveal-all'),nextPullButton=$('#next-pull'),boosterStep=$('#booster-step');
 const reducedMotion=window.matchMedia('(prefers-reduced-motion: reduce)');
 const boosterTimers=new Set();
-let revealTiles=[],currentDraw=[],revealedCount=0,drawSummary=null;
+let currentDraw=[],drawSummary=null,currentIndex=0,cardFaceUp=false,changingCard=false;
 function afterBooster(ms,action){
   const id=setTimeout(()=>{boosterTimers.delete(id);action()},ms);
   boosterTimers.add(id);
@@ -164,24 +165,90 @@ function cancelBoosterTimers(){for(const id of boosterTimers)clearTimeout(id);bo
 function clearBoosterScene(){
   cancelBoosterTimers();
   boosterBusy=false;
-  revealTiles=[];currentDraw=[];revealedCount=0;drawSummary=null;
+  currentDraw=[];drawSummary=null;currentIndex=0;cardFaceUp=false;changingCard=false;
   boosterArt.classList.remove('is-opening');
   boosterOpening.classList.remove('is-unsealing');
-  boosterGrid.classList.remove('booster-pulls');
+  boosterGrid.classList.remove('booster-pulls','booster-single','booster-gallery');
   boosterGrid.replaceChildren();
   boosterProgress.hidden=true;
   boosterProgressFill.style.width='0%';
+  boosterStep.hidden=true;
   boosterActions.hidden=true;
+  nextPullButton.hidden=true;
   boosterSummary.hidden=true;
   boosterSummary.replaceChildren();
+}
+/** The face-up card is decorative: tapping it should not leave the reveal sequence. */
+function boosterCardArtwork(item){
+  const buttonCard=makeCard(item.card,item.shiny);
+  const artwork=el('div',buttonCard.className);
+  artwork.style.cssText=buttonCard.style.cssText;
+  while(buttonCard.firstChild)artwork.append(buttonCard.firstChild);
+  return artwork;
+}
+function showBoosterCard(index,focus=true){
+  if(!boosterBusy||index<0||index>=currentDraw.length)return;
+  currentIndex=index;cardFaceUp=false;changingCard=false;
+  const item=currentDraw[index];
+  boosterGrid.classList.remove('booster-gallery');
+  boosterGrid.classList.add('booster-pulls','booster-single');
+  boosterGrid.replaceChildren();
+  const tile=el('div','pull-flip');
+  tile.dataset.rarity=item.card.rarity;
+  tile.style.setProperty('--pull-edge',RARITIES[item.card.rarity].color);
+  tile.classList.toggle('is-shiny',item.shiny);
+  const frame=el('div','pull-frame');
+  const back=el('button','pull-back');
+  back.type='button';
+  back.setAttribute('aria-label','Retourner la carte '+(index+1)+' sur '+currentDraw.length);
+  back.append(el('span','back-glyph','✧'),el('span','back-caption','TOUCHER POUR RÉVÉLER'));
+  back.addEventListener('click',()=>revealBoosterCard());
+  const front=el('div','pull-front');
+  front.inert=true;front.setAttribute('aria-hidden','true');
+  front.append(boosterCardArtwork(item));
+  frame.append(back,front);
+  const tag=el('div','pull-tag'+(item.shiny?' is-shiny':item.isNew?' is-new':' is-duplicate'),
+    item.shiny?'✦ Shiny':item.isNew?'✧ Nouvelle carte':'Doublon · +5 Éclats');
+  tile.append(frame,tag);
+  boosterGrid.append(tile);
+  boosterProgressFill.style.width=(index/currentDraw.length*100)+'%';
+  boosterStep.hidden=false;
+  boosterStep.textContent='Carte '+(index+1)+' / '+currentDraw.length;
+  nextPullButton.hidden=true;
+  $('#pack-title').textContent='Carte '+(index+1)+' sur '+currentDraw.length;
+  $('#pack-msg').textContent='Touche le dos de la carte pour révéler son illustration.';
+  if(focus)back.focus({preventScroll:true});
+}
+function revealBoosterCard(){
+  if(!boosterBusy||cardFaceUp||changingCard)return;
+  const tile=boosterGrid.querySelector('.pull-flip');
+  if(!tile)return;
+  cardFaceUp=true;
+  tile.classList.add('is-revealed');
+  const back=tile.querySelector('.pull-back'),front=tile.querySelector('.pull-front');
+  back.disabled=true;back.tabIndex=-1;back.setAttribute('aria-hidden','true');
+  front.inert=false;front.removeAttribute('aria-hidden');
+  boosterProgressFill.style.width=((currentIndex+1)/currentDraw.length*100)+'%';
+  const item=currentDraw[currentIndex];
+  $('#pack-title').textContent=item.card.name;
+  $('#pack-msg').textContent=RARITIES[item.card.rarity].label+(item.shiny?' · ✦ Shiny':'')+
+    (item.isNew?' · Nouvelle carte':' · Doublon (+5 Éclats)');
+  nextPullButton.textContent=currentIndex===currentDraw.length-1?'Voir les cinq cartes':'Carte suivante ›';
+  nextPullButton.hidden=false;
+  // Keep the card on screen until the player chooses to continue.
+  if(reducedMotion.matches)nextPullButton.focus({preventScroll:true});
+  else afterBooster(420,()=>{if(boosterBusy&&cardFaceUp)nextPullButton.focus({preventScroll:true})});
 }
 function completeBoosterReveal(){
   if(!boosterBusy)return;
   cancelBoosterTimers();
-  boosterBusy=false;
+  boosterBusy=false;changingCard=false;
   boosterArt.classList.remove('is-opening');
   boosterOpening.classList.remove('is-unsealing');
-  boosterActions.hidden=true;
+  boosterActions.hidden=true;nextPullButton.hidden=true;boosterStep.hidden=true;
+  boosterGrid.classList.remove('booster-pulls','booster-single');
+  boosterGrid.classList.add('booster-gallery');
+  boosterGrid.replaceChildren(...currentDraw.map(item=>makeCard(item.card,item.shiny)));
   boosterSummary.hidden=false;
   boosterSummary.replaceChildren(
     el('span','',drawSummary.newCount+' nouvelle(s)'),
@@ -189,61 +256,34 @@ function completeBoosterReveal(){
     el('span',drawSummary.shinyCount?'booster-star':'',drawSummary.shinyCount+' Shiny')
   );
   $('#pack-title').textContent='Archive ouverte · '+state.opened;
-  $('#pack-msg').textContent='Les cinq cartes ont été révélées. Touche une carte pour la retrouver dans le Codex.';
+  $('#pack-msg').textContent='Voici tes cinq cartes. Touche une carte pour la retrouver dans le Codex.';
   boosterProgressFill.style.width='100%';
   update();
 }
-function revealBoosterCard(index){
-  const tile=revealTiles[index];
-  if(!tile||tile.classList.contains('is-revealed'))return;
-  tile.classList.add('is-revealed');
-  const back=tile.querySelector('.pull-back'),front=tile.querySelector('.pull-front');
-  back.disabled=true;
-  back.tabIndex=-1;
-  back.setAttribute('aria-hidden','true');
-  front.inert=false;
-  front.removeAttribute('aria-hidden');
-  revealedCount++;
-  boosterProgressFill.style.width=(revealedCount/5*100)+'%';
-  if(revealedCount===revealTiles.length)completeBoosterReveal();
+function advanceBoosterCard(){
+  if(!boosterBusy||!cardFaceUp||changingCard)return;
+  if(currentIndex===currentDraw.length-1){completeBoosterReveal();return}
+  changingCard=true;
+  cancelBoosterTimers();
+  nextPullButton.disabled=true;
+  const oldTile=boosterGrid.querySelector('.pull-flip');
+  if(oldTile)oldTile.classList.add('is-leaving');
+  const next=()=>{
+    nextPullButton.disabled=false;
+    if(boosterBusy)showBoosterCard(currentIndex+1);
+  };
+  if(reducedMotion.matches)next();
+  else afterBooster(235,next);
 }
 function revealBoosterAll(){
-  cancelBoosterTimers();
-  for(let i=0;i<revealTiles.length;i++)revealBoosterCard(i);
-}
-function prepareBoosterCards(items){
-  revealTiles=[];revealedCount=0;
-  boosterGrid.replaceChildren();
-  boosterGrid.classList.add('booster-pulls');
-  for(let i=0;i<items.length;i++){
-    const item=items[i];
-    const tile=el('div','pull-flip');
-    tile.dataset.rarity=item.card.rarity;
-    tile.style.setProperty('--pull-edge',RARITIES[item.card.rarity].color);
-    tile.classList.toggle('is-shiny',item.shiny);
-    const frame=el('div','pull-frame');
-    const back=el('button','pull-back');
-    back.type='button';
-    back.setAttribute('aria-label','Révéler la carte '+(i+1)+' sur cinq');
-    back.append(el('span','back-glyph','✧'),el('span','back-caption','ARCHIVE I'));
-    back.addEventListener('click',()=>{revealBoosterCard(i);front.querySelector('button')?.focus({preventScroll:true})});
-    const front=el('div','pull-front');
-    front.inert=true;
-    front.setAttribute('aria-hidden','true');
-    front.append(makeCard(item.card,item.shiny));
-    frame.append(back,front);
-    const tag=el('div','pull-tag'+(item.shiny?' is-shiny':item.isNew?' is-new':' is-duplicate'),
-      item.shiny?'✦ Shiny':item.isNew?'✧ Nouvelle':'+5 Éclats');
-    tile.append(frame,tag);
-    boosterGrid.append(tile);
-    revealTiles.push(tile);
-  }
+  if(!boosterBusy)return;
+  // Skipping the presentation does not change the already-saved five cards.
+  completeBoosterReveal();
 }
 function openOriginesBooster(){
   if(boosterBusy||state.coins<PACK_PRICE)return;
   cancelBoosterTimers();
   boosterBusy=true;
-  // Use the exact same draw and economic rules as before this visual update.
   const results=drawPack();
   state.coins-=PACK_PRICE;
   state.opened++;
@@ -251,35 +291,38 @@ function openOriginesBooster(){
   currentDraw=results.map(item=>{
     const card=CARDS[item.id-1];
     const isNew=!state.owned[card.id];
-    if(isNew)newCount++;
-    else{duplicates++;state.dust+=5}
+    if(isNew)newCount++;else{duplicates++;state.dust+=5}
     state.owned[card.id]=(state.owned[card.id]||0)+1;
     if(item.shiny){state.shiny[card.id]=true;shinyCount++}
     return {...item,card,isNew};
   });
   drawSummary={newCount,duplicates,shinyCount};
   update(); // Persists the purchase before any animation or navigation.
-  prepareBoosterCards(currentDraw);
   boosterSummary.hidden=true;
   boosterSummary.replaceChildren();
-  boosterActions.hidden=false;
-  boosterProgress.hidden=false;
-  boosterProgressFill.style.width='0%';
+  boosterGrid.replaceChildren();
+  boosterGrid.classList.remove('booster-gallery');
+  boosterActions.hidden=false;nextPullButton.hidden=true;
+  boosterProgress.hidden=false;boosterProgressFill.style.width='0%';
+  boosterStep.hidden=false;boosterStep.textContent='Préparation des cartes…';
+  $('#pack-title').textContent='Le sceau des Origines s’éveille…';
+  $('#pack-msg').textContent='Le paquet s’ouvre : cinq découvertes t’attendent.';
   boosterOpening.classList.add('is-unsealing');
   boosterArt.classList.add('is-opening');
-  $('#pack-title').textContent='Le sceau des Origines s’éveille…';
-  $('#pack-msg').textContent='Cinq cartes mystérieuses attendent de révéler leurs secrets.';
-  if(reducedMotion.matches){revealBoosterAll();return}
-  afterBooster(550,()=>{
+  const startReveal=()=>{
+    if(!boosterBusy)return;
     boosterArt.classList.remove('is-opening');
     boosterOpening.classList.remove('is-unsealing');
-    if(mobileView.matches&&$('#page-boosters').classList.contains('active'))
+    showBoosterCard(0,false);
+    if(mobileView.matches&&$('#page-boosters').classList.contains('active')&&!reducedMotion.matches)
       boosterOpening.scrollIntoView({behavior:'smooth',block:'start'});
-    for(let i=0;i<currentDraw.length;i++)afterBooster(220+i*410,()=>revealBoosterCard(i));
-  });
+  };
+  if(reducedMotion.matches)startReveal();
+  else afterBooster(560,startReveal);
 }
 $('#buy').addEventListener('click',openOriginesBooster);
 revealAllButton.addEventListener('click',revealBoosterAll);
+nextPullButton.addEventListener('click',advanceBoosterCard);
 
 const success=[['Premiers pas','Terminer une épreuve',()=>state.wins>=1],['Explorateur','Terminer 10 épreuves',()=>state.wins>=10],['Archéologue','Terminer 50 épreuves',()=>state.wins>=50],['Curieux','Ouvrir son premier booster',()=>state.opened>=1],['Collectionneur','Découvrir 12 cartes',()=>Object.keys(state.owned).length>=12],['Archiviste','Découvrir les 24 cartes',()=>Object.keys(state.owned).length>=24],['Éclat rare','Trouver une carte Shiny',()=>Object.keys(state.shiny).length>=1],['Pactole','Gagner 1 000 Couronnes',()=>state.earned>=1000],['Chasseur de légendes','Obtenir une carte légendaire',()=>CARDS.some(c=>c.rarity==='legendary'&&state.owned[c.id])]];
 function renderAchievements(){const root=$('#achievements');root.replaceChildren();for(const [title,description,test] of success){const done=test();const box=el('article','achievement'+(done?'':' locked'));box.append(el('h3','',done?'✦ '+title:'◇ '+title),el('p','',description),el('small','muted',done?'Accompli':'À découvrir'));root.append(box)}}

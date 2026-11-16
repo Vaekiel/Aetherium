@@ -43,7 +43,7 @@ La mise en page desktop et **la clé de sauvegarde `aetherium-save-v1`** ne chan
 
 ## Ouverture des boosters (version 0.5)
 
-Le paquet Origines possède un habillage spécifique inspiré du Codex, sans interface supplémentaire encombrante. Un clic sur **Desceller** débite une seule fois les 100 Couronnes et sauvegarde **immédiatement** le tirage, puis lance une courte animation de rupture du sceau et de retournement progressif des cinq cartes. Chaque carte est consultable dans le Codex ; l'effet de brillance reste discret, avec des reflets supplémentaires sur les Épiques, Légendaires et Shiny. Le bouton **Tout révéler** permet d'ignorer la présentation. En mode réduction des animations du système, les cartes sont révélées directement.
+Le paquet Origines possède un habillage spécifique inspiré du Codex, sans interface supplémentaire encombrante. Un clic sur **Desceller** débite une seule fois les 100 Couronnes et sauvegarde **immédiatement** le tirage. Après une courte animation du sceau, **une seule carte face cachée** apparaît au centre, devant une pile de cartes. Le joueur la retourne puis profite de son illustration et de sa rareté. Il choisit ensuite **Carte suivante** pour découvrir la suivante, jusqu'à la cinquième carte ; les cinq cartes n'apparaissent ensemble qu'au **récapitulatif final**. Les Légendaires, Épiques et Shiny bénéficient de reflets discrets. **Tout révéler** permet d'accéder directement au récapitulatif. En mode réduction des animations du système, les transitions sont supprimées mais la révélation carte par carte reste possible.
 
 Les **probabilités, garanties, Éclats de doublons et sauvegardes** restent identiques aux versions précédentes ; seule la présentation change.
 

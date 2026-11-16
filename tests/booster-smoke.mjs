@@ -13,7 +13,7 @@ for(const sample of [0.001,0.2,0.49,0.72,0.92,0.999]){
 }
 assert.equal(Object.values(RARITIES).reduce((acc,r)=>acc+r.weight,0),100,'Probabilités normales totalisent 100');
 const html=read('index.html');
-for(const id of ['buy','booster-pack','booster-opening','booster-progress','reveal-all','booster-summary','pulls']){
+for(const id of ['buy','booster-pack','booster-opening','booster-progress','reveal-all','next-pull','booster-step','booster-summary','pulls']){
   assert.ok(html.includes('id="'+id+'"'),'Missing booster control: '+id);
 }
 const main=read('src/main.js');
@@ -25,4 +25,11 @@ assert.ok(main.includes("item.shiny"),'Shiny draw remains present');
 assert.ok(main.includes('update(); // Persists the purchase'),'Purchase is saved before animations');
 assert.ok(main.includes("reducedMotion.matches"),'Reduced-motion support enabled');
 assert.ok(main.includes('cancelBoosterTimers'),'Reveal timers can be cancelled');
+assert.ok(main.includes('function showBoosterCard(index'),'Exactly one current card is displayed');
+assert.ok(main.includes('function advanceBoosterCard()'),'Cards require an explicit next action');
+assert.ok(main.includes("showBoosterCard(currentIndex+1)"),'Advance shows the following card');
+assert.ok(main.includes("nextPullButton.hidden=true;"),'Next action hidden until current reveal');
+assert.ok(main.includes("boosterGrid.classList.add('booster-gallery')"),'All five cards are shown only at summary stage');
+assert.ok(!main.includes('for(let i=0;i<currentDraw.length;i++)afterBooster'),'No automatic mass reveal');
+assert.ok(main.includes('function revealBoosterAll()'),'Optional skip to summary retained');
 console.log('AETHERIUM booster smoke checks: OK');
