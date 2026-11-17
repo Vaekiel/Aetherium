@@ -1370,7 +1370,6 @@ function renderExpedition(){
   },'secondary expedition-leave'));
   host.append(controls);
 }
-renderExpedition();
 function makeCard(c,isShiny=false,locked=false){
   const chromatic=!!isShiny&&!locked;
   const preview=locked&&(c.id===1||(previewArt&&hasApprovedArt(c.id)));
@@ -1986,6 +1985,7 @@ function renderAchievements(){
 }
 $('#reset').addEventListener('click',()=>{if(!confirm('Effacer définitivement les cartes et la progression sauvegardées sur cet appareil ?'))return;clearBoosterScene();state=fresh();state.trialStats=sanitizedTrialStats(state.trialStats);trialStarters.forEach(start=>start());renderTrialMastery();renderDifficultyChoice();renderExpedition();selectedCard=null;forgeSelectedId=null;forgeFilter='all';$('#atelier-filter').value='all';$('#atelier-result').hidden=true;$('#inspector').replaceChildren(el('p','muted','Sélectionne une carte découverte pour l’admirer.'));$('#pulls').replaceChildren();$('#pack-title').textContent='Les archives attendent leur voyageur.';$('#pack-msg').textContent='Gagne des Couronnes en jouant pour ouvrir des boosters.';update();renderCollection();notify('Progression réinitialisée.')});
 syncMobileSheets();
+renderExpedition();
 update();
 navigate(APP_PAGES.includes(location.hash.slice(1))?location.hash.slice(1):'jouer');
 window.addEventListener('hashchange',()=>{
