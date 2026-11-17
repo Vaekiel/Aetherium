@@ -3,6 +3,7 @@ import {CRAFT_COSTS,getCraftCost,craftCard} from './crafting.js';
 import {applyCardIllustration,hasApprovedArt,CARD_ART} from './card-art.js';
 import {codexProgress,filterCodex} from './codex.js';
 import {sanitizeRecentFinds,recordRecentFind,buildLivingArchive} from './living-archives.js';
+import {createBackup,decodeBackup,installImportedSave,restorePreviousSave,PREVIOUS_SAVE_KEY,MAX_BACKUP_SIZE} from './save-backup.js';
 import {SEASONS,seasonById,collectionById,cardsForCollection,collectionForCard,seasonProgress} from './seasons.js';
 import {milestonesFor,sanitizeMilestoneClaims,uniqueCardsOwned,collectionMilestoneStatus,claimCollectionMilestone} from './collection-milestones.js';
 import {DIFFICULTIES,validDifficulty,trialRules,trialObjective,trialScore,trialReward,emptyTrialStats,sanitizedTrialStats,recordTrialWin,masteryLevel} from './trial-progress.js';
@@ -2101,7 +2102,103 @@ function renderAchievements(){
   }
   renderHonorifics();
 }
-$('#reset').addEventListener('click',()=>{if(!confirm('Effacer définitivement les cartes et la progression sauvegardées sur cet appareil ?'))return;clearBoosterScene();state=fresh();state.trialStats=sanitizedTrialStats(state.trialStats);trialStarters.forEach(start=>start());renderTrialMastery();renderDifficultyChoice();renderExpedition();selectedCard=null;forgeSelectedId=null;forgeFilter='all';$('#atelier-filter').value='all';$('#atelier-result').hidden=true;$('#inspector').replaceChildren(el('p','muted','Sélectionne une carte découverte pour l’admirer.'));$('#pulls').replaceChildren();$('#pack-title').textContent='Les archives attendent leur voyageur.';$('#pack-msg').textContent='Gagne des Couronnes en jouant pour ouvrir des boosters.';update();renderCollection();notify('Progression réinitialisée.')});
+// Save transfer remains opt-in and cannot interfere with game loops or rewards.
+const backupDialog=$('#backup-dialog');
+const backupStatus=$('#backup-status');
+const backupFile=$('#backup-file');
+const backupRestore=$('#backup-restore');
+let backupBusy=false;
+function backupMessage(message,error=false){
+  backupStatus.textContent=message;
+  backupStatus.classList.toggle('is-error',error);
+}
+function syncBackupRestore(){
+  try{backupRestore.disabled=localStorage.getItem(PREVIOUS_SAVE_KEY)===null}
+  catch{backupRestore.disabled=true}
+}
+$('#backup-open').addEventListener('click',()=>{
+  backupMessage('');
+  syncBackupRestore();
+  backupDialog.showModal();
+});
+$('#backup-close').addEventListener('click',()=>backupDialog.close());
+$('#backup-export').addEventListener('click',async()=>{
+  if(backupBusy)return;
+  backupBusy=true;
+  const control=$('#backup-export');
+  control.disabled=true;
+  backupMessage('Préparation du fichier de sauvegarde…');
+  try{
+    const json=await createBackup(state,CARDS.map(card=>card.id));
+    const file=new Blob([json],{type:'application/json;charset=utf-8'});
+    const url=URL.createObjectURL(file);
+    try{
+      const link=document.createElement('a');
+      link.href=url;
+      link.download='Aetherium-sauvegarde-'+new Date().toISOString().slice(0,10)+'.json';
+      document.body.append(link);
+      link.click();
+      link.remove();
+    }finally{
+      setTimeout(()=>URL.revokeObjectURL(url),60000);
+    }
+    backupMessage('Fichier préparé. Conserve-le dans un emplacement sûr.');
+  }catch(error){
+    backupMessage(error?.message||'Exportation impossible dans ce navigateur.',true);
+  }finally{
+    backupBusy=false;
+    control.disabled=false;
+  }
+});
+$('#backup-import').addEventListener('click',()=>{
+  if(!backupBusy)backupFile.click();
+});
+backupFile.addEventListener('change',async()=>{
+  const file=backupFile.files?.[0];
+  backupFile.value='';
+  if(!file||backupBusy)return;
+  backupBusy=true;
+  const control=$('#backup-import');
+  control.disabled=true;
+  backupMessage('Vérification du fichier…');
+  try{
+    if(file.size>MAX_BACKUP_SIZE)
+      throw new Error('Fichier trop volumineux (maximum : 1 Mo).');
+    const parsed=await decodeBackup(await file.text(),CARDS.map(card=>card.id));
+    const {stats,createdAt}=parsed;
+    const date=new Date(createdAt).toLocaleString('fr-FR');
+    const message='Sauvegarde du '+date+'\\n\\n'+
+      stats.cards+' cartes · '+stats.chromatic+' Chromatiques\\n'+
+      stats.crowns+' Couronnes · '+stats.shards+' Éclats\\n'+
+      stats.opened+' boosters ouverts\\n\\n'+
+      'Remplacer la progression de ce navigateur par cette sauvegarde ?\\n'+
+      'La progression actuelle sera conservée localement pour annuler cet import.';
+    if(!window.confirm(message)){
+      backupMessage('Importation annulée : ta progression n’a pas été modifiée.');
+      return;
+    }
+    installImportedSave(localStorage,parsed.state);
+    window.location.reload(); // Reload the normal, already-tested game loader.
+  }catch(error){
+    backupMessage(error?.message||'Fichier invalide : aucune modification effectuée.',true);
+  }finally{
+    backupBusy=false;
+    control.disabled=false;
+    syncBackupRestore();
+  }
+});
+backupRestore.addEventListener('click',()=>{
+  if(backupBusy||backupRestore.disabled)return;
+  if(!window.confirm('Restaurer la sauvegarde d’avant le dernier import ? La progression actuelle sera remplacée.'))return;
+  try{
+    restorePreviousSave(localStorage);
+    window.location.reload();
+  }catch(error){
+    backupMessage(error?.message||'Restauration impossible.',true);
+    syncBackupRestore();
+  }
+});
+$('#reset').addEventListener('click',()=>{if(!confirm('Effacer définitivement les cartes et la progression sauvegardées sur cet appareil ?'))return;clearBoosterScene();try{localStorage.removeItem(PREVIOUS_SAVE_KEY)}catch{}state=fresh();state.trialStats=sanitizedTrialStats(state.trialStats);trialStarters.forEach(start=>start());renderTrialMastery();renderDifficultyChoice();renderExpedition();selectedCard=null;forgeSelectedId=null;forgeFilter='all';$('#atelier-filter').value='all';$('#atelier-result').hidden=true;$('#inspector').replaceChildren(el('p','muted','Sélectionne une carte découverte pour l’admirer.'));$('#pulls').replaceChildren();$('#pack-title').textContent='Les archives attendent leur voyageur.';$('#pack-msg').textContent='Gagne des Couronnes en jouant pour ouvrir des boosters.';update();renderCollection();notify('Progression réinitialisée.')});
 syncMobileSheets();
 renderExpedition();
 update();
