@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#101322"><meta name="description" content="Aetherium, jeu gratuit de collection de cartes fantastiques et de mini-jeux."><title>AETHERIUM · Chroniques des Arcanes</title><link rel="stylesheet" href="./src/style.css"><link rel="stylesheet" href="./src/theme.css?v=card-ornament-1"><link rel="stylesheet" href="./src/mobile.css?v=inspector-layer-3"><link rel="stylesheet" href="./src/booster.css?v=booster-reveal-fix-1821"><link rel="stylesheet" href="./src/booster-packaging.css?v=ouverture-183"><link rel="stylesheet" href="./src/runes.css?v=rituels-1.7.2"><link rel="stylesheet" href="./src/memory.css?v=memoire-1.7.2"><link rel="stylesheet" href="./src/lock.css?v=logique-1.7.2"><link rel="stylesheet" href="./src/mines.css?v=fouilles-1.7.2"><link rel="stylesheet" href="./src/alchemy.css?v=alchemy-mastery-172b"><link rel="stylesheet" href="./src/shell.css?v=onglet-actif-1"><link rel="stylesheet" href="./src/trial-titles.css?v=titres-1.7.3"><link rel="stylesheet" href="./src/expedition.css?v=expedition-dediee-1.8.1"><link rel="stylesheet" href="./src/navigation.css?v=navigation-atelier-1"><link rel="stylesheet" href="./src/crafting.css?v=forge-active-1"><link rel="stylesheet" href="./src/save-backup.css?v=backup-185"><link rel="stylesheet" href="./src/chromatic.css?v=chromatiques-6"><link rel="stylesheet" href="./src/reflets-preview.css?v=art-pilot-38"><link rel="stylesheet" href="./src/codex.css?v=seasons-1.7.1"><link rel="stylesheet" href="./src/living-archives.css?v=archives-184"><link rel="stylesheet" href="./src/trial-progress.css?v=defis-1.7.3"></head>
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#101322"><meta name="description" content="Aetherium, jeu gratuit de collection de cartes fantastiques et de mini-jeux."><title>AETHERIUM · Chroniques des Arcanes</title><link rel="stylesheet" href="./src/style.css"><link rel="stylesheet" href="./src/theme.css?v=card-ornament-1"><link rel="stylesheet" href="./src/mobile.css?v=inspector-layer-3"><link rel="stylesheet" href="./src/booster.css?v=booster-reveal-fix-1821"><link rel="stylesheet" href="./src/booster-packaging.css?v=ouverture-183"><link rel="stylesheet" href="./src/runes.css?v=rituels-1.7.2"><link rel="stylesheet" href="./src/memory.css?v=memoire-1.7.2"><link rel="stylesheet" href="./src/lock.css?v=logique-1.7.2"><link rel="stylesheet" href="./src/mines.css?v=fouilles-1.7.2"><link rel="stylesheet" href="./src/alchemy.css?v=alchemy-mastery-172b"><link rel="stylesheet" href="./src/shell.css?v=onglet-actif-1"><link rel="stylesheet" href="./src/trial-titles.css?v=titres-1.7.3"><link rel="stylesheet" href="./src/expedition.css?v=expedition-dediee-1.8.1"><link rel="stylesheet" href="./src/navigation.css?v=navigation-atelier-1"><link rel="stylesheet" href="./src/crafting.css?v=forge-active-1"><link rel="stylesheet" href="./src/save-backup.css?v=backup-185"><link rel="stylesheet" href="./src/chromatic.css?v=chromatiques-6"><link rel="stylesheet" href="./src/reflets-preview.css?v=reflets-gallery-10"><link rel="stylesheet" href="./src/codex.css?v=seasons-1.7.1"><link rel="stylesheet" href="./src/living-archives.css?v=archives-184"><link rel="stylesheet" href="./src/trial-progress.css?v=defis-1.7.3"></head>
 <body><div id="app"><div class="ambient-landscape" aria-hidden="true"><div class="landscape-sky"></div><div class="landscape-moon"></div><div class="landscape-island island-left"></div><div class="landscape-island island-right"></div><div class="landscape-ruins"></div><div class="landscape-foreground"></div></div>
 <header class="top"><a class="brand" href="#jouer">AETHERIUM <small>Chroniques des Arcanes</small></a><nav aria-label="Navigation principale"><button type="button" data-page="jouer" class="active" aria-current="page"><span class="nav-icon" aria-hidden="true">✧</span><span>Épreuves</span></button><button type="button" data-page="boosters"><span class="nav-icon" aria-hidden="true">◈</span><span>Boosters</span></button><button type="button" data-page="collection"><span class="nav-icon" aria-hidden="true">▣</span><span>Codex</span></button><button type="button" data-page="atelier"><span class="nav-icon" aria-hidden="true">✦</span><span>Atelier</span></button></nav><div class="wallet" aria-label="Ressources"><button type="button" class="wallet-link" data-go="boosters" title="Utiliser les Couronnes dans les Boosters" aria-label="Couronnes — aller aux Boosters">♛ <b id="coins">300</b></button><button type="button" class="wallet-link" data-go="atelier" title="Consulter les Éclats dans l’Atelier" aria-label="Éclats — aller à l’Atelier">✦ <b id="dust">0</b></button></div><button type="button" id="chroniques-link" class="chronicles-link" data-go="succes" aria-label="Ouvrir les Chroniques et les Succès" title="Chroniques et Succès"><span class="chronicles-icon" aria-hidden="true">✧</span><span class="chronicles-label">Chroniques</span></button></header>
 <main class="layout">
@@ -118,6 +118,112 @@
       <span class="reflets-art-preview-warning">Aperçu visuel uniquement · Carte non disponible dans les boosters</span>
     </figcaption>
   </figure>
+  <section id="reflets-batch1-gallery" class="reflets-batch1-gallery" hidden aria-label="Dix illustrations inédites des Reflets brisés">
+    <h3>✧ Les premiers éclats du Revers</h3>
+    <p class="reflets-gallery-intro">10 illustrations à découvrir en avant-première · Collection non jouable pour le moment.</p>
+    <div class="reflets-gallery-grid">
+      <article class="reflets-gallery-card">
+        <a href="./assets/cards/reflets/eclat-fugueur.webp" target="_blank" rel="noopener" aria-label="Voir Éclat fugueur en haute définition">
+          <img src="./assets/cards/reflets/eclat-fugueur-thumb.webp" alt="Illustration de Éclat fugueur" width="350" height="525" loading="lazy" decoding="async">
+        </a>
+        <div class="reflets-gallery-card-info">
+          <span>N° 25 · Commune · Artefact</span>
+          <h4>Éclat fugueur</h4>
+          <p>« Chaque nuit, il regagne la fenêtre d’une maison disparue. »</p>
+        </div>
+      </article>
+      <article class="reflets-gallery-card">
+        <a href="./assets/cards/reflets/guetteuse-du-revers.webp" target="_blank" rel="noopener" aria-label="Voir Guetteuse du Revers en haute définition">
+          <img src="./assets/cards/reflets/guetteuse-du-revers-thumb.webp" alt="Illustration de Guetteuse du Revers" width="350" height="525" loading="lazy" decoding="async">
+        </a>
+        <div class="reflets-gallery-card-info">
+          <span>N° 26 · Commune · Héros</span>
+          <h4>Guetteuse du Revers</h4>
+          <p>« Elle surveille un carrefour dont l’autre moitié n’existe plus. »</p>
+        </div>
+      </article>
+      <article class="reflets-gallery-card">
+        <a href="./assets/cards/reflets/papillon-de-silice.webp" target="_blank" rel="noopener" aria-label="Voir Papillon de silice en haute définition">
+          <img src="./assets/cards/reflets/papillon-de-silice-thumb.webp" alt="Illustration de Papillon de silice" width="350" height="525" loading="lazy" decoding="async">
+        </a>
+        <div class="reflets-gallery-card-info">
+          <span>N° 27 · Commune · Créature</span>
+          <h4>Papillon de silice</h4>
+          <p>« Ses ailes montrent un paysage différent à chaque battement. »</p>
+        </div>
+      </article>
+      <article class="reflets-gallery-card">
+        <a href="./assets/cards/reflets/pluie-a-l-envers.webp" target="_blank" rel="noopener" aria-label="Voir Pluie à l’envers en haute définition">
+          <img src="./assets/cards/reflets/pluie-a-l-envers-thumb.webp" alt="Illustration de Pluie à l’envers" width="350" height="525" loading="lazy" decoding="async">
+        </a>
+        <div class="reflets-gallery-card-info">
+          <span>N° 28 · Commune · Sort</span>
+          <h4>Pluie à l’envers</h4>
+          <p>« Les gouttes remontent vers des nuages que personne ne voit. »</p>
+        </div>
+      </article>
+      <article class="reflets-gallery-card">
+        <a href="./assets/cards/reflets/miroir-d-ecorce.webp" target="_blank" rel="noopener" aria-label="Voir Miroir d’écorce en haute définition">
+          <img src="./assets/cards/reflets/miroir-d-ecorce-thumb.webp" alt="Illustration de Miroir d’écorce" width="350" height="525" loading="lazy" decoding="async">
+        </a>
+        <div class="reflets-gallery-card-info">
+          <span>N° 29 · Commune · Artefact</span>
+          <h4>Miroir d’écorce</h4>
+          <p>« Dans son bois poli, les arbres gardent les visages des absents. »</p>
+        </div>
+      </article>
+      <article class="reflets-gallery-card">
+        <a href="./assets/cards/reflets/loup-aux-deux-ombres.webp" target="_blank" rel="noopener" aria-label="Voir Loup aux deux ombres en haute définition">
+          <img src="./assets/cards/reflets/loup-aux-deux-ombres-thumb.webp" alt="Illustration de Loup aux deux ombres" width="350" height="525" loading="lazy" decoding="async">
+        </a>
+        <div class="reflets-gallery-card-info">
+          <span>N° 30 · Commune · Créature</span>
+          <h4>Loup aux deux ombres</h4>
+          <p>« Une ombre le suit ; l’autre semble toujours l’attendre. »</p>
+        </div>
+      </article>
+      <article class="reflets-gallery-card">
+        <a href="./assets/cards/reflets/cartographe-des-absents.webp" target="_blank" rel="noopener" aria-label="Voir Cartographe des Absents en haute définition">
+          <img src="./assets/cards/reflets/cartographe-des-absents-thumb.webp" alt="Illustration de Cartographe des Absents" width="350" height="525" loading="lazy" decoding="async">
+        </a>
+        <div class="reflets-gallery-card-info">
+          <span>N° 31 · Inhabituelle · Héros</span>
+          <h4>Cartographe des Absents</h4>
+          <p>« Elle trace les rues oubliées avant qu’elles ne s’effacent pour toujours. »</p>
+        </div>
+      </article>
+      <article class="reflets-gallery-card">
+        <a href="./assets/cards/reflets/sentinelle-des-felures.webp" target="_blank" rel="noopener" aria-label="Voir Sentinelle des Fêlures en haute définition">
+          <img src="./assets/cards/reflets/sentinelle-des-felures-thumb.webp" alt="Illustration de Sentinelle des Fêlures" width="350" height="525" loading="lazy" decoding="async">
+        </a>
+        <div class="reflets-gallery-card-info">
+          <span>N° 32 · Inhabituelle · Créature</span>
+          <h4>Sentinelle des Fêlures</h4>
+          <p>« Elle garde les fissures, sans savoir lequel des mondes elle protège. »</p>
+        </div>
+      </article>
+      <article class="reflets-gallery-card">
+        <a href="./assets/cards/reflets/fil-des-deux-rives.webp" target="_blank" rel="noopener" aria-label="Voir Fil des deux rives en haute définition">
+          <img src="./assets/cards/reflets/fil-des-deux-rives-thumb.webp" alt="Illustration de Fil des deux rives" width="350" height="525" loading="lazy" decoding="async">
+        </a>
+        <div class="reflets-gallery-card-info">
+          <span>N° 33 · Inhabituelle · Artefact</span>
+          <h4>Fil des deux rives</h4>
+          <p>« Une simple bobine relie deux portes qui n’ouvrent jamais au même endroit. »</p>
+        </div>
+      </article>
+      <article class="reflets-gallery-card">
+        <a href="./assets/cards/reflets/serment-retourne.webp" target="_blank" rel="noopener" aria-label="Voir Serment retourné en haute définition">
+          <img src="./assets/cards/reflets/serment-retourne-thumb.webp" alt="Illustration de Serment retourné" width="350" height="525" loading="lazy" decoding="async">
+        </a>
+        <div class="reflets-gallery-card-info">
+          <span>N° 34 · Inhabituelle · Sort</span>
+          <h4>Serment retourné</h4>
+          <p>« Les promesses oubliées reviennent chercher ceux qui les ont prononcées. »</p>
+        </div>
+      </article>
+    </div>
+  </section>
   <span class="codex-upcoming-foot">Les collections parues resteront jouables sans limitation de durée.</span>
 </section>
 <div class="collection-layout" id="collection-layout"><aside class="filters" id="collection-filters" aria-label="Filtres de collection"><div class="mobile-sheet-header"><strong>Filtrer la collection</strong><button type="button" id="filter-close" class="sheet-close" aria-label="Fermer les filtres">✕</button></div><div class="collection-side-title"><span class="side-icon" aria-hidden="true">▤</span><div><strong>Ma Collection</strong><small id="collection-progress"></small></div></div><div class="filter-group" id="type-filters"><h3>Catégories</h3><button class="active" data-type="all">Toutes</button><button data-type="Héros">Héros</button><button data-type="Créature">Créatures</button><button data-type="Sort">Sorts</button><button data-type="Artefact">Artefacts</button></div><div class="filter-group" id="rarity-filters"><h3>Rareté</h3><button class="active" data-rarity="all">Toutes les raretés</button><button data-rarity="common">Commune</button><button data-rarity="uncommon">Inhabituelle</button><button data-rarity="rare">Rare</button><button data-rarity="epic">Épique</button><button data-rarity="legendary">Légendaire</button></div><div class="filter-group chromatic-filter-group" id="finish-filters"><h3>Variantes</h3><button class="active" data-finish="all">Toutes les variantes</button><button data-finish="normal">Normales</button><button data-finish="chromatic">✧ Chromatiques</button></div><button type="button" id="filter-done" class="mobile-filter-done">Afficher les cartes</button></aside><div class="gallery"><div class="mobile-collection-heading"><div><span class="kicker">LE CODEX</span><h1>Ma collection</h1></div><div class="mobile-collection-stats"><span id="mobile-collection-progress"></span><span class="chromatic-counter" id="mobile-chromatic-count">✧ 0 / 24 Chromatiques</span></div><button type="button" class="mobile-chronicles-shortcut" data-go="succes" aria-label="Voir les Chroniques et les Succès" title="Chroniques et Succès">✧</button></div><div class="codex-section-head"><div><h2 id="codex-chapter-title">Toutes les archives</h2><p id="codex-chapter-subtitle">Les premières légendes des Marches de Verre</p></div><small id="codex-results" role="status" aria-live="polite">24 cartes</small></div><div class="collection-toolbar"><label class="search-wrap"><span aria-hidden="true">⌕</span><input aria-label="Rechercher une carte" id="search" placeholder="Rechercher une carte…"></label><button type="button" class="mobile-filter-button" id="filter-open" aria-controls="collection-filters" aria-expanded="false">☷ Filtres <span id="filter-count" class="filter-count" hidden></span></button><button type="button" class="preview-toggle" id="preview-art" aria-pressed="false">Voir les illustrations</button></div><div class="codex-discovery-tabs" role="group" aria-label="Statut de découverte"><button type="button" data-discovery="all" class="is-active" aria-pressed="true">Toutes</button><button type="button" data-discovery="collected" aria-pressed="false">Découvertes</button><button type="button" data-discovery="missing" aria-pressed="false">À découvrir</button></div><div id="card-grid" class="cards" aria-label="Cartes de l'album sélectionné"></div><p class="muted" id="empty"></p></div><aside id="inspector-shell" class="inspector-shell" aria-label="Fiche détaillée"><div class="inspector-sheet-header"><strong>Fiche de carte</strong><button type="button" id="inspect-close" class="sheet-close" aria-label="Fermer la fiche">✕</button></div><div id="inspector" class="inspector"><div class="inspection-empty"><div aria-hidden="true">✧</div><strong>Les Archives</strong><p>Sélectionne une carte découverte pour admirer son illustration et dévoiler son histoire.</p></div></div></aside></div></section>
@@ -216,4 +322,4 @@
   <div class="backup-footer"><span>Conserve le fichier téléchargé en lieu sûr : effacer les données du navigateur efface aussi les sauvegardes locales.</span><button type="button" id="backup-close" class="secondary">Fermer</button></div>
  </div>
 </dialog>
-<div id="toast" role="status" aria-live="polite"></div></div><script type="module" src="./src/main.js?v=reflets-art-38"></script></body></html>
+<div id="toast" role="status" aria-live="polite"></div></div><script type="module" src="./src/main.js?v=reflets-gallery-10"></script></body></html>
