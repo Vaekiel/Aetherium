@@ -1,0 +1,44 @@
+/* AETHERIUM 1.6.0 — Épreuves des Arcanes : compact progression UI.
+   Keep the validated dark twilight/pixel-art direction and generous tap targets. */
+#page-jouer .difficulty-panel{
+ display:flex;align-items:center;justify-content:space-between;gap:12px;
+ margin:0 0 16px;padding:12px 14px;
+ border:1px solid #8b73979a;border-radius:3px;
+ background:linear-gradient(115deg,#24213beb,#161c31e9);
+ box-shadow:inset 0 1px #ffffff10;
+}
+#page-jouer .difficulty-description{display:flex;flex-direction:column;gap:4px;min-width:0;flex:1}
+#page-jouer .difficulty-description strong{font:small-caps 17px/1.2 Georgia,serif;color:#efdebf}
+#page-jouer .difficulty-description small{font:11px/1.35 Georgia,serif;color:#bcb2cf}
+#page-jouer .difficulty-options{display:flex;gap:5px;flex:0 0 auto}
+#page-jouer .difficulty-options button{
+ min-height:40px;padding:9px 12px;border:1px solid #786c8e;border-radius:3px;
+ background:#24223d;color:#d6c9df;font:12px Georgia,serif;white-space:nowrap;
+}
+#page-jouer .difficulty-options button:hover{border-color:#cbb1d6;background:#302746}
+#page-jouer .difficulty-options button.is-active{
+ border-color:#d8b996;color:#fff1d9;background:linear-gradient(145deg,#524363,#28233f);
+ box-shadow:inset 0 1px #f8e4c42b;
+}
+#page-jouer .difficulty-options button:focus-visible{outline:2px solid #ddd0ff;outline-offset:2px}
+#page-jouer .trial-mastery{
+ display:block;margin:7px 0 13px;padding:8px 11px;
+ border:1px solid #7c6c8a63;border-radius:3px;
+ background:#1a1b31ad;color:#dac7de;
+ font:12px/1.4 Georgia,serif;
+}
+#page-jouer .games .game .reward{margin-top:7px;color:#ead1a1;font-size:12px}
+@media(max-width:850px){
+ #page-jouer .difficulty-panel{display:block;padding:11px;margin:0 0 12px}
+ #page-jouer .difficulty-description strong{font-size:16px}
+ #page-jouer .difficulty-description small{font-size:11px}
+ #page-jouer .difficulty-options{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin-top:10px}
+ #page-jouer .difficulty-options button{padding:8px 4px;min-height:44px;font-size:12px;white-space:normal}
+ #page-jouer .trial-mastery{font-size:11px;margin:8px 0 12px;padding:9px}
+}
+@media(max-width:360px){
+ #page-jouer .difficulty-options button{font-size:11px}
+}
+@media(prefers-reduced-motion:reduce){
+ #page-jouer .difficulty-options button{transition:none!important}
+}
