@@ -36,7 +36,7 @@ for(const control of ['codex-chapter-list','codex-progress-discovered','codex-pr
   'codex-discovery-tabs','codex-results','codex-chapter-title']){
   assert.ok(html.includes(control),'Codex markup includes '+control);
 }
-assert.ok(html.includes('src/codex.css?v=codex-1.5'),'Codex stylesheet versioned');
+assert.ok(html.includes('src/codex.css?v=codex-1.5.1'),'Codex stylesheet versioned');
 assert.ok(html.includes('src/main.js?v=codex-1.5'),'Codex script versioned');
 assert.ok(main.includes("from './codex.js'"),'Main module imports chapter helpers');
 assert.ok(main.includes('function renderCodexChapters()'),'Album counters are connected');
@@ -49,4 +49,16 @@ assert.ok(css.includes('@media(max-width:850px)'),'Mobile chapter rail supported
 assert.ok(css.includes('prefers-reduced-motion'),'Reduced-motion supported');
 assert.ok(css.includes('.codex-sealed-art'),'Sealed cards have a placeholder illustration');
 assert.ok(!read('src/codex.js').includes('localStorage'),'Chapters never write to a save');
+const theme=read('src/theme.css'),mobile=read('src/mobile.css'),chromaticCSS=read('src/chromatic.css');
+assert.ok(theme.includes('.card .info:before{content:"◆"'),'Card ornament belongs to the info band');
+assert.ok(theme.includes('.card .info{position:relative;'),'Info band is the ornament anchor');
+assert.ok(theme.includes('top:-8px'),'Ornament stays at the image/info boundary');
+assert.ok(!theme.includes('.card:before{content:"◆"'),'Cards no longer use fixed bottom offsets');
+assert.ok(!theme.includes('.card:before{bottom:'),'No obsolete phone ornament positioning');
+assert.ok(!mobile.includes('.gallery .card:before{bottom:'),'Mobile no longer positions ornaments by card height');
+assert.ok(mobile.includes('.gallery .card .info{padding:17px'),'Phone titles have room under their ornament');
+assert.ok(chromaticCSS.includes('.card.is-chromatic .info:before'),'Chromatic ornament follows the info band');
+assert.ok(!chromaticCSS.includes('.card.is-chromatic:before{'),'Chromatic cards do not revive the faulty placement');
+assert.ok(css.includes('.card.is-sealed .info:before'),'Sealed cards use the same aligned ornament');
+assert.ok(html.includes('theme.css?v=card-ornament-1')&&html.includes('mobile.css?v=card-ornament-1'),'Caches refreshed on mobile');
 console.log('AETHERIUM 1.5 : albums, progression, filtres, sauvegardes et gameplay OK');
