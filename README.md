@@ -29,6 +29,22 @@ Ouvrir ensuite `http://localhost:8000`.
 
 Le workflow `.github/workflows/pages.yml` valide les modules JavaScript et publie automatiquement la racine du dépôt sur GitHub Pages à chaque push sur `main`.
 
+## AETHERIUM 1.6.0 — Épreuves : difficultés et maîtrise
+
+Trois difficultés immédiatement accessibles, **Initiation / Aventure / Maîtrise**, sont désormais sélectionnables sur l'écran Épreuves (PC et mobile). Le changement relance la seule épreuve active pour que les nouvelles règles soient cohérentes ; les autres épreuves adoptent le mode lorsqu'elles sont sélectionnées. **Aventure** conserve les conditions historiques et les cinq récompenses de base.
+
+| Épreuve | Initiation | Aventure | Maîtrise |
+|---|---|---|---|
+| Chemin runique | 5 erreurs | 3 erreurs | 2 erreurs |
+| Mémoire ancienne | Sans limite | Sans limite | 16 coups maximum |
+| Serrure d’Éther | 5 essais | 3 essais | 2 essais |
+| Fouilles interdites | 8 dalles sûres | 10 dalles sûres | 12 dalles sûres |
+| Laboratoire arcanique | 5 mélanges ratés | 3 mélanges ratés | 2 mélanges ratés |
+
+Chaque victoire enregistre **victoires, meilleur score /100, difficulté maximale gagnée** dans le stockage local existant `aetherium-save-v1`. Un titre de maîtrise (À découvrir, Novice, Apprenti, Initié, Maître) est associé au nombre de victoires sur chaque épreuve. Les gains de base restent **35 / 45 / 50 / 65 / 60 Couronnes** ; une performance excellente en Aventure ou Maîtrise peut donner **+5 Couronnes**, et Maîtrise ajoute **+10 Couronnes**. Initiation n'offre pas de bonus pour éviter de pénaliser ceux qui veulent apprendre. Aucun changement aux cartes, à la forge, aux probabilités ou au prix des boosters.
+
+Le nouveau module `src/trial-progress.js` regroupe ces règles et leurs tests ; `src/trial-progress.css` reprend la direction crépusculaire sans alourdir l'écran. Les anciennes sauvegardes sont conservées et commencent par défaut en mode Aventure. Les mécaniques enrichies de chaque mini-jeu seront développées dans les versions 1.6.1 à 1.6.3.
+
 ## AETHERIUM 1.5.4 — Inspection du Codex sans voile sur mobile
 
 Sur mobile, la fiche agrandie du Codex est maintenant affichée dans la **couche supérieure native du navigateur** (Popover API, `manual`). Elle n'est plus limitée à la pile d'affichage de la page animée et ne peut plus être recouverte par le voile `backdrop-filter` du Codex. Les mêmes boutons Fermer, Précédente, Suivante et changement de finition continuent de fonctionner. L'aperçu reste en HD, les autres écrans ainsi que la sauvegarde `aetherium-save-v1` sont inchangés.
