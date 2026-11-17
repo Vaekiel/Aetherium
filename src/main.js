@@ -1069,9 +1069,6 @@ function makeCard(c,isShiny=false,locked=false){
 }
 // The side-by-side Codex guide deliberately uses the same approved artwork:
 // this is a visual demonstration and NEVER grants a Chromatique.
-const comparisonCard=CARDS[0];
-applyCardIllustration($('#chromatic-example-normal'),comparisonCard,{shiny:false,size:'full'});
-applyCardIllustration($('#chromatic-example-special'),comparisonCard,{shiny:false,size:'full'});
 let filterType='all',filterRarity='all',filterFinish='all',selectedCard=null,previewArt=false;
 let activeChapter='all',discoveryFilter='all',codexVisibleCards=[];
 const codexOverview={id:'all',number:'✦',title:'Toutes les archives',
