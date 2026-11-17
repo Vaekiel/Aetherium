@@ -403,7 +403,8 @@ function complete(i,description,performance={}){
   const earned=trialReward(g.reward,g.mode,score);
   state.trialStats=recordTrialWin(state.trialStats,i,g.mode,score);
   state.trialRecords=recordPersonalBest(state.trialRecords,i,g.mode,score,performance);
-  const expeditionResult=expeditionVictory(state.expedition,i,g.mode);
+  const expeditionResult=state.expedition?.route?
+    expeditionVictory(state.expedition,i,g.mode):{advanced:false};
   if(expeditionResult.advanced)state.expedition=expeditionResult.state;
   g.status.textContent='✓ '+description+' · '+score+'/100 · +'+earned+' Couronnes';
   grant(earned);
