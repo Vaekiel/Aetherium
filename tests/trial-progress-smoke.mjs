@@ -99,7 +99,7 @@ const browser={state:{difficulty:'aventure'},mini:Array.from({length:5},mockGame
  selectedGame:0,DIFFICULTIES,validDifficulty,picker:{},starts:[0,0,0,0,0],
  goals:Array(5).fill(''),messages:[],saves:0,
  $:selector=>selector==='#difficulty-hint'?mockHint:null,
- $:selector=>selector==='#difficulty-options [data-difficulty]'?modeButtons:
+ $$:selector=>selector==='#difficulty-options [data-difficulty]'?modeButtons:
    selector==='.game-choice'?pickerButtons:[],
  renderTrialMastery:null,
  save(){this.saves++;},
