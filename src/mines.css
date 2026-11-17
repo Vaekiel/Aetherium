@@ -94,3 +94,65 @@
  .excavation-trial .excavation-tile,.excavation-relic{transition:none!important}
  .excavation-relic.is-victorious,.excavation-relic.is-failed,.excavation-trial .excavation-tile.is-triggered{animation:none!important}
 }
+
+
+/* AETHERIUM 1.7.2 — three sites, safe passage sonde and cosmetic relic. */
+.excavation-trial .excavation-site-panel{
+ display:flex;flex-direction:column;gap:4px;margin:0 0 11px;
+ padding:11px 13px;border:1px solid #9b8698a3;border-radius:3px;
+ background:linear-gradient(130deg,#29243e,#1a253d);
+ box-shadow:inset 0 1px #e8d9ed0d;
+}
+.excavation-trial .excavation-site-kicker{
+ font:10px/1.2 Georgia,serif;color:#beacc9;letter-spacing:.11em
+}
+.excavation-trial .excavation-site-name{
+ font:small-caps 19px/1.2 Georgia,serif;color:#f5dbb4;
+}
+.excavation-trial .excavation-site-description{
+ margin:0!important;color:#c8bdd4!important;font:12px/1.5 Georgia,serif!important;
+}
+.excavation-trial .excavation-artifact-note{
+ display:block;margin-top:3px;padding-top:8px;border-top:1px solid #a2879c4d;
+ color:#add7dc;font:11px/1.45 Georgia,serif;
+}
+.excavation-trial[data-excavation-site="cloitre-des-veilleurs"] .excavation-site-panel{
+ background:linear-gradient(125deg,#29293e,#1b273b);
+}
+.excavation-trial[data-excavation-site="terrasses-du-prisme"] .excavation-site-panel{
+ background:linear-gradient(125deg,#2e2547,#1b263e);
+}
+.excavation-trial .excavation-tile.is-guided:not(:disabled){
+ border-color:#9be7f3!important;
+ box-shadow:inset 0 0 0 2px #9deaf1!important,0 0 12px #61cddd8a!important;
+}
+.excavation-trial .excavation-tile.is-guided:not(:disabled)::before{
+ content:'◇';position:absolute;z-index:3;top:2px;left:3px;
+ color:#e8ffff;font:700 18px/1 Georgia,serif;
+ text-shadow:0 0 7px #3ce5ed,0 0 4px #0b5d6e;pointer-events:none;
+}
+.excavation-trial .excavation-tile.is-artifact .excavation-artifact-mark{
+ position:absolute;z-index:4;right:2px;top:2px;display:grid;place-items:center;
+ width:22px;height:22px;border:1px solid #d0b48c;border-radius:50%;
+ color:#fff1ce;background:#372c47dd;
+ font:17px/1 Georgia,serif;text-shadow:0 0 6px #e8be98;
+ pointer-events:none;
+}
+.excavation-trial .small-actions{
+ display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;
+}
+.excavation-trial .small-actions button{
+ min-width:0;padding:8px 9px;white-space:normal;
+}
+.excavation-trial .small-actions button:disabled{
+ opacity:.55;cursor:not-allowed;
+}
+@media(max-width:850px){
+ .excavation-trial .excavation-site-panel{padding:10px;margin-bottom:10px}
+ .excavation-trial .excavation-site-name{font-size:18px}
+ .excavation-trial .small-actions button{min-height:46px;font-size:12px}
+}
+@media(max-width:375px){
+ .excavation-trial .small-actions{gap:5px}
+ .excavation-trial .small-actions button{padding:7px 5px;font-size:11px}
+}
