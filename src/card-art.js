@@ -53,11 +53,25 @@ export function applyCardIllustration(img,card,{shiny=false,size='thumbnail'}={}
   img.style.imageRendering='auto';
   img.style.objectFit='cover';
   img.onerror=null;
+  // An <img> element can be reused when switching a finish or inspecting a card.
+  // Remove stale responsive candidates before assigning a new illustration.
+  img.removeAttribute('srcset');
+  img.removeAttribute('sizes');
   const approved=CARD_ART[card.id];
   if(approved){
-    img.src=(size==='full'?approved.full:approved.thumbnail)+(card.id>=22?'?v=origines-b03':card.id>=12?'?v=origines-b02':'?v=20261116-unframed');
+    const version=card.id>=22?'?v=origines-b03':card.id>=12?'?v=origines-b02':'?v=20261116-unframed';
+    if(size==='thumbnail'){
+      // Mobile cards can occupy ~150–220 CSS pixels at 3x density.
+      // Let the browser select the original 1138px illustration when a
+      // 350px miniature would otherwise appear soft or pixelated.
+      img.sizes='(max-width: 589px) calc((100vw - 56px) / 2), (max-width: 850px) calc((100vw - 80px) / 3), (max-width: 1200px) 175px, 220px';
+      img.srcset=approved.thumbnail+version+' 350w, '+approved.full+version+' 1138w';
+    }
+    img.src=(size==='full'?approved.full:approved.thumbnail)+version;
     img.onerror=()=>{
       img.onerror=null;
+      img.removeAttribute('srcset');
+      img.removeAttribute('sizes');
       img.style.filter='none';
       img.style.imageRendering='pixelated';
       img.src=artFor(card,shiny);
