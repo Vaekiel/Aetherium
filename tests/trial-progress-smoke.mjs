@@ -53,7 +53,7 @@ const main=read('src/main.js'),html=read('index.html'),style=read('src/trial-pro
 assert.ok(main.includes("from './trial-progress.js'"),'Game imports pure progression');
 assert.ok(main.includes("const SAVE='aetherium-save-v1'"),'Legacy save key preserved');
 assert.ok(main.includes('state.trialStats=recordTrialWin('),'Victory records stored');
-assert.ok(main.includes("const difficultyButtons=$('#difficulty-options [data-difficulty]');"),
+assert.ok(main.includes("const difficultyButtons=$$('#difficulty-options [data-difficulty]');"),
   'All difficulty buttons are selected, not just the first button');
 assert.ok(main.includes('g.descriptionEl.textContent=trialObjective(index,g.mode)'),
   'The displayed goal follows the chosen mode and current game');
