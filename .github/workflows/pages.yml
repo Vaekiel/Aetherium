@@ -44,6 +44,9 @@ jobs:
           test -s src/navigation.css
           test -s src/crafting.css
           test -s src/chromatic.css
+          test -s src/codex.css
+          test -s src/codex.js
+          test -s tests/codex-smoke.mjs
           test -s tests/chromatic-smoke.mjs
           test -s src/crafting.js
           test -s tests/navigation-smoke.mjs
@@ -127,6 +130,7 @@ jobs:
           test -s assets/cards/derniere-etoile-thumb.webp
           grep -q '  24: Object.freeze' src/card-art.js
           node --check --input-type=module < src/main.js
+          node --check --input-type=module < src/codex.js
           node tests/booster-smoke.mjs
           node tests/runes-smoke.mjs
           node tests/memory-smoke.mjs
@@ -137,6 +141,7 @@ jobs:
           node tests/navigation-smoke.mjs
           node tests/crafting-smoke.mjs
           node tests/chromatic-smoke.mjs
+          node tests/codex-smoke.mjs
           node --check --input-type=module < src/crafting.js
           node --check --input-type=module < src/data.js
           node --check --input-type=module < src/art.js
