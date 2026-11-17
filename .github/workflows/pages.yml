@@ -48,6 +48,8 @@ jobs:
           test -s src/excavation-sites.js
           test -s tests/excavation-sites-smoke.mjs
           test -s src/alchemy.css
+          test -s src/alchemy-rituals.js
+          test -s tests/alchemy-rituals-smoke.mjs
           test -s src/shell.css
           test -s src/navigation.css
           test -s src/crafting.css
@@ -152,6 +154,7 @@ jobs:
           node --check --input-type=module < src/ether-lock-puzzles.js
           node --check --input-type=module < src/memory-rituals.js
           node --check --input-type=module < src/excavation-sites.js
+          node --check --input-type=module < src/alchemy-rituals.js
           node tests/booster-smoke.mjs
           node tests/runes-smoke.mjs
           node tests/rune-rituals-smoke.mjs
@@ -162,6 +165,7 @@ jobs:
           node tests/mines-smoke.mjs
           node tests/excavation-sites-smoke.mjs
           node tests/alchemy-smoke.mjs
+          node tests/alchemy-rituals-smoke.mjs
           node tests/interface-smoke.mjs
           node tests/navigation-smoke.mjs
           node tests/crafting-smoke.mjs
