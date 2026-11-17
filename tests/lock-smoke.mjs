@@ -22,7 +22,7 @@ const start=main.indexOf('function startLock()'), end=main.indexOf('function sta
 assert.ok(start>=0&&end>start, 'Logique de la Serrure d’Éther trouvée');
 const logic=main.slice(start,end);
 for(const marker of [
-  'const totalAttempts=3',
+  'const totalAttempts=trialRules(2,g.mode).maxAttempts',
   'const solution=Array.from({length:3}',
   'const numbers=shuffle([...solution',
   'numbers.forEach((value,index)',
