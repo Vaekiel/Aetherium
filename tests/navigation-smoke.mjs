@@ -7,7 +7,7 @@ const nav=html.match(/<nav aria-label="Navigation principale">([\s\S]*?)<\/nav>/
 assert.ok(nav,'Main navigation exists');
 const ids=[...nav.matchAll(/data-page="([^"]+)"/g)].map(m=>m[1]);
 assert.deepEqual(ids,['jouer','boosters','collection','atelier'],'Four clear top-level destinations');
-for(const section of [...ids,'succes']){
+for(const section of [...ids,'succes','expeditions']){
  assert.ok(html.includes('id="page-'+section+'"'),section+' is routed to a real page');
 }
 assert.ok(!nav.includes('data-page="succes"'),'Achievements are not a main tab');
@@ -20,9 +20,20 @@ assert.ok(html.includes('id="atelier-card-list"')&&html.includes('id="atelier-ca
 assert.ok(html.includes('id="atelier-confirm"'),'Forge presents a confirmation dialog before spending');
 assert.ok(html.includes('id="atelier-goal-summary"'),'Atelier retains persistent desired-card progress');
 assert.ok(js.includes("const MAIN_PAGES=['jouer','boosters','collection','atelier'];"),'Navigation page list includes Atelier');
-assert.ok(js.includes("const APP_PAGES=[...MAIN_PAGES,'succes'];"),'Legacy #succes route remains supported');
+assert.ok(js.includes("const APP_PAGES=[...MAIN_PAGES,'succes','expeditions'];"),'Chroniques and the Expedition page have valid independent routes');
 assert.ok(js.includes("APP_PAGES.includes(location.hash.slice(1))"),'Deep link to Atelier and Chroniques works');
 assert.ok(js.includes("$$('[data-go]').forEach"),'Resource and shortcut links are wired');
+assert.ok(!nav.includes('data-page="expeditions"'),'Expeditions do not crowd the four-tab mobile bar');
+assert.ok(html.includes('id="expedition-shortcut"')&&html.includes('data-go="expeditions"'),
+  'A visible shortcut opens the separate Expeditions page');
+assert.ok(html.includes('class="expedition-back secondary"')&&html.includes('data-go="jouer"'),
+  'Dedicated expedition page can return to the existing trials');
+assert.ok(js.includes("if(page==='expeditions')renderExpedition()"),
+  'Expedition progress refreshes on each visit');
+assert.ok(js.includes("navigate('jouer');\n    const target=mini[stage.game].card;"),
+  'Starting a chapter stage opens the original mini-game page');
+assert.ok(js.includes("g.actions?.append(button('✧ Suite de l’expédition'"),
+  'After victory the player can return to the expedition instead of being redirected mid-result');
 assert.ok(js.includes("el.setAttribute('aria-current','page')"),'Selected tab has accessible page state');
 assert.ok(js.includes('function renderAtelier()'),'Atelier resource display updates from real save');
 assert.ok(js.includes('state.dust.toLocaleString'),'Displayed Éclats are drawn from saved resource balance');
