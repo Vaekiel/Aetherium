@@ -256,9 +256,9 @@
  #page-expeditions .expedition-content{min-height:190px;padding:13px}
 }
 @media(max-width:520px){
- #page-jouer .expedition-portal{flex-wrap:wrap}
- #page-jouer .expedition-portal-copy{flex-basis:calc(100% - 45px)}
- #page-jouer .expedition-portal-button{width:100%}
+ #page-jouer .expedition-portal{flex-wrap:nowrap}
+ #page-jouer .expedition-portal-copy{flex:1 1 auto;min-width:0}
+ #page-jouer .expedition-portal-button{width:auto;flex:none;padding:8px 9px}
  #page-expeditions .expedition-hero{align-items:flex-start;flex-direction:column}
  #page-expeditions .expedition-hero h1{font-size:29px}
  #page-expeditions .expedition-hero p:last-child{font-size:12px}
