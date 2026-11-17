@@ -28,7 +28,7 @@ assert.ok(code.includes("const [name]=selectedRecipes[Math.min(round,2)];"),
   'The brewing panel only reads the recipe name during selection');
 assert.ok(code.includes("const [name,required]=selectedRecipes[round];"),
   'Hidden ingredient combinations remain available to validate the mixture');
-assert.ok(code.includes('Déduis les deux ingrédients grâce au nom de la potion'),
+assert.ok(code.includes('Déduis les deux ingrédients grâce aux indices du sceau'),
   'The player is encouraged to infer and remember the correct ingredients');
 assert.ok(!css.includes('.alchemy-requirement'),
   'Removed solution display no longer leaves an orphaned CSS rule');
@@ -42,4 +42,9 @@ for(const [name,required] of recipes){
  assert.ok(name.length>0&&required.length===2,'Every recipe requires exactly two ingredients');
  assert.ok(required.every(i=>Number.isInteger(i)&&i>=0&&i<6),'Recipes have valid ingredients');
 }
-console.log('AETHERIUM — Laboratoire arcanique HD : smoke checks OK');
+assert.ok(main.includes("from './alchemy-rituals.js'"),'Five known formulas use solvable clues');
+assert.ok(code.includes("renderGrimoire()"),'The laboratory shows an earned-recipe journal');
+assert.ok(code.includes("save(); // Preserve discoveries immediately"),'Every discovered formula is saved');
+assert.ok(html.includes('src/alchemy.css?v=grimoire-1.7.2'),'Alchemy CSS refreshed');
+assert.ok(html.includes('src/main.js?v=grimoire-1.7.2'),'Alchemy JS refreshed');
+console.log('AETHERIUM — Laboratoire arcanique HD et Grimoire : smoke checks OK');
