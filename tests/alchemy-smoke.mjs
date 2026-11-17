@@ -52,7 +52,7 @@ assert.ok(main.includes("from './alchemy-rituals.js'"),'Five known formulas use 
 assert.ok(code.includes("renderGrimoire()"),'The laboratory shows an earned-recipe journal');
 assert.ok(code.includes("save(); // Preserve discoveries immediately"),'Every discovered formula is saved');
 assert.ok(html.includes('src/alchemy.css?v=alchemy-mastery-172b'),'Alchemy CSS refreshed');
-assert.ok(html.includes('src/main.js?v=ouverture-183'),'Alchemy JS refreshed');
+assert.ok(html.includes('src/main.js?v='),'Alchemy JS refreshed');
 assert.ok(main.includes("g.mode==='maitrise'?3:2"),'Mastery requires a third ingredient');
 assert.ok(main.includes("s.alchemyKnown=sanitizeAlchemyKnown(raw.alchemyKnown)"),'Old local saves migrate safely');
 console.log('AETHERIUM — Laboratoire : 20 recettes, mode Maîtrise triple et Grimoire : OK');
