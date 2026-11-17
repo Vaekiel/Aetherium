@@ -1,0 +1,57 @@
+/* Aetherium — Reflets brisés pilot artwork (unreleased and non-playable).
+   Only the existing "upcoming" Codex area uses these rules. */
+#page-collection #reflets-art-preview[hidden]{display:none!important}
+#page-collection .reflets-art-preview{
+  display:grid;grid-template-columns:minmax(150px,240px) minmax(0,1fr);
+  align-items:center;gap:20px;
+  max-width:650px;margin:22px auto 12px;padding:14px;
+  border:1px solid #7c739f;border-radius:4px;
+  background:linear-gradient(145deg,#29243f,#171c34 70%);
+  box-shadow:inset 0 1px #dfdaf00d,0 12px 30px #0c102b90;
+  text-align:left;
+}
+#page-collection .reflets-art-preview-link{
+  display:block;position:relative;overflow:hidden;border:1px solid #ac94b5;
+  background:#1c1a30;line-height:0;
+  box-shadow:0 9px 28px #0a1028a8;
+}
+#page-collection .reflets-art-preview-link::after{
+  content:'';position:absolute;inset:4px;border:1px solid #c7bbd02f;pointer-events:none
+}
+#page-collection .reflets-art-preview img{
+  width:100%;height:auto;aspect-ratio:2/3;display:block;object-fit:cover;image-rendering:auto
+}
+#page-collection .reflets-art-preview figcaption{display:flex;flex-direction:column;align-items:flex-start;gap:9px;min-width:0}
+#page-collection .reflets-art-preview-eyebrow{
+  color:#b2bfd6;font:10px/1.35 system-ui,sans-serif;letter-spacing:.12em;text-transform:uppercase
+}
+#page-collection .reflets-art-preview strong{
+  color:#f1e4ce;font:small-caps clamp(22px,2.6vw,29px)/1.08 Georgia,serif
+}
+#page-collection .reflets-art-preview-rarity{
+  color:#8ec8f1;font:12px/1.45 Georgia,serif
+}
+#page-collection .reflets-art-preview em{
+  color:#d1c2dc;font:italic 13px/1.58 Georgia,serif
+}
+#page-collection .reflets-art-preview-hd{
+  color:#e2e2f0;font:12px/1.35 Georgia,serif;text-underline-offset:3px;
+  padding:9px 0;min-height:40px;display:inline-flex;align-items:center
+}
+#page-collection .reflets-art-preview-warning{
+  color:#aeb6c6;font:10px/1.45 system-ui,sans-serif
+}
+#page-collection .reflets-art-preview a:focus-visible{outline:2px solid #d9ebf4;outline-offset:3px}
+@media(max-width:680px){
+ #page-collection .reflets-art-preview{
+   display:flex;flex-direction:column;align-items:center;gap:13px;
+   margin:16px auto 8px;padding:12px
+ }
+ #page-collection .reflets-art-preview-link{width:min(100%,280px)}
+ #page-collection .reflets-art-preview figcaption{align-items:center;text-align:center}
+ #page-collection .reflets-art-preview strong{font-size:23px}
+ #page-collection .reflets-art-preview em{max-width:300px}
+}
+@media(prefers-reduced-motion:reduce){
+ #page-collection .reflets-art-preview *{scroll-behavior:auto}
+}
