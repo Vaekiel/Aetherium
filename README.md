@@ -29,6 +29,14 @@ Ouvrir ensuite `http://localhost:8000`.
 
 Le workflow `.github/workflows/pages.yml` valide les modules JavaScript et publie automatiquement la racine du dépôt sur GitHub Pages à chaque push sur `main`.
 
+## AETHERIUM 1.7.0 — Le Codex des Saisons (fondations)
+
+AETHERIUM est désormais organisé en **saisons permanentes de 72 cartes**, divisées en **trois collections de 24 cartes**. La saison 1, **Les Marches de Verre**, présente **I. Origines** (les 24 cartes réellement publiées), **II. Les Reflets brisés** (à venir) et **III. Au-delà du Verre** (à venir, avec une carte Signature prévue parmi les 24). La saison 2, **Le Plateau Nébuleux**, figure dans le Codex comme futur horizon, avec trois collections non annoncées.
+
+Dans le Codex, le joueur choisit sa **saison** puis sa **collection**. Une progression explicite distingue les cartes **publiées** (24 / 72 pour la saison 1) des cartes **possédées** (sur les 24 disponibles). Les collections futures proposent une présentation narrative dédiée, sans cartes fictives, faux boosters ni gains anticipés. Le filtre par catégorie, rareté, statut et finition, les variantes Chromatiques, l'inspection mobile HD et la Forge continuent de fonctionner sur Origines. La première saison garde ses 24 cartes actuelles, leurs ID, les probabilités des boosters et la clé locale `aetherium-save-v1` sans migration.
+
+La structure pure `src/seasons.js` est pensée pour ajouter ultérieurement les collections II/III et les prochaines saisons sans réorganiser le premier catalogue. La future carte Signature sera obtenue par accomplissement et ne sera pas tirée aléatoirement ; **elle n'est pas encore créée**. Les saisons ne sont pas limitées dans le temps. Les anciens chapitres de six cartes n'apparaissent plus dans l'interface.
+
 ## AETHERIUM 1.6.0.3 — Codex plus léger : retrait du panneau Chromatique
 
 Le panneau repliable « Normale ou Chromatique ? » et ses deux cartes d'exemple sont retirés de la grille du Codex, ainsi que les chargements d'images et règles CSS associés. L'inspection individuelle d'une carte, le filtre Chromatiques, les compteurs, les bordures prismatiques des cartes réellement obtenues et les probabilités des boosters restent inchangés. Suppression ciblée sans modification de sauvegarde.
@@ -71,7 +79,7 @@ Les vignettes des cartes utilisent maintenant un `srcset` responsive : le naviga
 
 ## AETHERIUM 1.5 — Le Codex vivant
 
-Le Codex d'Origines est maintenant organisé en **quatre chapitres de six cartes** : Premières Lueurs, Mémoires Anciennes, Terres de Légende et Au-delà des Astres. Ce sont des vues de l'album existant : aucune carte supplémentaire, aucune nouvelle récompense et aucune migration de sauvegarde. La vue « Toutes les archives » continue d'afficher les 24 cartes.
+Dans la version 1.5, le Codex d'Origines était organisé en **quatre chapitres de six cartes** : Premières Lueurs, Mémoires Anciennes, Terres de Légende et Au-delà des Astres. Cette ancienne organisation a été remplacée par les saisons et collections en version 1.7. Les 24 cartes demeurent inchangées.
 
 - Les onglets des chapitres affichent leur progression réelle, ainsi que le nombre de Chromatiques obtenues ; deux jauges globales montrent l'avancée du Codex et les variantes prismatiques.
 - Le joueur peut afficher uniquement les cartes **découvertes**, **à découvrir**, ou toutes ; ces sélections se combinent aux filtres de catégorie, rareté, finition et recherche existants.
