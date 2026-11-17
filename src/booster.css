@@ -176,3 +176,60 @@
 @media(prefers-reduced-motion:reduce){
   #page-boosters .booster-single .pull-flip{transition:none!important}
 }
+
+
+/* AETHERIUM 1.8.2.1 — Android / WebView image reveal fix.
+   Some mobile compositors do not paint a decoded image inside a hidden
+   preserve-3d face after a 180° flip. Use a lightweight 2D reveal instead. */
+#page-boosters .booster-single .pull-frame{
+  transform-style:flat;
+  -webkit-transform-style:flat;
+}
+#page-boosters .booster-single .pull-back,
+#page-boosters .booster-single .pull-front{
+  -webkit-backface-visibility:visible;
+  backface-visibility:visible;
+  will-change:opacity,transform;
+}
+#page-boosters .booster-single .pull-back{z-index:2}
+#page-boosters .booster-single .pull-front{
+  z-index:1;
+  transform:translateY(8px) scale(.97);
+  -webkit-transform:translateY(8px) scale(.97);
+  opacity:0;
+  visibility:hidden;
+  pointer-events:none;
+}
+#page-boosters .booster-single .pull-flip.is-revealed .pull-back{
+  z-index:1;
+  transform:translateY(-8px) scale(.96);
+  -webkit-transform:translateY(-8px) scale(.96);
+  opacity:0;
+  pointer-events:none;
+}
+#page-boosters .booster-single .pull-flip.is-revealed .pull-front{
+  z-index:3;
+  transform:none;
+  -webkit-transform:none;
+  opacity:1;
+  visibility:visible;
+  pointer-events:auto;
+}
+#page-boosters .booster-single .pull-front .card img{
+  display:block;
+  width:100%;
+  flex:1 1 0;
+  height:auto;
+  min-height:0;
+  object-fit:cover;
+  opacity:1;
+  visibility:visible;
+  background-color:#17172a;
+}
+@media(prefers-reduced-motion:reduce){
+  #page-boosters .booster-single .pull-back,
+  #page-boosters .booster-single .pull-front{
+    transition:none!important;
+    will-change:auto;
+  }
+}
