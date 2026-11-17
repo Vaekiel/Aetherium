@@ -298,7 +298,7 @@ const definitions=[
 {name:'Mémoire ancienne',description:'Retourne les tablettes des Archives et retrouve les huit paires runiques.',reward:45},
 {name:'Serrure d’Éther',description:'Choisis trois cristaux pour atteindre la valeur cible en trois tentatives.',reward:50},
 {name:'Fouilles interdites',description:'Ouvre dix cases sans déclencher les cinq pièges cachés. Les nombres donnent les pièges voisins.',reward:65},
-{name:'Laboratoire arcanique',description:'Reproduis trois recettes. Trois mauvaises préparations terminent l’épreuve.',reward:60}
+{name:'Laboratoire arcanique',description:'Déduis deux ingrédients du nom de chaque potion et mémorise les mélanges réussis.',reward:60}
 ];
 const mini=[];
 definitions.forEach((d,i)=>{
@@ -848,7 +848,6 @@ function startAlchemy(){
     panel.append(
       el('span','alchemy-kicker','GRIMOIRE DES ARCHIVES'),
       el('strong','alchemy-name'),
-      el('span','alchemy-requirement'),
       el('div','alchemy-counters'),
       el('div','alchemy-slots')
     );
@@ -872,9 +871,8 @@ function startAlchemy(){
   let mixButton;
 
   const updateHud=()=>{
-    const [name,required]=selectedRecipes[Math.min(round,2)];
+    const [name]=selectedRecipes[Math.min(round,2)];
     $('.alchemy-name',hud).textContent=name;
-    $('.alchemy-requirement',hud).textContent='Ingrédients : '+required.map(i=>ingredientNames[i]).join(' + ');
     $('.alchemy-round',hud).textContent='Potion '+Math.min(round+1,3)+' / 3';
     $('.alchemy-errors',hud).textContent='Erreurs '+errors+' / '+maxErrors;
     [...meter.children].forEach((node,i)=>node.classList.toggle('filled',i<round));
@@ -928,7 +926,7 @@ function startAlchemy(){
     cauldron.classList.remove('is-success','is-error','is-brewing');
     g.status.classList.remove('is-complete','is-failed');
     updateHud();
-    g.status.textContent='Reproduis la recette du grimoire, puis mélange les deux ingrédients.';
+    g.status.textContent='Déduis les deux ingrédients grâce au nom de la potion et mémorise les combinaisons réussies.';
   };
   const mix=()=>{
     if(g.ended||busy||selected.length!==2)return;
@@ -955,7 +953,7 @@ function startAlchemy(){
           if(mixButton)mixButton.disabled=true;
           return;
         }
-        g.status.textContent='✓ '+name+' réussie ! Préparation de la potion suivante…';
+        g.status.textContent='✓ '+name+' réussie ! Retiens ce mélange pour la prochaine fois…';
       }else{
         errors++;
         cauldron.classList.add('is-error');
