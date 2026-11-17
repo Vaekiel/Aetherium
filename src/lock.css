@@ -79,3 +79,23 @@
  .lock-trial .small-actions button{padding:6px;font-size:12px}
 }
 @media(prefers-reduced-motion:reduce){.ether-lock-dial,.ether-crystal{transition:none!important}.ether-lock-dial.is-open,.ether-lock-dial.is-warning{animation:none!important}}
+
+
+/* AETHERIUM 1.7.2 — Clear, readable logical clue below the mechanical dial. */
+.game.lock-trial .ether-lock-rule{
+ display:flex;align-items:flex-start;gap:8px;flex-wrap:wrap;
+ margin:0 0 12px;padding:10px 12px;border:1px solid #9a80977c;
+ border-radius:3px;background:linear-gradient(125deg,#312945d8,#1a2540cc);
+ box-shadow:inset 0 1px #eee4fa0d;
+}
+.game.lock-trial .ether-lock-rule-title{
+ flex:0 0 auto;color:#f1d6ac;font:small-caps 15px/1.35 Georgia,serif;
+}
+.game.lock-trial .ether-lock-rule-text{
+ flex:1 1 175px;color:#e2d7e8;font:12px/1.48 Georgia,serif;
+}
+@media(max-width:850px){
+ .game.lock-trial .ether-lock-rule{gap:5px;padding:9px 10px;margin:0 0 10px}
+ .game.lock-trial .ether-lock-rule-title{font-size:14px}
+ .game.lock-trial .ether-lock-rule-text{font-size:12px}
+}
