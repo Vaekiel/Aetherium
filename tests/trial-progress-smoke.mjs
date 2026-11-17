@@ -118,7 +118,7 @@ assert.equal(browser.state.difficulty,'maitrise','Expert button changes actual g
 assert.equal(browser.starts[0],1,'Changing mode restarts the selected game');
 assert.equal(browser.goals[0],trialObjective(0,'maitrise'),'Expert rune objective updates');
 assert.equal(modeButtons[2].attributes['aria-pressed'],'true','Selected expert button updates visually');
-pickerButtons[3].click();
+browser.selectGame(3);
 assert.equal(browser.selectedGame,3);
 assert.equal(browser.starts[3],1,'Choosing another game applies selected difficulty');
 assert.equal(browser.goals[3],trialObjective(3,'maitrise'),'Excavation target updates to 12');
