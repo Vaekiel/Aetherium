@@ -499,7 +499,7 @@ function startMemory(){
   $('.memory-ritual-title',g.card).textContent=ritual.title;
   $('.memory-ritual-rule',g.card).textContent=ritual.rule;
   const fresco=g.card.querySelector('.memory-fresco');
-  const frescoPieces=$('.memory-fresco-piece',fresco);
+  const frescoPieces=Array.from(fresco.querySelectorAll('.memory-fresco-piece'));
   fresco.classList.remove('is-restored');
   frescoPieces.forEach(piece=>piece.classList.remove('is-revealed'));
   $('.memory-fresco-count',fresco).textContent='0 / 8 fragments';
