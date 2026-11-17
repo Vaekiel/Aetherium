@@ -88,8 +88,30 @@ assert.ok(main.includes('function renderExpedition(){'));
 assert.ok(main.includes('renderExpedition();\nupdate();'));
 assert.ok(html.includes('id="expedition-panel"'));
 assert.ok(html.includes('id="expedition-content"'));
-assert.ok(html.includes('src/main.js?v=seuil-1.8.0'));
-assert.ok(html.includes('src/expedition.css?v=seuil-1.8.0'));
+assert.ok(html.includes('src/main.js?v=expedition-dediee-1.8.1'));
+assert.ok(html.includes('src/expedition.css?v=expedition-dediee-1.8.1'));
+const playStart=html.indexOf('<section id="page-jouer"');
+const journeyStart=html.indexOf('<section id="page-expeditions"');
+const boosterStart=html.indexOf('<section id="page-boosters"');
+const chapterPosition=html.indexOf('id="expedition-panel"');
+assert.ok(playStart>=0&&playStart<journeyStart&&journeyStart<chapterPosition&&chapterPosition<boosterStart,
+  'The chapter is hosted on an independent screen, not above the mini-games');
+assert.equal((html.match(/id="expedition-panel"/g)||[]).length,1);
+assert.ok(html.includes('id="expedition-shortcut"')&&html.includes('data-go="expeditions"'),
+  'The classic play page keeps a discreet link to the chapter');
+assert.ok(html.includes('data-go="jouer"')&&html.includes('expedition-back'),
+  'A return control remains visible on the separate expedition page');
+assert.ok(main.includes("const APP_PAGES=[...MAIN_PAGES,'succes','expeditions'];"));
+assert.ok(main.includes("if(page==='expeditions')renderExpedition()"));
+assert.ok(main.includes("navigate('jouer');\n    const target=mini[stage.game].card;"),
+  'The journey launches the original mini-games on their proper page');
+assert.ok(main.includes("g.actions?.append(button('✧ Suite de l’expédition'"),
+  'A qualifying victory offers a manual return to the adventure');
+assert.ok(css.includes('#page-expeditions .expedition-panel'));
+assert.ok(css.includes('#page-expeditions .expedition-hero'));
+assert.ok(css.includes('#page-jouer .expedition-portal'));
+assert.ok(!css.includes('#page-jouer .expedition-panel'),
+  'The full chapter must no longer style the classic challenge screen');
 assert.ok(css.includes('@media(max-width:850px)'));
 assert.ok(css.includes('@media(max-width:520px)'));
 assert.ok(css.includes('prefers-reduced-motion'));
@@ -125,15 +147,19 @@ const completeCode=main.slice(main.indexOf('function complete(i,description,perf
  main.indexOf('const runeNames=',main.indexOf('function complete(i,description,performance={}){')));
 assert.ok(completeCode.startsWith('function complete(i,description,performance={}){'));
 const games=Array.from({length:5},(_,i)=>({
- mode:'aventure',ended:false,reward:[35,45,50,65,60][i],status:{textContent:''}
+ mode:'aventure',ended:false,reward:[35,45,50,65,60][i],status:{textContent:''},
+ actions:{children:[],append(button){this.children.push(button)}}
 }));
 const state={trialStats:[],trialRecords:[],expedition:startExpedition(null,'verriers','aventure')};
 let earned=0,rendered=0,wins=0;
+const returned=[];
 const gameSandbox={mini:games,state,expeditionVictory,trialScore,trialReward,
  recordTrialWin,recordPersonalBest,
  grant(value){earned+=value;wins++},
  renderTrialMastery(){},
- renderExpedition(){rendered++}
+ renderExpedition(){rendered++},
+ button(label,handler){return {textContent:label,click:handler}},
+ navigate(page){returned.push(page)}
 };
 function complete(index,performance={}){
  gameSandbox.index=index;gameSandbox.performance=performance;
@@ -150,6 +176,10 @@ assert.equal(state.expedition.step,1);
 assert.equal(state.expedition.armed,false);
 assert.equal(earned,80,'Expedition gives no extra Couronnes on top of the original victory');
 assert.equal(rendered,1);
+assert.equal(games[0].actions.children.length,1,'A new return link appears after a completed stage');
+games[0].actions.children[0].click();
+assert.deepEqual(returned,['expeditions'],'Return link navigates to the story, not another mini-game');
+assert.equal(state.expedition.step,1,'Returning does not replay or reset progress');
 complete(0,{errors:0});
 assert.equal(earned,80,'Completed game cannot pay twice');
 assert.equal(state.expedition.step,1);
@@ -182,10 +212,12 @@ function uiNode(tag='div',klass='',value=''){
  };
 }
 const chapterContent=uiNode('div'),chapterCounter=uiNode('span');
+const portalText=uiNode('span');
 const domState={difficulty:'maitrise',expedition:emptyExpedition()};
-const calls={saved:0,started:[],selected:[],rendered:0};
-const cards=Array.from({length:5},()=>({card:{
- querySelector:()=>null,scrollIntoView(){}
+const calls={saved:0,started:[],selected:[],rendered:0,navigated:[],scrolled:[]};
+const cards=Array.from({length:5},(_,index)=>({card:{
+ querySelector:()=>null,
+ scrollIntoView(){calls.scrolled.push(index)}
 }}));
 const choicesSandbox={
  state:domState,EXPEDITION_ROUTES,expeditionSummary,startExpedition,
@@ -201,10 +233,12 @@ const choicesSandbox={
  renderDifficultyChoice(){},
  selectGame(i){calls.selected.push(i)},
  save(){calls.saved++},
+ navigate(page){calls.navigated.push(page)},
  el:uiNode,
  button(label,fn,klass){const b=uiNode('button',klass,label);b.addEventListener('click',fn);return b},
  $:selector=>selector==='#expedition-content'?chapterContent:
-  selector==='#expedition-counter'?chapterCounter:null
+  selector==='#expedition-counter'?chapterCounter:
+  selector==='#expedition-shortcut-progress'?portalText:null
 };
 const uiCode=main.slice(main.indexOf('function renderExpedition(){'),
  main.indexOf('function makeCard(',main.indexOf('function renderExpedition(){')));
@@ -212,6 +246,7 @@ assert.ok(uiCode.startsWith('function renderExpedition(){'));
 const ui=runInNewContext(uiCode+'({renderExpedition})',choicesSandbox);
 ui.renderExpedition();
 assert.equal(chapterCounter.textContent,'0/2 fragments');
+assert.equal(portalText.textContent,'Deux chemins à découvrir');
 const choiceBlock=chapterContent.children.find(e=>e.classList.contains('expedition-choices'));
 assert.equal(choiceBlock.children.length,2);
 choiceBlock.children[1].click();
@@ -219,12 +254,15 @@ assert.equal(domState.expedition.route,'veilleurs');
 assert.equal(domState.expedition.mode,'maitrise');
 assert.equal(domState.expedition.step,0);
 assert.equal(calls.saved,1);
+assert.ok(portalText.textContent.includes('étape 1/3'),'The compact shortcut reflects the active itinerary');
 const actions=chapterContent.children.find(e=>e.classList.contains('expedition-actions'));
 assert.equal(actions.children.length,2);
 actions.children[0].click();
 assert.equal(domState.expedition.armed,true);
 assert.deepEqual(calls.started,[1],'Launching Veilleurs restarts the actual Memory trial');
 assert.deepEqual(calls.selected,[1],'The selected mini-game becomes visible');
+assert.deepEqual(calls.navigated,['jouer'],'A stage launch leaves the expedition screen and reveals the game');
+assert.deepEqual(calls.scrolled,[1],'The targeted game is scrolled into view on desktop and mobile');
 assert.equal(calls.saved,2);
 const cancel=chapterContent.children.find(e=>e.classList.contains('expedition-actions')).children[1];
 cancel.click();
