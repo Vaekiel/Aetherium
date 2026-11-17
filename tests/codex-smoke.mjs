@@ -48,6 +48,10 @@ assert.ok(main.includes("const SAVE='aetherium-save-v1'"),'Existing save key pre
 assert.ok(css.includes('@media(max-width:850px)'),'Mobile chapter rail supported');
 assert.ok(css.includes('prefers-reduced-motion'),'Reduced-motion supported');
 assert.ok(css.includes('.codex-sealed-art'),'Sealed cards have a placeholder illustration');
+assert.ok(html.includes('<section id="page-collection" class="page"><div id="sheet-scrim"'),
+  'Mobile inspector backdrop shares its Codex stacking context');
+assert.ok(!html.includes('</main><div id="sheet-scrim"'),
+  'Backdrop must not cover the entire elevated inspector');
 assert.ok(!read('src/codex.js').includes('localStorage'),'Chapters never write to a save');
 const artSource=read('src/card-art.js');
 assert.ok(artSource.includes("img.srcset=approved.thumbnail+version+' 350w, '+approved.full+version+' 1138w'"),
