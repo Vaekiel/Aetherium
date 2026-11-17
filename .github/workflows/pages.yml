@@ -60,6 +60,8 @@ jobs:
           test -s src/collection-milestones.js
           test -s tests/collection-milestones-smoke.mjs
           test -s src/trial-progress.js
+          test -s src/trial-records.js
+          test -s tests/trial-records-smoke.mjs
           test -s src/trial-progress.css
           test -s tests/trial-progress-smoke.mjs
           test -s tests/codex-smoke.mjs
@@ -150,6 +152,7 @@ jobs:
           node --check --input-type=module < src/seasons.js
           node --check --input-type=module < src/collection-milestones.js
           node --check --input-type=module < src/trial-progress.js
+          node --check --input-type=module < src/trial-records.js
           node --check --input-type=module < src/rune-rituals.js
           node --check --input-type=module < src/ether-lock-puzzles.js
           node --check --input-type=module < src/memory-rituals.js
@@ -173,6 +176,7 @@ jobs:
           node tests/codex-smoke.mjs
           node tests/collection-milestones-smoke.mjs
           node tests/trial-progress-smoke.mjs
+          node tests/trial-records-smoke.mjs
           node --check --input-type=module < src/crafting.js
           node --check --input-type=module < src/data.js
           node --check --input-type=module < src/art.js
