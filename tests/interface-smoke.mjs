@@ -42,7 +42,7 @@ assert.ok(main.includes("target.showPopover()"),
   'Opening inspection elevates its panel into native browser top layer');
 assert.ok(main.includes("inspectorShell.hidePopover()"),
   'Closing inspection releases the native top layer');
-assert.ok(html.includes('mobile.css?v=inspector-layer-3')&&html.includes('src/main.js?v=seasons-1.7.0'),
+assert.ok(html.includes('mobile.css?v=inspector-layer-3')&&html.includes('src/main.js?v=seasons-1.7.1'),
   'Updated mobile inspector assets bypass stale caches');
 assert.ok(mobileCSS.includes('body.sheet-open #app>.layout{z-index:110}'),
   'Open mobile sheets raise the layout above the fixed app header');
