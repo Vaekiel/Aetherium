@@ -75,5 +75,6 @@ assert.ok(mobile.includes('.gallery .card .info{padding:17px'),'Phone titles hav
 assert.ok(chromaticCSS.includes('.card.is-chromatic .info:before'),'Chromatic ornament follows the info band');
 assert.ok(!chromaticCSS.includes('.card.is-chromatic:before{'),'Chromatic cards do not revive the faulty placement');
 assert.ok(css.includes('.card.is-sealed .info:before'),'Sealed cards use the same aligned ornament');
-assert.ok(html.includes('theme.css?v=card-ornament-1')&&html.includes('mobile.css?v=card-ornament-1'),'Caches refreshed on mobile');
+assert.ok(html.includes('theme.css?v=card-ornament-1')&&html.includes('mobile.css?v=inspector-layer-2'),
+  'Caches refreshed for both the card ornament and mobile inspection layers');
 console.log('AETHERIUM 1.5 : albums, progression, filtres, sauvegardes et gameplay OK');
