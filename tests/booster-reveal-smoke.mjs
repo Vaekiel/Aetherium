@@ -78,7 +78,7 @@ for(const text of [
  'boosterGrid.classList.add(\'booster-gallery\')']){
  assert.ok(main.includes(text),'The original game economy/persistence remains unchanged: '+text);
 }
-assert.ok(html.includes('src/main.js?v=booster-reveal-fix-1821'),
+assert.ok(html.includes('src/main.js?v=ouverture-183'),
   'New JavaScript is not served from the cached broken version');
 assert.ok(html.includes('src/booster.css?v=booster-reveal-fix-1821'),
   'New 2D presentation is not masked by old cached CSS');
