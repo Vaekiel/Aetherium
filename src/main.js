@@ -9,7 +9,7 @@ import {nextRuneRitual,runeExpectedAt} from './rune-rituals.js';
 import {makeEtherPuzzle,etherRule,evaluateEtherAttempt,etherAttemptFeedback} from './ether-lock-puzzles.js';
 import {nextMemoryRitual,buildMemoryDeck} from './memory-rituals.js';
 import {makeExcavationSite,chooseExcavationGuide} from './excavation-sites.js';
-import {ALCHEMY_ESSENCES,ALCHEMY_MODES,alchemyClue,recipeIndex,rememberAlchemyRecipe} from './alchemy-rituals.js';
+import {ALCHEMY_ESSENCES,ALCHEMY_MODES,ALCHEMY_RECIPE_COUNT,alchemyClue,recipeIndex,rememberAlchemyRecipe,sanitizeAlchemyKnown} from './alchemy-rituals.js';
 
 const $=(q,root=document)=>root.querySelector(q);
 const $$=(q,root=document)=>Array.from(root.querySelectorAll(q));
@@ -93,7 +93,7 @@ mobileView.addEventListener('change',syncMobileSheets);
 // for the corresponding 24 catalogue entries. All gameplay/save data is unchanged.
 const SAVE='aetherium-save-v1';
 const fresh=()=>({coins:300,dust:0,owned:{},shiny:{},wins:0,earned:0,opened:0,goalId:null,difficulty:'aventure',trialStats:[],collectionMilestones:{},alchemyKnown:[]});
-function load(){try{const raw=JSON.parse(localStorage.getItem(SAVE));if(!raw||typeof raw!=='object')return fresh();const s=fresh();for(const field of ['coins','dust','wins','earned','opened'])if(Number.isSafeInteger(raw[field])&&raw[field]>=0&&raw[field]<1e9)s[field]=raw[field];for(const c of CARDS){const n=raw.owned?.[c.id];if(Number.isSafeInteger(n)&&n>0&&n<1e6)s.owned[c.id]=n;if(raw.shiny?.[c.id]===true&&s.owned[c.id])s.shiny[c.id]=true}if(Number.isSafeInteger(raw.goalId)&&CARDS.some(c=>c.id===raw.goalId)&&!s.owned[raw.goalId])s.goalId=raw.goalId;if(['initiation','aventure','maitrise'].includes(raw.difficulty))s.difficulty=raw.difficulty;if(Array.isArray(raw.trialStats))s.trialStats=raw.trialStats;s.collectionMilestones=sanitizeMilestoneClaims(raw.collectionMilestones);if(Array.isArray(raw.alchemyKnown))s.alchemyKnown=[...new Set(raw.alchemyKnown.filter(id=>Number.isInteger(id)&&id>=0&&id<5))].sort((a,b)=>a-b);return s}catch{return fresh()}}
+function load(){try{const raw=JSON.parse(localStorage.getItem(SAVE));if(!raw||typeof raw!=='object')return fresh();const s=fresh();for(const field of ['coins','dust','wins','earned','opened'])if(Number.isSafeInteger(raw[field])&&raw[field]>=0&&raw[field]<1e9)s[field]=raw[field];for(const c of CARDS){const n=raw.owned?.[c.id];if(Number.isSafeInteger(n)&&n>0&&n<1e6)s.owned[c.id]=n;if(raw.shiny?.[c.id]===true&&s.owned[c.id])s.shiny[c.id]=true}if(Number.isSafeInteger(raw.goalId)&&CARDS.some(c=>c.id===raw.goalId)&&!s.owned[raw.goalId])s.goalId=raw.goalId;if(['initiation','aventure','maitrise'].includes(raw.difficulty))s.difficulty=raw.difficulty;if(Array.isArray(raw.trialStats))s.trialStats=raw.trialStats;s.collectionMilestones=sanitizeMilestoneClaims(raw.collectionMilestones);if(Array.isArray(raw.alchemyKnown))s.alchemyKnown=sanitizeAlchemyKnown(raw.alchemyKnown);return s}catch{return fresh()}}
 let state=load();
 state.trialStats=sanitizedTrialStats(state.trialStats);
 let boosterBusy=false;
@@ -944,7 +944,11 @@ function startMines(){
 }
 
 const ingredients=[['☘','Mousse'],['☀','Soleil'],['◈','Cristal'],['☾','Lune'],['✿','Fleur'],['❄','Givre']];
-const recipes=[['Élixir de Vie',[0,4]],['Sérum solaire',[1,2]],['Souffle lunaire',[3,5]],['Sève d’Aurore',[0,1]],['Nectar cristallin',[2,4]]];
+const recipes=[
+['Élixir de Vie',[0,4]],['Sérum solaire',[1,2]],['Souffle lunaire',[3,5]],['Sève d’Aurore',[0,1]],['Nectar cristallin',[2,4]],
+['Rosée de Cristal',[0,2]],['Floraison Solaire',[1,4]],['Givre de Verre',[2,5]],['Brume des Racines',[0,3]],['Braise d’Hiver',[1,5]],['Éclipse Florale',[3,4]],['Pétales de Givre',[4,5]],
+['Couronne des Trois Saisons',[0,1,5]],['Essence du Verre',[0,2,5]],['Sceau de l’Équinoxe',[1,3,4]],['Sève des Constellations',[0,1,2]],['Prisme du Crépuscule',[2,3,4]],['Aube des Ronces',[0,3,5]],['Couronne du Solstice',[1,4,5]],['Rituel des Trois Astres',[1,2,3]]
+];
 /* Laboratoire arcanique: three recipes, two ingredients each, three mistakes maximum.
    HD sprites are presentation only; the five original recipes and reward are retained. */
 let alchemySession=0;
@@ -961,7 +965,8 @@ function startAlchemy(){
   g.status.classList.add('alchemy-status');
   g.status.classList.remove('is-complete','is-failed');
   const reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const selectedRecipes=shuffle([...recipes]).slice(0,3);
+  const requiredIngredients=g.mode==='maitrise'?3:2;
+  const selectedRecipes=shuffle(recipes.filter(recipe=>recipe[1].length===requiredIngredients)).slice(0,3);
   let round=0,errors=0,selected=[],busy=false;
 
   let hud=g.card.querySelector('.alchemy-hud');
@@ -979,8 +984,8 @@ function startAlchemy(){
     const counters=$('.alchemy-counters',panel);
     counters.append(el('span','alchemy-round'),el('span','alchemy-errors'));
     const slots=$('.alchemy-slots',panel);
-    slots.setAttribute('aria-label','Deux ingrédients sélectionnés');
-    for(let i=0;i<2;i++)slots.append(el('span','alchemy-slot','◇'));
+    slots.setAttribute('aria-label','Emplacements pour les ingrédients sélectionnés');
+    for(let i=0;i<3;i++)slots.append(el('span','alchemy-slot','◇'));
     hud.append(cauldron,panel);
     const meter=el('div','alchemy-meter');
     meter.setAttribute('aria-hidden','true');
@@ -1007,17 +1012,22 @@ function startAlchemy(){
   }
   const renderGrimoire=()=>{
     const known=state.alchemyKnown||[];
-    $('.alchemy-grimoire-count',grimoire).textContent=known.length+' / 5 formules retrouvées';
+    $('.alchemy-grimoire-count',grimoire).textContent=known.length+' / '+recipes.length+' formules retrouvées';
     const list=$('.alchemy-grimoire-list',grimoire);
     list.replaceChildren();
     recipes.forEach((recipe,index)=>{
+      const advanced=recipe[1].length===3;
+      if(index===0||index===12){
+        list.append(el('div','alchemy-grimoire-section',
+          advanced?'✦ FORMULES DU GRAND ŒUVRE · MAÎTRISE':'✧ FORMULES DES ARCHIVES · INITIATION ET AVENTURE'));
+      }
       const discovered=known.includes(index);
-      const entry=el('div','alchemy-grimoire-entry'+(discovered?' is-known':''));
+      const entry=el('div','alchemy-grimoire-entry'+(discovered?' is-known':'')+(advanced?' is-advanced':''));
       const title=el('strong','alchemy-grimoire-recipe',
-        discovered?'✧ '+recipe[0]:'◇ Formule scellée '+(index+1));
+        discovered?'✧ '+recipe[0]:(advanced?'◇ Grand Œuvre scellé '+(index-11):'◇ Formule scellée '+(index+1)));
       const detail=el('span','alchemy-grimoire-detail',
         discovered?recipe[1].map(i=>ingredients[i][1]).join(' + '):
-          'Réussis cette potion pour en conserver la formule.');
+          (advanced?'Une alchimie à trois essences reste à découvrir.':'Réussis cette potion pour en conserver la formule.'));
       entry.append(title,detail);
       list.append(entry);
     });
@@ -1025,7 +1035,9 @@ function startAlchemy(){
   renderGrimoire();
   const cauldron=$('.alchemy-cauldron',hud);
   const meter=g.card.querySelector('.alchemy-meter');
-  const slots=$$('.alchemy-slot',hud);
+  const slots=$('.alchemy-slot',hud);
+  slots.forEach((slot,index)=>slot.hidden=index>=requiredIngredients);
+  $('.alchemy-slots',hud).style.setProperty('--alchemy-slot-count',requiredIngredients);
   const ingredientNames=ingredients.map(item=>item[1]);
   const symbols=['Mousse','Soleil','Cristal','Lune','Fleur','Givre'];
   const ingredientButtons=[];
@@ -1047,7 +1059,7 @@ function startAlchemy(){
       button.classList.toggle('selected',active);
       button.setAttribute('aria-pressed',String(active));
     });
-    if(mixButton)mixButton.disabled=g.ended||busy||selected.length!==2;
+    if(mixButton)mixButton.disabled=g.ended||busy||selected.length!==requiredIngredients;
   };
 
   g.board.replaceChildren();
@@ -1070,15 +1082,17 @@ function startAlchemy(){
       if(g.ended||busy)return;
       const prior=selected.indexOf(i);
       if(prior!==-1)selected.splice(prior,1);
-      else if(selected.length<2)selected.push(i);
+      else if(selected.length<requiredIngredients)selected.push(i);
       else{
-        g.status.textContent='Deux ingrédients maximum : retire une sélection pour la remplacer.';
+        g.status.textContent=requiredIngredients+' ingrédients maximum : retire une sélection pour la remplacer.';
         return;
       }
       updateHud();
-      g.status.textContent=selected.length===2
-        ?'Les ingrédients sont prêts : mélange-les dans le chaudron.'
-        :'Sélectionne deux ingrédients pour préparer la potion.';
+      g.status.textContent=selected.length===requiredIngredients
+        ?'Les essences sont prêtes : active le chaudron.'
+        :'Sélectionne '+(requiredIngredients-selected.length)+' essence'+
+          (requiredIngredients-selected.length>1?'s':'')+' supplémentaire'+
+          (requiredIngredients-selected.length>1?'s':'')+'.';
     });
     ingredientButtons.push(tile);
     g.board.append(tile);
@@ -1092,10 +1106,12 @@ function startAlchemy(){
     const clue=alchemyClue(g.mode,selectedRecipes[round],round+session);
     $('.alchemy-ritual-title',g.card).textContent=clue.title+' · '+ALCHEMY_MODES[clue.mode].title;
     $('.alchemy-ritual-clue',g.card).textContent=clue.detail;
-    g.status.textContent='Déduis les deux ingrédients grâce aux indices du sceau et conserve les formules dans ton grimoire.';
+    g.status.textContent=g.mode==='maitrise'?
+      'Le Grand Œuvre exige trois essences : recoupe les indices pour trouver la seule combinaison juste.':
+      'Déduis deux ingrédients grâce aux indices du sceau et conserve les formules dans ton grimoire.';
   };
   const mix=()=>{
-    if(g.ended||busy||selected.length!==2)return;
+    if(g.ended||busy||selected.length!==requiredIngredients)return;
     busy=true;
     updateHud();
     cauldron.classList.remove('is-success','is-error');
