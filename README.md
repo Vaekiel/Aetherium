@@ -29,6 +29,10 @@ Ouvrir ensuite `http://localhost:8000`.
 
 Le workflow `.github/workflows/pages.yml` valide les modules JavaScript et publie automatiquement la racine du dépôt sur GitHub Pages à chaque push sur `main`.
 
+## AETHERIUM 1.5.2 — Images nettes sur mobile
+
+Les vignettes des cartes utilisent maintenant un `srcset` responsive : le navigateur conserve la miniature WebP pour les affichages suffisamment petits, mais sélectionne l'illustration HD d'origine sur les écrans à forte densité de pixels. Cela améliore la netteté de la grille du Codex et des aperçus non possédés, sans modifier le contenu des cartes ni le fonctionnement des Chromatiques. Lors de la révélation individuelle d'un booster, le jeu affiche désormais directement l'illustration HD au lieu d'agrandir sa miniature. Les images restent chargées à la demande dans les grilles. Les sauvegardes et le gameplay restent inchangés.
+
 ## AETHERIUM 1.5 — Le Codex vivant
 
 Le Codex d'Origines est maintenant organisé en **quatre chapitres de six cartes** : Premières Lueurs, Mémoires Anciennes, Terres de Légende et Au-delà des Astres. Ce sont des vues de l'album existant : aucune carte supplémentaire, aucune nouvelle récompense et aucune migration de sauvegarde. La vue « Toutes les archives » continue d'afficher les 24 cartes.
