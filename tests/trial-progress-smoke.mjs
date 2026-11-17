@@ -49,6 +49,8 @@ assert.equal(masteryLevel(3).title,'Apprenti');
 assert.equal(masteryLevel(8).title,'Initié');
 assert.equal(masteryLevel(20).title,'Maître');
 
+const {sanitizeMilestoneClaims}=await import('data:text/javascript;charset=utf-8,'+
+ encodeURIComponent(read('src/collection-milestones.js')));
 const main=read('src/main.js'),html=read('index.html'),style=read('src/trial-progress.css');
 assert.ok(main.includes("from './trial-progress.js'"),'Game imports pure progression');
 assert.ok(main.includes("const SAVE='aetherium-save-v1'"),'Legacy save key preserved');
@@ -64,7 +66,7 @@ for(const selector of ['difficulty-options','difficulty-hint','data-difficulty="
  'data-difficulty="aventure"','data-difficulty="maitrise"'])
   assert.ok(html.includes(selector),'Difficulty UI contains '+selector);
 assert.ok(html.includes('src/trial-progress.css?v=arcanes-1.6.0.1'),'Difficulty stylesheet versioned');
-assert.ok(html.includes('src/main.js?v=seasons-1.7.0'),'Current script versioned');
+assert.ok(html.includes('src/main.js?v=seasons-1.7.1'),'Current script versioned');
 assert.ok(style.includes('@media(max-width:850px)'),'Mobile difficulty controls supported');
 assert.ok(style.includes('min-height:44px'),'Difficulty mode targets have mobile tap area');
 const freshCode=main.slice(main.indexOf('const fresh='),main.indexOf('function load(){'));
@@ -73,7 +75,7 @@ const legacy={coins:75,dust:23,wins:7,earned:890,opened:4,owned:{1:2},shiny:{1:t
 const loaded=runInNewContext(freshCode+loadCode+'load()',{
  localStorage:{getItem:key=>key==='aetherium-save-v1'?JSON.stringify(legacy):null},
  CARDS:await import('data:text/javascript;charset=utf-8,'+encodeURIComponent(read('src/data.js'))).then(m=>m.CARDS),
- SAVE:'aetherium-save-v1'
+ SAVE:'aetherium-save-v1',sanitizeMilestoneClaims
 });
 assert.equal(loaded.coins,75);assert.equal(loaded.dust,23);
 assert.equal(loaded.owned[1],2);assert.equal(loaded.shiny[1],true);
