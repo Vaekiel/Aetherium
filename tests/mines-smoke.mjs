@@ -15,11 +15,16 @@ const start=main.indexOf('function startMines()'),end=main.indexOf('const ingred
 assert.ok(start>=0&&end>start,'Excavation function present');
 const game=main.slice(start,end);
 for(const fragment of [
-  'length:25','slice(0,5)','countNearby','safe===safeTarget',
+  'for(let i=0;i<25;i++)','makeExcavationSite(previousExcavationSite)',
+  'const bombs=site.bombs','countNearby','safe===safeTarget',
+  'chooseExcavationGuide(site,dug)','site.artifactIndex',
   "complete(3,'Fouille accomplie !",'bombs.has(i)',
   'tile.disabled=true','aria-label','setArtwork(tile,0)',
   "g.board.style.setProperty('--cols',5)",
   'g.actions.replaceChildren',
 ]) assert.ok(game.includes(fragment),'Missing gameplay marker: '+fragment);
 assert.ok(!game.includes('tileGrid(g.board'),'No generic HTML grid in redesigned mini-game');
-console.log('AETHERIUM Fouilles interdites pixel-art HD checks: OK');
+assert.ok(html.includes('src/mines.css?v=fouilles-1.7.2'),'New excavation CSS bypasses cache');
+assert.ok(html.includes('src/main.js?v=fouilles-1.7.2'),'New excavation runtime bypasses cache');
+assert.ok(main.includes("from './excavation-sites.js'"),'Fair site generator is imported');
+console.log('AETHERIUM Fouilles interdites : HD, sites variés et sonde de sécurité OK');
