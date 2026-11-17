@@ -9,6 +9,7 @@ import {nextRuneRitual,runeExpectedAt} from './rune-rituals.js';
 import {makeEtherPuzzle,etherRule,evaluateEtherAttempt,etherAttemptFeedback} from './ether-lock-puzzles.js';
 import {nextMemoryRitual,buildMemoryDeck} from './memory-rituals.js';
 import {makeExcavationSite,chooseExcavationGuide} from './excavation-sites.js';
+import {ALCHEMY_ESSENCES,ALCHEMY_MODES,alchemyClue,recipeIndex,rememberAlchemyRecipe} from './alchemy-rituals.js';
 
 const $=(q,root=document)=>root.querySelector(q);
 const $$=(q,root=document)=>Array.from(root.querySelectorAll(q));
@@ -91,8 +92,8 @@ mobileView.addEventListener('change',syncMobileSheets);
 // approved Collection mockup. These are *visual placeholders*, not final art
 // for the corresponding 24 catalogue entries. All gameplay/save data is unchanged.
 const SAVE='aetherium-save-v1';
-const fresh=()=>({coins:300,dust:0,owned:{},shiny:{},wins:0,earned:0,opened:0,goalId:null,difficulty:'aventure',trialStats:[],collectionMilestones:{}});
-function load(){try{const raw=JSON.parse(localStorage.getItem(SAVE));if(!raw||typeof raw!=='object')return fresh();const s=fresh();for(const field of ['coins','dust','wins','earned','opened'])if(Number.isSafeInteger(raw[field])&&raw[field]>=0&&raw[field]<1e9)s[field]=raw[field];for(const c of CARDS){const n=raw.owned?.[c.id];if(Number.isSafeInteger(n)&&n>0&&n<1e6)s.owned[c.id]=n;if(raw.shiny?.[c.id]===true&&s.owned[c.id])s.shiny[c.id]=true}if(Number.isSafeInteger(raw.goalId)&&CARDS.some(c=>c.id===raw.goalId)&&!s.owned[raw.goalId])s.goalId=raw.goalId;if(['initiation','aventure','maitrise'].includes(raw.difficulty))s.difficulty=raw.difficulty;if(Array.isArray(raw.trialStats))s.trialStats=raw.trialStats;s.collectionMilestones=sanitizeMilestoneClaims(raw.collectionMilestones);return s}catch{return fresh()}}
+const fresh=()=>({coins:300,dust:0,owned:{},shiny:{},wins:0,earned:0,opened:0,goalId:null,difficulty:'aventure',trialStats:[],collectionMilestones:{},alchemyKnown:[]});
+function load(){try{const raw=JSON.parse(localStorage.getItem(SAVE));if(!raw||typeof raw!=='object')return fresh();const s=fresh();for(const field of ['coins','dust','wins','earned','opened'])if(Number.isSafeInteger(raw[field])&&raw[field]>=0&&raw[field]<1e9)s[field]=raw[field];for(const c of CARDS){const n=raw.owned?.[c.id];if(Number.isSafeInteger(n)&&n>0&&n<1e6)s.owned[c.id]=n;if(raw.shiny?.[c.id]===true&&s.owned[c.id])s.shiny[c.id]=true}if(Number.isSafeInteger(raw.goalId)&&CARDS.some(c=>c.id===raw.goalId)&&!s.owned[raw.goalId])s.goalId=raw.goalId;if(['initiation','aventure','maitrise'].includes(raw.difficulty))s.difficulty=raw.difficulty;if(Array.isArray(raw.trialStats))s.trialStats=raw.trialStats;s.collectionMilestones=sanitizeMilestoneClaims(raw.collectionMilestones);if(Array.isArray(raw.alchemyKnown))s.alchemyKnown=[...new Set(raw.alchemyKnown.filter(id=>Number.isInteger(id)&&id>=0&&id<5))].sort((a,b)=>a-b);return s}catch{return fresh()}}
 let state=load();
 state.trialStats=sanitizedTrialStats(state.trialStats);
 let boosterBusy=false;
@@ -984,8 +985,44 @@ function startAlchemy(){
     const meter=el('div','alchemy-meter');
     meter.setAttribute('aria-hidden','true');
     for(let i=0;i<3;i++)meter.append(el('span'));
-    g.board.before(hud,meter);
+    const hint=el('div','alchemy-ritual');
+    hint.append(el('span','alchemy-ritual-icon','✧'));
+    const hintCopy=el('div','alchemy-ritual-copy');
+    hintCopy.append(el('strong','alchemy-ritual-title'),el('span','alchemy-ritual-clue'));
+    hint.append(hintCopy);
+    const family=el('p','alchemy-family-legend',
+      'Essences : Végétales — Mousse, Fleur · Astrales — Soleil, Lune · Minérales — Cristal, Givre');
+    g.board.before(hud,meter,hint,family);
   }
+  let grimoire=g.card.querySelector('.alchemy-grimoire');
+  if(!grimoire){
+    grimoire=el('details','alchemy-grimoire');
+    const head=el('summary','alchemy-grimoire-head');
+    head.append(el('span','alchemy-grimoire-symbol','✦'));
+    const headText=el('span','alchemy-grimoire-heading');
+    headText.append(el('strong','', 'Le Grimoire retrouvé'),el('small','alchemy-grimoire-count'));
+    head.append(headText);
+    grimoire.append(head,el('div','alchemy-grimoire-list'));
+    g.actions.before(grimoire);
+  }
+  const renderGrimoire=()=>{
+    const known=state.alchemyKnown||[];
+    $('.alchemy-grimoire-count',grimoire).textContent=known.length+' / 5 formules retrouvées';
+    const list=$('.alchemy-grimoire-list',grimoire);
+    list.replaceChildren();
+    recipes.forEach((recipe,index)=>{
+      const discovered=known.includes(index);
+      const entry=el('div','alchemy-grimoire-entry'+(discovered?' is-known':''));
+      const title=el('strong','alchemy-grimoire-recipe',
+        discovered?'✧ '+recipe[0]:'◇ Formule scellée '+(index+1));
+      const detail=el('span','alchemy-grimoire-detail',
+        discovered?recipe[1].map(i=>ingredients[i][1]).join(' + '):
+          'Réussis cette potion pour en conserver la formule.');
+      entry.append(title,detail);
+      list.append(entry);
+    });
+  };
+  renderGrimoire();
   const cauldron=$('.alchemy-cauldron',hud);
   const meter=g.card.querySelector('.alchemy-meter');
   const slots=$$('.alchemy-slot',hud);
@@ -1020,13 +1057,15 @@ function startAlchemy(){
   for(let i=0;i<ingredients.length;i++){
     const tile=el('button','tile alchemy-ingredient');
     tile.type='button';
-    tile.setAttribute('aria-label','Sélectionner '+ingredientNames[i]);
+    tile.setAttribute('aria-label','Sélectionner '+ingredientNames[i]+', sceau '+(i+1)+', essence '+ALCHEMY_ESSENCES[i]);
+    tile.setAttribute('title',ingredientNames[i]+' · Sceau '+(i+1)+' · Essence '+ALCHEMY_ESSENCES[i]);
     tile.setAttribute('aria-pressed','false');
     tile.style.setProperty('--alchemy-x',((i%3)/2*100)+'%');
     tile.style.setProperty('--alchemy-y',(Math.floor(i/3)/2*100)+'%');
     const artwork=el('span','alchemy-art');
     artwork.setAttribute('aria-hidden','true');
-    tile.append(artwork,el('span','alchemy-ingredient-name',symbols[i]));
+    tile.append(artwork,el('span','alchemy-ingredient-name',symbols[i]),
+      el('span','alchemy-seal-number',String(i+1)));
     tile.addEventListener('click',()=>{
       if(g.ended||busy)return;
       const prior=selected.indexOf(i);
@@ -1050,7 +1089,10 @@ function startAlchemy(){
     cauldron.classList.remove('is-success','is-error','is-brewing');
     g.status.classList.remove('is-complete','is-failed');
     updateHud();
-    g.status.textContent='Déduis les deux ingrédients grâce au nom de la potion et mémorise les combinaisons réussies.';
+    const clue=alchemyClue(g.mode,selectedRecipes[round],round+session);
+    $('.alchemy-ritual-title',g.card).textContent=clue.title+' · '+ALCHEMY_MODES[clue.mode].title;
+    $('.alchemy-ritual-clue',g.card).textContent=clue.detail;
+    g.status.textContent='Déduis les deux ingrédients grâce aux indices du sceau et conserve les formules dans ton grimoire.';
   };
   const mix=()=>{
     if(g.ended||busy||selected.length!==2)return;
@@ -1067,6 +1109,13 @@ function startAlchemy(){
       cauldron.classList.remove('is-brewing');
       const success=choice.every(i=>required.includes(i));
       if(success){
+        const knownId=recipeIndex(recipes,name);
+        const remembered=rememberAlchemyRecipe(state.alchemyKnown,knownId);
+        if(remembered.length>state.alchemyKnown.length){
+          state.alchemyKnown=remembered;
+          save(); // Preserve discoveries immediately, even if this trial later fails.
+          renderGrimoire();
+        }
         round++;
         cauldron.classList.add('is-success');
         updateHud();
