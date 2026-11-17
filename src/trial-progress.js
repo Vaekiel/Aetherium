@@ -19,6 +19,18 @@ export function trialRules(index,difficulty='aventure'){
   ];
   return {...(options[index]?.[position]??{})};
 }
+/** Goal text derived from the same rules that govern each challenge. */
+export function trialObjective(index,difficulty='aventure'){
+  const rules=trialRules(index,difficulty);
+  switch(index){
+    case 0: return 'Activer 12 runes dans l’ordre · '+rules.maxErrors+' erreurs maximum.';
+    case 1: return 'Retrouver 8 paires de tablettes · '+(rules.maxMoves===null?'sans limite de coups.':rules.maxMoves+' coups maximum.');
+    case 2: return 'Aligner 3 cristaux sur la valeur cible · '+rules.maxAttempts+' essais maximum.';
+    case 3: return 'Explorer '+rules.safeTarget+' dalles sûres sur 25 en évitant 5 pièges.';
+    case 4: return 'Préparer 3 potions · '+rules.maxErrors+' mélanges ratés maximum.';
+    default: return '';
+  }
+}
 export function trialScore(index,{errors=0,moves=0,attempts=0}={}){
   const count=n=>Number.isFinite(n)?Math.max(0,Math.floor(n)):0;
   const penalties=[count(errors)*18,Math.max(0,count(moves)-8)*4,
