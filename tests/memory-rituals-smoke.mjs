@@ -170,7 +170,7 @@ exercise('maitrise','ancient');
 exercise('maitrise','glimpse',{restart:true});
 exercise('maitrise','ancient',{fail:true});
 const html=read('index.html'),css=read('src/memory.css');
-assert.ok(html.includes('src/main.js?v=records-clean-1.7.3'));
+assert.ok(html.includes('src/main.js?v=defis-1.7.3'));
 assert.ok(html.includes('src/memory.css?v=memoire-1.7.2'));
 assert.ok(css.includes('.memory-board.is-previewing'));
 assert.ok(css.includes('dusk-horizon.webp'));
