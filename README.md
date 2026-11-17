@@ -29,6 +29,10 @@ Ouvrir ensuite `http://localhost:8000`.
 
 Le workflow `.github/workflows/pages.yml` valide les modules JavaScript et publie automatiquement la racine du dépôt sur GitHub Pages à chaque push sur `main`.
 
+## AETHERIUM 1.5.3 — Fenêtre d'inspection mobile au premier plan
+
+Correction du véritable problème de flou lors de l'agrandissement d'une carte sur téléphone : le voile modal était placé hors du conteneur du Codex et passait **devant** la fiche, y compris son illustration HD et ses textes. Le voile est désormais dans le Codex, sous le panneau d'inspection et le tiroir de filtres ; pendant l'ouverture, le conteneur principal passe au-dessus de la barre de navigation. La fiche reste nette, le fond est assombri et flouté, et les commandes de fermeture continuent à fonctionner. Aucun changement des illustrations, du gameplay, des taux de boosters et des sauvegardes.
+
 ## AETHERIUM 1.5.2 — Images nettes sur mobile
 
 Les vignettes des cartes utilisent maintenant un `srcset` responsive : le navigateur conserve la miniature WebP pour les affichages suffisamment petits, mais sélectionne l'illustration HD d'origine sur les écrans à forte densité de pixels. Cela améliore la netteté de la grille du Codex et des aperçus non possédés, sans modifier le contenu des cartes ni le fonctionnement des Chromatiques. Lors de la révélation individuelle d'un booster, le jeu affiche désormais directement l'illustration HD au lieu d'agrandir sa miniature. Les images restent chargées à la demande dans les grilles. Les sauvegardes et le gameplay restent inchangés.
