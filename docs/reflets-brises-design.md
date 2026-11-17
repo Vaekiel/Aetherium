@@ -60,6 +60,18 @@ La liste canonique des **24 noms, types, raretés, fragments de lore et briefs d
 6. Les sauvegardes anciennes restent compatibles. Après extension des IDs valides, vérifier l’export et l’import des cartes 25–48 **avant** ouverture au public.
 7. Les récompenses de progression propres à Reflets brisés ne doivent pas être disponibles avant la publication.
 
+## Illustration pilote n° 38 — intégration de test
+
+L’image verticale du **Cerf sans reflet** est validée comme premier visuel de référence.
+
+**Fichiers attendus dans le dépôt avant publication :**
+- `assets/cards/cerf-sans-reflet.webp` — illustration originale sans cadre, 1024 × 1536 px ;
+- `assets/cards/cerf-sans-reflet-thumb.webp` — miniature 350 × 525 px.
+
+Le nouveau panneau d’aperçu du Codex (Partie II verrouillée) est préparé dans cette branche. **Il ne doit pas être fusionné tant que les deux images ne sont pas présentes dans GitHub.** Un test bloquant dans GitHub Actions vérifie que les fichiers sont de vrais WebP.
+
+La simple prévisualisation n’ajoute aucun ID au catalogue jouable. Les boosters, la Forge, les récompenses et les sauvegardes continuent à utiliser les cartes publiées.
+
 ## Prochain jalon artistique
 
 Réaliser **une seule illustration pilote** : `#38 Cerf sans reflet`, rare. Le contraste du cerf lumineux et de l’eau incapable de le refléter constitue un test facile à évaluer sur téléphone. Vérifier d’abord l’illustration au vrai format de carte, puis produire les 23 autres dans la même grammaire visuelle.

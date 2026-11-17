@@ -1757,6 +1757,7 @@ function renderCollection(){
   const availableCards=cardsForCollection(CARDS,activeSeason,activeCollection);
   const isUpcoming=!selectedPart.released;
   $('#codex-upcoming').hidden=!isUpcoming;
+  $('#reflets-art-preview').hidden=!(isUpcoming&&activeSeason==='marches-de-verre'&&selectedPart.id==='reflets-brises');
   $('#collection-layout').hidden=isUpcoming;
   if(isUpcoming){
     $('#codex-milestones').hidden=true;
