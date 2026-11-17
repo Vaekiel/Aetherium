@@ -1777,6 +1777,9 @@ const boosterGrid=$('#pulls'),boosterProgress=$('#booster-progress'),boosterProg
 const boosterActions=$('#booster-actions'),boosterSummary=$('#booster-summary');
 const revealAllButton=$('#reveal-all'),nextPullButton=$('#next-pull'),boosterStep=$('#booster-step');
 const reducedMotion=window.matchMedia('(prefers-reduced-motion: reduce)');
+// The packet seal and the first card are one sequence; no additional roll
+// or payment happens while the foil animation is running.
+const BOOSTER_UNSEAL_MS=980;
 const boosterTimers=new Set();
 let currentDraw=[],drawSummary=null,currentIndex=0,cardFaceUp=false,changingCard=false;
 function afterBooster(ms,action){
@@ -1958,7 +1961,12 @@ function openOriginesBooster(){
       boosterOpening.scrollIntoView({behavior:'smooth',block:'start'});
   };
   if(reducedMotion.matches)startReveal();
-  else afterBooster(560,startReveal);
+  else{
+    afterBooster(370,()=>{
+      if(boosterBusy)$('#pack-msg').textContent='Le sceau se brise…';
+    });
+    afterBooster(BOOSTER_UNSEAL_MS,startReveal);
+  }
 }
 $('#buy').addEventListener('click',openOriginesBooster);
 revealAllButton.addEventListener('click',revealBoosterAll);
