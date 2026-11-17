@@ -23,7 +23,7 @@ assert.ok(!main.includes("from './reflets-brises-catalog.js'"),'A preview cannot
 assert.ok(!gameData.includes('reflets-brises-catalog.js'),'Origines pools are not modified');
 assert.ok(!artwork.includes('cerf-sans-reflet'),'Pilot artwork is not counted as an owned or obtainable card');
 assert.ok(season.includes("part('reflets-brises'"),'Reflets stays planned');
-assert.ok(!season.includes("part('reflets-brises','II','Les Reflets brisés',") || season.includes("mirrors-never-released")==false);
+assert.ok(!season.includes("released:true,first:25,last:48"),'Reflets must not be published before art release');
 assert.ok(css.includes('@media(max-width:680px)'),'Preview remains usable on phones');
 assert.ok(css.includes('#page-collection #reflets-art-preview[hidden]'),'Unavailable preview must remain hidden');
 
