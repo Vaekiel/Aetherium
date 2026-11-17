@@ -41,6 +41,8 @@ jobs:
           test -s tests/ether-lock-puzzles-smoke.mjs
           test -s tests/rune-rituals-smoke.mjs
           test -s src/memory.css
+          test -s src/memory-rituals.js
+          test -s tests/memory-rituals-smoke.mjs
           test -s src/lock.css
           test -s src/mines.css
           test -s src/alchemy.css
@@ -146,10 +148,12 @@ jobs:
           node --check --input-type=module < src/trial-progress.js
           node --check --input-type=module < src/rune-rituals.js
           node --check --input-type=module < src/ether-lock-puzzles.js
+          node --check --input-type=module < src/memory-rituals.js
           node tests/booster-smoke.mjs
           node tests/runes-smoke.mjs
           node tests/rune-rituals-smoke.mjs
           node tests/memory-smoke.mjs
+          node tests/memory-rituals-smoke.mjs
           node tests/lock-smoke.mjs
           node tests/ether-lock-puzzles-smoke.mjs
           node tests/mines-smoke.mjs
