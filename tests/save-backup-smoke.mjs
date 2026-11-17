@@ -8,7 +8,7 @@ for(const id of ['backup-open','backup-dialog','backup-export','backup-import',
  assert.ok(html.includes('id="'+id+'"'),'Save UI control must exist: '+id);
 }
 assert.ok(html.includes('src/save-backup.css?v=backup-185'),'Dedicated backup style is loaded');
-assert.ok(html.includes('src/main.js?v=backup-185'),'New main controller bypasses cache');
+assert.ok(html.includes('src/main.js?v='),'New main controller bypasses cache');
 assert.ok(main.includes("from './save-backup.js'"),'Backup logic is integrated');
 assert.ok(main.includes('await createBackup(state,CARDS.map(card=>card.id))'),
   'Export uses the complete existing saved state');

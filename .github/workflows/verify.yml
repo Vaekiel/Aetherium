@@ -20,6 +20,8 @@ jobs:
         run: node --experimental-default-type=module --test tests/living-archives.test.mjs
       - name: Verify portable backup and rollback safety
         run: node --experimental-default-type=module --test tests/save-backup.test.mjs
+      - name: Check rarity-based duplicate rewards
+        run: node --experimental-default-type=module --test tests/duplicate-rewards.test.mjs
       - name: Run full legacy smoke test suite
         run: |
           set -eu

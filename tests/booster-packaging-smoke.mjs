@@ -46,7 +46,7 @@ assert.ok(image.includes('Faceted floating crystal'));
 assert.ok(!image.includes('<script')&&!image.includes('<image ')&&!image.includes('href=')&&!image.includes('<foreignObject'),
  'Original artwork is self-contained and cannot load other resources');
 for(const token of ['const boosterArt=','boosterArt.classList.add(\'is-opening\')',
-  'state.coins-=PACK_PRICE','drawPack()','state.opened++','state.dust+=5',
+  'state.coins-=PACK_PRICE','drawPack()','state.opened++','state.dust+=dustGain',
   'update(); // Persists the purchase','showBoosterCard(0,false)',
   'boosterGrid.classList.add(\'booster-gallery\')']){
  assert.ok(main.includes(token),'Purchase, reveals and local save remain untouched: '+token);

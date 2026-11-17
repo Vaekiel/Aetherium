@@ -73,10 +73,10 @@ assert.ok(patched.includes('object-fit:cover'));
 assert.ok(patched.includes('prefers-reduced-motion:reduce'));
 assert.ok(!/rotateY\(/.test(patched),'Revealed mobile image must not rotate in a 3D compositing layer');
 for(const text of [
- 'state.coins-=PACK_PRICE','state.opened++','state.dust+=5',
+ 'state.coins-=PACK_PRICE','state.opened++','state.dust+=dustGain',
  'update(); // Persists the purchase',
  'boosterGrid.classList.add(\'booster-gallery\')']){
- assert.ok(main.includes(text),'The original game economy/persistence remains unchanged: '+text);
+ assert.ok(main.includes(text),'Booster reward and purchase persistence remain consistent: '+text);
 }
 assert.ok(html.includes('src/main.js?v='),
   'New JavaScript is not served from the cached broken version');
