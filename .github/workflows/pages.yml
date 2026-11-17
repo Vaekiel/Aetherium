@@ -59,6 +59,10 @@ jobs:
           test -s src/chromatic.css
           test -s src/codex.css
           test -s src/codex.js
+          test -s src/save-backup.js
+          test -s src/save-backup.css
+          test -s tests/save-backup.test.mjs
+          test -s tests/save-backup-smoke.mjs
           test -s src/seasons.js
           test -s src/collection-milestones.js
           test -s tests/collection-milestones-smoke.mjs
@@ -108,6 +112,8 @@ jobs:
           grep -q 'src/navigation.css' index.html
           grep -q 'src/crafting.css' index.html
           grep -q 'src/chromatic.css' index.html
+          grep -q 'src/save-backup.css' index.html
+          grep -q 'id="backup-dialog"' index.html
           grep -q 'data-finish="chromatic"' index.html
           grep -q 'id="atelier-confirm"' index.html
           grep -q 'src/alchemy.css' index.html
@@ -161,6 +167,7 @@ jobs:
           test -s assets/cards/derniere-etoile-thumb.webp
           grep -q '  24: Object.freeze' src/card-art.js
           node --check --input-type=module < src/main.js
+          node --check --input-type=module < src/save-backup.js
           node --check --input-type=module < src/codex.js
           node --check --input-type=module < src/seasons.js
           node --check --input-type=module < src/collection-milestones.js
@@ -174,6 +181,8 @@ jobs:
           node --check --input-type=module < src/memory-rituals.js
           node --check --input-type=module < src/excavation-sites.js
           node --check --input-type=module < src/alchemy-rituals.js
+          node --experimental-default-type=module --test tests/save-backup.test.mjs
+          node tests/save-backup-smoke.mjs
           node tests/booster-smoke.mjs
           node tests/booster-reveal-smoke.mjs
           node tests/booster-opening-smoke.mjs
