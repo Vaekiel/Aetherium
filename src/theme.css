@@ -93,9 +93,9 @@ h1,h2,h3{color:#f6ebdf;text-shadow:0 2px 4px #0b1021}
 .gallery-caption{font-size:10px;letter-spacing:.13em;color:#bcb0d5;white-space:nowrap}
 .gallery .cards{grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
 .card{background:linear-gradient(140deg,#2c2440,#161b31);border:1px solid color-mix(in srgb,var(--edge,#b1a4c4) 75%,#d3a979);outline:1px solid #f2d6a033;outline-offset:-4px;border-radius:2px;padding:5px;transition:transform .16s,box-shadow .16s;box-shadow:0 5px 14px #060a20ad;overflow:hidden}
-.card:before{content:"◆";position:absolute;z-index:2;bottom:44px;left:50%;transform:translateX(-50%);color:var(--edge,#c9bdde);text-shadow:0 0 9px var(--edge,#c9bdde);font-size:14px;pointer-events:none}
+.card .info:before{content:"◆";position:absolute;z-index:2;top:-8px;left:50%;transform:translateX(-50%);color:var(--edge,#c9bdde);text-shadow:0 0 9px var(--edge,#c9bdde);font-size:14px;line-height:1;pointer-events:none}
 .card img{aspect-ratio:112/136;image-rendering:pixelated;border:1px solid #b5a09675;filter:saturate(1.16)}
-.card .info{background:#181a30;padding:9px 5px 5px;text-align:center}
+.card .info{position:relative;background:#181a30;padding:17px 5px 5px;text-align:center}
 .card .name{font-size:clamp(10px,.91vw,13px);font-variant:small-caps;color:#f1e9dd;min-height:29px}
 .card .meta{font-family:Georgia,serif;color:#c9b4cf;font-size:10px}
 .card .amount{background:#17152fce;border:1px solid #d0bca855;color:#f5d1a1}
@@ -152,9 +152,8 @@ footer{background:#101326db;border-top:1px solid #8e6d6a82;color:#aaa3bd}
  .gallery-caption{display:none}
  .gallery .cards{grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}
  .card{padding:3px}
- .card .info{padding:7px 3px 4px}
+ .card .info{padding:16px 3px 4px}
  .card .name{font-size:11px;min-height:27px}
- .card:before{bottom:41px}
  .inspector{width:100%;max-width:none;grid-column:auto}
  .inspector img{max-width:260px}
  .intro{min-height:0;padding:24px}
@@ -188,7 +187,7 @@ footer{background:#101326db;border-top:1px solid #8e6d6a82;color:#aaa3bd}
 .layout{max-width:1350px}
 .card img,.inspector img{background-color:#17172a}
 .card{border-color:var(--edge,#bcaebc);box-shadow:0 3px 12px #060a20b8}
-.card:before{font-size:12px;text-shadow:none}
+.card .info:before{font-size:12px;text-shadow:none}
 .card .info{background:#1b192c}
 .card:hover:not(:disabled){box-shadow:0 0 7px color-mix(in srgb,var(--edge) 25%,transparent),0 5px 16px #090e22}
 @media(min-width:1400px){
