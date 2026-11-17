@@ -115,8 +115,8 @@ function exerciseUI(){
   $:key=>key==='#honorific-active'?active:key==='#honorific-list'?list:null,
   el:node,button(label,handler,klass){const b=node('button',klass,label);b.addEventListener('click',handler);return b},
   saves:0,alerts:[],
-  save(){this.saves++},
-  notify(message){this.alerts.push(message)}
+  save(){sandbox.saves++},
+  notify(message){sandbox.alerts.push(message)}
  };
  const context=runInNewContext(renderCode+'({renderHonorifics})',sandbox);
  const render=context.renderHonorifics;
