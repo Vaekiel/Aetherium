@@ -13,7 +13,8 @@ for(const id of ['games','game-picker','buy','pulls','booster-summary','booster-
 }
 assert.ok(html.includes('src/shell.css'),'Nouvelle interface chargée');
 const styleLinks=[...html.matchAll(/href="\.\/src\/([^" ]+\.css)(?:\?[^" ]+)?"/g)].map(x=>x[1]);
-assert.equal(styleLinks.at(-1),'chromatic.css','Les Chromatiques utilisent une surcouche visuelle non destructive');
+assert.equal(styleLinks.at(-2),'chromatic.css','La finition Chromatique est chargée avant le nouveau Codex');
+assert.equal(styleLinks.at(-1),'codex.css','Le Codex vivant charge sa finition responsive en dernier');
 assert.ok(styleLinks.includes('crafting.css'),'La Forge existante est conservée');
 assert.ok(html.includes('id="chromatic-showcase"'),'Une comparaison visible explique les Chromatiques dans le Codex');
 assert.ok(styleLinks.includes('navigation.css'),'La navigation validée reste intégrée');
