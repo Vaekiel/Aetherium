@@ -66,7 +66,7 @@ for(const selector of ['difficulty-options','difficulty-hint','data-difficulty="
  'data-difficulty="aventure"','data-difficulty="maitrise"'])
   assert.ok(html.includes(selector),'Difficulty UI contains '+selector);
 assert.ok(html.includes('src/trial-progress.css?v=defis-1.7.3'),'Difficulty stylesheet versioned');
-assert.ok(html.includes('src/main.js?v=seuil-1.8.0'),'Current script versioned');
+assert.ok(html.includes('src/main.js?v=expedition-dediee-1.8.1'),'Current script versioned');
 assert.ok(style.includes('@media(max-width:850px)'),'Mobile difficulty controls supported');
 assert.ok(style.includes('min-height:44px'),'Difficulty mode targets have mobile tap area');
 const freshCode=main.slice(main.indexOf('const fresh='),main.indexOf('function load(){'));
