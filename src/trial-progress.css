@@ -48,3 +48,78 @@
 @media(prefers-reduced-motion:reduce){
  #page-jouer .difficulty-options button{transition:none!important}
 }
+
+
+/* AETHERIUM 1.7.3 — Les Maîtres des Arcanes · carnet personnel. */
+#page-jouer .trial-records{
+ margin:-4px 0 12px;border:1px solid #80748f89;border-radius:3px;
+ background:linear-gradient(120deg,#21213a,#171d32);
+ color:#e2d7e3;overflow:hidden;
+}
+#page-jouer .trial-records-summary{
+ display:flex;align-items:center;gap:8px;min-height:44px;
+ padding:10px 12px;cursor:pointer;list-style:none;
+ font:12px/1.4 Georgia,serif;
+}
+#page-jouer .trial-records-summary::-webkit-details-marker{display:none}
+#page-jouer .trial-records-symbol{
+ color:#ddc496;font:22px/1 Georgia,serif;text-shadow:0 0 10px #9c82bb71;
+}
+#page-jouer .trial-records-heading{
+ color:#f2dfc5;font-variant:small-caps;font-size:15px;
+}
+#page-jouer .trial-records-current{
+ color:#bfc5d9;min-width:0;margin-left:auto;text-align:right;font-size:11px;
+}
+#page-jouer .trial-records-summary::after{
+ content:'⌄';flex:none;color:#c7b5d2;font:18px/1 Georgia,serif;
+}
+#page-jouer .trial-records[open] .trial-records-summary::after{content:'⌃'}
+#page-jouer .trial-records-summary:hover{background:#36304a5b}
+#page-jouer .trial-records-summary:focus-visible{
+ outline:2px solid #e3c8eb;outline-offset:-3px;
+}
+#page-jouer .trial-records-table{
+ display:table;width:calc(100% - 20px);margin:0 10px 8px;
+ border-collapse:collapse;table-layout:auto;color:#dcd7e8;
+ font:11px/1.5 system-ui,sans-serif;
+}
+#page-jouer .trial-records-table th,
+#page-jouer .trial-records-table td{
+ padding:7px 5px;text-align:left;vertical-align:top;
+ border-bottom:1px solid #8a75905a;
+ font-variant-numeric:tabular-nums;
+}
+#page-jouer .trial-records-table thead th{
+ color:#aaadca;font:10px/1.3 system-ui,sans-serif;
+ letter-spacing:.02em;
+}
+#page-jouer .trial-records-table tbody th{
+ color:#e6d0b2;font-weight:600;
+}
+#page-jouer .trial-records-table .is-current{
+ background:#40506b26;
+}
+#page-jouer .trial-records-table tbody tr:last-child th,
+#page-jouer .trial-records-table tbody tr:last-child td{
+ border-bottom:0;
+}
+#page-jouer .trial-records-note{
+ padding:0 12px 11px;margin:0!important;
+ color:#b7b0c3!important;font:10px/1.4 Georgia,serif!important;
+}
+@media(max-width:850px){
+ #page-jouer .trial-records{margin:0 0 10px}
+ #page-jouer .trial-records-summary{padding:9px 10px;min-height:44px}
+ #page-jouer .trial-records-heading{font-size:14px}
+ #page-jouer .trial-records-current{font-size:10px}
+ #page-jouer .trial-records-table{width:calc(100% - 14px);margin:0 7px 8px;font-size:10px}
+ #page-jouer .trial-records-table th,
+ #page-jouer .trial-records-table td{padding:7px 3px}
+}
+@media(max-width:360px){
+ #page-jouer .trial-records-summary{gap:4px}
+ #page-jouer .trial-records-heading{font-size:12px}
+ #page-jouer .trial-records-current{font-size:9px}
+ #page-jouer .trial-records-table{font-size:9px}
+}
