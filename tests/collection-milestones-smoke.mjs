@@ -80,7 +80,7 @@ assert.ok(css.includes('#page-collection .codex-milestones'),
  'Midnight-violet journal design is present');
 assert.ok(css.includes('@media(max-width:390px)'),
  'The smallest mobile screens display one clear tile per row');
-assert.ok(html.includes('src/main.js?v=expedition-dediee-1.8.1'));
+assert.ok(html.includes('src/main.js?v=booster-reveal-fix-1821'));
 assert.ok(html.includes('src/codex.css?v=seasons-1.7.1'));
 
 // Execute the real source save loader in a VM with legacy player data.
