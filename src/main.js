@@ -3,6 +3,7 @@ import {CRAFT_COSTS,getCraftCost,craftCard} from './crafting.js';
 import {applyCardIllustration,hasApprovedArt,CARD_ART} from './card-art.js';
 import {codexProgress,filterCodex} from './codex.js';
 import {SEASONS,seasonById,collectionById,cardsForCollection,collectionForCard,seasonProgress} from './seasons.js';
+import {milestonesFor,sanitizeMilestoneClaims,uniqueCardsOwned,collectionMilestoneStatus,claimCollectionMilestone} from './collection-milestones.js';
 import {DIFFICULTIES,validDifficulty,trialRules,trialObjective,trialScore,trialReward,emptyTrialStats,sanitizedTrialStats,recordTrialWin,masteryLevel} from './trial-progress.js';
 
 const $=(q,root=document)=>root.querySelector(q);
@@ -86,8 +87,8 @@ mobileView.addEventListener('change',syncMobileSheets);
 // approved Collection mockup. These are *visual placeholders*, not final art
 // for the corresponding 24 catalogue entries. All gameplay/save data is unchanged.
 const SAVE='aetherium-save-v1';
-const fresh=()=>({coins:300,dust:0,owned:{},shiny:{},wins:0,earned:0,opened:0,goalId:null,difficulty:'aventure',trialStats:[]});
-function load(){try{const raw=JSON.parse(localStorage.getItem(SAVE));if(!raw||typeof raw!=='object')return fresh();const s=fresh();for(const field of ['coins','dust','wins','earned','opened'])if(Number.isSafeInteger(raw[field])&&raw[field]>=0&&raw[field]<1e9)s[field]=raw[field];for(const c of CARDS){const n=raw.owned?.[c.id];if(Number.isSafeInteger(n)&&n>0&&n<1e6)s.owned[c.id]=n;if(raw.shiny?.[c.id]===true&&s.owned[c.id])s.shiny[c.id]=true}if(Number.isSafeInteger(raw.goalId)&&CARDS.some(c=>c.id===raw.goalId)&&!s.owned[raw.goalId])s.goalId=raw.goalId;if(['initiation','aventure','maitrise'].includes(raw.difficulty))s.difficulty=raw.difficulty;if(Array.isArray(raw.trialStats))s.trialStats=raw.trialStats;return s}catch{return fresh()}}
+const fresh=()=>({coins:300,dust:0,owned:{},shiny:{},wins:0,earned:0,opened:0,goalId:null,difficulty:'aventure',trialStats:[],collectionMilestones:{}});
+function load(){try{const raw=JSON.parse(localStorage.getItem(SAVE));if(!raw||typeof raw!=='object')return fresh();const s=fresh();for(const field of ['coins','dust','wins','earned','opened'])if(Number.isSafeInteger(raw[field])&&raw[field]>=0&&raw[field]<1e9)s[field]=raw[field];for(const c of CARDS){const n=raw.owned?.[c.id];if(Number.isSafeInteger(n)&&n>0&&n<1e6)s.owned[c.id]=n;if(raw.shiny?.[c.id]===true&&s.owned[c.id])s.shiny[c.id]=true}if(Number.isSafeInteger(raw.goalId)&&CARDS.some(c=>c.id===raw.goalId)&&!s.owned[raw.goalId])s.goalId=raw.goalId;if(['initiation','aventure','maitrise'].includes(raw.difficulty))s.difficulty=raw.difficulty;if(Array.isArray(raw.trialStats))s.trialStats=raw.trialStats;s.collectionMilestones=sanitizeMilestoneClaims(raw.collectionMilestones);return s}catch{return fresh()}}
 let state=load();
 state.trialStats=sanitizedTrialStats(state.trialStats);
 let boosterBusy=false;
@@ -1257,6 +1258,64 @@ function renderCodexSeasons(){
   $('#codex-chromatic-track').setAttribute('aria-valuenow',String(stats.chromatic));
   $('#codex-chromatic-track').setAttribute('aria-valuemax',String(Math.max(stats.total,1)));
 }
+function claimDiscoveryFragment(threshold){
+  const cards=cardsForCollection(CARDS,activeSeason,activeCollection);
+  const result=claimCollectionMilestone({
+    seasonId:activeSeason,collectionId:activeCollection,threshold,
+    cards,owned:state.owned,claims:state.collectionMilestones
+  });
+  if(!result.ok){notify(result.reason);return}
+  const reward=result.milestone.reward;
+  // All changes happen in one synchronous update, saved before confirmation.
+  state.collectionMilestones=result.claims;
+  if(reward.currency==='coins'){
+    state.coins+=reward.amount;
+    state.earned+=reward.amount;
+  }else state.dust+=reward.amount;
+  update();
+  renderCollection();
+  notify('✧ '+result.milestone.title+' · +'+reward.amount+
+    (reward.currency==='coins'?' Couronnes':' Éclats')+' !');
+}
+function renderCollectionMilestones(cards){
+  const journal=$('#codex-milestones');
+  const entries=milestonesFor(activeSeason,activeCollection);
+  journal.hidden=!entries.length;
+  if(!entries.length)return;
+  const count=uniqueCardsOwned(cards,state.owned);
+  const statuses=collectionMilestoneStatus(
+    activeSeason,activeCollection,cards,state.owned,state.collectionMilestones);
+  const recovered=statuses.filter(entry=>entry.status==='claimed').length;
+  const pending=statuses.filter(entry=>entry.status==='claimable').length;
+  $('#codex-milestones-count').textContent=pending
+    ?pending+' fragment'+(pending>1?'s':'')+' à révéler'
+    :recovered+' / '+entries.length+' fragments retrouvés';
+  $('#codex-milestones-progress').textContent=count+' / '+cards.length+' cartes différentes';
+  const holder=$('#codex-milestones-list');
+  holder.replaceChildren();
+  for(const entry of statuses){
+    const unlocked=entry.status!=='locked';
+    const claimed=entry.status==='claimed';
+    const tile=el('article','codex-milestone-card'+(unlocked?' is-unlocked':'')+
+      (claimed?' is-claimed':''));
+    const number=el('span','codex-milestone-number',
+      '✧ '+String(entry.threshold).padStart(2,'0')+' / '+String(cards.length).padStart(2,'0'));
+    const title=el('strong','codex-milestone-title',unlocked?entry.title:'Fragment scellé');
+    const award=el('span','codex-milestone-award','+'+entry.reward.amount+
+      (entry.reward.currency==='coins'?' Couronnes':' Éclats'));
+    tile.append(number,title,award);
+    if(claimed){
+      tile.append(el('p','codex-milestone-story','« '+entry.fragment+' »'),
+        el('span','codex-milestone-state','✦ Fragment retrouvé'));
+    }else if(unlocked){
+      tile.append(el('p','codex-milestone-message','Une page des Archives attend ton regard.'));
+      tile.append(button('✧ Révéler le fragment',()=>claimDiscoveryFragment(entry.threshold),
+        'codex-milestone-claim'));
+    }else tile.append(el('p','codex-milestone-message',
+      'Encore '+(entry.threshold-count)+' carte'+(entry.threshold-count>1?'s':'')+' à découvrir.'));
+    holder.append(tile);
+  }
+}
 function renderCollection(){
   renderCodexSeasons();
   const selectedPart=collectionById(activeSeason,activeCollection);
@@ -1265,6 +1324,7 @@ function renderCollection(){
   $('#codex-upcoming').hidden=!isUpcoming;
   $('#collection-layout').hidden=isUpcoming;
   if(isUpcoming){
+    $('#codex-milestones').hidden=true;
     $('#codex-upcoming-title').textContent='Partie '+selectedPart.number+' · '+selectedPart.title;
     $('#codex-upcoming-description').textContent=selectedPart.subtitle;
     $('#codex-upcoming-note').textContent=selectedPart.signature
@@ -1275,6 +1335,7 @@ function renderCollection(){
     update();
     return;
   }
+  renderCollectionMilestones(availableCards);
   const gallery=$('#card-grid');
   const q=$('#search').value.trim();
   const cards=filterCodex(availableCards,{type:filterType,rarity:filterRarity,
