@@ -13,9 +13,9 @@ for(const id of ['codex-upcoming','reflets-art-preview']){
  assert.ok(html.includes('id="'+id+'"'),'The existing upcoming collection hosts '+id);
 }
 assert.ok(html.includes('src/reflets-preview.css?v=art-pilot-38'));
-assert.ok(html.includes('src/main.js?v=reflets-art-38'));
+assert.ok(html.includes('src/main.js?v=reflets-lot1-11'));
 assert.ok(html.includes('Aperçu visuel uniquement · Carte non disponible dans les boosters'));
-assert.ok(main.includes("$('#reflets-art-preview').hidden=!(isUpcoming&&activeSeason==='marches-de-verre'&&selectedPart.id==='reflets-brises')"),
+assert.ok(main.includes("const showRefletsPreview=isUpcoming&&activeSeason==='marches-de-verre'&&selectedPart.id==='reflets-brises';")&&main.includes("$('#reflets-art-preview').hidden=!showRefletsPreview"),
  'A preview must appear ONLY in the locked Reflets brisés chapter');
 assert.ok(main.includes("$('#collection-layout').hidden=isUpcoming"),'Unreleased collection does not display a playable gallery');
 assert.ok(main.includes("const SAVE='aetherium-save-v1'"),'Existing save key unchanged');
