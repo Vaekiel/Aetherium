@@ -25,7 +25,7 @@ assert.ok(code.includes('next=runeExpectedAt(ritual,step)'),'La rune attendue su
 assert.ok(code.includes('rune-ritual-rule'),'La consigne du rituel est toujours lisible');
 assert.ok(code.includes("blind=g.mode==='maitrise'"),'Le mode expert limite les indices sans cacher la règle');
 assert.ok(html.includes('src/runes.css?v=rituels-1.7.2'),'Le nouveau panneau runique contourne le cache');
-assert.ok(html.includes('src/main.js?v=seuil-1.8.0'),'Le contrôleur des runes contourne le cache');
+assert.ok(html.includes('src/main.js?v=expedition-dediee-1.8.1'),'Le contrôleur des runes contourne le cache');
 assert.ok(code.includes('if(errors>=maxErrors)'), 'Le nombre d’erreurs dépend de la difficulté');
 assert.ok(code.includes('trialRules(0,g.mode).maxErrors'),'Les règles des runes suivent le mode choisi');
 assert.ok(code.includes("complete(0,'Sceau restauré !"),'Récompense existante conservée');
