@@ -1,0 +1,58 @@
+/* AETHERIUM 1.8.5 — Save management matches the light midnight Codex UI.
+   Dialog uses the native top layer, so it is safe above mobile navigation. */
+.backup-dialog{
+  width:min(94vw,590px);max-height:min(88dvh,780px);margin:auto;
+  padding:0;border:1px solid #8f7c9c;border-radius:6px;
+  background:linear-gradient(150deg,#27223d,#14192d);color:#e9dfed;
+  box-shadow:0 25px 80px #050712d9;
+}
+.backup-dialog::backdrop{background:#060917c7;backdrop-filter:blur(5px)}
+.backup-dialog-inner{padding:24px}
+.backup-dialog h2{
+  margin:3px 0 11px;font:small-caps 27px/1.16 Georgia,serif;color:#f3debe;
+}
+.backup-dialog p{
+  color:#c6bfd4;font:13px/1.55 Georgia,serif;
+}
+.backup-dialog .kicker{margin:0;color:#c1a8d8}
+.backup-actions{
+  display:grid;gap:10px;margin:18px 0;
+}
+.backup-action{
+  display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;
+  gap:12px;padding:14px;border:1px solid #635977;border-radius:4px;
+  background:#1a1c33b0;
+}
+.backup-action div{min-width:190px;flex:1;display:flex;flex-direction:column;gap:5px}
+.backup-action strong{color:#f2e2c9;font:small-caps 17px/1.25 Georgia,serif}
+.backup-action small{color:#c0b7cc;font:11px/1.5 Georgia,serif}
+.backup-action button,.backup-recovery button,.backup-footer button{
+  min-height:44px;padding:9px 12px;font-size:12px;white-space:normal;
+}
+.backup-recovery{
+  padding:10px 13px;border:1px solid #676079;border-radius:4px;
+  background:#191d32;
+}
+.backup-recovery p{margin:0 0 9px;font-size:12px}
+.backup-recovery button:disabled{opacity:.48;cursor:not-allowed}
+#backup-status{min-height:20px;margin:13px 0 0;color:#bde0cc}
+#backup-status.is-error{color:#efadab}
+.backup-footer{
+  display:flex;align-items:center;justify-content:space-between;
+  gap:16px;margin-top:12px;padding-top:13px;border-top:1px solid #63566f;
+}
+.backup-footer span{color:#aaa1ba;font:11px/1.45 Georgia,serif}
+.backup-dialog button:focus-visible{outline:2px solid #e9d3a9;outline-offset:2px}
+@media(max-width:590px){
+  .backup-dialog{max-height:90dvh}
+  .backup-dialog-inner{padding:17px}
+  .backup-dialog h2{font-size:23px}
+  .backup-action{align-items:stretch}
+  .backup-action div{min-width:0}
+  .backup-action button{width:100%}
+  .backup-footer{flex-direction:column;align-items:stretch}
+  .backup-footer button{align-self:flex-end}
+}
+@media(prefers-reduced-motion:reduce){
+  .backup-dialog::backdrop{backdrop-filter:none}
+}

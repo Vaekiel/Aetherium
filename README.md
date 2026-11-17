@@ -46,6 +46,16 @@ Aucune installation ni inscription. Le jeu fonctionne directement dans un naviga
 
 Votre progression est **enregistrée automatiquement et localement** dans votre navigateur. Elle reste liée à cet appareil et à ce navigateur : effacer ses données peut effacer la sauvegarde.
 
+### Sauvegarder et retrouver sa collection
+
+Depuis le bas de la page du jeu, clique sur **Gérer ma sauvegarde**.
+
+- **Télécharger ma sauvegarde** crée un fichier JSON personnel contenant cartes, Chromatiques, ressources, records et expéditions.
+- **Choisir un fichier JSON** permet d'importer un fichier Aetherium exporté depuis un autre navigateur ou appareil. Le jeu vérifie son intégrité et affiche un récapitulatif **avant de demander confirmation**.
+- **Annuler le dernier import** restaure la progression qui était enregistrée dans le navigateur avant l'importation, tant que les données locales n'ont pas été effacées.
+
+Les fichiers ne sont **jamais envoyés à un serveur** : tout se passe sur ton appareil. Garde une copie du fichier exporté en dehors du navigateur (documents, stockage personnel, etc.). Les sauvegardes locales de secours disparaissent elles aussi si les données du site sont effacées.
+
 ## ✨ Ce qui vous attend
 
 - **Un Codex à enrichir** — héros, créatures, sortilèges et artefacts dessinent les contours d'un monde à reconstituer.
