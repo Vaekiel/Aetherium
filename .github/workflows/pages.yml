@@ -23,8 +23,15 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      - name: Use the same Node.js runtime as CI
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
       - name: Verify browser app
+        shell: bash
         run: |
+          set -euxo pipefail
+          node --version
           test -f index.html
           test -f src/main.js
           test -f src/style.css
