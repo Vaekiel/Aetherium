@@ -82,7 +82,7 @@
 #page-collection .gallery #card-grid .card.is-sealed .info{background:#1a1c30}
 #page-collection .gallery #card-grid .card.is-sealed .name{color:#baaeca;font-style:italic}
 #page-collection .gallery #card-grid .card.is-sealed .meta{color:#857f9e}
-#page-collection .gallery #card-grid .card.is-sealed:before{color:#8e7aa2}
+#page-collection .gallery #card-grid .card.is-sealed .info:before{color:#8e7aa2}
 #page-collection .codex-sealed-art{
   position:relative;display:flex;flex-direction:column;justify-content:center;
   align-items:center;gap:10px;aspect-ratio:112/136;width:100%;overflow:hidden;
