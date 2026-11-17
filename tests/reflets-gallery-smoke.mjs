@@ -12,10 +12,11 @@ const data=read('src/data.js');
 const art=read('src/card-art.js');
 const css=read('src/reflets-gallery.css');
 
-assert.equal(REFLETS_GALLERY_ART.length,10,'Exactly ten new artworks are previewed');
+assert.equal(REFLETS_GALLERY_ART.length,19,'Nineteen original artworks are previewed');
 assert.deepEqual(REFLETS_GALLERY_ART.map(x=>x.id),
- Array.from({length:10},(_,i)=>i+25),'The first lot covers catalogue IDs 25–34');
-assert.equal(new Set(REFLETS_GALLERY_ART.map(x=>x.slug)).size,10,'No duplicate illustrations');
+ [...Array.from({length:10},(_,i)=>i+25),36,37,39,40,41,42,43,44,45],
+ 'First ten and nine batch-2 cards are shown; missing #35 and pilot #38 are not duplicated');
+assert.equal(new Set(REFLETS_GALLERY_ART.map(x=>x.slug)).size,19,'No duplicate illustrations');
 assert.ok(REFLETS_GALLERY_ART.every(x=>Object.isFrozen(x)),'Preview metadata is immutable');
 
 for(const card of REFLETS_GALLERY_ART){
@@ -35,8 +36,8 @@ for(const card of REFLETS_GALLERY_ART){
 for(const id of ['reflets-gallery','reflets-gallery-grid','reflets-art-preview']){
  assert.ok(html.includes('id="'+id+'"'),'Codex gallery DOM element: '+id);
 }
-assert.ok(html.includes('reflets-gallery.css?v=lot1-11'),'Gallery stylesheet is cache busted');
-assert.ok(html.includes('main.js?v=reflets-lot1-11'),'Main JS controller is cache busted');
+assert.ok(html.includes('reflets-gallery.css?v=lot2-19'),'Gallery stylesheet is cache busted');
+assert.ok(html.includes('main.js?v=reflets-lot2-19'),'Main JS controller is cache busted');
 assert.ok(main.includes("import {mountRefletsGallery} from './reflets-gallery.js';"));
 assert.ok(main.includes("$('#reflets-gallery').hidden=!showRefletsPreview"));
 assert.ok(main.includes("if(showRefletsPreview)mountRefletsGallery($('#reflets-gallery-grid'));"));
@@ -60,4 +61,4 @@ assert.ok(!data.includes('reflets-gallery'),'Booster logic never imports preview
 assert.ok(!art.includes('reflets-gallery'),'Playable art pool never imports previews');
 assert.ok(!main.includes('reflets-brises-catalog'),'Draft catalogue is only imported by preview module');
 assert.ok(main.includes("const SAVE='aetherium-save-v1'"),'Legacy save key stays stable');
-console.log('AETHERIUM Reflets brisés — 10 complete HD + thumbnails; 11 previews including pilot; no gameplay leaks');
+console.log('AETHERIUM Reflets brisés — 19 complete HD + thumbnails; 20 previews including pilot; no gameplay leaks');
