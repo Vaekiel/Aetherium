@@ -229,7 +229,7 @@ exercise('maitrise',{fail:true});
 exercise('initiation',{knownBefore:[0,1,2]});
 const html=read('index.html'),css=read('src/alchemy.css');
 assert.ok(html.includes('src/alchemy.css?v=alchemy-mastery-172b'));
-assert.ok(html.includes('src/main.js?v=seuil-1.8.0'));
+assert.ok(html.includes('src/main.js?v=expedition-dediee-1.8.1'));
 assert.ok(css.includes('.alchemy-grimoire-list'));
 assert.ok(css.includes('.alchemy-ritual-clue'));
 assert.ok(css.includes('@media(max-width:850px)'));
