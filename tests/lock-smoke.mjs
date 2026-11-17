@@ -23,10 +23,13 @@ assert.ok(start>=0&&end>start, 'Logique de la Serrure d’Éther trouvée');
 const logic=main.slice(start,end);
 for(const marker of [
   'const totalAttempts=trialRules(2,g.mode).maxAttempts',
-  'const solution=Array.from({length:3}',
-  'const numbers=shuffle([...solution',
+  'const puzzle=makeEtherPuzzle(g.mode)',
+  'const numbers=puzzle.values',
+  'evaluateEtherAttempt(puzzle,selected)',
+  'etherAttemptFeedback(puzzle,result)',
+  'etherRule(puzzle)',
   'numbers.forEach((value,index)',
-  'if(sum===target)',
+  'if(result.won)',
   'g.ended=true',
   'complete(2,',
   "setAttribute('aria-pressed'",
@@ -34,4 +37,7 @@ for(const marker of [
   "g.board.style.setProperty('--cols',3)"
 ])assert.ok(logic.includes(marker),'Élément de jeu absent : '+marker);
 assert.ok(!logic.includes('tileGrid(g.board'),'Ancienne grille générique encore utilisée');
-console.log('AETHERIUM — Serrure d’Éther HD : smoke checks OK');
+assert.ok(html.includes('src/lock.css?v=logique-1.7.2'),'Lock CSS updated');
+assert.ok(html.includes('src/main.js?v=ether-1.7.2'),'New lock runtime is not cached');
+assert.ok(main.includes("from './ether-lock-puzzles.js'"),'Logic module imported');
+console.log('AETHERIUM — Serrure d’Éther HD et énigmes logiques : smoke checks OK');
