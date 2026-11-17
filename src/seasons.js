@@ -15,7 +15,7 @@ export const SEASONS=Object.freeze([
   season('marches-de-verre',1,'Les Marches de Verre',
     'Une région de cristaux oubliés, de gardiens et de secrets enfouis.',[
       part('origines','I','Origines','Les premières légendes des Marches de Verre.',{released:true,first:1,last:24}),
-      part('reflets-brises','II','Les Reflets brisés','Les anomalies du verre révèlent de nouveaux mystères.'),
+      part('reflets-brises','II','Les Reflets brisés','Dans les Marches de Verre, les miroirs n’obéissent plus.'),
       part('au-dela-du-verre','III','Au-delà du Verre','L’ultime secret des Marches attend d’être découvert.',{signature:true})
     ]),
   season('plateau-nebuleux',2,'Le Plateau Nébuleux',
