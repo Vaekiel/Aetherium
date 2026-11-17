@@ -153,3 +153,31 @@
 @media(prefers-reduced-motion:reduce){
  .alchemy-trial .alchemy-grimoire-head::after{transition:none}
 }
+
+
+/* AETHERIUM 1.7.2 — Three-essence Mastery, existing HD artwork retained. */
+.alchemy-slots{
+ grid-template-columns:repeat(var(--alchemy-slot-count,2),minmax(0,1fr));
+}
+.alchemy-slot[hidden]{display:none!important}
+.alchemy-trial .alchemy-grimoire-section{
+ grid-column:1/-1;padding:7px 1px 4px;
+ border-bottom:1px solid #97869e82;
+ color:#c4bbd2;font:small-caps 13px/1.4 Georgia,serif;
+}
+.alchemy-trial .alchemy-grimoire-entry.is-advanced{
+ border-color:#7b6993;
+ background:linear-gradient(140deg,#262540,#1b1b34);
+}
+.alchemy-trial .alchemy-grimoire-entry.is-advanced.is-known{
+ border-color:#a996a4;
+ background:linear-gradient(135deg,#322a43,#1e2b3d);
+}
+.alchemy-trial .alchemy-grimoire-entry.is-advanced .alchemy-grimoire-recipe{
+ color:#e5cdec;
+}
+@media(max-width:360px){
+ .alchemy-slots{gap:3px}
+ .alchemy-slot{padding:4px 2px;font-size:10px}
+ .alchemy-trial .alchemy-grimoire-section{font-size:12px}
+}
