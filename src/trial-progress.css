@@ -21,6 +21,11 @@
  box-shadow:inset 0 1px #f8e4c42b;
 }
 #page-jouer .difficulty-options button:focus-visible{outline:2px solid #ddd0ff;outline-offset:2px}
+#page-jouer .game .trial-objective{
+  color:#ebdcbf;font:13px/1.55 Georgia,serif;
+  padding:9px 12px;margin:7px 0 10px;
+  border-left:2px solid #b793d0;background:#1b1c32a8;
+}
 #page-jouer .trial-mastery{
  display:block;margin:7px 0 13px;padding:8px 11px;
  border:1px solid #7c6c8a63;border-radius:3px;
@@ -35,6 +40,7 @@
  #page-jouer .difficulty-options{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin-top:10px}
  #page-jouer .difficulty-options button{padding:8px 4px;min-height:44px;font-size:12px;white-space:normal}
  #page-jouer .trial-mastery{font-size:11px;margin:8px 0 12px;padding:9px}
+ #page-jouer .game .trial-objective{font-size:12px;padding:9px 10px}
 }
 @media(max-width:360px){
  #page-jouer .difficulty-options button{font-size:11px}
