@@ -1,4 +1,6 @@
 /* AETHERIUM 1.5 — Codex vivant, responsive and restrained midnight-gold styling. */
+/* The two progress rails supersede duplicate counters in the old heading. */
+#page-collection .chromatic-collection-stats{display:none}
 #page-collection .codex-progress-panel{
   display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;
   margin:0 0 16px;padding:15px 18px;
@@ -131,6 +133,7 @@
   #page-collection .codex-chapter{scroll-snap-align:start}
 }
 @media(max-width:850px){
+  #page-collection .mobile-collection-stats{display:none}
   #page-collection .codex-progress-panel{gap:10px;padding:11px 12px;margin:0 0 13px}
   #page-collection .codex-progress-line span{font-size:11px}
   #page-collection .codex-progress-line strong{font-size:12px}
