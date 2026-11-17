@@ -116,7 +116,7 @@ $('#mobile-collection-progress').textContent=Object.keys(state.owned).length+' /
   renderAchievements();renderAtelier()}
 function grant(value){state.coins+=value;state.earned+=value;state.wins++;update();notify('+'+value+' Couronnes remportées !')}
 const MAIN_PAGES=['jouer','boosters','collection','atelier'];
-const APP_PAGES=[...MAIN_PAGES,'succes'];
+const APP_PAGES=[...MAIN_PAGES,'succes','expeditions'];
 let forgeSelectedId=null;
 let forgeFilter='all';
 let pendingCraftId=null;
@@ -298,6 +298,7 @@ function navigate(page){
   if(page==='collection')renderCollection();
   if(page==='atelier')renderAtelier();
   if(page==='succes')renderAchievements();
+  if(page==='expeditions')renderExpedition();
   history.replaceState(null,'','#'+page);
   if(mobileView.matches)window.scrollTo(0,0);
 }
@@ -409,7 +410,13 @@ function complete(i,description,performance={}){
   g.status.textContent='✓ '+description+' · '+score+'/100 · +'+earned+' Couronnes';
   grant(earned);
   renderTrialMastery();
-  if(expeditionResult.advanced)renderExpedition();
+  if(expeditionResult.advanced){
+    renderExpedition();
+    // The victory belongs to the original mini-game; the player chooses
+    // when to return to the story instead of losing the result screen.
+    g.actions?.append(button('✧ Suite de l’expédition',()=>navigate('expeditions'),
+      'secondary expedition-return'));
+  }
 }
 const runeNames=['Soleil','Lune','Constellations','Œil','Spirale','Arbre','Rose des vents','Étoiles','Montagne','Vagues','Sablier','Flamme'];
 let previousRuneRitual=null;
@@ -1281,6 +1288,11 @@ difficultyButtons.forEach(control=>control.addEventListener('click',()=>{
 renderDifficultyChoice();
 function renderExpedition(){
   const view=expeditionSummary(state.expedition);
+  const portalText=$('#expedition-shortcut-progress');
+  portalText.textContent=view.route&&!view.complete?
+    view.route.name+' · étape '+(view.current.step+1)+'/3':
+    view.discovered?view.discovered+'/'+view.total+' fragments découverts':
+    'Deux chemins à découvrir';
   $('#expedition-counter').textContent=view.discovered+'/'+view.total+' fragments';
   const host=$('#expedition-content');
   host.replaceChildren();
@@ -1289,9 +1301,6 @@ function renderExpedition(){
   leadText.append(el('span','expedition-kicker','CHAPITRE I · LE SEUIL DES VERRIERS'),
     el('h3','expedition-title','Le Seuil des Verriers'));
   lead.append(leadText);
-  const discoveries=el('span','expedition-discoveries',
-    view.discovered+' / '+view.total+' chemins révélés');
-  lead.append(discoveries);
   host.append(lead);
   const startRoute=routeId=>{
     state.expedition=startExpedition(state.expedition,routeId,state.difficulty);
@@ -1360,8 +1369,9 @@ function renderExpedition(){
     selectGame(stage.game);
     renderTrialMastery();
     renderExpedition();
+    navigate('jouer');
     const target=mini[stage.game].card;
-    if(mobileView.matches)target.scrollIntoView({behavior:'smooth',block:'start'});
+    target.scrollIntoView({behavior:'smooth',block:'start'});
     target.querySelector('button:not([disabled])')?.focus({preventScroll:true});
   },'primary expedition-continue');
   controls.append(play,button('Quitter le parcours',()=>{
