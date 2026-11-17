@@ -15,7 +15,7 @@ const start=main.indexOf('function startMines()'),end=main.indexOf('const ingred
 assert.ok(start>=0&&end>start,'Excavation function present');
 const game=main.slice(start,end);
 for(const fragment of [
-  'length:25','slice(0,5)','countNearby','safe===10',
+  'length:25','slice(0,5)','countNearby','safe===safeTarget',
   "complete(3,'Fouille accomplie !",'bombs.has(i)',
   'tile.disabled=true','aria-label','setArtwork(tile,0)',
   "g.board.style.setProperty('--cols',5)",
