@@ -37,7 +37,7 @@ for(const control of ['codex-chapter-list','codex-progress-discovered','codex-pr
   assert.ok(html.includes(control),'Codex markup includes '+control);
 }
 assert.ok(html.includes('src/codex.css?v=codex-1.5.1'),'Codex stylesheet versioned');
-assert.ok(html.includes('src/main.js?v=codex-1.5.2'),'Codex script versioned');
+assert.ok(html.includes('src/main.js?v=codex-1.5.4'),'Codex script versioned');
 assert.ok(main.includes("from './codex.js'"),'Main module imports chapter helpers');
 assert.ok(main.includes('function renderCodexChapters()'),'Album counters are connected');
 assert.ok(main.includes('function inspectSealed('),'Undiscovered cards have an inspection state');
@@ -48,6 +48,8 @@ assert.ok(main.includes("const SAVE='aetherium-save-v1'"),'Existing save key pre
 assert.ok(css.includes('@media(max-width:850px)'),'Mobile chapter rail supported');
 assert.ok(css.includes('prefers-reduced-motion'),'Reduced-motion supported');
 assert.ok(css.includes('.codex-sealed-art'),'Sealed cards have a placeholder illustration');
+assert.ok(main.includes("target.showPopover()")&&main.includes("inspectorShell.hidePopover()"),
+  'Mobile Codex inspector uses native top layer instead of page stacking');
 assert.ok(html.includes('<section id="page-collection" class="page"><div id="sheet-scrim"'),
   'Mobile inspector backdrop shares its Codex stacking context');
 assert.ok(!html.includes('</main><div id="sheet-scrim"'),
@@ -75,6 +77,6 @@ assert.ok(mobile.includes('.gallery .card .info{padding:17px'),'Phone titles hav
 assert.ok(chromaticCSS.includes('.card.is-chromatic .info:before'),'Chromatic ornament follows the info band');
 assert.ok(!chromaticCSS.includes('.card.is-chromatic:before{'),'Chromatic cards do not revive the faulty placement');
 assert.ok(css.includes('.card.is-sealed .info:before'),'Sealed cards use the same aligned ornament');
-assert.ok(html.includes('theme.css?v=card-ornament-1')&&html.includes('mobile.css?v=inspector-layer-2'),
+assert.ok(html.includes('theme.css?v=card-ornament-1')&&html.includes('mobile.css?v=inspector-layer-3'),
   'Caches refreshed for both the card ornament and mobile inspection layers');
 console.log('AETHERIUM 1.5 : albums, progression, filtres, sauvegardes et gameplay OK');
