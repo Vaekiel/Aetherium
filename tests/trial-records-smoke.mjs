@@ -153,8 +153,8 @@ const css=read('src/trial-progress.css'),html=read('index.html');
 assert.ok(css.includes('.trial-records-summary'));
 assert.ok(css.includes('.trial-records-table'));
 assert.ok(css.includes('@media(max-width:850px)'));
-assert.ok(html.includes('src/trial-progress.css?v=records-clean-1.7.3'));
-assert.ok(html.includes('src/main.js?v=records-clean-1.7.3'));
+assert.ok(html.includes('src/trial-progress.css?v=defis-1.7.3'));
+assert.ok(html.includes('src/main.js?v=defis-1.7.3'));
 // Render the actual responsive record UI using a minimal, DOM-shaped tree.
 const renderCode=main.slice(main.indexOf('function renderTrialMastery(){'),
  main.indexOf('function complete(i,description,performance={}){'));
