@@ -1,0 +1,77 @@
+/* AETHERIUM — Reflets brisés, first ten illustrated previews.
+   Unlocked content, game card stats and collections are not affected. */
+#page-collection #reflets-gallery[hidden]{display:none!important}
+#page-collection .reflets-gallery{max-width:880px;margin:20px auto 16px;text-align:left}
+#page-collection .reflets-gallery-intro{max-width:660px;margin:0 auto 18px;text-align:center}
+#page-collection .reflets-gallery-intro .kicker{
+  color:#aa9cc5;font:10px/1.35 system-ui,sans-serif;letter-spacing:.14em
+}
+#page-collection .reflets-gallery-intro h3{
+  margin:8px 0 6px;color:#f1e3ce;
+  font:small-caps clamp(22px,2.6vw,28px)/1.18 Georgia,serif
+}
+#page-collection .reflets-gallery-intro p{
+  max-width:580px;margin:0 auto;color:#c5bace;font:12px/1.55 Georgia,serif
+}
+#page-collection .reflets-gallery-grid{
+  display:grid;grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:13px
+}
+#page-collection .reflets-gallery-card{
+  min-width:0;margin:0;padding:7px;
+  border:1px solid #5e5e86a8;border-radius:4px;
+  background:linear-gradient(162deg,#27243e,#151a2e 87%);
+  box-shadow:0 8px 22px #060a186e;
+  display:flex;flex-direction:column;gap:9px;
+}
+#page-collection .reflets-gallery-card[data-rarity="uncommon"]{
+  border-color:#538e7d9e
+}
+#page-collection .reflets-gallery-card-art{
+  display:block;line-height:0;overflow:hidden;
+  border:1px solid #9290b2;border-radius:2px;
+  background:#1a1b2f;aspect-ratio:2/3;
+}
+#page-collection .reflets-gallery-card-art img{
+  width:100%;height:100%;object-fit:cover;display:block;
+  image-rendering:auto
+}
+#page-collection .reflets-gallery-card figcaption{
+  display:flex;flex-direction:column;gap:6px;padding:1px 4px 7px
+}
+#page-collection .reflets-gallery-category{
+  color:#b1a7c5;font:10px/1.4 system-ui,sans-serif;letter-spacing:.03em
+}
+#page-collection .reflets-gallery-card[data-rarity="uncommon"] .reflets-gallery-category{
+  color:#a0d4c0
+}
+#page-collection .reflets-gallery-card figcaption strong{
+  color:#efe1ca;font:small-caps 17px/1.15 Georgia,serif;min-height:35px;
+}
+#page-collection .reflets-gallery-card figcaption em{
+  font:italic 11px/1.5 Georgia,serif;color:#c5bfd2
+}
+#page-collection .reflets-gallery-foot{
+  margin:13px 0 0;text-align:center;color:#a9a4b8;
+  font:11px/1.55 Georgia,serif
+}
+#page-collection .reflets-gallery a:focus-visible{
+  outline:2px solid #d7e9fa;outline-offset:3px
+}
+@media(min-width:681px){
+  #page-collection .reflets-gallery-card-art img{transition:transform .2s ease}
+  #page-collection .reflets-gallery-card-art:hover img{transform:scale(1.035)}
+}
+@media(max-width:850px){
+  #page-collection .reflets-gallery-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}
+}
+@media(max-width:570px){
+  #page-collection .reflets-gallery{margin-top:18px}
+  #page-collection .reflets-gallery-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+  #page-collection .reflets-gallery-card{padding:5px;gap:7px}
+  #page-collection .reflets-gallery-card figcaption strong{font-size:15px;min-height:30px}
+  #page-collection .reflets-gallery-card figcaption em{font-size:10px}
+}
+@media(prefers-reduced-motion:reduce){
+  #page-collection .reflets-gallery-card-art img{transition:none!important}
+}
