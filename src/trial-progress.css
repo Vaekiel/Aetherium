@@ -104,10 +104,6 @@
 #page-jouer .trial-records-table tbody tr:last-child td{
  border-bottom:0;
 }
-#page-jouer .trial-records-note{
- padding:0 12px 11px;margin:0!important;
- color:#b7b0c3!important;font:10px/1.4 Georgia,serif!important;
-}
 @media(max-width:850px){
  #page-jouer .trial-records{margin:0 0 10px}
  #page-jouer .trial-records-summary{padding:9px 10px;min-height:44px}
