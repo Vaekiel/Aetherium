@@ -72,6 +72,19 @@ Le nouveau panneau d’aperçu du Codex (Partie II verrouillée) est préparé d
 
 La simple prévisualisation n’ajoute aucun ID au catalogue jouable. Les boosters, la Forge, les récompenses et les sauvegardes continuent à utiliser les cartes publiées.
 
+## Premier lot de 10 illustrations — aperçu du Codex
+
+**Lot 1 : IDs 25–34**. Les dix cartes du catalogue possèdent une image HD WebP 1024 × 1536 et une miniature 350 × 525, chacune enregistrée sous `assets/cards/<slug>.webp` et `assets/cards/<slug>-thumb.webp`.
+
+Le Codex permet de consulter cette série dans **Les Reflets brisés** avec le Cerf sans reflet n° 38 déjà validé. Ces images servent de **prévisualisation artistique**, sans aucune modification du catalogue de cartes jouables, des tirages, de la Forge ou des sauvegardes. La collection conserve `released:false`.
+
+### Étapes restantes
+
+- Produire les lots 2 (10 illustrations) et 3 (3 illustrations), avec leurs miniatures.
+- Vérifier la cohérence artistique et l'identité de chaque carte.
+- Développer puis tester le booster propre aux Reflets brisés.
+- Rendre les 24 cartes obtenables seulement après les tests de bout en bout.
+
 ## Prochain jalon artistique
 
 Réaliser **une seule illustration pilote** : `#38 Cerf sans reflet`, rare. Le contraste du cerf lumineux et de l’eau incapable de le refléter constitue un test facile à évaluer sur téléphone. Vérifier d’abord l’illustration au vrai format de carte, puis produire les 23 autres dans la même grammaire visuelle.

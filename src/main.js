@@ -6,6 +6,7 @@ import {codexProgress,filterCodex} from './codex.js';
 import {sanitizeRecentFinds,recordRecentFind,buildLivingArchive} from './living-archives.js';
 import {createBackup,decodeBackup,installImportedSave,restorePreviousSave,PREVIOUS_SAVE_KEY,MAX_BACKUP_SIZE} from './save-backup.js';
 import {SEASONS,seasonById,collectionById,cardsForCollection,collectionForCard,seasonProgress} from './seasons.js';
+import {mountRefletsGallery} from './reflets-gallery.js';
 import {milestonesFor,sanitizeMilestoneClaims,uniqueCardsOwned,collectionMilestoneStatus,claimCollectionMilestone} from './collection-milestones.js';
 import {DIFFICULTIES,validDifficulty,trialRules,trialObjective,trialScore,trialReward,emptyTrialStats,sanitizedTrialStats,recordTrialWin,masteryLevel} from './trial-progress.js';
 import {TRIAL_RECORD_MODES,TRIAL_RECORD_METRICS,sanitizedTrialRecords,recordPersonalBest,recordMetricLabel} from './trial-records.js';
@@ -1757,7 +1758,10 @@ function renderCollection(){
   const availableCards=cardsForCollection(CARDS,activeSeason,activeCollection);
   const isUpcoming=!selectedPart.released;
   $('#codex-upcoming').hidden=!isUpcoming;
-  $('#reflets-art-preview').hidden=!(isUpcoming&&activeSeason==='marches-de-verre'&&selectedPart.id==='reflets-brises');
+  const showRefletsPreview=isUpcoming&&activeSeason==='marches-de-verre'&&selectedPart.id==='reflets-brises';
+  $('#reflets-art-preview').hidden=!showRefletsPreview;
+  $('#reflets-gallery').hidden=!showRefletsPreview;
+  if(showRefletsPreview)mountRefletsGallery($('#reflets-gallery-grid'));
   $('#collection-layout').hidden=isUpcoming;
   if(isUpcoming){
     $('#codex-milestones').hidden=true;
