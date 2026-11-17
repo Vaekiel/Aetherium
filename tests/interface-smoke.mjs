@@ -24,6 +24,21 @@ for(const sheet of ['runes.css','memory.css','lock.css','mines.css','alchemy.css
 }
 assert.ok(html.includes('class="play-stage"')&&html.includes('class="play-lore"'),'Nouvelle scène de jeu');
 assert.ok(html.includes('class="collection-header"'),'Codex avec en-tête');
+const mobileCSS=read('src/mobile.css');
+const codexOpen=html.indexOf('<section id="page-collection" class="page">');
+const codexEnd=html.indexOf('</section>\n<section id="page-atelier"',codexOpen);
+const veilPos=html.indexOf('id="sheet-scrim"');
+assert.ok(codexOpen>=0&&veilPos>codexOpen&&codexEnd>veilPos,
+  'Mobile blur backdrop is inside the Codex page, not above the inspector stacking context');
+assert.ok(!html.includes('</main><div id="sheet-scrim"'),
+  'Backdrop is no longer an outside sibling of the main layout');
+assert.equal((html.match(/id="sheet-scrim"/g)||[]).length,1,'One backdrop only');
+assert.ok(mobileCSS.includes('body.sheet-open #app>.layout{z-index:110}'),
+  'Open mobile sheets raise the layout above the fixed app header');
+assert.ok(mobileCSS.includes('.sheet-scrim{position:fixed;inset:0;z-index:109;'),
+  'Backdrop remains below the mobile panel');
+assert.ok(mobileCSS.includes('.inspector-shell{position:fixed!important;inset:0;z-index:121;'),
+  'Inspected artwork is above the blur backdrop');
 assert.ok(html.includes('LES TRÉSORS DU CODEX'),'Boutique scénarisée');
 assert.ok(html.includes('Chroniques & Succès'),'Registre des succès');
 assert.ok(main.includes('const trialSubtitles='),'Sélecteur de jeux enrichi');
