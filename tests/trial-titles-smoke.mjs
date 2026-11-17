@@ -56,7 +56,7 @@ assert.ok(main.includes('state.titleId=next;\n      save();'));
 assert.ok(html.includes('id="honorific-list"'));
 assert.ok(html.includes('id="honorific-active"'));
 assert.ok(html.includes('src/trial-titles.css?v=titres-1.7.3'));
-assert.ok(html.includes('src/main.js?v=expedition-dediee-1.8.1'));
+assert.ok(html.includes('src/main.js?v=booster-reveal-fix-1821'));
 assert.ok(css.includes('@media(max-width:590px)'));
 assert.ok(css.includes('.honorific.is-equipped'));
 assert.ok(css.includes(':focus-visible'));
