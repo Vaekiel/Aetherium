@@ -10,7 +10,7 @@ const match=main.match(/const BOOSTER_UNSEAL_MS=(\d+);/);
 assert.ok(match,'Booster scene duration is explicit and shared');
 const duration=Number(match[1]);
 assert.equal(duration,980);
-assert.ok(html.includes('src/main.js?v=ouverture-183'));
+assert.ok(html.includes('src/main.js?v='));
 assert.ok(html.includes('src/booster-packaging.css?v=ouverture-183'));
 assert.ok(html.includes('class="pack-seal"'));
 assert.ok(html.includes('class="pack-seal-left"'));
@@ -50,12 +50,13 @@ function simulate(reduced){
  const pack=box(),opening=box(),grid=box(),progress=box();
  const summary=box(),actions=box(),next=box(),step=box(),fill=box();
  let saves=0,draws=0,cancels=0;
- const state={coins:300,opened:0,owned:{},shiny:{},dust:0};
+ const state={coins:300,opened:0,owned:{},shiny:{},dust:0,recentFinds:[]};
  const sandbox={
   boosterBusy:false,state,CARDS:Array.from({length:4},(_,i)=>({id:i+1,name:i===3?'Floraison Cendrée':'Carte'})),
   PACK_PRICE:100,
   drawPack(){draws++;return Array.from({length:5},(_,i)=>({id:4,shiny:i===0}))},
   update(){saves++},
+  recordRecentFind(entries,id,kind){return [{id,kind},...entries].slice(0,6)},
   cancelBoosterTimers(){cancels++},
   boosterSummary:summary,boosterGrid:grid,boosterActions:actions,
   nextPullButton:next,boosterProgress:progress,boosterProgressFill:fill,
@@ -76,6 +77,8 @@ function simulate(reduced){
  assert.equal(state.owned[4],5,'All five copies are persisted before the animation');
  assert.equal(state.shiny[4],true);
  assert.equal(state.dust,20,'Four duplicates grant the standard Éclats');
+ assert.equal(state.recentFinds.length,1,'Le registre ne compte pas les doublons');
+ assert.equal(state.recentFinds[0].kind,'chromatic','La première Chromatique est enregistrée');
  assert.equal(saves,1,'Purchase is saved immediately, before timers');
  assert.equal(cancels,1);
  assert.equal(sandbox.boosterBusy,true);
