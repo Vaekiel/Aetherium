@@ -29,6 +29,10 @@ Ouvrir ensuite `http://localhost:8000`.
 
 Le workflow `.github/workflows/pages.yml` valide les modules JavaScript et publie automatiquement la racine du dépôt sur GitHub Pages à chaque push sur `main`.
 
+## AETHERIUM 1.6.0.3 — Codex plus léger : retrait du panneau Chromatique
+
+Le panneau repliable « Normale ou Chromatique ? » et ses deux cartes d'exemple sont retirés de la grille du Codex, ainsi que les chargements d'images et règles CSS associés. L'inspection individuelle d'une carte, le filtre Chromatiques, les compteurs, les bordures prismatiques des cartes réellement obtenues et les probabilités des boosters restent inchangés. Suppression ciblée sans modification de sauvegarde.
+
 ## AETHERIUM 1.6.0.2 — Laboratoire arcanique : recettes à deviner
 
 La fenêtre du Laboratoire arcanique n'affiche plus la combinaison d'ingrédients sous le nom d'une potion. Le joueur choisit deux ingrédients en déduisant la recette à partir de son nom, puis mémorise les mélanges qui fonctionnent. Une courte instruction non révélatrice remplace l'ancienne solution affichée automatiquement. Les ingrédients choisis restent visibles dans les emplacements de préparation ; les ingrédients requis restent cachés et ne servent qu'à la validation du mélange. Les cinq recettes d'origine, les trois niveaux de difficulté, les récompenses et les sauvegardes sont conservés. Cache JavaScript et CSS réactualisé.
@@ -73,7 +77,7 @@ Le Codex d'Origines est maintenant organisé en **quatre chapitres de six cartes
 - Le joueur peut afficher uniquement les cartes **découvertes**, **à découvrir**, ou toutes ; ces sélections se combinent aux filtres de catégorie, rareté, finition et recherche existants.
 - Les cartes non obtenues se présentent comme des **archives scellées**, sans révéler leur illustration. Une fiche de carte scellée conduit aux Boosters ou à l'Atelier.
 - La fiche détaillée comporte désormais une navigation **Précédente / Suivante** parmi les cartes actuellement affichées, avec le chapitre d'origine rappelé sous le nom.
-- La comparaison Normale / Chromatique reste accessible, mais repliée par défaut afin de donner toute sa place au Codex. La présentation est responsive sur téléphone, tablette et ordinateur.
+- La fenêtre de comparaison autonome Normale / Chromatique a été retirée en 1.6.0.3 pour alléger le Codex ; les variantes restent accessibles depuis la fiche des cartes et les filtres. La présentation est responsive sur téléphone, tablette et ordinateur.
 
 Les nouveaux fichiers `src/codex.js` et `src/codex.css` isolent les calculs de progression et la présentation. **Aucune modification** des tirages, de l'économie, des 5 mini-jeux, de la fabrication ni du stockage `aetherium-save-v1`. Le test `tests/codex-smoke.mjs` couvre la couverture complète des chapitres, les filtres, les compteurs et les invariants.
 
