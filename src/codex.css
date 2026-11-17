@@ -268,3 +268,110 @@
  #page-collection .codex-season,
  #page-collection .codex-season-published-track>span{transition:none!important}
 }
+
+
+/* AETHERIUM 1.7.1 — Journal des découvertes, intentionally collapsed by default.
+   Lore text is created by JS only once a reward has been claimed. */
+#page-collection #codex-milestones[hidden]{display:none!important}
+#page-collection .codex-milestones{
+ margin:0 0 16px;border:1px solid #8a7794a3;border-radius:4px;
+ background:linear-gradient(140deg,#25213beb,#161c31f0);
+ box-shadow:inset 0 1px #ffffff0e,0 6px 16px #080c1d55;
+ overflow:hidden;
+}
+#page-collection .codex-milestones-head{
+ display:flex;align-items:center;gap:11px;min-height:73px;padding:12px 15px;
+ list-style:none;cursor:pointer;color:#f3dfc0;
+}
+#page-collection .codex-milestones-head::-webkit-details-marker{display:none}
+#page-collection .codex-milestones-head::after{
+ content:'⌄';flex:none;color:#d9c7e8;font:24px/1 Georgia,serif;transform:rotate(0);
+ transition:transform .15s ease;margin-left:3px;
+}
+#page-collection .codex-milestones[open] .codex-milestones-head::after{transform:rotate(180deg)}
+#page-collection .codex-milestones-head:focus-visible{outline:2px solid #cfb1e4;outline-offset:-3px}
+#page-collection .codex-milestones-glyph{
+ flex:none;display:grid;place-items:center;width:42px;height:42px;
+ border:1px solid #9d8cb7;border-radius:50%;
+ background:radial-gradient(circle,#4b446c,#25233b);
+ color:#ead7ee;text-shadow:0 0 9px #a5c5ef;font:28px Georgia,serif;
+}
+#page-collection .codex-milestones-heading{
+ flex:1;min-width:0;display:flex;flex-direction:column;gap:3px;
+}
+#page-collection .codex-milestones-heading strong{
+ color:#f5e1c1;font:small-caps 21px/1.15 Georgia,serif;
+}
+#page-collection .codex-milestones-heading small{
+ color:#bfb2ce;font:11px/1.35 Georgia,serif;
+}
+#page-collection .codex-milestones-count{
+ color:#d8d1eb;font:11px/1.3 Georgia,serif;text-align:right;max-width:126px;
+}
+#page-collection .codex-milestones-intro{
+ margin:0 15px 12px;padding:11px 0 0;border-top:1px solid #9c839750;
+ color:#c9c0d7;font:12px/1.55 Georgia,serif;
+}
+#page-collection .codex-milestones-list{
+ display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;
+ margin:0 15px 15px;
+}
+#page-collection .codex-milestone-card{
+ display:flex;flex-direction:column;align-items:stretch;gap:8px;
+ min-width:0;min-height:177px;padding:13px 12px;border:1px solid #5e577b;
+ border-radius:3px;background:linear-gradient(156deg,#201f36,#141a2e);
+}
+#page-collection .codex-milestone-card.is-unlocked{
+ border-color:#a38baa;background:linear-gradient(152deg,#302841,#192039);
+}
+#page-collection .codex-milestone-card.is-claimed{
+ border-color:#9c8d85;background:linear-gradient(160deg,#2b293d,#192137);
+}
+#page-collection .codex-milestone-number{
+ color:#c5adce;font:10px/1.3 Georgia,serif;letter-spacing:.095em;
+}
+#page-collection .codex-milestone-title{
+ color:#ebdfc6;font:small-caps 17px/1.17 Georgia,serif;
+}
+#page-collection .codex-milestone-award{
+ color:#b6cfcb;font:11px/1.3 Georgia,serif;
+}
+#page-collection .codex-milestone-message,
+#page-collection .codex-milestone-story{
+ margin:2px 0 0;color:#c2bad0;font:12px/1.52 Georgia,serif;
+}
+#page-collection .codex-milestone-story{
+ color:#e5d9ca;font-style:italic;
+}
+#page-collection .codex-milestone-state{
+ color:#addcc6;font:11px/1.3 Georgia,serif;margin-top:auto;
+}
+#page-collection .codex-milestone-claim{
+ cursor:pointer;min-height:39px;margin-top:auto;padding:8px 9px;
+ background:linear-gradient(145deg,#5d477a,#3b315b);border:1px solid #bfa6d2;
+ border-radius:3px;color:#f8eed9;font:12px/1.2 Georgia,serif;
+}
+#page-collection .codex-milestone-claim:hover{background:#665186;border-color:#dcc1de}
+#page-collection .codex-milestone-claim:focus-visible{outline:2px solid #d9e8f0;outline-offset:2px}
+@media(max-width:1120px){
+ #page-collection .codex-milestones-list{grid-template-columns:repeat(2,minmax(0,1fr))}
+ #page-collection .codex-milestone-card{min-height:155px}
+}
+@media(max-width:850px){
+ #page-collection .codex-milestones-head{min-height:69px;padding:10px;gap:8px}
+ #page-collection .codex-milestones-glyph{width:33px;height:33px;font-size:22px}
+ #page-collection .codex-milestones-heading strong{font-size:17px}
+ #page-collection .codex-milestones-count{font-size:10px;max-width:96px}
+ #page-collection .codex-milestones-intro{margin:0 10px 10px}
+ #page-collection .codex-milestones-list{gap:8px;margin:0 10px 10px}
+ #page-collection .codex-milestone-card{padding:11px 9px}
+ #page-collection .codex-milestone-title{font-size:16px}
+ #page-collection .codex-milestone-claim{min-height:44px}
+}
+@media(max-width:390px){
+ #page-collection .codex-milestones-list{grid-template-columns:1fr}
+ #page-collection .codex-milestone-card{min-height:0}
+}
+@media(prefers-reduced-motion:reduce){
+ #page-collection .codex-milestones-head::after{transition:none}
+}
