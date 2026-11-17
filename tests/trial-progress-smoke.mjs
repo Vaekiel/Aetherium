@@ -102,8 +102,8 @@ const browser={state:{difficulty:'aventure'},mini:Array.from({length:5},mockGame
  $$:selector=>selector==='#difficulty-options [data-difficulty]'?modeButtons:
    selector==='.game-choice'?pickerButtons:[],
  renderTrialMastery:null,
- save(){this.saves++;},
- notify(message){this.messages.push(message);}
+ save(){browser.saves++;},
+ notify(message){browser.messages.push(message);}
 };
 browser.trialStarters=browser.mini.map((_,i)=>()=>{browser.mini[i].mode=browser.state.difficulty;browser.starts[i]++;});
 browser.renderTrialMastery=()=>browser.mini.forEach((item,i)=>{browser.goals[i]=trialObjective(i,item.mode);});
