@@ -67,6 +67,8 @@ jobs:
           test -s src/codex.css
           test -s src/codex.js
           test -s src/save-backup.js
+          test -s src/duplicate-rewards.js
+          test -s tests/duplicate-rewards.test.mjs
           test -s src/save-backup.css
           test -s tests/save-backup.test.mjs
           test -s tests/save-backup-smoke.mjs
@@ -175,6 +177,7 @@ jobs:
           grep -q '  24: Object.freeze' src/card-art.js
           node --check --input-type=module < src/main.js
           node --check --input-type=module < src/save-backup.js
+          node --check --input-type=module < src/duplicate-rewards.js
           node --check --input-type=module < src/codex.js
           node --check --input-type=module < src/seasons.js
           node --check --input-type=module < src/collection-milestones.js
@@ -189,6 +192,7 @@ jobs:
           node --check --input-type=module < src/excavation-sites.js
           node --check --input-type=module < src/alchemy-rituals.js
           node --experimental-default-type=module --test tests/save-backup.test.mjs
+          node --experimental-default-type=module --test tests/duplicate-rewards.test.mjs
           node tests/save-backup-smoke.mjs
           node tests/booster-smoke.mjs
           node tests/booster-reveal-smoke.mjs
