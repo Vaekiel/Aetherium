@@ -22,6 +22,16 @@ for(const marker of ["selectedRecipes=shuffle([...recipes]).slice(0,3)","for(let
  assert.ok(code.includes(marker),'Missing gameplay marker: '+marker);
 }
 assert.ok(!code.includes('tileGrid(g.board'),'Generic tiles are gone');
+assert.ok(!code.includes('alchemy-requirement'),'The potion panel must never display the correct ingredients');
+assert.ok(!code.includes('required.map('),'The recipe solution must not be converted to an on-screen hint');
+assert.ok(code.includes("const [name]=selectedRecipes[Math.min(round,2)];"),
+  'The brewing panel only reads the recipe name during selection');
+assert.ok(code.includes("const [name,required]=selectedRecipes[round];"),
+  'Hidden ingredient combinations remain available to validate the mixture');
+assert.ok(code.includes('Déduis les deux ingrédients grâce au nom de la potion'),
+  'The player is encouraged to infer and remember the correct ingredients');
+assert.ok(!css.includes('.alchemy-requirement'),
+  'Removed solution display no longer leaves an orphaned CSS rule');
 const recipeLine=main.match(/^const recipes=.*;$/m)?.[0];
 const ingredientLine=main.match(/^const ingredients=.*;$/m)?.[0];
 assert.ok(recipeLine&&ingredientLine,'Original five recipe definitions present');
