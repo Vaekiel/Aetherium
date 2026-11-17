@@ -119,3 +119,72 @@
  #page-jouer .trial-records-current{font-size:9px}
  #page-jouer .trial-records-table{font-size:9px}
 }
+
+
+/* AETHERIUM 1.7.3 — Défis des Maîtres: small, optional records subpanel. */
+#page-jouer .trial-challenges-summary{
+ flex:none;white-space:nowrap;padding:2px 4px;
+ font:11px/1.35 Georgia,serif;color:#dfc59d;
+}
+#page-jouer .trial-challenges{
+ margin:0 10px 10px;padding-top:10px;
+ border-top:1px solid #8b769457;
+}
+#page-jouer .trial-challenges-heading{
+ display:block;margin:0 2px 7px;
+ color:#d8c9e0;font:small-caps 14px/1.3 Georgia,serif;
+}
+#page-jouer .trial-challenges-list{
+ display:grid;gap:4px;
+}
+#page-jouer .trial-challenge{
+ display:grid;grid-template-columns:17px 43px minmax(0,1fr) 15px;
+ align-items:center;column-gap:7px;
+ min-height:36px;padding:6px 7px;border:1px solid #776d856b;
+ border-radius:3px;background:#171b2c8a;
+ color:#a9a4ba;
+}
+#page-jouer .trial-challenge-medal{
+ text-align:center;color:#837e91;
+ font:17px/1 Georgia,serif;
+}
+#page-jouer .trial-challenge-name{
+ color:#ada3b8;font:small-caps 13px/1.25 Georgia,serif;
+}
+#page-jouer .trial-challenge-goal{
+ color:#aca8bf;font:11px/1.35 Georgia,serif;
+}
+#page-jouer .trial-challenge-status{
+ color:#968ca7;text-align:right;font:12px/1 Georgia,serif;
+}
+#page-jouer .trial-challenge.is-earned{
+ border-color:#9a8f9c8c;background:linear-gradient(100deg,#34304367,#1c23339c);
+}
+#page-jouer .trial-challenge.is-earned .trial-challenge-goal{
+ color:#d4cbd8;
+}
+#page-jouer .trial-challenge.is-earned .trial-challenge-status{
+ color:#b0ddc6;
+}
+#page-jouer .trial-challenge.is-earned[data-grade="bronze"] .trial-challenge-medal,
+#page-jouer .trial-challenge.is-earned[data-grade="bronze"] .trial-challenge-name{color:#c9a284}
+#page-jouer .trial-challenge.is-earned[data-grade="argent"] .trial-challenge-medal,
+#page-jouer .trial-challenge.is-earned[data-grade="argent"] .trial-challenge-name{color:#c5d3df}
+#page-jouer .trial-challenge.is-earned[data-grade="or"] .trial-challenge-medal,
+#page-jouer .trial-challenge.is-earned[data-grade="or"] .trial-challenge-name{color:#e4ce93}
+@media(max-width:850px){
+ #page-jouer .trial-challenges-summary{font-size:10px;padding:1px 2px}
+ #page-jouer .trial-challenges{margin:0 7px 9px;padding-top:8px}
+ #page-jouer .trial-challenges-heading{font-size:13px}
+ #page-jouer .trial-challenge{grid-template-columns:16px 39px minmax(0,1fr) 12px;
+   gap:5px;padding:7px 5px;min-height:38px}
+ #page-jouer .trial-challenge-name{font-size:12px}
+ #page-jouer .trial-challenge-goal{font-size:10px}
+}
+@media(max-width:360px){
+ #page-jouer .trial-challenge{
+   grid-template-columns:15px 36px minmax(0,1fr) 11px;gap:3px;padding:6px 4px
+ }
+ #page-jouer .trial-challenge-name{font-size:11px}
+ #page-jouer .trial-challenge-goal{font-size:9px}
+}
