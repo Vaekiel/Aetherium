@@ -1,6 +1,7 @@
 import {CARDS,RARITIES,PACK_PRICE,drawPack} from './data.js';
 import {CRAFT_COSTS,getCraftCost,craftCard} from './crafting.js';
 import {applyCardIllustration,hasApprovedArt,CARD_ART} from './card-art.js';
+import {CODEX_CHAPTERS,chapterFor,chapterCards,codexProgress,filterCodex} from './codex.js';
 
 const $=(q,root=document)=>root.querySelector(q);
 const $$=(q,root=document)=>Array.from(root.querySelectorAll(q));
@@ -947,36 +948,43 @@ function makeCard(c,isShiny=false,locked=false){
   const chromatic=!!isShiny&&!locked;
   const preview=locked&&(c.id===1||(previewArt&&hasApprovedArt(c.id)));
   const reallyLocked=locked&&!preview;
-  const b=el('button','card'+(reallyLocked?' locked':'')+(chromatic?' is-chromatic':''));
+  const b=el('button','card'+(reallyLocked?' is-sealed':'')+(chromatic?' is-chromatic':''));
   b.type='button';
+  b.dataset.cardId=String(c.id);
   b.style.setProperty('--edge',RARITIES[c.rarity].color);
-  const img=el('img');
-  applyCardIllustration(img,c,{shiny:chromatic,size:'thumbnail'});
-  // Wrap only Chromatiques so the prism can live above the art without
-  // tinting or replacing the original pixel-art illustration.
-  if(chromatic){
-    const art=el('span','chromatic-art-window');
-    art.append(img);
+  if(reallyLocked){
+    const art=el('span','codex-sealed-art');
+    art.setAttribute('aria-hidden','true');
+    art.append(el('span','codex-sealed-glyph','✧'),
+      el('span','codex-sealed-number','ARCHIVE '+String(c.id).padStart(3,'0')));
     b.append(art);
-  }else b.append(img);
+  }else{
+    const img=el('img');
+    applyCardIllustration(img,c,{shiny:chromatic,size:'thumbnail'});
+    if(chromatic){
+      const art=el('span','chromatic-art-window');
+      art.append(img);b.append(art);
+    }else b.append(img);
+  }
   const meta=el('div','info');
-  meta.append(el('div','name',reallyLocked?'Carte inconnue':c.name),
-    el('div','meta',RARITIES[c.rarity].label+' · '+c.type));
+  meta.append(el('div','name',reallyLocked?'Archive scellée':c.name),
+    el('div','meta',reallyLocked?'À découvrir · '+RARITIES[c.rarity].label:RARITIES[c.rarity].label+' · '+c.type));
   b.append(meta);
   if(!locked&&state.owned[c.id])b.append(el('span','amount','×'+state.owned[c.id]));
   if(chromatic)b.append(el('span','shine chromatic-seal','✧ CHROMATIQUE'));
   if(preview){
     b.append(el('span','shine','APERÇU'));
     b.setAttribute('aria-label','Voir l’illustration de '+c.name+' sans posséder cette carte');
+  }else if(reallyLocked){
+    b.setAttribute('aria-label','Archive '+String(c.id).padStart(3,'0')+', non découverte : ouvrir la fiche scellée');
+  }else if(chromatic){
+    b.setAttribute('aria-label',c.name+' — version Chromatique, '+RARITIES[c.rarity].label);
   }
-  if(reallyLocked)b.disabled=true;
-  else{
-    if(chromatic)b.setAttribute('aria-label',c.name+' — version Chromatique, '+RARITIES[c.rarity].label);
-    b.addEventListener('click',()=>{
-      if($('#page-boosters').classList.contains('active'))navigate('collection');
-      inspect(c,chromatic);
-    });
-  }
+  b.addEventListener('click',()=>{
+    if($('#page-boosters').classList.contains('active'))navigate('collection');
+    if(reallyLocked)inspectSealed(c);
+    else inspect(c,chromatic);
+  });
   return b;
 }
 // The side-by-side Codex guide deliberately uses the same approved artwork:
@@ -985,8 +993,64 @@ const comparisonCard=CARDS[0];
 applyCardIllustration($('#chromatic-example-normal'),comparisonCard,{shiny:false,size:'full'});
 applyCardIllustration($('#chromatic-example-special'),comparisonCard,{shiny:false,size:'full'});
 let filterType='all',filterRarity='all',filterFinish='all',selectedCard=null,previewArt=false;
+let activeChapter='all',discoveryFilter='all',codexVisibleCards=[];
+const codexOverview={id:'all',number:'✦',title:'Toutes les archives',
+  subtitle:'Les légendes d’Origines réunies',sigil:'✦'};
+function markCodexSelected(id){
+  $$('#card-grid .card').forEach(tile=>{
+    const selected=Number(tile.dataset.cardId)===id;
+    tile.classList.toggle('is-selected',selected);
+    tile.setAttribute('aria-pressed',String(selected));
+  });
+}
+function codexBrowseTo(card){
+  if(!card)return;
+  const locked=!state.owned[card.id]&&card.id!==1&&!(previewArt&&hasApprovedArt(card.id));
+  if(locked)inspectSealed(card,false);
+  else inspect(card,filterFinish==='normal'?false:!!state.shiny[card.id],false);
+}
+function addCodexNavigation(panel,c){
+  const index=codexVisibleCards.findIndex(item=>item.id===c.id);
+  if(index<0)return;
+  const nav=el('div','codex-inspector-navigation');
+  nav.setAttribute('aria-label','Feuilleter les archives affichées');
+  const previous=button('‹ Précédente',()=>browse(index-1),'codex-inspector-prev');
+  const next=button('Suivante ›',()=>browse(index+1),'codex-inspector-next');
+  previous.disabled=index===0;
+  next.disabled=index===codexVisibleCards.length-1;
+  nav.append(previous,el('small','',String(index+1)+' / '+codexVisibleCards.length),next);
+  panel.append(nav);
+  function browse(target){
+    codexBrowseTo(codexVisibleCards[target]);
+    const heading=$('#inspector h2');
+    if(heading){heading.tabIndex=-1;heading.focus({preventScroll:true})}
+  }
+}
+function inspectSealed(c,scroll=true){
+  selectedCard={id:c.id,shiny:false,sealed:true};
+  const panel=$('#inspector');
+  panel.replaceChildren();
+  panel.classList.remove('is-chromatic');
+  const seal=el('div','codex-sealed-inspector');
+  seal.setAttribute('aria-hidden','true');
+  seal.append(el('span','','✧'),el('span','','ARCHIVE '+String(c.id).padStart(3,'0')));
+  const chapter=chapterFor(c);
+  panel.append(seal,
+    el('p','kicker','ARCHIVE '+String(c.id).padStart(3,'0')+' · '+RARITIES[c.rarity].label),
+    el('h2','','Archive non découverte'),
+    el('p','codex-inspector-chapter',chapter?'Chapitre '+chapter.number+' · '+chapter.title:'Origines'),
+    el('p','muted','Cette page est encore scellée. Découvre cette carte dans les boosters ou façonne-la dans l’Atelier.'));
+  panel.append(button('Ouvrir des boosters',()=>navigate('boosters'),'secondary'),
+    button('Explorer l’Atelier',()=>navigate('atelier'),'secondary'));
+  addCodexNavigation(panel,c);
+  markCodexSelected(c.id);
+  if(scroll){
+    if(mobileView.matches)openSheet('inspector');
+    else if(matchMedia('(max-width:1050px)').matches)panel.scrollIntoView({behavior:'smooth',block:'nearest'});
+  }
+}
 function inspect(c,shiny=false,scroll=true,chromaticPreview=false){
-  // Kept under the same save key: legacy "shiny" flags are now Chromatiques.
+  // Legacy shiny flags and owned quantities remain the only saved data.
   const ownedChromatic=!!state.shiny[c.id];
   const previewChromatic=!!shiny&&!ownedChromatic&&!!chromaticPreview;
   const chromatic=!!shiny&&(ownedChromatic||previewChromatic);
@@ -1006,10 +1070,12 @@ function inspect(c,shiny=false,scroll=true,chromaticPreview=false){
   }
   const kicker=el('p','kicker','ARCHIVE '+String(c.id).padStart(3,'0')+' · '+RARITIES[c.rarity].label);
   const title=el('h2','',c.name);
+  const chapter=chapterFor(c);
+  const chapterLabel=el('p','codex-inspector-chapter',chapter?'Chapitre '+chapter.number+' · '+chapter.title:'Origines');
   const desc=el('p','','« '+c.lore+' »');
   const stats=el('div','stats');
   stats.append(el('span','','⚔ '+c.attack),el('span','','♥ '+c.health),el('span','','×'+(state.owned[c.id]||0)));
-  panel.append(artwork,kicker,title,el('p','muted',c.type+
+  panel.append(artwork,kicker,title,chapterLabel,el('p','muted',c.type+
     (chromatic?' · ✧ Version Chromatique':' · Version normale')+
     (previewChromatic?' · Aperçu uniquement':state.owned[c.id]?'':' · Aperçu non possédé')),desc,stats);
   if(ownedChromatic){
@@ -1023,59 +1089,135 @@ function inspect(c,shiny=false,scroll=true,chromaticPreview=false){
     if(!chromatic)panel.append(el('p','chromatic-inspector-hint',
       'Tu ne possèdes pas cette variante : aperçu visuel sans déblocage.'));
   }
+  addCodexNavigation(panel,c);
+  markCodexSelected(c.id);
   if(scroll){
     if(mobileView.matches)openSheet('inspector');
     else if(matchMedia('(max-width:1050px)').matches)panel.scrollIntoView({behavior:'smooth',block:'nearest'});
   }
 }
+function renderCodexChapters(){
+  const totals=codexProgress(CARDS,state.owned,state.shiny);
+  $('#codex-progress-discovered').textContent=totals.discovered+' / '+totals.total;
+  $('#codex-progress-chromatic').textContent=totals.chromatic+' / '+totals.total;
+  $('#codex-progress-fill').style.width=totals.percent+'%';
+  $('#codex-chromatic-fill').style.width=totals.chromaticPercent+'%';
+  $('#codex-progress-track').setAttribute('aria-valuenow',String(totals.discovered));
+  $('#codex-chromatic-track').setAttribute('aria-valuenow',String(totals.chromatic));
+  const holder=$('#codex-chapter-list');
+  if(!holder.childElementCount){
+    for(const chapter of [codexOverview,...CODEX_CHAPTERS]){
+      const tile=button('',()=>{activeChapter=chapter.id;renderCollection()},'codex-chapter');
+      tile.dataset.chapter=chapter.id;
+      const eyebrow=el('span','codex-chapter-eyebrow',
+        chapter.id==='all'?'✦ ALBUM ORIGINES':'✦ CHAPITRE '+chapter.number);
+      const name=el('span','codex-chapter-name',chapter.title);
+      const count=el('span','codex-chapter-count');
+      const track=el('span','codex-chapter-track');
+      track.setAttribute('aria-hidden','true');
+      track.append(el('span'));
+      tile.append(eyebrow,name,count,track);
+      holder.append(tile);
+    }
+  }
+  for(const tile of $$('.codex-chapter',holder)){
+    const id=tile.dataset.chapter,chapter=CODEX_CHAPTERS.find(item=>item.id===id);
+    const stats=codexProgress(chapterCards(CARDS,id),state.owned,state.shiny);
+    const active=id===activeChapter;
+    tile.classList.toggle('is-active',active);
+    tile.classList.toggle('is-complete',stats.total>0&&stats.discovered===stats.total);
+    tile.setAttribute('aria-pressed',String(active));
+    tile.setAttribute('aria-label',(chapter?'Chapitre '+chapter.number+', ':'')+
+      (chapter?.title??'Toutes les archives')+', '+stats.discovered+' cartes sur '+stats.total+
+      ', '+stats.chromatic+' Chromatiques');
+    $('.codex-chapter-count',tile).textContent=stats.discovered+' / '+stats.total+
+      ' · ✧ '+stats.chromatic;
+    $('.codex-chapter-track>span',tile).style.width=stats.percent+'%';
+  }
+  const active=CODEX_CHAPTERS.find(chapter=>chapter.id===activeChapter);
+  $('#codex-chapter-title').textContent=active?'Chapitre '+active.number+' · '+active.title:'Toutes les archives';
+  $('#codex-chapter-subtitle').textContent=active?.subtitle??'Les légendes d’Origines réunies';
+}
 function renderCollection(){
-  const q=$('#search').value.trim().toLocaleLowerCase('fr');
+  renderCodexChapters();
   const gallery=$('#card-grid');
+  const q=$('#search').value.trim();
+  const cards=filterCodex(CARDS,{chapter:activeChapter,type:filterType,rarity:filterRarity,
+    finish:filterFinish,discovery:discoveryFilter,query:q,owned:state.owned,shiny:state.shiny});
+  codexVisibleCards=cards;
   gallery.replaceChildren();
-  const cards=CARDS.filter(c=>
-    (filterType==='all'||c.type===filterType)&&
-    (filterRarity==='all'||c.rarity===filterRarity)&&
-    (filterFinish!=='chromatic'||!!state.shiny[c.id])&&
-    c.name.toLocaleLowerCase('fr').includes(q));
   for(const c of cards){
     const chromatic=filterFinish==='normal'?false:!!state.shiny[c.id];
     gallery.append(makeCard(c,chromatic,!state.owned[c.id]));
   }
-  $('#empty').textContent=cards.length?'':filterFinish==='chromatic'?
-    'Aucune Chromatique ne correspond à cette recherche.':'Aucune carte ne correspond à la recherche.';
-  const appliedFilters=(filterType!=='all'?1:0)+(filterRarity!=='all'?1:0)+(filterFinish!=='all'?1:0);
+  const inChapter=chapterCards(CARDS,activeChapter).length;
+  $('#codex-results').textContent=cards.length+' / '+inChapter+' archives';
+  const empty=$('#empty');
+  empty.classList.add('codex-empty');
+  empty.hidden=cards.length>0;
+  empty.textContent=cards.length?'':filterFinish==='chromatic'?
+    'Aucune Chromatique ne correspond à ces filtres. Essaie un autre chapitre ou une autre rareté.':
+    discoveryFilter==='collected'?'Aucune carte découverte ne correspond à ces critères.':
+    'Aucune archive ne correspond à cette recherche.';
+  const appliedFilters=(filterType!=='all'?1:0)+(filterRarity!=='all'?1:0)+
+    (filterFinish!=='all'?1:0)+(discoveryFilter!=='all'?1:0);
   const filterCount=$('#filter-count');
   filterCount.hidden=appliedFilters===0;
   filterCount.textContent=String(appliedFilters);
   const next=cards.find(c=>c.id===selectedCard?.id)||cards[0];
-  if(next&&(state.owned[next.id]||next.id===1||(previewArt&&hasApprovedArt(next.id)))){
-    // The filtered view takes precedence over the previously inspected variant.
-    const chromatic=filterFinish==='normal'?false:
-      filterFinish==='chromatic'?!!state.shiny[next.id]:
-      (selectedCard?.id===next.id?selectedCard.shiny:!!state.shiny[next.id]);
-    inspect(next,chromatic,false,
-      !!(selectedCard?.id===next.id&&selectedCard?.preview&&chromatic));
-  }else if(!selectedCard)inspect(CARDS[0],false,false);
+  if(next){
+    const revealed=!!state.owned[next.id]||next.id===1||(previewArt&&hasApprovedArt(next.id));
+    if(!revealed)inspectSealed(next,false);
+    else{
+      const chromatic=filterFinish==='normal'?false:
+        filterFinish==='chromatic'?!!state.shiny[next.id]:
+        (selectedCard?.id===next.id?selectedCard.shiny:!!state.shiny[next.id]);
+      inspect(next,chromatic,false,!!(selectedCard?.id===next.id&&selectedCard?.preview&&chromatic));
+    }
+  }else{
+    selectedCard=null;
+    const panel=$('#inspector');
+    panel.classList.remove('is-chromatic');
+    panel.replaceChildren(el('p','muted','Choisis un autre chapitre ou ajuste les filtres pour feuilleter les archives.'));
+  }
   update();
 }
 $('#search').addEventListener('input',renderCollection);
 const previewToggle=$('#preview-art');
 function syncPreviewToggle(){
- previewToggle.textContent=previewArt?'Masquer les aperçus':'Voir les '+Object.keys(CARD_ART).length+' illustrations';
- previewToggle.setAttribute('aria-pressed',String(previewArt));
- previewToggle.classList.toggle('active',previewArt);
+  previewToggle.textContent=previewArt?'Masquer les aperçus':'Voir les '+Object.keys(CARD_ART).length+' illustrations';
+  previewToggle.setAttribute('aria-pressed',String(previewArt));
+  previewToggle.classList.toggle('active',previewArt);
 }
 previewToggle.addEventListener('click',()=>{
- previewArt=!previewArt;
- if(!previewArt&&selectedCard&&!state.owned[selectedCard.id]&&selectedCard.id!==1)selectedCard={id:1,shiny:false};
- syncPreviewToggle();
- renderCollection();
+  previewArt=!previewArt;
+  if(!previewArt&&selectedCard&&!state.owned[selectedCard.id]&&selectedCard.id!==1)selectedCard={id:1,shiny:false};
+  syncPreviewToggle();renderCollection();
 });
 syncPreviewToggle();
-
-$$('[data-type]').forEach(b=>b.addEventListener('click',()=>{filterType=b.dataset.type;$$('[data-type]').forEach(x=>x.classList.toggle('active',x===b));renderCollection()}));
-$$('[data-rarity]').forEach(b=>b.addEventListener('click',()=>{filterRarity=b.dataset.rarity;$$('[data-rarity]').forEach(x=>x.classList.toggle('active',x===b));renderCollection()}));
-$$('[data-finish]').forEach(b=>b.addEventListener('click',()=>{filterFinish=b.dataset.finish;$$('[data-finish]').forEach(x=>x.classList.toggle('active',x===b));renderCollection()}));
+$$('[data-type]').forEach(b=>b.addEventListener('click',()=>{
+  filterType=b.dataset.type;
+  $$('[data-type]').forEach(x=>{x.classList.toggle('active',x===b);x.setAttribute('aria-pressed',String(x===b))});
+  renderCollection();
+}));
+$$('[data-rarity]').forEach(b=>b.addEventListener('click',()=>{
+  filterRarity=b.dataset.rarity;
+  $$('[data-rarity]').forEach(x=>{x.classList.toggle('active',x===b);x.setAttribute('aria-pressed',String(x===b))});
+  renderCollection();
+}));
+$$('[data-finish]').forEach(b=>b.addEventListener('click',()=>{
+  filterFinish=b.dataset.finish;
+  $$('[data-finish]').forEach(x=>{x.classList.toggle('active',x===b);x.setAttribute('aria-pressed',String(x===b))});
+  renderCollection();
+}));
+$$('[data-discovery]').forEach(b=>b.addEventListener('click',()=>{
+  discoveryFilter=b.dataset.discovery;
+  $$('[data-discovery]').forEach(x=>{
+    x.classList.toggle('is-active',x===b);
+    x.setAttribute('aria-pressed',String(x===b));
+  });
+  renderCollection();
+}));
 
 /* Origines booster: one sealed card at a time, from a five-card stack.
    A purchase is saved before presentation; revealing never re-rolls or charges. */
