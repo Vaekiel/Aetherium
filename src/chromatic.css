@@ -170,96 +170,6 @@
  #page-boosters .pull-flip.is-chromatic.is-revealed:before{filter:none}
 }
 
-/* v1.4.1 — comparison available without owning a Chromatique.
-   More readable foil: visible outlines, image-window gleam and an explicit
-   non-owned preview instead of a barely perceptible 2px color shift. */
-#page-collection .chromatic-showcase{
- margin:0 0 18px;overflow:hidden;
- border:1px solid #b59caaa9;border-radius:3px;
- background:linear-gradient(140deg,#24213ced,#121a30eb);
- box-shadow:0 7px 20px #0609197d;
-}
-#page-collection .chromatic-showcase>summary{
- display:flex;align-items:center;gap:12px;cursor:pointer;
- min-height:68px;padding:13px 16px;
- border-bottom:1px solid #ae92a454;
- list-style:none;color:#eddfeb;
-}
-#page-collection .chromatic-showcase>summary::-webkit-details-marker{display:none}
-#page-collection .chromatic-showcase>summary::after{
- content:"⌄";font:24px/1 Georgia,serif;color:#e1c4e6;
- margin-left:7px;transition:transform .2s;
-}
-#page-collection .chromatic-showcase[open]>summary::after{transform:rotate(180deg)}
-#page-collection .chromatic-showcase>summary:focus-visible{
- outline:2px solid #bde6e8;outline-offset:-3px;
-}
-#page-collection .chromatic-showcase-icon{
- display:grid;place-items:center;flex:0 0 43px;width:43px;height:43px;
- font:32px/1 Georgia,serif;color:#edfff4;text-shadow:0 0 8px #9bcfea;
- border:1px solid #dfbbd8;background:radial-gradient(circle,#5f537d,#283550);
- box-shadow:0 0 12px #96a5e272;
-}
-#page-collection .chromatic-showcase-heading{display:flex;flex:1;min-width:0;flex-direction:column;gap:4px}
-#page-collection .chromatic-showcase-heading strong{font:small-caps 21px/1.13 Georgia,serif;color:#f6e1bd}
-#page-collection .chromatic-showcase-heading small{font:12px/1.4 Georgia,serif;color:#d2bdd4}
-#page-collection .chromatic-showcase-label{
- flex-shrink:0;padding:5px 7px;border:1px solid #bcacbf;
- font:10px/1.2 system-ui,sans-serif;letter-spacing:.1em;color:#eee2f5;
-}
-#page-collection .chromatic-showcase-body{padding:15px 13px 17px}
-#page-collection .chromatic-showcase-pair{
- display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;
- align-items:start;max-width:455px;margin:0 auto;
-}
-#page-collection .chromatic-showcase-card{
- min-width:0;margin:0;padding:9px 9px 12px;
- border:1px solid #87728c;
- background:linear-gradient(150deg,#22213b,#13182c);
- box-shadow:0 6px 14px #07091c8c;text-align:center;
-}
-#page-collection .chromatic-showcase-art{
- position:relative;width:100%;aspect-ratio:112/136;overflow:hidden;
- border:3px solid #a9a3bb;background:#141a30;
- box-shadow:inset 0 0 0 2px #090e20b2;
- isolation:isolate;
-}
-#page-collection .chromatic-showcase-art img{
- display:block;width:100%;height:100%;object-fit:cover;image-rendering:pixelated;
-}
-#page-collection .chromatic-showcase-card.is-chromatic{
- border:2px solid #b6e7e9;
- background:linear-gradient(143deg,#2d2e57,#16273c,#342540);
- box-shadow:0 0 0 1px #e8badb,0 0 18px #a7b2f29b,0 8px 23px #060817ae;
-}
-#page-collection .chromatic-showcase-card.is-chromatic .chromatic-showcase-art{
- border:5px solid transparent;
- background:linear-gradient(#181a2c,#181a2c) padding-box,var(--chrom-edge) border-box;
- box-shadow:0 0 13px #b3c9f4a6,inset 0 0 0 2px #e3eed9;
-}
-#page-collection .chromatic-showcase-card.is-chromatic .chromatic-showcase-art:after{
- content:"";position:absolute;z-index:2;pointer-events:none;inset:0;
- background:linear-gradient(115deg,transparent 10%,#a8eced13 34%,#dfadf256 47%,#fff7d351 51%,#96e6e52c 58%,transparent 78%);
- background-size:210% 100%;opacity:.72;mix-blend-mode:screen;
- animation:chromatic-foil-drift 9s ease-in-out infinite alternate;
-}
-#page-collection .chromatic-showcase-stamp{
- position:absolute;z-index:4;left:50%;bottom:7px;transform:translateX(-50%);
- white-space:nowrap;max-width:94%;
- border:1px solid #ecdbc1;padding:5px 7px;
- background:linear-gradient(90deg,#203b52e8,#543f74eb,#27556beb);
- box-shadow:0 0 13px #b6dceea8;color:#fff8e6;
- font:600 9px/1.2 Georgia,serif;letter-spacing:.075em;
-}
-#page-collection .chromatic-showcase-card figcaption{display:flex;flex-direction:column;gap:4px;margin-top:10px}
-#page-collection .chromatic-showcase-card figcaption strong{font:small-caps 17px Georgia,serif;color:#f6e5cc}
-#page-collection .chromatic-showcase-card.is-chromatic figcaption strong{color:#d6fbf5;text-shadow:0 0 8px #d39ef2a8}
-#page-collection .chromatic-showcase-card figcaption small{font:11px/1.3 Georgia,serif;color:#c4b5d0}
-#page-collection .chromatic-showcase-disclaimer{
- max-width:475px;margin:13px auto 0;text-align:center;color:#bdafc9;
- font:11px/1.55 Georgia,serif;
-}
-
 /* Strong enough to recognize in the two-column phone Codex. */
 .card.is-chromatic{
  border-width:3px!important;
@@ -307,38 +217,17 @@
 #page-collection .inspector .chromatic-inspector-hint{
  margin:7px auto 0;color:#b8acbf;font:11px/1.5 Georgia,serif;
 }
-@media(max-width:850px){
- #page-collection .chromatic-showcase>summary{min-height:58px;padding:10px 9px;gap:8px}
- #page-collection .chromatic-showcase-icon{width:35px;height:35px;flex-basis:35px;font-size:25px}
- #page-collection .chromatic-showcase-heading strong{font-size:17px}
- #page-collection .chromatic-showcase-heading small{font-size:10px}
- #page-collection .chromatic-showcase-label{font-size:9px;padding:4px}
- #page-collection .chromatic-showcase-body{padding:12px 8px}
- #page-collection .chromatic-showcase-pair{gap:8px;max-width:380px}
- #page-collection .chromatic-showcase-card{padding:6px 6px 9px}
- #page-collection .chromatic-showcase-card figcaption strong{font-size:15px}
- #page-collection .chromatic-showcase-card figcaption small{font-size:10px}
- #page-collection .chromatic-showcase-stamp{font-size:8px;letter-spacing:0;padding:4px}
-}
-@media(max-width:360px){
- #page-collection .chromatic-showcase-heading strong{font-size:15px}
- #page-collection .chromatic-showcase-heading small{font-size:9px}
-}
 @media(prefers-reduced-motion:reduce){
- .card.is-chromatic .chromatic-art-window:after,
- #page-collection .chromatic-showcase-card.is-chromatic .chromatic-showcase-art:after{
+ .card.is-chromatic .chromatic-art-window:after{
   animation:none!important;background-position:30% 0!important;
  }
- #page-collection .chromatic-showcase>summary:after{transition:none}
 }
-
 
 /* v1.4.2 — animated Chromatique border.
    The prismatic light travels around the frame, BEHIND the unchanged HD art.
    Transform-only animation avoids continuous image recoloring and heavy filters. */
 .card.is-chromatic .chromatic-art-window,
-#page-collection .inspector .inspector-art-shell.is-chromatic,
-#page-collection .chromatic-showcase-card.is-chromatic .chromatic-showcase-art{
+#page-collection .inspector .inspector-art-shell.is-chromatic{
   position:relative;
   overflow:hidden;
   isolation:isolate;
@@ -350,10 +239,8 @@
   box-shadow:inset 0 0 0 1px #e5b9f0,0 0 10px #83dfe5a0;
 }
 #page-collection .inspector .inspector-art-shell.is-chromatic{padding:6px}
-#page-collection .chromatic-showcase-card.is-chromatic .chromatic-showcase-art{padding:5px}
 .card.is-chromatic .chromatic-art-window::before,
-#page-collection .inspector .inspector-art-shell.is-chromatic::before,
-#page-collection .chromatic-showcase-card.is-chromatic .chromatic-showcase-art::before{
+#page-collection .inspector .inspector-art-shell.is-chromatic::before{
   content:"";
   position:absolute;
   inset:-95%;
@@ -375,8 +262,7 @@
   transform-origin:center;
 }
 .card.is-chromatic .chromatic-art-window img,
-#page-collection .inspector .inspector-art-shell.is-chromatic img,
-#page-collection .chromatic-showcase-card.is-chromatic .chromatic-showcase-art img{
+#page-collection .inspector .inspector-art-shell.is-chromatic img{
   position:relative;
   z-index:1;
 }
@@ -391,8 +277,7 @@
 }
 @media(prefers-reduced-motion:reduce){
   .card.is-chromatic .chromatic-art-window::before,
-  #page-collection .inspector .inspector-art-shell.is-chromatic::before,
-  #page-collection .chromatic-showcase-card.is-chromatic .chromatic-showcase-art::before{
+  #page-collection .inspector .inspector-art-shell.is-chromatic::before{
     animation:none!important;
     transform:rotate(20deg);
   }
