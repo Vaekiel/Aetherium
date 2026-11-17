@@ -8,6 +8,7 @@ import {DIFFICULTIES,validDifficulty,trialRules,trialObjective,trialScore,trialR
 import {nextRuneRitual,runeExpectedAt} from './rune-rituals.js';
 import {makeEtherPuzzle,etherRule,evaluateEtherAttempt,etherAttemptFeedback} from './ether-lock-puzzles.js';
 import {nextMemoryRitual,buildMemoryDeck} from './memory-rituals.js';
+import {makeExcavationSite,chooseExcavationGuide} from './excavation-sites.js';
 
 const $=(q,root=document)=>root.querySelector(q);
 const $$=(q,root=document)=>Array.from(root.querySelectorAll(q));
@@ -777,7 +778,8 @@ function startLock(){
     :'Trouve les trois cristaux qui satisfont la somme ET la règle du sceau.';
 }
 
-/* Fouilles interdites: 25 sealed excavation sites, five traps, ten safe discoveries. */
+/* Fouilles interdites: three archaeological sites, always 25 tiles and five traps. */
+let previousExcavationSite=null;
 function startMines(){
   const g=mini[3];
   g.ended=false;g.mode=state.difficulty;
@@ -787,18 +789,14 @@ function startMines(){
   g.status.classList.add('excavation-status');
   g.status.classList.remove('is-complete','is-failed');
 
-  const bombs=new Set(shuffle(Array.from({length:25},(_,i)=>i)).slice(0,5));
+  const site=makeExcavationSite(previousExcavationSite);
+  previousExcavationSite=site.id;
+  g.card.dataset.excavationSite=site.id;
+  const bombs=site.bombs;
+  const countNearby=i=>site.numbers[i];
+  const dug=new Set();
   let safe=0;
-  const countNearby=i=>{
-    const x=i%5,y=Math.floor(i/5);
-    let count=0;
-    for(let dy=-1;dy<=1;dy++)for(let dx=-1;dx<=1;dx++){
-      if(!dx&&!dy)continue;
-      const xx=x+dx,yy=y+dy;
-      if(xx>=0&&xx<5&&yy>=0&&yy<5&&bombs.has(yy*5+xx))count++;
-    }
-    return count;
-  };
+  let guidedIndex=null;
   const setArtwork=(tile,index)=>{
     tile.style.setProperty('--exc-x',((index%3)/2*100)+'%');
     tile.style.setProperty('--exc-y',(Math.floor(index/3)/2*100)+'%');
@@ -819,8 +817,18 @@ function startMines(){
     const meter=el('div','excavation-meter');
     meter.setAttribute('aria-hidden','true');
     for(let i=0;i<10;i++)meter.append(el('span'));
-    g.board.before(hud,meter);
+    const sitePanel=el('div','excavation-site-panel');
+    sitePanel.append(el('span','excavation-site-kicker','✧ CARNET DE FOUILLES'),
+      el('strong','excavation-site-name'),
+      el('p','excavation-site-description'),
+      el('span','excavation-artifact-note'));
+    g.board.before(sitePanel,hud,meter);
   }
+  const sitePanel=$('.excavation-site-panel',g.card);
+  $('.excavation-site-name',sitePanel).textContent=site.title;
+  $('.excavation-site-description',sitePanel).textContent=site.description;
+  const artifactNote=$('.excavation-artifact-note',sitePanel);
+  artifactNote.textContent='◇ Vestige facultatif à découvrir · sans bonus de Couronnes';
   const relic=$('.excavation-relic',hud);
   relic.classList.remove('is-victorious','is-failed');
   const meter=g.card.querySelector('.excavation-meter');
@@ -837,6 +845,26 @@ function startMines(){
   g.board.setAttribute('role','group');
   g.board.setAttribute('aria-label','Site de fouilles : vingt-cinq dalles, cinq pièges dissimulés');
   const tiles=[];
+  const clearGuide=()=>{
+    if(guidedIndex===null)return;
+    const old=tiles[guidedIndex];
+    if(old&&!old.disabled){
+      old.classList.remove('is-guided');
+      old.setAttribute('aria-label','Fouiller la dalle '+(guidedIndex+1));
+    }
+    guidedIndex=null;
+  };
+  const markGuide=(hint)=>{
+    clearGuide();
+    if(!hint||g.ended)return;
+    guidedIndex=hint.index;
+    const tile=tiles[guidedIndex];
+    tile.classList.add('is-guided');
+    tile.setAttribute('aria-label','Dalle '+(guidedIndex+1)+' : passage sûr repéré par la sonde');
+    g.status.textContent=hint.deduction
+      ?'Les dalles déjà observées indiquent un passage sûr. Suis la lueur turquoise.'
+      :'La sonde a repéré un passage sûr. Suis la lueur turquoise.';
+  };
   for(let i=0;i<25;i++){
     const tile=el('button','tile excavation-tile');
     tile.type='button';
@@ -848,6 +876,8 @@ function startMines(){
     tile.append(sprite);
     tile.addEventListener('click',()=>{
       if(g.ended||tile.disabled)return;
+      clearGuide();
+      dug.add(i);
       tile.disabled=true;
       tile.classList.add('is-dug');
       if(bombs.has(i)){
@@ -864,6 +894,7 @@ function startMines(){
           dangerTile.setAttribute('aria-label','Dalle '+(position+1)+' : piège runique');
         }
         tiles.forEach(b=>b.disabled=true);
+        if(sondeButton)sondeButton.disabled=true;
         updateHud();
         g.status.textContent='Une rune corrompue s’est éveillée. Les cinq pièges sont révélés : recommence une fouille.';
         return;
@@ -879,12 +910,21 @@ function startMines(){
         clue.setAttribute('aria-hidden','true');
         tile.append(clue);
       }
+      if(i===site.artifactIndex){
+        tile.classList.add('is-artifact');
+        const mark=el('span','excavation-artifact-mark','✧');
+        mark.setAttribute('aria-hidden','true');
+        tile.append(mark);
+        artifactNote.textContent='✧ Vestige retrouvé : '+site.artifact;
+        tile.setAttribute('aria-label',tile.getAttribute('aria-label')+' · vestige retrouvé');
+      }
       safe++;
       updateHud();
       if(safe===safeTarget){
         relic.classList.add('is-victorious');
         g.status.classList.add('is-complete');
         tiles.forEach(b=>b.disabled=true);
+        if(sondeButton)sondeButton.disabled=true;
         complete(3,'Fouille accomplie ! '+safeTarget+' dalles sûres ont été explorées.');
       }else g.status.textContent='Dalle '+(i+1)+' : '+(adjacent?adjacent+' piège(s) voisin(s).':'aucun piège adjacent.')+' Continue la fouille.';
     });
@@ -892,8 +932,14 @@ function startMines(){
     tiles.push(tile);
   }
   updateHud();
-  g.status.textContent='Soulève les dalles. Les nombres révèlent combien de pièges entourent une case.';
-  g.actions.replaceChildren(button('✧ Nouvelle fouille',startMines));
+  let sondeButton=button('✧ Sonder un passage',()=>{
+    if(g.ended)return;
+    const hint=chooseExcavationGuide(site,dug);
+    if(hint)markGuide(hint);
+    else g.status.textContent='Tous les passages sûrs ont été explorés.';
+  });
+  g.actions.replaceChildren(sondeButton,button('✧ Nouvelle fouille',startMines));
+  markGuide({index:site.entrance,deduction:false});
 }
 
 const ingredients=[['☘','Mousse'],['☀','Soleil'],['◈','Cristal'],['☾','Lune'],['✿','Fleur'],['❄','Givre']];
