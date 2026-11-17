@@ -13,8 +13,9 @@ for(const id of ['games','game-picker','buy','pulls','booster-summary','booster-
 }
 assert.ok(html.includes('src/shell.css'),'Nouvelle interface chargée');
 const styleLinks=[...html.matchAll(/href="\.\/src\/([^" ]+\.css)(?:\?[^" ]+)?"/g)].map(x=>x[1]);
-assert.equal(styleLinks.at(-2),'chromatic.css','La finition Chromatique est chargée avant le nouveau Codex');
-assert.equal(styleLinks.at(-1),'codex.css','Le Codex vivant charge sa finition responsive en dernier');
+assert.equal(styleLinks.at(-3),'chromatic.css','La finition Chromatique est préservée');
+assert.equal(styleLinks.at(-2),'codex.css','Le Codex garde ses styles dédiés');
+assert.equal(styleLinks.at(-1),'trial-progress.css','Les Épreuves chargent leurs styles de progression après le Codex');
 assert.ok(styleLinks.includes('crafting.css'),'La Forge existante est conservée');
 assert.ok(html.includes('id="chromatic-showcase"'),'Une comparaison visible explique les Chromatiques dans le Codex');
 assert.ok(styleLinks.includes('navigation.css'),'La navigation validée reste intégrée');
@@ -41,7 +42,7 @@ assert.ok(main.includes("target.showPopover()"),
   'Opening inspection elevates its panel into native browser top layer');
 assert.ok(main.includes("inspectorShell.hidePopover()"),
   'Closing inspection releases the native top layer');
-assert.ok(html.includes('mobile.css?v=inspector-layer-3')&&html.includes('src/main.js?v=codex-1.5.4'),
+assert.ok(html.includes('mobile.css?v=inspector-layer-3')&&html.includes('src/main.js?v=arcanes-1.6.0'),
   'Updated mobile inspector assets bypass stale caches');
 assert.ok(mobileCSS.includes('body.sheet-open #app>.layout{z-index:110}'),
   'Open mobile sheets raise the layout above the fixed app header');
