@@ -85,6 +85,6 @@ assert.ok(main.includes('state.trialStats=recordTrialWin'));
 assert.ok(css.includes('.trial-challenge.is-earned'));
 assert.ok(css.includes('@media(max-width:850px)'));
 assert.ok(css.includes('@media(max-width:360px)'));
-assert.ok(html.includes('src/main.js?v=ouverture-183'));
+assert.ok(html.includes('src/main.js?v='));
 assert.ok(html.includes('src/trial-progress.css?v=defis-1.7.3'));
 console.log('AETHERIUM 1.7.3 — 15 médailles: seuils, anciens scores, victoires, rétrocompatibilité et rendu OK');

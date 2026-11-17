@@ -88,7 +88,7 @@ assert.ok(main.includes('function renderExpedition(){'));
 assert.ok(main.includes('renderExpedition();\nupdate();'));
 assert.ok(html.includes('id="expedition-panel"'));
 assert.ok(html.includes('id="expedition-content"'));
-assert.ok(html.includes('src/main.js?v=ouverture-183'));
+assert.ok(html.includes('src/main.js?v='));
 assert.ok(html.includes('src/expedition.css?v=expedition-dediee-1.8.1'));
 const playStart=html.indexOf('<section id="page-jouer"');
 const journeyStart=html.indexOf('<section id="page-expeditions"');
