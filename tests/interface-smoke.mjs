@@ -33,6 +33,16 @@ assert.ok(codexOpen>=0&&veilPos>codexOpen&&codexEnd>veilPos,
 assert.ok(!html.includes('</main><div id="sheet-scrim"'),
   'Backdrop is no longer an outside sibling of the main layout');
 assert.equal((html.match(/id="sheet-scrim"/g)||[]).length,1,'One backdrop only');
+assert.ok(mobileCSS.includes('#page-collection .inspector-shell[popover]:popover-open'),
+  'Mobile card inspector renders in a native top-layer popover above all page effects');
+assert.ok(main.includes("target.setAttribute('popover','manual')"),
+  'Inspector receives popover capability in mobile layout');
+assert.ok(main.includes("target.showPopover()"),
+  'Opening inspection elevates its panel into native browser top layer');
+assert.ok(main.includes("inspectorShell.hidePopover()"),
+  'Closing inspection releases the native top layer');
+assert.ok(html.includes('mobile.css?v=inspector-layer-3')&&html.includes('src/main.js?v=codex-1.5.4'),
+  'Updated mobile inspector assets bypass stale caches');
 assert.ok(mobileCSS.includes('body.sheet-open #app>.layout{z-index:110}'),
   'Open mobile sheets raise the layout above the fixed app header');
 assert.ok(mobileCSS.includes('.sheet-scrim{position:fixed;inset:0;z-index:109;'),
