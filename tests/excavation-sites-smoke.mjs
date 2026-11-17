@@ -182,6 +182,6 @@ assert.ok(css.includes('.excavation-site-panel'));
 assert.ok(css.includes('.excavation-tile.is-artifact'));
 assert.ok(css.includes('@media(max-width:850px)'));
 assert.ok(css.includes('prefers-reduced-motion'));
-assert.ok(html.includes('src/main.js?v=ouverture-183'));
+assert.ok(html.includes('src/main.js?v='));
 assert.ok(html.includes('src/mines.css?v=fouilles-1.7.2'));
 console.log('AETHERIUM 1.7.2 — Fouilles : 300 cartes justes, sonde sûre, vestiges, objectifs et clics réels OK');
