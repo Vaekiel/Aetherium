@@ -156,3 +156,115 @@
   #page-collection .codex-chapter,#page-collection .codex-progress-track>span,
   #page-collection .codex-chapter-track>span{transition:none!important}
 }
+
+
+/* AETHERIUM 1.7.0 — Permanent season library.
+   The first 24 published cards remain the only real booster pool. */
+#page-collection #collection-layout[hidden],
+#page-collection #codex-upcoming[hidden]{display:none!important}
+#page-collection .codex-seasons{margin:0 0 12px}
+#page-collection .codex-season-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+#page-collection .codex-season{
+ display:flex;flex-direction:column;align-items:flex-start;gap:5px;text-align:left;
+ min-width:0;min-height:91px;padding:13px 16px;
+ border:1px solid #82718d;border-radius:3px;
+ background:linear-gradient(140deg,#22213b,#131a2e);
+ color:#d4c7df;box-shadow:inset 0 1px #ffffff0c;
+ transition:border-color .15s ease,background .15s ease;
+}
+#page-collection .codex-season:hover{border-color:#c0a8cc;background:linear-gradient(140deg,#2b2645,#19243b)}
+#page-collection .codex-season.is-active{
+ background:linear-gradient(135deg,#40344f,#202744 70%,#1a203b);
+ border-color:#e0c29c;box-shadow:inset 0 0 0 1px #e7d4bd29,0 0 12px #b39ad521;
+}
+#page-collection .codex-season-number{color:#d8b998;font:10px/1.2 system-ui,sans-serif;letter-spacing:.16em}
+#page-collection .codex-season-name{color:#f5e6d0;font:small-caps 20px/1.16 Georgia,serif}
+#page-collection .codex-season-state{color:#bdb1d1;font:11px/1.4 Georgia,serif;margin-top:auto}
+#page-collection .codex-season:focus-visible{outline:2px solid #e1c9ec;outline-offset:2px}
+#page-collection .codex-season-banner{
+ position:relative;overflow:hidden;margin:0 0 18px;padding:16px 19px 15px;
+ border:1px solid #998098a1;border-radius:3px;
+ background:
+  radial-gradient(ellipse at 92% 6%,#5b4e8770,transparent 45%),
+  linear-gradient(135deg,#26213d,#151b31 76%);
+ box-shadow:inset 0 1px #ffffff12,0 8px 22px #090d2182;
+}
+#page-collection .codex-season-banner::after{
+ content:'';position:absolute;inset:7px;border:1px solid #e4c29c17;pointer-events:none;
+}
+#page-collection .codex-season-banner-head{display:flex;justify-content:space-between;align-items:center;gap:13px}
+#page-collection .codex-season-banner-head>div{min-width:0}
+#page-collection .codex-season-banner h2{margin:4px 0;color:#f5e0be;font:small-caps clamp(22px,2.9vw,29px)/1.2 Georgia,serif}
+#page-collection .codex-season-banner p{margin:3px 0 0;color:#c7bcd3;font:12px/1.5 Georgia,serif}
+#page-collection .codex-season-medallion{
+ flex:none;display:grid;place-items:center;width:61px;aspect-ratio:1;
+ font:43px/1 Georgia,serif;color:#e0d5ef;text-shadow:0 0 14px #9bcff8bd;
+ border:1px solid #b89abe;border-radius:50%;background:radial-gradient(circle,#483d6b,#1d2441);
+ box-shadow:0 0 15px #a6b3dd30;
+}
+#page-collection .codex-season-numbers{display:flex;gap:10px;flex-wrap:wrap;justify-content:space-between;margin-top:15px;font:11px/1.35 Georgia,serif}
+#page-collection .codex-season-numbers strong{color:#f1d9b3}
+#page-collection .codex-season-numbers span{color:#c9b8d3}
+#page-collection .codex-season-published-track{
+ width:100%;height:6px;margin-top:8px;overflow:hidden;border:1px solid #8c79a15e;border-radius:12px;
+ background:#0d1226;
+}
+#page-collection .codex-season-published-track>span{
+ display:block;height:100%;width:0;border-radius:inherit;
+ background:linear-gradient(90deg,#6f70ad,#a0b4d9,#e5cea2);
+ transition:width .3s ease;
+}
+#page-collection .codex-chapter-list{grid-template-columns:repeat(3,minmax(0,1fr))}
+#page-collection .codex-chapter{min-height:106px}
+#page-collection .codex-chapter.is-upcoming{
+ background:linear-gradient(150deg,#201f34,#151b2f);border-color:#645973;
+}
+#page-collection .codex-chapter.is-upcoming .codex-chapter-name{color:#d0c5d5}
+#page-collection .codex-chapter.is-upcoming .codex-chapter-count{color:#a99bb9}
+#page-collection .codex-part-signature{
+ color:#e3caa5;font:10px/1.2 Georgia,serif;letter-spacing:.035em;
+}
+#page-collection .codex-upcoming{
+ padding:clamp(22px,4vw,42px) 22px;margin:0 0 16px;
+ text-align:center;border:1px solid #9480a28c;border-radius:3px;
+ background:radial-gradient(ellipse at center top,#4f3a5c40,transparent 65%),#1b2036;
+}
+#page-collection .codex-upcoming-glyph{
+ display:block;font:48px/1 Georgia,serif;color:#cfbedc;text-shadow:0 0 20px #9acdf37d;
+}
+#page-collection .codex-upcoming h2{
+ margin:12px 0 8px;color:#f1dfbf;font:small-caps clamp(22px,3vw,28px)/1.2 Georgia,serif;
+}
+#page-collection .codex-upcoming>p:not(.kicker){
+ color:#c9bfd4;font:13px/1.6 Georgia,serif;max-width:550px;margin:7px auto;
+}
+#page-collection .codex-upcoming .codex-upcoming-foot{
+ display:block;margin:20px auto 0;padding-top:15px;border-top:1px solid #a993a033;
+ color:#aabbc7;font:11px/1.5 Georgia,serif;
+}
+@media(max-width:1200px){
+ #page-collection .codex-chapter-list{grid-template-columns:repeat(3,minmax(142px,1fr))}
+}
+@media(max-width:850px){
+ #page-collection .codex-season-list{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+ #page-collection .codex-season{padding:11px 10px;min-height:98px}
+ #page-collection .codex-season-name{font-size:17px}
+ #page-collection .codex-season-state{font-size:10px}
+ #page-collection .codex-season-banner{padding:13px;margin-bottom:14px}
+ #page-collection .codex-season-banner h2{font-size:22px}
+ #page-collection .codex-season-medallion{width:43px;font-size:30px}
+ #page-collection .codex-season-banner p{font-size:11px}
+ #page-collection .codex-chapter-list{display:flex;grid-template-columns:none;gap:8px;overflow-x:auto}
+ #page-collection .codex-chapter{flex:0 0 163px;min-height:105px}
+ #page-collection .codex-upcoming{padding:25px 13px}
+}
+@media(max-width:360px){
+ #page-collection .codex-season-name{font-size:15px}
+ #page-collection .codex-season{padding:10px 8px}
+ #page-collection .codex-season-medallion{display:none}
+ #page-collection .codex-chapter{flex-basis:149px}
+}
+@media(prefers-reduced-motion:reduce){
+ #page-collection .codex-season,
+ #page-collection .codex-season-published-track>span{transition:none!important}
+}
