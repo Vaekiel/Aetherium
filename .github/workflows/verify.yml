@@ -18,6 +18,8 @@ jobs:
           find src -name '*.js' -type f -print0 | xargs -0 -n1 node --check
       - name: Check Archives Vivantes rules
         run: node --experimental-default-type=module --test tests/living-archives.test.mjs
+      - name: Verify portable backup and rollback safety
+        run: node --experimental-default-type=module --test tests/save-backup.test.mjs
       - name: Run full legacy smoke test suite
         run: |
           set -eu
