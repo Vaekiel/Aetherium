@@ -1,60 +1,104 @@
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
-
 const read=path=>readFileSync(path,'utf8');
-const data=await import('data:text/javascript;charset=utf-8,'+encodeURIComponent(read('src/data.js')));
-const {CODEX_CHAPTERS,chapterFor,chapterCards,codexProgress,filterCodex}=await import(
-  'data:text/javascript;charset=utf-8,'+encodeURIComponent(read('src/codex.js')));
+const asModule=source=>'data:text/javascript;charset=utf-8,'+encodeURIComponent(read(source));
+const data=await import(asModule('src/data.js'));
 const {CARDS,CHROMATIC_RATE,PACK_PRICE}=data;
-assert.equal(CARDS.length,24,'Original set remains 24 cards');
-assert.equal(CODEX_CHAPTERS.length,4,'Exactly four chapters');
-assert.deepEqual(CODEX_CHAPTERS.map(ch=>chapterCards(CARDS,ch.id).length),[6,6,6,6],'Chapters have six cards each');
-for(const card of CARDS)assert.ok(chapterFor(card),'Every existing card belongs to a chapter');
-assert.equal(new Set(CODEX_CHAPTERS.flatMap(ch=>chapterCards(CARDS,ch.id).map(c=>c.id))).size,24,
-  'Chapters do not duplicate or lose any card');
-const owned={1:2,6:1,7:1,22:1},shiny={1:true,6:true,22:true,3:true};
-assert.deepEqual(codexProgress(CARDS,owned,shiny),{
-  total:24,discovered:4,chromatic:3,missing:20,percent:17,chromaticPercent:13
-},'Counts use only acquired cards and valid Chromatiques');
-assert.deepEqual(codexProgress(chapterCards(CARDS,'lueurs'),owned,shiny),{
-  total:6,discovered:2,chromatic:2,missing:4,percent:33,chromaticPercent:33
-});
-assert.equal(filterCodex(CARDS,{chapter:'lueurs'}).length,6);
-assert.equal(filterCodex(CARDS,{discovery:'collected',owned,shiny}).length,4);
-assert.equal(filterCodex(CARDS,{discovery:'missing',owned,shiny}).length,20);
-assert.equal(filterCodex(CARDS,{finish:'chromatic',owned,shiny}).length,3);
-assert.equal(filterCodex(CARDS,{chapter:'lueurs',finish:'chromatic',owned,shiny}).length,2);
-assert.equal(filterCodex(CARDS,{chapter:'astres',discovery:'collected',owned,shiny}).length,1);
-assert.equal(filterCodex(CARDS,{chapter:'lueurs',discovery:'missing',owned,shiny}).length,4);
-assert.equal(filterCodex(CARDS,{query:'Eclaireuse'}).length,1,'Search ignores accents');
-assert.equal(filterCodex(CARDS,{type:'Héros',rarity:'legendary'}).length,1,'Existing filters compose with chapters');
-assert.equal(filterCodex(CARDS,{finish:'chromatic',discovery:'missing',owned,shiny}).length,0);
-assert.equal(CHROMATIC_RATE,0.03,'Chromatic probability is unchanged');
-assert.equal(PACK_PRICE,100,'Booster cost is unchanged');
-const main=read('src/main.js'),html=read('index.html'),css=read('src/codex.css');
-for(const control of ['codex-chapter-list','codex-progress-discovered','codex-progress-chromatic',
-  'codex-discovery-tabs','codex-results','codex-chapter-title']){
-  assert.ok(html.includes(control),'Codex markup includes '+control);
+const {SEASONS,CARDS_PER_COLLECTION,COLLECTIONS_PER_SEASON,CARDS_PER_SEASON,seasonById,
+  collectionById,cardsForCollection,collectionForCard,seasonProgress}=await import(asModule('src/seasons.js'));
+const {codexProgress,filterCodex}=await import(asModule('src/codex.js'));
+assert.equal(CARDS.length,24,'Existing Origines set retains exactly 24 unique cards');
+assert.equal(CARDS_PER_COLLECTION,24);
+assert.equal(COLLECTIONS_PER_SEASON,3);
+assert.equal(CARDS_PER_SEASON,72);
+assert.equal(SEASONS.length,2,'Marches de Verre and Plateau Nébuleux in the roadmap');
+assert.deepEqual(SEASONS.map(s=>s.title),['Les Marches de Verre','Le Plateau Nébuleux']);
+for(const season of SEASONS){
+ assert.equal(season.plannedCards,72);
+ assert.equal(season.collections.length,3);
+ assert.ok(season.collections.every(p=>p.plannedCards===24));
+ assert.ok(season.collections.at(-1).signature,'Final collection reserves its Signature slot');
 }
-assert.ok(html.includes('src/codex.css?v=codex-1.5.1'),'Codex stylesheet versioned');
-assert.ok(html.includes('src/main.js?v=arcanes-1.6.0.3'),'Codex script versioned');
-assert.ok(main.includes("from './codex.js'"),'Main module imports chapter helpers');
-assert.ok(main.includes('function renderCodexChapters()'),'Album counters are connected');
-assert.ok(main.includes('function inspectSealed('),'Undiscovered cards have an inspection state');
+assert.equal(seasonById('marches-de-verre').number,1);
+assert.equal(collectionById('marches-de-verre','origines').title,'Origines');
+assert.equal(collectionById('marches-de-verre','reflets-brises').released,false);
+assert.equal(collectionById('marches-de-verre','au-dela-du-verre').released,false);
+assert.equal(cardsForCollection(CARDS,'marches-de-verre','origines').length,24);
+assert.deepEqual(cardsForCollection(CARDS,'marches-de-verre','origines').map(c=>c.id),CARDS.map(c=>c.id),
+ 'The first collection contains all existing cards in their original order');
+assert.equal(cardsForCollection(CARDS,'marches-de-verre','reflets-brises').length,0);
+assert.equal(cardsForCollection(CARDS,'marches-de-verre','au-dela-du-verre').length,0);
+assert.equal(cardsForCollection(CARDS,'plateau-nebuleux','plateau-1').length,0);
+assert.equal(cardsForCollection(CARDS,'not-a-season','origines').length,0);
+assert.equal(collectionForCard(CARDS[0]).collection.id,'origines');
+assert.equal(collectionForCard(CARDS[23]).season.id,'marches-de-verre');
+assert.equal(collectionForCard({id:72}),null,'Future Signature card does not exist yet');
+const owned={1:2,6:1,7:1,22:1},shiny={1:true,6:true,22:true,3:true};
+assert.deepEqual(seasonProgress(CARDS,owned,shiny,'marches-de-verre'),{
+ planned:72,released:24,discovered:4,chromatic:3,
+ collectionsReleased:1,collectionsPlanned:3,percentReleased:33,percentCollected:17
+});
+assert.deepEqual(seasonProgress(CARDS,owned,shiny,'plateau-nebuleux'),{
+ planned:72,released:0,discovered:0,chromatic:0,
+ collectionsReleased:0,collectionsPlanned:3,percentReleased:0,percentCollected:0
+});
+assert.deepEqual(codexProgress(CARDS,owned,shiny),{
+ total:24,discovered:4,chromatic:3,missing:20,percent:17,chromaticPercent:13
+},'Counters reflect published cards, not the 72 planned slots');
+assert.deepEqual(codexProgress([],owned,shiny),{
+ total:0,discovered:0,chromatic:0,missing:0,percent:0,chromaticPercent:0
+});
+const origines=cardsForCollection(CARDS,'marches-de-verre','origines');
+assert.equal(filterCodex(origines,{discovery:'collected',owned,shiny}).length,4);
+assert.equal(filterCodex(origines,{discovery:'missing',owned,shiny}).length,20);
+assert.equal(filterCodex(origines,{finish:'chromatic',owned,shiny}).length,3);
+assert.equal(filterCodex(origines,{query:'Eclaireuse'}).length,1,'Search ignores accents');
+assert.equal(filterCodex(origines,{type:'Héros',rarity:'legendary'}).length,1);
+assert.equal(filterCodex(origines,{finish:'chromatic',discovery:'missing',owned,shiny}).length,0);
+assert.equal(filterCodex([],{query:'dragon'}).length,0,'No future catalog is fabricated');
+assert.equal(CHROMATIC_RATE,0.03,'Chromatic probability unchanged');
+assert.equal(PACK_PRICE,100,'Booster price unchanged');
+const main=read('src/main.js'),html=read('index.html'),css=read('src/codex.css');
+for(const control of ['codex-season-list','codex-collection-list','codex-season-title',
+ 'codex-season-publication','codex-season-discovered','codex-season-published-track',
+ 'codex-upcoming','codex-upcoming-title','codex-upcoming-note','collection-layout',
+ 'codex-progress-discovered','codex-progress-chromatic','codex-discovery-tabs',
+ 'codex-results','codex-chapter-title']){
+ assert.ok(html.includes('id="'+control+'"'),'Codex includes '+control);
+}
+assert.ok(html.includes('src/codex.css?v=seasons-1.7.0'),'Season CSS is cache-busted');
+assert.ok(html.includes('src/main.js?v=seasons-1.7.0'),'Season JS is cache-busted');
+assert.ok(main.includes("from './seasons.js'"),'Main imports season catalogue');
+assert.ok(main.includes("from './codex.js'"),'Main imports filtering and counts');
+assert.ok(main.includes('function renderCodexSeasons()'),'Season controls are wired');
+assert.ok(main.includes('function renderCollection()'),'Collection panel remains reactive');
+assert.ok(main.includes('cardsForCollection(CARDS,activeSeason,activeCollection)'),
+ 'Only released cards can enter active gallery');
+assert.ok(main.includes("$('#collection-layout').hidden=isUpcoming"),
+ 'Upcoming collections hide real card controls');
+assert.ok(main.includes("$('#codex-upcoming').hidden=!isUpcoming"),
+ 'Upcoming seasons have a dedicated preview panel');
+assert.ok(main.includes('renderCodexSeasons();'),'Season navigation drives Codex');
+assert.ok(!main.includes('activeChapter')&&!main.includes('CODEX_CHAPTERS'),'Old 6-card chapters removed');
+assert.ok(main.includes('function inspectSealed('),'Undiscovered cards still have an inspection state');
 assert.ok(main.includes('function addCodexNavigation('),'Inspection supports turning pages');
-assert.ok(main.includes('filterCodex(CARDS,'),'Gallery uses pure filter logic');
+assert.ok(main.includes('filterCodex(availableCards,'),'Gallery filters selected release only');
 assert.ok(main.includes("if(reallyLocked)inspectSealed(c)"),'Sealed cards do not reveal artwork');
 assert.ok(main.includes("const SAVE='aetherium-save-v1'"),'Existing save key preserved');
-assert.ok(css.includes('@media(max-width:850px)'),'Mobile chapter rail supported');
-assert.ok(css.includes('prefers-reduced-motion'),'Reduced-motion supported');
-assert.ok(css.includes('.codex-sealed-art'),'Sealed cards have a placeholder illustration');
+assert.ok(css.includes('@media(max-width:850px)'),'Mobile season navigation exists');
+assert.ok(css.includes('prefers-reduced-motion'),'Reduced motion supported');
+assert.ok(css.includes('#page-collection .codex-season-list'),'Season selector styled');
+assert.ok(css.includes('#page-collection #collection-layout[hidden]'),
+ 'Future collection hides inaccessible gallery and filter panels');
+assert.ok(css.includes('.codex-sealed-art'),'Existing card silhouettes preserved');
 assert.ok(main.includes("target.showPopover()")&&main.includes("inspectorShell.hidePopover()"),
-  'Mobile Codex inspector uses native top layer instead of page stacking');
+ 'Codex inspector still uses top-layer popover on mobile');
 assert.ok(html.includes('<section id="page-collection" class="page"><div id="sheet-scrim"'),
-  'Mobile inspector backdrop shares its Codex stacking context');
+ 'Mobile scrim retained in correct context');
 assert.ok(!html.includes('</main><div id="sheet-scrim"'),
-  'Backdrop must not cover the entire elevated inspector');
-assert.ok(!read('src/codex.js').includes('localStorage'),'Chapters never write to a save');
+ 'Scrim cannot cover inspected image');
+assert.ok(!read('src/seasons.js').includes('localStorage'),'Season metadata cannot mutate saves');
+assert.ok(!read('src/codex.js').includes('localStorage'),'Codex helpers cannot mutate saves');
 const artSource=read('src/card-art.js');
 assert.ok(artSource.includes("img.srcset=approved.thumbnail+version+' 350w, '+approved.full+version+' 1138w'"),
   'Gallery thumbnails support HD sources on dense mobile displays');
@@ -79,4 +123,4 @@ assert.ok(!chromaticCSS.includes('.card.is-chromatic:before{'),'Chromatic cards 
 assert.ok(css.includes('.card.is-sealed .info:before'),'Sealed cards use the same aligned ornament');
 assert.ok(html.includes('theme.css?v=card-ornament-1')&&html.includes('mobile.css?v=inspector-layer-3'),
   'Caches refreshed for both the card ornament and mobile inspection layers');
-console.log('AETHERIUM 1.5 : albums, progression, filtres, sauvegardes et gameplay OK');
+console.log('AETHERIUM 1.7 : saisons, 24 cartes existantes, filtres, HD et sauvegardes OK');
