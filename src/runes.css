@@ -123,3 +123,31 @@
  .rune-trial .rune-tile.done::after{width:16px;height:16px;font-size:11px}
 }
 @media(prefers-reduced-motion:reduce){.rune-trial .rune-tile{transition:none!important}.rune-trial .rune-tile.wrong{animation:none!important}}
+
+
+/* AETHERIUM 1.7.2 — Ritual briefing, visible and legible on every screen. */
+.rune-trial .rune-ritual{
+ display:flex;align-items:center;gap:11px;min-width:0;
+ margin:0 0 9px;padding:11px 12px;
+ border:1px solid #9483a184;border-radius:3px;
+ background:linear-gradient(125deg,#2b2949ed,#202943d9);
+ box-shadow:inset 0 1px #edd9f014;
+}
+.rune-trial .rune-ritual-glyph{
+ flex:none;display:grid;place-items:center;width:33px;height:33px;
+ border:1px solid #a89aaf;border-radius:50%;background:#303651;
+ font:25px/1 Georgia,serif;color:#dbeef8;text-shadow:0 0 10px #7bcade99;
+}
+.rune-trial .rune-ritual-copy{display:flex;flex-direction:column;gap:4px;min-width:0}
+.rune-trial .rune-ritual-name{
+ font:small-caps 16px/1.2 Georgia,serif;color:#f5e0be;
+}
+.rune-trial .rune-ritual-rule{
+ font:12px/1.48 Georgia,serif;color:#d7ccdf;
+}
+@media(max-width:850px){
+ .rune-trial .rune-ritual{gap:8px;padding:9px;margin-bottom:9px}
+ .rune-trial .rune-ritual-glyph{width:29px;height:29px;font-size:22px}
+ .rune-trial .rune-ritual-name{font-size:15px}
+ .rune-trial .rune-ritual-rule{font-size:11px}
+}
