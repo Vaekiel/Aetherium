@@ -42,7 +42,7 @@ assert.ok(image.includes('</svg>'));
 assert.ok(image.includes('viewBox="0 0 600 850"'));
 assert.ok(image.includes('Ancient segmented arch'));
 assert.ok(image.includes('Faceted floating crystal'));
-assert.ok(!image.includes('<script')&&!image.includes('http://')&&!image.includes('href='),
+assert.ok(!image.includes('<script')&&!image.includes('<image ')&&!image.includes('href=')&&!image.includes('<foreignObject'),
  'Original artwork is self-contained and cannot load other resources');
 for(const token of ['const boosterArt=','boosterArt.classList.add(\'is-opening\')',
   'state.coins-=PACK_PRICE','drawPack()','state.opened++','state.dust+=5',
