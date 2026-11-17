@@ -33,7 +33,7 @@ assert.ok(main.includes('drawSummary.shinyCount+\' Chromatique(s)\''),'Booster r
 assert.ok(html.includes('data-finish="chromatic"')&&html.includes('data-finish="normal"'),'Variant filter options exist');
 assert.ok(html.includes('Chromatique : 3 % par carte'),'Booster odds are visible to players');
 assert.ok(html.includes('src/chromatic.css?v=chromatiques-6'),'Enhanced foil CSS is cache-busted');
-assert.ok(html.includes('src/main.js?v=seasons-1.7.0'),'Current Codex JS is cache-busted');
+assert.ok(html.includes('src/main.js?v=seasons-1.7.1'),'Current Codex JS is cache-busted');
 assert.ok(css.includes('.card.is-chromatic')&&css.includes('var(--chrom-edge)'),'Static foil border is present');
 assert.ok(css.includes('.inspector-art-shell.is-chromatic'),'Full inspector displays prismatic art frame');
 assert.ok(!html.includes('id="chromatic-showcase"')&&!html.includes('Normale ou Chromatique ?'),
@@ -68,6 +68,8 @@ assert.ok(art.includes("img.style.filter='none'"),'All 24 final artworks are not
 assert.ok(!html.includes('Shiny'),'No outdated player-facing Shiny naming');
 
 // Execute the actual localStorage reader in a sandbox to verify legacy progress.
+const {sanitizeMilestoneClaims}=await import('data:text/javascript;charset=utf-8,'+
+  encodeURIComponent(read('src/collection-milestones.js')));
 const freshCode=main.slice(main.indexOf('const fresh='),main.indexOf('function load(){'));
 const loadCode=main.slice(main.indexOf('function load(){'),main.indexOf('let state=load();'));
 assert.ok(freshCode.startsWith('const fresh='),'Save defaults recovered for test');
@@ -78,7 +80,7 @@ const legacy={
 };
 const state=vm.runInNewContext(freshCode+loadCode+'load()',{
  localStorage:{getItem:key=>key==='aetherium-save-v1'?JSON.stringify(legacy):null},
- CARDS,SAVE:'aetherium-save-v1'
+ CARDS,SAVE:'aetherium-save-v1',sanitizeMilestoneClaims
 });
 assert.equal(state.coins,225,'Coins retained');
 assert.equal(state.dust,85,'Shards retained');
