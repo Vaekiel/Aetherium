@@ -1,0 +1,81 @@
+/* AETHERIUM 1.7.3 — Honorific titles, Chroniques.
+   Compact, cosmetic, accessible touch targets. */
+#page-succes .honorifics{
+  margin:0 0 22px;padding:15px 16px 16px;
+  background:linear-gradient(145deg,#25213bde,#161c30ef);
+  border:1px solid #aa8d9a83;border-radius:3px;
+  box-shadow:inset 0 1px #f6ddb315,0 5px 18px #0b10244c;
+}
+#page-succes .honorifics-header{
+  display:flex;align-items:center;justify-content:space-between;
+  gap:12px;min-width:0;margin-bottom:12px;
+}
+#page-succes .honorifics-header .kicker{
+  font-size:10px;letter-spacing:.09em;margin:0 0 5px;color:#b7a5c8;
+}
+#page-succes .honorifics-header h2{
+  margin:0;color:#f2dbb6;font:small-caps 21px/1.2 Georgia,serif;
+}
+#page-succes .honorific-active{
+  margin:0;padding:8px 11px;
+  border:1px solid #977d9b88;border-radius:3px;
+  color:#ead1aa;background:#30263e9e;
+  font:small-caps 15px/1.3 Georgia,serif;text-align:right;
+}
+#page-succes .honorific-list{
+  display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:7px;
+}
+#page-succes .honorific{
+  display:flex;align-items:center;flex-direction:column;justify-content:center;
+  gap:6px;min-width:0;min-height:104px;padding:12px 8px 10px;
+  border:1px solid #736782a1;border-radius:3px;
+  background:linear-gradient(165deg,#26223c,#161c2e);
+  color:#ddd2e1;text-align:center;
+  font-family:Georgia,serif;
+  transition:border-color .18s,background .18s,transform .18s;
+}
+#page-succes .honorific-symbol{color:#b8a4bb;font:29px/1 Georgia,serif}
+#page-succes .honorific-name{
+  font:small-caps 14px/1.15 Georgia,serif;color:#e8d8c6;
+  text-wrap:balance;
+}
+#page-succes .honorific-state{
+  font:11px/1.2 Georgia,serif;color:#beb1cb;
+}
+#page-succes .honorific.is-locked{
+  opacity:.68;filter:saturate(.68);cursor:not-allowed;
+}
+#page-succes .honorific.is-locked .honorific-name{color:#b4aabf}
+#page-succes .honorific.is-unlocked{
+  border-color:#a9939a;cursor:pointer;
+}
+#page-succes .honorific.is-unlocked .honorific-symbol{color:#dbcb99}
+#page-succes .honorific.is-unlocked:hover{
+  border-color:#e2c49c;background:linear-gradient(165deg,#383048,#20243e);
+  transform:translateY(-1px);
+}
+#page-succes .honorific.is-equipped{
+  border-color:#e2ca92;background:linear-gradient(145deg,#45354e,#25263e);
+  box-shadow:inset 0 0 0 1px #dfc28a44,0 0 12px #b1976a33;
+}
+#page-succes .honorific.is-equipped .honorific-state{
+  color:#bcead3;
+}
+#page-succes .honorific:focus-visible{
+  outline:2px solid #f3dcb4;outline-offset:3px;
+}
+@media(max-width:1100px){
+  #page-succes .honorific-list{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+@media(max-width:590px){
+  #page-succes .honorifics{padding:12px;margin-bottom:15px}
+  #page-succes .honorifics-header{align-items:flex-start;flex-direction:column;gap:8px}
+  #page-succes .honorifics-header h2{font-size:20px}
+  #page-succes .honorific-active{padding:6px 9px;font-size:14px;text-align:left}
+  #page-succes .honorific-list{grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+  #page-succes .honorific{min-height:98px;padding:10px 6px}
+  #page-succes .honorific-name{font-size:13px}
+}
+@media(prefers-reduced-motion:reduce){
+  #page-succes .honorific{transition:none}
+}
