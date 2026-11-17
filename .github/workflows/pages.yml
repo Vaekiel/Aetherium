@@ -46,6 +46,9 @@ jobs:
           test -s src/chromatic.css
           test -s src/codex.css
           test -s src/codex.js
+          test -s src/trial-progress.js
+          test -s src/trial-progress.css
+          test -s tests/trial-progress-smoke.mjs
           test -s tests/codex-smoke.mjs
           test -s tests/chromatic-smoke.mjs
           test -s src/crafting.js
@@ -131,6 +134,7 @@ jobs:
           grep -q '  24: Object.freeze' src/card-art.js
           node --check --input-type=module < src/main.js
           node --check --input-type=module < src/codex.js
+          node --check --input-type=module < src/trial-progress.js
           node tests/booster-smoke.mjs
           node tests/runes-smoke.mjs
           node tests/memory-smoke.mjs
@@ -142,6 +146,7 @@ jobs:
           node tests/crafting-smoke.mjs
           node tests/chromatic-smoke.mjs
           node tests/codex-smoke.mjs
+          node tests/trial-progress-smoke.mjs
           node --check --input-type=module < src/crafting.js
           node --check --input-type=module < src/data.js
           node --check --input-type=module < src/art.js
