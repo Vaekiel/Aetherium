@@ -29,6 +29,18 @@ Ouvrir ensuite `http://localhost:8000`.
 
 Le workflow `.github/workflows/pages.yml` valide les modules JavaScript et publie automatiquement la racine du dépôt sur GitHub Pages à chaque push sur `main`.
 
+## AETHERIUM 1.5 — Le Codex vivant
+
+Le Codex d'Origines est maintenant organisé en **quatre chapitres de six cartes** : Premières Lueurs, Mémoires Anciennes, Terres de Légende et Au-delà des Astres. Ce sont des vues de l'album existant : aucune carte supplémentaire, aucune nouvelle récompense et aucune migration de sauvegarde. La vue « Toutes les archives » continue d'afficher les 24 cartes.
+
+- Les onglets des chapitres affichent leur progression réelle, ainsi que le nombre de Chromatiques obtenues ; deux jauges globales montrent l'avancée du Codex et les variantes prismatiques.
+- Le joueur peut afficher uniquement les cartes **découvertes**, **à découvrir**, ou toutes ; ces sélections se combinent aux filtres de catégorie, rareté, finition et recherche existants.
+- Les cartes non obtenues se présentent comme des **archives scellées**, sans révéler leur illustration. Une fiche de carte scellée conduit aux Boosters ou à l'Atelier.
+- La fiche détaillée comporte désormais une navigation **Précédente / Suivante** parmi les cartes actuellement affichées, avec le chapitre d'origine rappelé sous le nom.
+- La comparaison Normale / Chromatique reste accessible, mais repliée par défaut afin de donner toute sa place au Codex. La présentation est responsive sur téléphone, tablette et ordinateur.
+
+Les nouveaux fichiers `src/codex.js` et `src/codex.css` isolent les calculs de progression et la présentation. **Aucune modification** des tirages, de l'économie, des 5 mini-jeux, de la fabrication ni du stockage `aetherium-save-v1`. Le test `tests/codex-smoke.mjs` couvre la couverture complète des chapitres, les filtres, les compteurs et les invariants.
+
 ## Animation Chromatique visible dans les boosters (correctif 1.4.3)
 
 Lorsqu'une carte Chromatique est révélée pendant l'ouverture d'un booster, le liseré autour de l'illustration est plus épais et ses couleurs tournent plus vite. Un halo cyan/violet pulse doucement autour de la carte jusqu'à l'action « Carte suivante ». Le dos reste normal pour ne pas révéler à l'avance le tirage. L'animation est adaptée aux petits écrans et s'immobilise si la réduction des mouvements est active. Aucun changement aux illustrations, taux de tirage, sauvegardes ou récompenses.
@@ -205,7 +217,7 @@ La cinquième carte est garantie **Inhabituelle ou mieux** (65 % / 25 % / 8 % / 
 
 ## Suite du développement
 
-Créer les illustrations de cartes définitives, approfondir les mini-jeux, ajouter des albums et objectifs de collection, ajouter des effets d'ouverture et renforcer les tests automatisés.
+Finaliser les illustrations de cartes définitives, approfondir les mini-jeux (future version 1.6), introduire des objectifs de collection, puis préparer les futurs albums et renforcer les tests automatisés.
 
 Pas de compte, pas de cash shop, pas de données personnelles envoyées à un serveur.
 
