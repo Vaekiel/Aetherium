@@ -7,6 +7,7 @@ import {milestonesFor,sanitizeMilestoneClaims,uniqueCardsOwned,collectionMilesto
 import {DIFFICULTIES,validDifficulty,trialRules,trialObjective,trialScore,trialReward,emptyTrialStats,sanitizedTrialStats,recordTrialWin,masteryLevel} from './trial-progress.js';
 import {nextRuneRitual,runeExpectedAt} from './rune-rituals.js';
 import {makeEtherPuzzle,etherRule,evaluateEtherAttempt,etherAttemptFeedback} from './ether-lock-puzzles.js';
+import {nextMemoryRitual,buildMemoryDeck} from './memory-rituals.js';
 
 const $=(q,root=document)=>root.querySelector(q);
 const $$=(q,root=document)=>Array.from(root.querySelectorAll(q));
@@ -446,10 +447,13 @@ const memoryRunes=[
 
 let memorySession=0;
 let memoryTurnTimer=null;
+let previousMemoryRitual=null;
 function startMemory(){
   const g=mini[1];
   g.mode=state.difficulty;
   const maxMoves=trialRules(1,g.mode).maxMoves;
+  const ritual=nextMemoryRitual(g.mode,previousMemoryRitual);
+  previousMemoryRitual=ritual.id;
   const session=++memorySession;
   if(memoryTurnTimer!==null){clearTimeout(memoryTurnTimer);memoryTurnTimer=null;}
   g.ended=false;
@@ -476,20 +480,45 @@ function startMemory(){
     const meter=el('div','memory-meter');
     meter.setAttribute('aria-hidden','true');
     for(let i=0;i<8;i++)meter.append(el('span'));
-    g.board.before(hud,meter);
+    const banner=el('div','memory-ritual');
+    banner.append(el('span','memory-ritual-glyph','✦'));
+    const copy=el('div','memory-ritual-copy');
+    copy.append(el('strong','memory-ritual-title'),el('span','memory-ritual-rule'));
+    banner.append(copy);
+    const fresco=el('section','memory-fresco');
+    fresco.setAttribute('aria-label','Fresque ancienne : 0 fragment sur 8 retrouvé');
+    const frescoHeading=el('div','memory-fresco-header');
+    frescoHeading.append(el('strong','memory-fresco-title','La Fresque oubliée'),
+      el('span','memory-fresco-count','0 / 8 fragments'));
+    const frescoGrid=el('div','memory-fresco-grid');
+    frescoGrid.setAttribute('aria-hidden','true');
+    for(let i=0;i<8;i++)frescoGrid.append(el('span','memory-fresco-piece'));
+    fresco.append(frescoHeading,frescoGrid);
+    g.board.before(banner,hud,meter,fresco);
   }
+  $('.memory-ritual-title',g.card).textContent=ritual.title;
+  $('.memory-ritual-rule',g.card).textContent=ritual.rule;
+  const fresco=g.card.querySelector('.memory-fresco');
+  const frescoPieces=$('.memory-fresco-piece',fresco);
+  fresco.classList.remove('is-restored');
+  frescoPieces.forEach(piece=>piece.classList.remove('is-revealed'));
+  $('.memory-fresco-count',fresco).textContent='0 / 8 fragments';
+  fresco.setAttribute('aria-label','Fresque ancienne : 0 fragment sur 8 retrouvé');
   const meter=g.card.querySelector('.memory-meter');
   const updateHud=()=>{
     $('.memory-pairs',hud).textContent=`${matches} / 8`;
     $('.memory-moves',hud).textContent=String(moves)+(maxMoves===null?'':' / '+maxMoves);
     $('.memory-faults',hud).textContent=`Erreurs : ${mistakes}`;
     [...meter.children].forEach((node,i)=>node.classList.toggle('filled',i<matches));
+    frescoPieces.forEach((piece,i)=>piece.classList.toggle('is-revealed',i<matches));
+    fresco.classList.toggle('is-restored',matches===8);
+    $('.memory-fresco-count',fresco).textContent=matches===8?
+      'Fresque restaurée · 8 / 8':matches+' / 8 fragments';
+    fresco.setAttribute('aria-label','Fresque ancienne : '+matches+' fragment'+
+      (matches>1?'s':'')+' sur 8 retrouvé'+(matches>1?'s':''));
   };
 
-  const tiles=shuffle(memoryRunes.flatMap(r=>[
-    {...r,key:`${r.id}-a`},
-    {...r,key:`${r.id}-b`}
-  ]));
+  const tiles=buildMemoryDeck(memoryRunes,ritual,shuffle);
 
   const reveal=(button)=>{
     button.disabled=true;
@@ -586,9 +615,23 @@ function startMemory(){
   });
 
   updateHud();
-  g.status.textContent='Retourne les tablettes runiques et recompose les huit paires anciennes.'+
+  g.status.textContent='Retrouve les huit paires pour reconstituer la fresque.'+
     (maxMoves===null?'':' Objectif Maîtrise : '+maxMoves+' coups maximum.');
   g.actions.replaceChildren(button('✧ Nouvelle table',startMemory));
+  if(ritual.previewMs){
+    // The opening glimpse is non-interactive. Restart or difficulty changes
+    // cancel its timeout and invalidate it by session ID.
+    lock=true;
+    g.board.classList.add('is-previewing');
+    g.status.textContent='Souffle du passé : observe les seize symboles avant que le voile retombe.';
+    memoryTurnTimer=setTimeout(()=>{
+      memoryTurnTimer=null;
+      if(session!==memorySession||g.ended)return;
+      g.board.classList.remove('is-previewing');
+      lock=false;
+      g.status.textContent='Le voile est retombé. Retrouve les huit paires de mémoire.';
+    },ritual.previewMs);
+  }else g.board.classList.remove('is-previewing');
 }
 
 /* Serrure d'Éther — a three-crystal sum lock with authentic illustrated sprites. */
