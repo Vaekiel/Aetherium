@@ -35,6 +35,9 @@ jobs:
           test -f src/theme.css
           test -f src/mobile.css
           test -s src/booster.css
+          test -s src/booster-packaging.css
+          test -s assets/boosters/origines-portal.svg
+          test -s tests/booster-packaging-smoke.mjs
           test -s src/runes.css
           test -s src/rune-rituals.js
           test -s src/ether-lock-puzzles.js
@@ -170,6 +173,7 @@ jobs:
           node --check --input-type=module < src/excavation-sites.js
           node --check --input-type=module < src/alchemy-rituals.js
           node tests/booster-smoke.mjs
+          node tests/booster-packaging-smoke.mjs
           node tests/runes-smoke.mjs
           node tests/rune-rituals-smoke.mjs
           node tests/memory-smoke.mjs
