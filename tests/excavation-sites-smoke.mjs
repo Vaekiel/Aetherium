@@ -118,7 +118,7 @@ function exercise(mode,{trap=false}={}){
    el:node,$:(selector,root)=>root.querySelector(selector),
    button(text,fn,kind='secondary'){const b=node('button',kind,text);
      b.addEventListener('click',fn);return b},
-   complete(index,description){completions.push({index,description});game.ended=true}
+   complete(index,description,performance){completions.push({index,description,performance});game.ended=true}
  };
  runInNewContext(controller+'startMines()',sandbox);
  const tiles=board.children;
@@ -164,6 +164,7 @@ function exercise(mode,{trap=false}={}){
  assert.equal(game.ended,true,'The original safe-target victory remains');
  assert.equal(completions.length,1,'One victory only');
  assert.equal(completions[0].index,3);
+ assert.equal(completions[0].performance.hints,target-2,'Only manually requested probes enter the personal record');
  assert.equal(sonde.disabled,true,'No more scans after victory');
  assert.equal(card.querySelector('.excavation-counter').textContent,
    target+' / '+target+' cases sûres');
