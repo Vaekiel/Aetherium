@@ -55,3 +55,59 @@
 @media(prefers-reduced-motion:reduce){
  #page-collection .reflets-art-preview *{scroll-behavior:auto}
 }
+
+/* The first ten Reflets brisés illustrations are previews only.
+   Never display this gallery for a released collection or another season. */
+#page-collection #reflets-batch1-gallery[hidden]{display:none!important}
+#page-collection .reflets-batch1-gallery{
+  max-width:1020px;margin:32px auto 22px;padding:0 12px;text-align:center
+}
+#page-collection .reflets-batch1-gallery h3{
+  color:#e9ddf4;font:small-caps clamp(20px,3vw,27px)/1.2 Georgia,serif;
+  margin:0 0 8px;letter-spacing:.04em
+}
+#page-collection .reflets-gallery-intro{
+  color:#b5b2c9;font:12px/1.5 system-ui,sans-serif;margin:0 auto 22px
+}
+#page-collection .reflets-gallery-grid{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));
+  gap:14px;align-items:stretch;text-align:left
+}
+#page-collection .reflets-gallery-card{
+  display:flex;flex-direction:column;min-width:0;overflow:hidden;
+  background:linear-gradient(150deg,#28223e,#151a30);
+  border:1px solid #716d91;border-radius:5px;
+  box-shadow:0 8px 20px #080c1c65
+}
+#page-collection .reflets-gallery-card>a{
+  display:block;position:relative;overflow:hidden;background:#15182c;line-height:0
+}
+#page-collection .reflets-gallery-card>a:focus-visible{
+  outline:2px solid #c5e9f6;outline-offset:-3px
+}
+#page-collection .reflets-gallery-card img{
+  display:block;width:100%;height:auto;aspect-ratio:2/3;
+  object-fit:cover;image-rendering:auto
+}
+#page-collection .reflets-gallery-card-info{
+  display:flex;flex-direction:column;gap:7px;padding:12px 11px 14px;flex:1
+}
+#page-collection .reflets-gallery-card-info>span{
+  color:#a3b8d0;font:10px/1.35 system-ui,sans-serif
+}
+#page-collection .reflets-gallery-card-info h4{
+  color:#f0e2cf;font:small-caps 17px/1.2 Georgia,serif;margin:0
+}
+#page-collection .reflets-gallery-card-info p{
+  color:#c9c0d4;font:italic 12px/1.5 Georgia,serif;margin:0
+}
+@media(max-width:680px){
+ #page-collection .reflets-batch1-gallery{margin:26px auto 16px;padding:0 4px}
+ #page-collection .reflets-gallery-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+ #page-collection .reflets-gallery-card-info{padding:10px 8px 12px}
+ #page-collection .reflets-gallery-card-info h4{font-size:15px}
+ #page-collection .reflets-gallery-card-info p{font-size:11px}
+}
+@media(max-width:340px){
+ #page-collection .reflets-gallery-grid{grid-template-columns:1fr}
+}
