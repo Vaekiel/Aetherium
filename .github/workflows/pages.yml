@@ -94,6 +94,7 @@ jobs:
           test -s tests/runes-smoke.mjs
           test -f tests/booster-smoke.mjs
           test -s tests/booster-reveal-smoke.mjs
+          test -s tests/booster-opening-smoke.mjs
           grep -q 'id="filter-open"' index.html
           grep -q 'id="inspect-close"' index.html
           grep -q 'id="game-picker"' index.html
@@ -175,6 +176,7 @@ jobs:
           node --check --input-type=module < src/alchemy-rituals.js
           node tests/booster-smoke.mjs
           node tests/booster-reveal-smoke.mjs
+          node tests/booster-opening-smoke.mjs
           node tests/booster-packaging-smoke.mjs
           node tests/runes-smoke.mjs
           node tests/rune-rituals-smoke.mjs
