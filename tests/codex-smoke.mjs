@@ -62,10 +62,11 @@ const main=read('src/main.js'),html=read('index.html'),css=read('src/codex.css')
 for(const control of ['codex-season-list','codex-collection-list','codex-season-title',
  'codex-season-publication','codex-season-discovered','codex-season-published-track',
  'codex-upcoming','codex-upcoming-title','codex-upcoming-note','collection-layout',
- 'codex-progress-discovered','codex-progress-chromatic','codex-discovery-tabs',
+ 'codex-progress-discovered','codex-progress-chromatic',
  'codex-results','codex-chapter-title']){
  assert.ok(html.includes('id="'+control+'"'),'Codex includes '+control);
 }
+assert.ok(html.includes('class="codex-discovery-tabs"'),'Discovery tabs remain present');
 assert.ok(html.includes('src/codex.css?v=seasons-1.7.0'),'Season CSS is cache-busted');
 assert.ok(html.includes('src/main.js?v=seasons-1.7.0'),'Season JS is cache-busted');
 assert.ok(main.includes("from './seasons.js'"),'Main imports season catalogue');
