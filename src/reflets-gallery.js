@@ -1,5 +1,5 @@
-/* AETHERIUM — Reflets brisés, LOT 1.
-   Illustration previews only. Never append these drafts to src/data.js:
+/* AETHERIUM — Reflets brisés, LOTS 1 ET 2.
+   Illustration previews only; #35 remains unillustrated. Never append these drafts to src/data.js:
    the existing booster, collection and crafting systems stay locked. */
 import {REFLETS_BRISES_DRAFT} from './reflets-brises-catalog.js';
 
@@ -13,7 +13,16 @@ const slugs=Object.freeze([
   [31,'cartographe-des-absents'],
   [32,'sentinelle-des-felures'],
   [33,'fil-des-deux-rives'],
-  [34,'serment-retourne']
+  [34,'serment-retourne'],
+  [36,'ronce-reflechie'],
+  [37,'copiste-des-visages'],
+  [39,'sablier-des-heures-doubles'],
+  [40,'maree-de-verre'],
+  [41,'gardien-du-seuil-inverse'],
+  [42,'lame-de-parallaxe'],
+  [43,'palais-des-dedoubles'],
+  [44,'cendre-de-l-autre-soleil'],
+  [45,'elyra-la-sans-visage']
 ]);
 const rarityLabels=Object.freeze({
   common:'Commune',
