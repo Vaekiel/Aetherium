@@ -169,3 +169,120 @@
   animation:none!important;transition:none!important;
  }
 }
+
+
+/* AETHERIUM 1.8.3 — Le Sceau des Origines.
+   Lightweight 2D foil-tear sequence. Only the wrapper animates; the card
+   reveal stays flat and Android-safe (booster.css 1.8.2.1). */
+#page-boosters .pack.pack-origines .pack-rip{
+ position:absolute;z-index:12;top:11%;left:6%;right:6%;height:4px;
+ pointer-events:none;opacity:0;transform:scaleX(.01);
+ transform-origin:left center;
+ background:linear-gradient(90deg,#fffaf0 0%,#e4ebf9 30%,#a9e9f1 55%,#dfb9f1 80%,#fff3c8 100%);
+ box-shadow:0 0 7px #f5e8ffb0,0 0 18px #a7dcf594;
+ clip-path:polygon(0 25%,11% 75%,21% 20%,33% 85%,47% 35%,60% 70%,74% 15%,86% 75%,100% 25%,100% 100%,0 100%);
+}
+#page-boosters .pack.pack-origines .pack-seal{
+ position:absolute;z-index:10;left:50%;top:50%;
+ width:65px;height:65px;transform:translate(-50%,-50%);
+ border-radius:50%;pointer-events:none;
+ box-shadow:0 0 0 2px #17172bc9,0 0 19px #c1a2e38b,0 0 32px #eac5943e;
+}
+#page-boosters .pack.pack-origines .pack-seal-left,
+#page-boosters .pack.pack-origines .pack-seal-right{
+ position:absolute;top:0;bottom:0;width:50%;overflow:hidden;
+ background:radial-gradient(circle at 50% 45%,#a18cb4 0%,#594a76 38%,#2b2549 77%,#15192d 100%);
+ border:2px solid #d6ba8d;box-shadow:inset 0 0 0 3px #e2cee044,inset 0 0 12px #070a25;
+}
+#page-boosters .pack.pack-origines .pack-seal-left{
+ left:0;border-radius:65px 0 0 65px;border-right:1px solid #dcc4d399;
+}
+#page-boosters .pack.pack-origines .pack-seal-right{
+ right:0;border-radius:0 65px 65px 0;border-left:1px solid #dcc4d399;
+}
+#page-boosters .pack.pack-origines .pack-seal::before{
+ content:'✧';position:absolute;z-index:2;inset:0;
+ display:grid;place-items:center;color:#ffe5b5;
+ font:33px/1 Georgia,serif;
+ text-shadow:0 0 7px #fff2cc,0 0 19px #91d9ef;
+}
+#page-boosters .pack.pack-origines.is-opening{
+ animation:aetherium-pack-rupture 980ms cubic-bezier(.24,.7,.32,1) both;
+}
+#page-boosters .pack.pack-origines.is-opening .pack-foil{
+ animation:aetherium-foil-flash 980ms ease-in-out both;
+}
+#page-boosters .pack.pack-origines.is-opening .pack-crimp-top{
+ animation:aetherium-ripped-edge 980ms cubic-bezier(.23,.7,.35,1) both;
+}
+#page-boosters .pack.pack-origines.is-opening .pack-seal-left{
+ animation:aetherium-seal-left 980ms cubic-bezier(.32,.66,.2,1) both;
+}
+#page-boosters .pack.pack-origines.is-opening .pack-seal-right{
+ animation:aetherium-seal-right 980ms cubic-bezier(.32,.66,.2,1) both;
+}
+#page-boosters .pack.pack-origines.is-opening .pack-seal::before{
+ animation:aetherium-seal-glyph 980ms ease-in both;
+}
+#page-boosters .pack.pack-origines.is-opening .pack-rip{
+ animation:aetherium-tear-trace 980ms ease-out both;
+}
+@keyframes aetherium-pack-rupture{
+ 0%,12%{transform:translateY(0) rotate(0);filter:brightness(1)}
+ 28%{transform:translateY(-3px) rotate(-1.3deg);filter:brightness(1.2)}
+ 47%{transform:translateY(-5px) rotate(1.5deg);filter:brightness(1.45)}
+ 73%{transform:translateY(0) rotate(-.7deg);filter:brightness(1.24)}
+ 100%{transform:translateY(0) rotate(0);filter:brightness(1)}
+}
+@keyframes aetherium-ripped-edge{
+ 0%,33%{transform:translateY(0);opacity:1}
+ 55%{transform:translate(-7px,-10px) rotate(-8deg);opacity:1}
+ 78%{transform:translate(-9px,-28px) rotate(-14deg);opacity:.85}
+ 100%{transform:translate(-13px,-38px) rotate(-18deg);opacity:0}
+}
+@keyframes aetherium-seal-left{
+ 0%,27%{transform:none;opacity:1}
+ 44%{transform:translate(-6px,-1px) rotate(-8deg);opacity:1}
+ 80%{transform:translate(-21px,17px) rotate(-36deg);opacity:.5}
+ 100%{transform:translate(-35px,32px) rotate(-53deg);opacity:0}
+}
+@keyframes aetherium-seal-right{
+ 0%,27%{transform:none;opacity:1}
+ 44%{transform:translate(6px,-1px) rotate(8deg);opacity:1}
+ 80%{transform:translate(21px,12px) rotate(36deg);opacity:.5}
+ 100%{transform:translate(35px,28px) rotate(53deg);opacity:0}
+}
+@keyframes aetherium-seal-glyph{
+ 0%,23%{opacity:1;transform:scale(1)}
+ 34%{opacity:1;transform:scale(1.3);filter:brightness(1.7)}
+ 44%,100%{opacity:0;transform:scale(.5)}
+}
+@keyframes aetherium-tear-trace{
+ 0%,37%{opacity:0;transform:scaleX(.01)}
+ 42%{opacity:1;transform:scaleX(.02)}
+ 74%{opacity:1;transform:scaleX(1)}
+ 85%{opacity:.7;transform:scaleX(1)}
+ 100%{opacity:0;transform:scaleX(1)}
+}
+@media(max-width:850px){
+ #page-boosters .pack.pack-origines .pack-seal{width:37px;height:37px}
+ #page-boosters .pack.pack-origines .pack-seal::before{font-size:21px}
+ #page-boosters .pack.pack-origines .pack-seal-left{border-radius:37px 0 0 37px}
+ #page-boosters .pack.pack-origines .pack-seal-right{border-radius:0 37px 37px 0}
+ #page-boosters .pack.pack-origines .pack-rip{height:3px}
+}
+@media(max-width:420px){
+ #page-boosters .pack.pack-origines .pack-seal{width:32px;height:32px}
+ #page-boosters .pack.pack-origines .pack-seal::before{font-size:19px}
+}
+@media(prefers-reduced-motion:reduce){
+ #page-boosters .pack.pack-origines.is-opening,
+ #page-boosters .pack.pack-origines.is-opening .pack-crimp-top,
+ #page-boosters .pack.pack-origines.is-opening .pack-foil,
+ #page-boosters .pack.pack-origines.is-opening .pack-seal-left,
+ #page-boosters .pack.pack-origines.is-opening .pack-seal-right,
+ #page-boosters .pack.pack-origines.is-opening .pack-seal::before,
+ #page-boosters .pack.pack-origines.is-opening .pack-rip{
+  animation:none!important;
+ }
+}
