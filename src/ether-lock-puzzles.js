@@ -6,8 +6,6 @@ const combinations=Object.freeze(Array.from({length:6},(_,a)=>
   Array.from({length:6-a-1},(_,b)=>
     Array.from({length:6-(a+b+1)-1},(_,c)=>[a,a+b+1,a+b+c+2])
   ).flat()).flat());
-const randomIndex=(length,random)=>Math.min(length-1,Math.max(0,
-  Math.floor((Number.isFinite(Number(random()))?Number(random()):0)*length)));
 function shuffled(items,random){
   const array=[...items];
   for(let index=array.length-1;index>0;index--){
