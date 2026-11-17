@@ -49,6 +49,17 @@ assert.ok(css.includes('@media(max-width:850px)'),'Mobile chapter rail supported
 assert.ok(css.includes('prefers-reduced-motion'),'Reduced-motion supported');
 assert.ok(css.includes('.codex-sealed-art'),'Sealed cards have a placeholder illustration');
 assert.ok(!read('src/codex.js').includes('localStorage'),'Chapters never write to a save');
+const artSource=read('src/card-art.js');
+assert.ok(artSource.includes("img.srcset=approved.thumbnail+version+' 350w, '+approved.full+version+' 1138w'"),
+  'Gallery thumbnails support HD sources on dense mobile displays');
+assert.ok(artSource.includes("(max-width: 589px)")&&artSource.includes("(max-width: 850px)"),
+  'Source selection respects the mobile two- and three-column layouts');
+assert.ok(artSource.includes("img.removeAttribute('srcset')"),
+  'Fallback illustrations clear responsive candidates');
+assert.ok(main.includes("applyCardIllustration(revealedImage,item.card,{shiny:item.shiny,size:'full'})"),
+  'Single booster reveal loads the full HD illustration');
+assert.ok(main.includes("applyCardIllustration(img,c,{shiny:chromatic,size:'full'})"),
+  'Full-screen Codex inspection keeps the original HD illustration');
 const theme=read('src/theme.css'),mobile=read('src/mobile.css'),chromaticCSS=read('src/chromatic.css');
 assert.ok(theme.includes('.card .info:before{content:"◆"'),'Card ornament belongs to the info band');
 assert.ok(theme.includes('.card .info{position:relative;'),'Info band is the ornament anchor');
