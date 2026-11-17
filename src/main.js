@@ -6,6 +6,7 @@ import {SEASONS,seasonById,collectionById,cardsForCollection,collectionForCard,s
 import {milestonesFor,sanitizeMilestoneClaims,uniqueCardsOwned,collectionMilestoneStatus,claimCollectionMilestone} from './collection-milestones.js';
 import {DIFFICULTIES,validDifficulty,trialRules,trialObjective,trialScore,trialReward,emptyTrialStats,sanitizedTrialStats,recordTrialWin,masteryLevel} from './trial-progress.js';
 import {nextRuneRitual,runeExpectedAt} from './rune-rituals.js';
+import {makeEtherPuzzle,etherRule,evaluateEtherAttempt,etherAttemptFeedback} from './ether-lock-puzzles.js';
 
 const $=(q,root=document)=>root.querySelector(q);
 const $$=(q,root=document)=>Array.from(root.querySelectorAll(q));
@@ -599,10 +600,11 @@ function startLock(){
   g.status.classList.add('ether-lock-status');
   g.status.classList.remove('is-complete','is-failed');
 
-  // The three hidden solution stones guarantee at least one possible combination.
-  const solution=Array.from({length:3},()=>2+Math.floor(Math.random()*9));
-  const target=solution.reduce((a,b)=>a+b,0);
-  const numbers=shuffle([...solution,...Array.from({length:3},()=>1+Math.floor(Math.random()*10))]);
+  // Each public sum + rule uniquely identifies one possible trio.
+  // Feedback is informative rather than an arbitrary trial-and-error trap.
+  const puzzle=makeEtherPuzzle(g.mode);
+  const target=puzzle.target;
+  const numbers=puzzle.values;
   let selected=[],tries=0;
   const totalAttempts=trialRules(2,g.mode).maxAttempts;
 
@@ -621,10 +623,14 @@ function startLock(){
     for(let i=0;i<3;i++)slots.append(el('span','ether-slot','◇'));
     readout.append(label,objective,counters,slots);
     hud.append(dial,readout);
-    g.board.before(hud);
+    const briefing=el('div','ether-lock-rule');
+    briefing.append(el('strong','ether-lock-rule-title','✧ Règle du sceau'),
+      el('span','ether-lock-rule-text'));
+    g.board.before(hud,briefing);
   }
   const dial=$('.ether-lock-dial',hud);
   dial.classList.remove('is-open','is-broken','is-warning');
+  $('.ether-lock-rule-text',g.card).textContent=etherRule(puzzle);
   const targetEl=$('.ether-target',hud);
   targetEl.textContent=String(target);
   const sumEl=$('.ether-sum',hud);
@@ -688,8 +694,9 @@ function startLock(){
 
   validateButton=button('✦ Activer le sceau',()=>{
     if(g.ended||selected.length!==3)return;
-    const sum=selected.reduce((n,i)=>n+numbers[i],0);
-    if(sum===target){
+    const result=evaluateEtherAttempt(puzzle,selected);
+    if(!result)return;
+    if(result.won){
       dial.classList.add('is-open');
       g.card.classList.add('lock-solved');
       g.status.classList.add('is-complete');
@@ -708,19 +715,23 @@ function startLock(){
       g.status.classList.add('is-failed');
       dial.classList.remove('is-warning');
       dial.classList.add('is-broken');
-      g.status.textContent='Le mécanisme s’est figé. Relance une nouvelle serrure.';
+      g.status.textContent=etherAttemptFeedback(puzzle,result)+
+        ' Le mécanisme s’est figé. Relance une nouvelle serrure.';
     }else{
       dial.classList.remove('is-warning');
       void dial.offsetWidth;
       dial.classList.add('is-warning');
-      g.status.textContent='Énergie '+sum+' au lieu de '+target+' : encore '+(totalAttempts-tries)+' essai'+(totalAttempts-tries>1?'s':'')+'.';
+      g.status.textContent=etherAttemptFeedback(puzzle,result)+
+        ' Encore '+(totalAttempts-tries)+' essai'+(totalAttempts-tries>1?'s':'')+'.';
     }
     updateHud();
   },'primary');
   g.actions.replaceChildren(validateButton,button('Nouveau mécanisme',()=>{g.card.classList.remove('lock-solved');startLock()}));
   g.card.classList.remove('lock-solved');
   updateHud();
-  g.status.textContent='Sélectionne trois cristaux et aligne leur énergie sur le nombre cible.';
+  g.status.textContent=g.mode==='initiation'
+    ?'Choisis trois cristaux pour atteindre la somme indiquée.'
+    :'Trouve les trois cristaux qui satisfont la somme ET la règle du sceau.';
 }
 
 /* Fouilles interdites: 25 sealed excavation sites, five traps, ten safe discoveries. */
