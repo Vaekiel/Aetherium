@@ -55,7 +55,7 @@ assert.ok(main.includes('complete(2,')&&main.includes('reward:50'),'Existing suc
 assert.ok(main.includes("const SAVE='aetherium-save-v1'"),'Legacy save key unchanged');
 assert.ok(css.includes('.ether-lock-rule-text')&&css.includes('ether-lock-atlas.webp'),
  'Clues are styled without replacing crystal art');
-assert.ok(html.includes('src/main.js?v=memoire-1.7.2'));
+assert.ok(html.includes('src/main.js?v=fouilles-1.7.2'));
 assert.ok(html.includes('src/lock.css?v=logique-1.7.2'));
 
 const makeNode=(tag='div',cssClass='',text='')=>{
