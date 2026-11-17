@@ -1,7 +1,8 @@
 import {CARDS,RARITIES,PACK_PRICE,drawPack} from './data.js';
 import {CRAFT_COSTS,getCraftCost,craftCard} from './crafting.js';
 import {applyCardIllustration,hasApprovedArt,CARD_ART} from './card-art.js';
-import {CODEX_CHAPTERS,chapterFor,chapterCards,codexProgress,filterCodex} from './codex.js';
+import {codexProgress,filterCodex} from './codex.js';
+import {SEASONS,seasonById,collectionById,cardsForCollection,collectionForCard,seasonProgress} from './seasons.js';
 import {DIFFICULTIES,validDifficulty,trialRules,trialObjective,trialScore,trialReward,emptyTrialStats,sanitizedTrialStats,recordTrialWin,masteryLevel} from './trial-progress.js';
 
 const $=(q,root=document)=>root.querySelector(q);
@@ -1067,12 +1068,9 @@ function makeCard(c,isShiny=false,locked=false){
   });
   return b;
 }
-// The side-by-side Codex guide deliberately uses the same approved artwork:
-// this is a visual demonstration and NEVER grants a Chromatique.
 let filterType='all',filterRarity='all',filterFinish='all',selectedCard=null,previewArt=false;
-let activeChapter='all',discoveryFilter='all',codexVisibleCards=[];
-const codexOverview={id:'all',number:'✦',title:'Toutes les archives',
-  subtitle:'Les légendes d’Origines réunies',sigil:'✦'};
+let activeSeason=SEASONS[0].id,activeCollection=SEASONS[0].collections[0].id;
+let discoveryFilter='all',codexVisibleCards=[];
 function markCodexSelected(id){
   $$('#card-grid .card').forEach(tile=>{
     const selected=Number(tile.dataset.cardId)===id;
@@ -1111,11 +1109,12 @@ function inspectSealed(c,scroll=true){
   const seal=el('div','codex-sealed-inspector');
   seal.setAttribute('aria-hidden','true');
   seal.append(el('span','','✧'),el('span','','ARCHIVE '+String(c.id).padStart(3,'0')));
-  const chapter=chapterFor(c);
+  const location=collectionForCard(c);
+  const collectionLabel=location?'Saison '+location.season.number+' · '+location.collection.title:'Les Archives';
   panel.append(seal,
     el('p','kicker','ARCHIVE '+String(c.id).padStart(3,'0')+' · '+RARITIES[c.rarity].label),
     el('h2','','Archive non découverte'),
-    el('p','codex-inspector-chapter',chapter?'Chapitre '+chapter.number+' · '+chapter.title:'Origines'),
+    el('p','codex-inspector-chapter',collectionLabel),
     el('p','muted','Cette page est encore scellée. Découvre cette carte dans les boosters ou façonne-la dans l’Atelier.'));
   panel.append(button('Ouvrir des boosters',()=>navigate('boosters'),'secondary'),
     button('Explorer l’Atelier',()=>navigate('atelier'),'secondary'));
@@ -1147,8 +1146,8 @@ function inspect(c,shiny=false,scroll=true,chromaticPreview=false){
   }
   const kicker=el('p','kicker','ARCHIVE '+String(c.id).padStart(3,'0')+' · '+RARITIES[c.rarity].label);
   const title=el('h2','',c.name);
-  const chapter=chapterFor(c);
-  const chapterLabel=el('p','codex-inspector-chapter',chapter?'Chapitre '+chapter.number+' · '+chapter.title:'Origines');
+  const location=collectionForCard(c);
+  const chapterLabel=el('p','codex-inspector-chapter',location?'Saison '+location.season.number+' · '+location.collection.title:'Les Archives');
   const desc=el('p','','« '+c.lore+' »');
   const stats=el('div','stats');
   stats.append(el('span','','⚔ '+c.attack),el('span','','♥ '+c.health),el('span','','×'+(state.owned[c.id]||0)));
@@ -1173,53 +1172,112 @@ function inspect(c,shiny=false,scroll=true,chromaticPreview=false){
     else if(matchMedia('(max-width:1050px)').matches)panel.scrollIntoView({behavior:'smooth',block:'nearest'});
   }
 }
-function renderCodexChapters(){
-  const totals=codexProgress(CARDS,state.owned,state.shiny);
-  $('#codex-progress-discovered').textContent=totals.discovered+' / '+totals.total;
-  $('#codex-progress-chromatic').textContent=totals.chromatic+' / '+totals.total;
-  $('#codex-progress-fill').style.width=totals.percent+'%';
-  $('#codex-chromatic-fill').style.width=totals.chromaticPercent+'%';
-  $('#codex-progress-track').setAttribute('aria-valuenow',String(totals.discovered));
-  $('#codex-chromatic-track').setAttribute('aria-valuenow',String(totals.chromatic));
-  const holder=$('#codex-chapter-list');
-  if(!holder.childElementCount){
-    for(const chapter of [codexOverview,...CODEX_CHAPTERS]){
-      const tile=button('',()=>{activeChapter=chapter.id;renderCollection()},'codex-chapter');
-      tile.dataset.chapter=chapter.id;
-      const eyebrow=el('span','codex-chapter-eyebrow',
-        chapter.id==='all'?'✦ ALBUM ORIGINES':'✦ CHAPITRE '+chapter.number);
-      const name=el('span','codex-chapter-name',chapter.title);
-      const count=el('span','codex-chapter-count');
-      const track=el('span','codex-chapter-track');
-      track.setAttribute('aria-hidden','true');
-      track.append(el('span'));
-      tile.append(eyebrow,name,count,track);
-      holder.append(tile);
+function renderCodexSeasons(){
+  const seasons=$('#codex-season-list');
+  if(!seasons.childElementCount){
+    for(const season of SEASONS){
+      const control=button('',()=>{
+        if(activeSeason===season.id)return;
+        closeSheets(false);
+        activeSeason=season.id;
+        activeCollection=season.collections[0].id;
+        selectedCard=null;
+        renderCollection();
+      },'codex-season');
+      control.dataset.season=season.id;
+      control.append(el('span','codex-season-number','SAISON '+String(season.number).padStart(2,'0')),
+        el('strong','codex-season-name',season.title),
+        el('span','codex-season-state'));
+      seasons.append(control);
     }
   }
-  for(const tile of $$('.codex-chapter',holder)){
-    const id=tile.dataset.chapter,chapter=CODEX_CHAPTERS.find(item=>item.id===id);
-    const stats=codexProgress(chapterCards(CARDS,id),state.owned,state.shiny);
-    const active=id===activeChapter;
-    tile.classList.toggle('is-active',active);
-    tile.classList.toggle('is-complete',stats.total>0&&stats.discovered===stats.total);
-    tile.setAttribute('aria-pressed',String(active));
-    tile.setAttribute('aria-label',(chapter?'Chapitre '+chapter.number+', ':'')+
-      (chapter?.title??'Toutes les archives')+', '+stats.discovered+' cartes sur '+stats.total+
-      ', '+stats.chromatic+' Chromatiques');
-    $('.codex-chapter-count',tile).textContent=stats.discovered+' / '+stats.total+
-      ' · ✧ '+stats.chromatic;
-    $('.codex-chapter-track>span',tile).style.width=stats.percent+'%';
+  for(const control of $$('.codex-season',seasons)){
+    const season=seasonById(control.dataset.season);
+    const progress=seasonProgress(CARDS,state.owned,state.shiny,season.id);
+    const active=season.id===activeSeason;
+    control.classList.toggle('is-active',active);
+    control.setAttribute('aria-pressed',String(active));
+    control.setAttribute('aria-label','Saison '+season.number+' : '+season.title+
+      ', '+progress.released+' cartes publiées sur '+progress.planned);
+    $('.codex-season-state',control).textContent=
+      progress.released?progress.collectionsReleased+' / '+progress.collectionsPlanned+' collections disponibles':'À venir';
   }
-  const active=CODEX_CHAPTERS.find(chapter=>chapter.id===activeChapter);
-  $('#codex-chapter-title').textContent=active?'Chapitre '+active.number+' · '+active.title:'Toutes les archives';
-  $('#codex-chapter-subtitle').textContent=active?.subtitle??'Les légendes d’Origines réunies';
+  const season=seasonById(activeSeason);
+  const progress=seasonProgress(CARDS,state.owned,state.shiny,activeSeason);
+  $('#codex-season-title').textContent='Saison '+season.number+' — '+season.title;
+  $('#codex-season-description').textContent=season.subtitle;
+  $('#codex-season-publication').textContent=progress.released+' / '+progress.planned+' cartes publiées';
+  $('#codex-season-published-fill').style.width=progress.percentReleased+'%';
+  $('#codex-season-published-track').setAttribute('aria-valuenow',String(progress.released));
+  $('#codex-season-published-track').setAttribute('aria-valuemax',String(progress.planned));
+  $('#codex-season-discovered').textContent=progress.discovered+' cartes obtenues';
+  $('.collection-edition').textContent='✧ Saison '+season.number+' · '+season.title;
+
+  const partHolder=$('#codex-collection-list');
+  partHolder.replaceChildren();
+  for(const part of season.collections){
+    const active=part.id===activeCollection;
+    const partCards=cardsForCollection(CARDS,season.id,part.id);
+    const stats=codexProgress(partCards,state.owned,state.shiny);
+    const tile=button('',()=>{
+      if(activeCollection===part.id)return;
+      closeSheets(false);
+      activeCollection=part.id;
+      selectedCard=null;
+      renderCollection();
+    },'codex-chapter'+(active?' is-active':'')+(part.released&&stats.total===stats.discovered?' is-complete':'')+(part.released?'':' is-upcoming'));
+    tile.dataset.collection=part.id;
+    tile.setAttribute('aria-pressed',String(active));
+    tile.setAttribute('aria-label','Partie '+part.number+' : '+part.title+
+      (part.released?', '+stats.discovered+' cartes obtenues sur '+stats.total:', à venir'));
+    const eyebrow=el('span','codex-chapter-eyebrow','✦ PARTIE '+part.number);
+    const title=el('span','codex-chapter-name',part.title);
+    const count=el('span','codex-chapter-count',
+      part.released?stats.discovered+' / '+part.plannedCards+' · ✧ '+stats.chromatic:'À venir · '+part.plannedCards+' cartes');
+    tile.append(eyebrow,title,count);
+    if(part.signature&&!part.released)tile.append(el('span','codex-part-signature','✧ Carte Signature'));
+    if(part.released){
+      const track=el('span','codex-chapter-track');
+      track.setAttribute('aria-hidden','true');
+      const fill=el('span');fill.style.width=stats.percent+'%';
+      track.append(fill);tile.append(track);
+    }
+    partHolder.append(tile);
+  }
+  const collection=collectionById(activeSeason,activeCollection);
+  $('#codex-chapter-title').textContent='Partie '+collection.number+' · '+collection.title;
+  $('#codex-chapter-subtitle').textContent=collection.subtitle;
+  const stats=codexProgress(season.collections.flatMap(part=>cardsForCollection(CARDS,season.id,part.id)),state.owned,state.shiny);
+  $('#codex-progress-discovered').textContent=stats.discovered+' / '+stats.total;
+  $('#codex-progress-chromatic').textContent=stats.chromatic+' / '+stats.total;
+  $('#codex-progress-fill').style.width=stats.percent+'%';
+  $('#codex-chromatic-fill').style.width=stats.chromaticPercent+'%';
+  $('#codex-progress-track').setAttribute('aria-valuenow',String(stats.discovered));
+  $('#codex-progress-track').setAttribute('aria-valuemax',String(Math.max(stats.total,1)));
+  $('#codex-chromatic-track').setAttribute('aria-valuenow',String(stats.chromatic));
+  $('#codex-chromatic-track').setAttribute('aria-valuemax',String(Math.max(stats.total,1)));
 }
 function renderCollection(){
-  renderCodexChapters();
+  renderCodexSeasons();
+  const selectedPart=collectionById(activeSeason,activeCollection);
+  const availableCards=cardsForCollection(CARDS,activeSeason,activeCollection);
+  const isUpcoming=!selectedPart.released;
+  $('#codex-upcoming').hidden=!isUpcoming;
+  $('#collection-layout').hidden=isUpcoming;
+  if(isUpcoming){
+    $('#codex-upcoming-title').textContent='Partie '+selectedPart.number+' · '+selectedPart.title;
+    $('#codex-upcoming-description').textContent=selectedPart.subtitle;
+    $('#codex-upcoming-note').textContent=selectedPart.signature
+      ?'24 cartes prévues, dont une carte Signature obtenue par accomplissement. Aucun booster disponible pour le moment.'
+      :'24 cartes prévues. Cette collection sera disponible dans une prochaine mise à jour.';
+    selectedCard=null;
+    codexVisibleCards=[];
+    update();
+    return;
+  }
   const gallery=$('#card-grid');
   const q=$('#search').value.trim();
-  const cards=filterCodex(CARDS,{chapter:activeChapter,type:filterType,rarity:filterRarity,
+  const cards=filterCodex(availableCards,{type:filterType,rarity:filterRarity,
     finish:filterFinish,discovery:discoveryFilter,query:q,owned:state.owned,shiny:state.shiny});
   codexVisibleCards=cards;
   gallery.replaceChildren();
@@ -1227,13 +1285,13 @@ function renderCollection(){
     const chromatic=filterFinish==='normal'?false:!!state.shiny[c.id];
     gallery.append(makeCard(c,chromatic,!state.owned[c.id]));
   }
-  const inChapter=chapterCards(CARDS,activeChapter).length;
+  const inChapter=availableCards.length;
   $('#codex-results').textContent=cards.length+' / '+inChapter+' archives';
   const empty=$('#empty');
   empty.classList.add('codex-empty');
   empty.hidden=cards.length>0;
   empty.textContent=cards.length?'':filterFinish==='chromatic'?
-    'Aucune Chromatique ne correspond à ces filtres. Essaie un autre chapitre ou une autre rareté.':
+    'Aucune Chromatique ne correspond à ces filtres. Essaie une autre rareté ou une autre collection.':
     discoveryFilter==='collected'?'Aucune carte découverte ne correspond à ces critères.':
     'Aucune archive ne correspond à cette recherche.';
   const appliedFilters=(filterType!=='all'?1:0)+(filterRarity!=='all'?1:0)+
@@ -1255,7 +1313,7 @@ function renderCollection(){
     selectedCard=null;
     const panel=$('#inspector');
     panel.classList.remove('is-chromatic');
-    panel.replaceChildren(el('p','muted','Choisis un autre chapitre ou ajuste les filtres pour feuilleter les archives.'));
+    panel.replaceChildren(el('p','muted','Choisis une autre collection ou ajuste les filtres pour feuilleter les archives.'));
   }
   update();
 }
