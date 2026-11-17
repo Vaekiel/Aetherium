@@ -22,7 +22,7 @@ jobs:
         run: node --experimental-default-type=module --test tests/save-backup.test.mjs
       - name: Check rarity-based duplicate rewards
         run: node --experimental-default-type=module --test tests/duplicate-rewards.test.mjs
-      - name: Run full legacy smoke test suite
+      - name: Run full game and future collection smoke test suite
         run: |
           set -eu
           for test_file in tests/*-smoke.mjs; do
