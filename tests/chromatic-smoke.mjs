@@ -33,7 +33,7 @@ assert.ok(main.includes('drawSummary.shinyCount+\' Chromatique(s)\''),'Booster r
 assert.ok(html.includes('data-finish="chromatic"')&&html.includes('data-finish="normal"'),'Variant filter options exist');
 assert.ok(html.includes('Chromatique : 3 % par carte'),'Booster odds are visible to players');
 assert.ok(html.includes('src/chromatic.css?v=chromatiques-6'),'Enhanced foil CSS is cache-busted');
-assert.ok(html.includes('src/main.js?v=grimoire-1.7.2'),'Current Codex JS is cache-busted');
+assert.ok(html.includes('src/main.js?v=alchemy-mastery-172b'),'Current Codex JS is cache-busted');
 assert.ok(css.includes('.card.is-chromatic')&&css.includes('var(--chrom-edge)'),'Static foil border is present');
 assert.ok(css.includes('.inspector-art-shell.is-chromatic'),'Full inspector displays prismatic art frame');
 assert.ok(!html.includes('id="chromatic-showcase"')&&!html.includes('Normale ou Chromatique ?'),
