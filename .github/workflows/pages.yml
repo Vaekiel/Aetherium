@@ -64,6 +64,9 @@ jobs:
           test -s src/trial-challenges.js
           test -s src/trial-titles.js
           test -s src/trial-titles.css
+          test -s src/expeditions.js
+          test -s src/expedition.css
+          test -s tests/expedition-smoke.mjs
           test -s tests/trial-titles-smoke.mjs
           test -s tests/trial-challenges-smoke.mjs
           test -s tests/trial-records-smoke.mjs
@@ -160,6 +163,7 @@ jobs:
           node --check --input-type=module < src/trial-records.js
           node --check --input-type=module < src/trial-challenges.js
           node --check --input-type=module < src/trial-titles.js
+          node --check --input-type=module < src/expeditions.js
           node --check --input-type=module < src/rune-rituals.js
           node --check --input-type=module < src/ether-lock-puzzles.js
           node --check --input-type=module < src/memory-rituals.js
@@ -186,6 +190,7 @@ jobs:
           node tests/trial-records-smoke.mjs
           node tests/trial-challenges-smoke.mjs
           node tests/trial-titles-smoke.mjs
+          node tests/expedition-smoke.mjs
           node --check --input-type=module < src/crafting.js
           node --check --input-type=module < src/data.js
           node --check --input-type=module < src/art.js
