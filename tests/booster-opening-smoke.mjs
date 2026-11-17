@@ -3,6 +3,8 @@ import {readFileSync} from 'node:fs';
 import {runInNewContext} from 'node:vm';
 
 const read=file=>readFileSync(file,'utf8');
+const {duplicateDustReward}=await import('data:text/javascript;charset=utf-8,'+
+ encodeURIComponent(read('src/duplicate-rewards.js')));
 const html=read('index.html'),main=read('src/main.js');
 const css=read('src/booster-packaging.css');
 const picture=read('assets/boosters/origines-portal.svg');
@@ -52,8 +54,8 @@ function simulate(reduced){
  let saves=0,draws=0,cancels=0;
  const state={coins:300,opened:0,owned:{},shiny:{},dust:0,recentFinds:[]};
  const sandbox={
-  boosterBusy:false,state,CARDS:Array.from({length:4},(_,i)=>({id:i+1,name:i===3?'Floraison Cendrée':'Carte'})),
-  PACK_PRICE:100,
+  boosterBusy:false,state,CARDS:Array.from({length:4},(_,i)=>({id:i+1,name:i===3?'Floraison Cendrée':'Carte',rarity:i===3?'rare':'common'})),
+  PACK_PRICE:100,duplicateDustReward,
   drawPack(){draws++;return Array.from({length:5},(_,i)=>({id:4,shiny:i===0}))},
   update(){saves++},
   recordRecentFind(entries,id,kind){return [{id,kind},...entries].slice(0,6)},
@@ -76,7 +78,10 @@ function simulate(reduced){
  assert.equal(state.opened,1,'Exactly one booster is counted');
  assert.equal(state.owned[4],5,'All five copies are persisted before the animation');
  assert.equal(state.shiny[4],true);
- assert.equal(state.dust,20,'Four duplicates grant the standard Éclats');
+ assert.equal(state.dust,40,'Four Rare duplicates award 10 Éclats each');
+ assert.equal(sandbox.drawSummary.dustEarned,40,'Booster summary uses exact rewards, not 5 per duplicate');
+ assert.equal(sandbox.currentDraw[0].dustGain,0,'The first unique card grants no Éclats');
+ assert.equal(sandbox.currentDraw[1].dustGain,10,'A duplicate records its rarity-based reward');
  assert.equal(state.recentFinds.length,1,'Le registre ne compte pas les doublons');
  assert.equal(state.recentFinds[0].kind,'chromatic','La première Chromatique est enregistrée');
  assert.equal(saves,1,'Purchase is saved immediately, before timers');
