@@ -6,6 +6,7 @@ import {SEASONS,seasonById,collectionById,cardsForCollection,collectionForCard,s
 import {milestonesFor,sanitizeMilestoneClaims,uniqueCardsOwned,collectionMilestoneStatus,claimCollectionMilestone} from './collection-milestones.js';
 import {DIFFICULTIES,validDifficulty,trialRules,trialObjective,trialScore,trialReward,emptyTrialStats,sanitizedTrialStats,recordTrialWin,masteryLevel} from './trial-progress.js';
 import {TRIAL_RECORD_MODES,TRIAL_RECORD_METRICS,sanitizedTrialRecords,recordPersonalBest,recordMetricLabel} from './trial-records.js';
+import {trialChallengesFor} from './trial-challenges.js';
 import {nextRuneRitual,runeExpectedAt} from './rune-rituals.js';
 import {makeEtherPuzzle,etherRule,evaluateEtherAttempt,etherAttemptFeedback} from './ether-lock-puzzles.js';
 import {nextMemoryRitual,buildMemoryDeck} from './memory-rituals.js';
@@ -319,7 +320,8 @@ definitions.forEach((d,i)=>{
   const recordsHeader=el('summary','trial-records-summary');
   recordsHeader.append(el('span','trial-records-symbol','✧'),
     el('span','trial-records-heading','Records'),
-    el('span','trial-records-current'));
+    el('span','trial-records-current'),
+    el('span','trial-challenges-summary'));
   const recordsTable=el('table','trial-records-table');
   recordsTable.setAttribute('aria-label','Records personnels par difficulté');
   const recordsHead=el('thead');
@@ -329,7 +331,11 @@ definitions.forEach((d,i)=>{
   }
   recordsHead.append(headerRow);
   recordsTable.append(recordsHead,el('tbody'));
-  recordsEl.append(recordsHeader,recordsTable);
+  const challengePanel=el('section','trial-challenges');
+  challengePanel.setAttribute('aria-label','Défis des Maîtres');
+  challengePanel.append(el('strong','trial-challenges-heading','Défis des Maîtres'),
+    el('div','trial-challenges-list'));
+  recordsEl.append(recordsHeader,recordsTable,challengePanel);
   const status=el('div','status');status.setAttribute('aria-live','polite');
   const board=el('div','board'),actions=el('div','small-actions');
   card.append(el('h3','',String(i+1).padStart(2,'0')+' · '+d.name),
@@ -360,6 +366,23 @@ function renderTrialMastery(){
         el('td','',recordMetricLabel(index,best.bestMetric)));
       body.append(row);
     });
+    const medals=trialChallengesFor(index,entry,record);
+    const medalCount=medals.filter(item=>item.earned).length;
+    $('.trial-challenges-summary',g.recordsEl).textContent='✦ '+medalCount+'/3';
+    const challengeList=$('.trial-challenges-list',g.recordsEl);
+    challengeList.replaceChildren();
+    for(const medal of medals){
+      const line=el('div','trial-challenge'+(medal.earned?' is-earned':''));
+      line.dataset.grade=medal.id;
+      line.setAttribute('aria-label',medal.name+' · '+medal.description+
+        ' · '+(medal.earned?'obtenue':'à débloquer'));
+      const sign=el('span','trial-challenge-medal',medal.earned?'✦':'◇');
+      sign.setAttribute('aria-hidden','true');
+      line.append(sign,el('strong','trial-challenge-name',medal.name),
+        el('span','trial-challenge-goal',medal.description),
+        el('span','trial-challenge-status',medal.earned?'✓':'—'));
+      challengeList.append(line);
+    }
     const metric=TRIAL_RECORD_METRICS[index];
     g.recordsEl.setAttribute('aria-label','Carnet des records de '+definitions[index].name+
       ' · '+metric.label+' · '+current.wins+' victoires dans la difficulté actuelle');
