@@ -29,6 +29,10 @@ Ouvrir ensuite `http://localhost:8000`.
 
 Le workflow `.github/workflows/pages.yml` valide les modules JavaScript et publie automatiquement la racine du dépôt sur GitHub Pages à chaque push sur `main`.
 
+## AETHERIUM 1.5.4 — Inspection du Codex sans voile sur mobile
+
+Sur mobile, la fiche agrandie du Codex est maintenant affichée dans la **couche supérieure native du navigateur** (Popover API, `manual`). Elle n'est plus limitée à la pile d'affichage de la page animée et ne peut plus être recouverte par le voile `backdrop-filter` du Codex. Les mêmes boutons Fermer, Précédente, Suivante et changement de finition continuent de fonctionner. L'aperçu reste en HD, les autres écrans ainsi que la sauvegarde `aetherium-save-v1` sont inchangés.
+
 ## AETHERIUM 1.5.3 — Fenêtre d'inspection mobile au premier plan
 
 Correction du véritable problème de flou lors de l'agrandissement d'une carte sur téléphone : le voile modal était placé hors du conteneur du Codex et passait **devant** la fiche, y compris son illustration HD et ses textes. Le voile est désormais dans le Codex, sous le panneau d'inspection et le tiroir de filtres ; pendant l'ouverture, le conteneur principal passe au-dessus de la barre de navigation. La fiche reste nette, le fond est assombri et flouté, et les commandes de fermeture continuent à fonctionner. Aucun changement des illustrations, du gameplay, des taux de boosters et des sauvegardes.
