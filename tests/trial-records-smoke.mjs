@@ -143,4 +143,58 @@ assert.ok(css.includes('.trial-records-table'));
 assert.ok(css.includes('@media(max-width:850px)'));
 assert.ok(html.includes('src/trial-progress.css?v=records-1.7.3'));
 assert.ok(html.includes('src/main.js?v=records-1.7.3'));
-console.log('AETHERIUM 1.7.3 — Carnet : modes séparés, métriques, ancienne sauvegarde, vrai gain et anti-doublon OK');
+// Render the actual responsive record UI using a minimal, DOM-shaped tree.
+const renderCode=main.slice(main.indexOf('function renderTrialMastery(){'),
+ main.indexOf('function complete(i,description,performance={}){'));
+assert.ok(renderCode.startsWith('function renderTrialMastery(){'));
+function dom(tag='',cls='',value=''){
+ const classes=new Set(cls.split(/\\s+/).filter(Boolean));
+ const n={tagName:tag,textContent:value,children:[],attrs:{},
+  classList:{contains:token=>classes.has(token)},
+  append(...items){n.children.push(...items)},
+  replaceChildren(...items){n.children=[...items]},
+  setAttribute(key,val){n.attrs[key]=String(val)},
+  querySelector(selector){
+   const key=selector.slice(0,1)==='.'?selector.slice(1):selector;
+   const find=parent=>{for(const child of parent.children){
+    if(child.tagName===key||child.classList.contains(key))return child;
+    const result=find(child);if(result)return result;
+   }return null};return find(n);
+  }
+ };
+ return n;
+}
+const definitions=['Chemin runique','Mémoire ancienne','Serrure d’Éther',
+ 'Fouilles interdites','Laboratoire arcanique'].map(name=>({name}));
+const mini=Array.from({length:5},(_,index)=>{
+ const recordsEl=dom('details','trial-records'),summary=dom('summary','trial-records-summary');
+ summary.append(dom('span','trial-records-current'));
+ recordsEl.append(summary,dom('tbody'));
+ return {mode:index===0?'initiation':'aventure',reward:[35,45,50,65,60][index],
+  descriptionEl:{textContent:''},rewardEl:{textContent:'',title:''},
+  masteryEl:{textContent:'',attrs:{},setAttribute(name,value){this.attrs[name]=value}},
+  recordsEl};
+});
+const uiCtx={mini,definitions,state:{trialStats:[
+ {wins:11,bestScore:100,bestMode:'maitrise'}],trialRecords:records},
+  sanitizedTrialStats,sanitizedTrialRecords,masteryLevel,
+  TRIAL_RECORD_MODES,TRIAL_RECORD_METRICS,recordMetricLabel,
+  DIFFICULTIES,trialObjective,trialReward,
+  $:(selector,root)=>root.querySelector(selector),el:dom};
+runInNewContext(renderCode+'renderTrialMastery()',uiCtx);
+const firstRecords=mini[0].recordsEl.querySelector('tbody');
+assert.equal(firstRecords.children.length,3,'Each game renders one row per difficulty');
+assert.equal(firstRecords.children[0].children[2].textContent,'100/100');
+assert.equal(firstRecords.children[0].children[3].textContent,'0 erreur');
+assert.equal(firstRecords.children[2].children[2].textContent,'85/100');
+assert.ok(mini[0].recordsEl.querySelector('.trial-records-current').textContent.includes('100/100'));
+assert.ok(mini[0].masteryEl.textContent.includes('11 victoires'),
+ 'Legacy aggregate mastery remains visible alongside the new mode records');
+assert.equal(mini[1].recordsEl.querySelector('tbody').children[2].children[3].textContent,'13 coups');
+assert.equal(mini[3].recordsEl.querySelector('tbody').children[2].children[3].textContent,'0 sonde');
+assert.equal(mini[4].recordsEl.querySelector('tbody').children[2].children[3].textContent,'2 mélanges ratés');
+mini[0].mode='maitrise';
+runInNewContext('renderTrialMastery()',uiCtx);
+assert.ok(mini[0].recordsEl.querySelector('.trial-records-current').textContent.includes('85/100'),
+ 'Changing difficulty updates the visible current record without touching the save');
+console.log('AETHERIUM 1.7.3 — Carnet : UI réel, modes séparés, ancienne sauvegarde et victoires protégées OK');
