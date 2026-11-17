@@ -12,6 +12,9 @@
   html,body{width:100%;overflow-x:hidden;overscroll-behavior-x:none}
   body{font-size:15px}
   body.sheet-open{overflow:hidden}
+  /* Keep the veil and the inspected card in one stacking context.
+     The Codex panel (z=121) must stay above its backdrop (z=109). */
+  body.sheet-open #app>.layout{z-index:110}
   #app{min-height:100svh;overflow:clip}
   .ambient-landscape:before{opacity:.12;width:40vw}
   .ambient-landscape:after{background:linear-gradient(#111326a8,#121627d9)}
