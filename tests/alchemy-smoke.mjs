@@ -18,7 +18,7 @@ const begin=main.indexOf('function startAlchemy()');
 const end=main.indexOf('[startRunes,startMemory,startLock,startMines,startAlchemy].forEach',begin);
 assert.ok(begin>=0&&end>begin,'Alchemy runtime code exists');
 const code=main.slice(begin,end);
-for(const marker of ["selectedRecipes=shuffle([...recipes]).slice(0,3)","for(let i=0;i<ingredients.length;i++)","g.board.style.setProperty('--cols',3)","if(errors===3)","if(round===3)","complete(4,'Alchimie maîtrisée !","if(g.ended||busy","const session=++alchemySession","clearTimeout(alchemyTimer)","session!==alchemySession","setAttribute('aria-pressed'","button('✦ Mélanger'"]){
+for(const marker of ["selectedRecipes=shuffle([...recipes]).slice(0,3)","for(let i=0;i<ingredients.length;i++)","g.board.style.setProperty('--cols',3)","if(errors===maxErrors)","if(round===3)","complete(4,'Alchimie maîtrisée !","if(g.ended||busy","const session=++alchemySession","clearTimeout(alchemyTimer)","session!==alchemySession","setAttribute('aria-pressed'","button('✦ Mélanger'"]){
  assert.ok(code.includes(marker),'Missing gameplay marker: '+marker);
 }
 assert.ok(!code.includes('tileGrid(g.board'),'Generic tiles are gone');
