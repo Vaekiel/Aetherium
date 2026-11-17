@@ -4,7 +4,7 @@ import {runInNewContext} from 'node:vm';
 
 const read=p=>readFileSync(p,'utf8');
 const {
- DIFFICULTIES,TRIAL_COUNT,validDifficulty,trialRules,trialScore,trialReward,
+ DIFFICULTIES,TRIAL_COUNT,validDifficulty,trialRules,trialObjective,trialScore,trialReward,
  sanitizedTrialStats,recordTrialWin,masteryLevel
 }=await import('data:text/javascript;charset=utf-8,'+encodeURIComponent(read('src/trial-progress.js')));
 assert.deepEqual(DIFFICULTIES.map(m=>m.id),['initiation','aventure','maitrise']);
@@ -15,6 +15,12 @@ assert.deepEqual([0,1,2].map(i=>trialRules(1,DIFFICULTIES[i].id).maxMoves),[null
 assert.deepEqual([0,1,2].map(i=>trialRules(2,DIFFICULTIES[i].id).maxAttempts),[5,3,2],'Lock difficulty varies');
 assert.deepEqual([0,1,2].map(i=>trialRules(3,DIFFICULTIES[i].id).safeTarget),[8,10,12],'Excavation safe target varies');
 assert.deepEqual([0,1,2].map(i=>trialRules(4,DIFFICULTIES[i].id).maxErrors),[5,3,2],'Alchemy errors vary');
+assert.equal(trialObjective(0,'initiation'),'Activer 12 runes dans l’ordre · 5 erreurs maximum.');
+assert.equal(trialObjective(0,'maitrise'),'Activer 12 runes dans l’ordre · 2 erreurs maximum.');
+assert.equal(trialObjective(1,'maitrise'),'Retrouver 8 paires de tablettes · 16 coups maximum.');
+assert.equal(trialObjective(2,'aventure'),'Aligner 3 cristaux sur la valeur cible · 3 essais maximum.');
+assert.equal(trialObjective(3,'maitrise'),'Explorer 12 dalles sûres sur 25 en évitant 5 pièges.');
+assert.equal(trialObjective(4,'initiation'),'Préparer 3 potions · 5 mélanges ratés maximum.');
 assert.equal(trialScore(0,{errors:0}),100);
 assert.equal(trialScore(0,{errors:3}),46);
 assert.equal(trialScore(1,{moves:16}),68);
@@ -47,14 +53,18 @@ const main=read('src/main.js'),html=read('index.html'),style=read('src/trial-pro
 assert.ok(main.includes("from './trial-progress.js'"),'Game imports pure progression');
 assert.ok(main.includes("const SAVE='aetherium-save-v1'"),'Legacy save key preserved');
 assert.ok(main.includes('state.trialStats=recordTrialWin('),'Victory records stored');
+assert.ok(main.includes("const difficultyButtons=$('#difficulty-options [data-difficulty]');"),
+  'All difficulty buttons are selected, not just the first button');
+assert.ok(main.includes('g.descriptionEl.textContent=trialObjective(index,g.mode)'),
+  'The displayed goal follows the chosen mode and current game');
 assert.ok(main.includes('grant(earned)'),'Actual bonus reaches saved wallet');
 assert.ok(main.includes('trialStarters[selectedGame]()'),'Switching mode restarts the active trial');
 assert.ok(main.includes('if(mini[index].mode!==state.difficulty)'),'Switching games applies new difficulty');
 for(const selector of ['difficulty-options','difficulty-hint','data-difficulty="initiation"',
  'data-difficulty="aventure"','data-difficulty="maitrise"'])
   assert.ok(html.includes(selector),'Difficulty UI contains '+selector);
-assert.ok(html.includes('src/trial-progress.css?v=arcanes-1.6.0'),'Difficulty stylesheet versioned');
-assert.ok(html.includes('src/main.js?v=arcanes-1.6.0'),'Current script versioned');
+assert.ok(html.includes('src/trial-progress.css?v=arcanes-1.6.0.1'),'Difficulty stylesheet versioned');
+assert.ok(html.includes('src/main.js?v=arcanes-1.6.0.1'),'Current script versioned');
 assert.ok(style.includes('@media(max-width:850px)'),'Mobile difficulty controls supported');
 assert.ok(style.includes('min-height:44px'),'Difficulty mode targets have mobile tap area');
 const freshCode=main.slice(main.indexOf('const fresh='),main.indexOf('function load(){'));
