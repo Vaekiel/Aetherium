@@ -318,19 +318,18 @@ definitions.forEach((d,i)=>{
   const recordsEl=el('details','trial-records');
   const recordsHeader=el('summary','trial-records-summary');
   recordsHeader.append(el('span','trial-records-symbol','✧'),
-    el('span','trial-records-heading','Carnet des records'),
+    el('span','trial-records-heading','Records'),
     el('span','trial-records-current'));
   const recordsTable=el('table','trial-records-table');
   recordsTable.setAttribute('aria-label','Records personnels par difficulté');
   const recordsHead=el('thead');
   const headerRow=el('tr');
-  for(const name of ['Difficulté','Victoires','Meilleur score','Performance']){
+  for(const name of ['Mode','Victoires','Score',TRIAL_RECORD_METRICS[i].label]){
     headerRow.append(el('th','',name));
   }
   recordsHead.append(headerRow);
   recordsTable.append(recordsHead,el('tbody'));
-  recordsEl.append(recordsHeader,recordsTable,
-    el('p','trial-records-note','Suivi détaillé depuis la version 1.7.3. Les anciens scores globaux restent conservés.'));
+  recordsEl.append(recordsHeader,recordsTable);
   const status=el('div','status');status.setAttribute('aria-live','polite');
   const board=el('div','board'),actions=el('div','small-actions');
   card.append(el('h3','',String(i+1).padStart(2,'0')+' · '+d.name),
@@ -343,15 +342,13 @@ function renderTrialMastery(){
   mini.forEach((g,index)=>{
     const entry=stats[index],level=masteryLevel(entry.wins);
     g.descriptionEl.textContent=trialObjective(index,g.mode);
-    g.masteryEl.textContent='✧ '+level.title+' · '+entry.wins+' victoire'+(entry.wins>1?'s':'')+
-      (entry.wins?' · record '+entry.bestScore+'/100':' · première victoire à découvrir');
+    g.masteryEl.textContent='✧ '+level.title+(entry.wins?' · '+entry.wins+' victoire'+(entry.wins>1?'s':''):'');
     g.masteryEl.setAttribute('aria-label','Maîtrise de '+definitions[index].name+' : '+level.title+
       ', '+entry.wins+' victoires, meilleur score '+entry.bestScore+' sur 100');
     const record=sanitizedTrialRecords(state.trialRecords)[index];
     const current=record[g.mode];
     $('.trial-records-current',g.recordsEl).textContent=current.wins?
-      '· '+current.bestScore+'/100 en '+DIFFICULTIES.find(d=>d.id===g.mode).label:
-      '· aucun record en '+DIFFICULTIES.find(d=>d.id===g.mode).label;
+      current.bestScore+'/100':'—';
     const body=$('tbody',g.recordsEl);
     body.replaceChildren();
     TRIAL_RECORD_MODES.forEach(mode=>{
