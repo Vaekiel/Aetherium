@@ -1,0 +1,111 @@
+/* AETHERIUM 1.8.4 — An unobtrusive, collapsible showcase for actual finds. */
+#page-collection .codex-living{
+  margin:0 0 18px;border:1px solid #8c7898;border-radius:4px;
+  background:linear-gradient(145deg,#25223c,#15192f);
+  box-shadow:inset 0 1px #ffffff10;
+}
+#page-collection .living-summary{
+  display:flex;align-items:center;gap:12px;min-height:76px;padding:12px 16px;
+  list-style:none;cursor:pointer;
+}
+#page-collection .living-summary::-webkit-details-marker{display:none}
+#page-collection .living-summary::after{
+  content:'⌄';color:#e4c99d;font:22px/1 Georgia,serif;margin-left:2px;
+  transition:transform .18s ease;
+}
+#page-collection .codex-living[open] .living-summary::after{transform:rotate(180deg)}
+#page-collection .living-summary:focus-visible{outline:2px solid #d8bfeb;outline-offset:-3px}
+#page-collection .living-glyph{
+  flex:none;display:grid;place-items:center;width:42px;height:42px;
+  border:1px solid #aa91b1;border-radius:50%;
+  background:radial-gradient(circle,#51466b,#29233d);
+  color:#f1dcb4;text-shadow:0 0 12px #c6aadd;font:23px Georgia,serif;
+}
+#page-collection .living-summary-name{
+  display:flex;flex:1;min-width:0;flex-direction:column;gap:4px;
+}
+#page-collection .living-summary-name strong{color:#f4e3c6;font:small-caps 21px/1.12 Georgia,serif}
+#page-collection .living-summary-name small{color:#bfb5d0;font:11px/1.35 Georgia,serif}
+#page-collection .living-summary-progress{
+  color:#dacde2;max-width:192px;text-align:right;font:11px/1.4 Georgia,serif;
+}
+#page-collection .living-content{
+  padding:14px 16px 16px;border-top:1px solid #8e7c9866;
+}
+#page-collection .living-spotlights{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+#page-collection .living-section{min-width:0}
+#page-collection .living-section-head{
+  display:flex;align-items:baseline;justify-content:space-between;
+  flex-wrap:wrap;gap:5px;margin:0 0 10px;
+}
+#page-collection .living-section-head h3{
+  margin:0;color:#edddbe;font:small-caps 18px/1.2 Georgia,serif;
+}
+#page-collection .living-section-head small{color:#b9adc9;font:10px/1.3 Georgia,serif}
+#page-collection .living-tiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+#page-collection .living-tile{
+  min-width:0;display:flex;align-items:center;gap:9px;padding:7px;
+  text-align:left;color:#f0e2d7;background:#1b1c32;
+  border:1px solid #70647e;border-top-color:var(--living-edge,#827197);
+  border-radius:3px;cursor:pointer;
+}
+#page-collection .living-tile:hover{background:#29253f;border-color:#b7a1bf}
+#page-collection .living-tile:focus-visible{outline:2px solid #ead5b3;outline-offset:2px}
+#page-collection .living-tile.is-chromatic{border-color:#ae9bca;box-shadow:inset 0 0 13px #8ec6d11a}
+#page-collection .living-tile img{
+  width:48px;height:66px;flex:none;object-fit:cover;border-radius:2px;
+  background:#111629;
+}
+#page-collection .living-tile-info{display:flex;flex-direction:column;gap:5px;min-width:0}
+#page-collection .living-tile-name{font:12px/1.22 Georgia,serif;overflow-wrap:anywhere}
+#page-collection .living-tile-note{color:#baafc9;font:10px/1.2 Georgia,serif}
+#page-collection .living-empty{
+  margin:0;color:#b9b0cb;font:12px/1.5 Georgia,serif;
+}
+#page-collection .living-lower{
+  display:grid;grid-template-columns:3fr 2fr;gap:20px;
+  margin-top:16px;padding-top:13px;border-top:1px solid #77678366;
+}
+#page-collection .living-rarity-list{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}
+#page-collection .living-rarity-line{min-width:0}
+#page-collection .living-rarity-label{
+  display:flex;flex-direction:column;gap:3px;color:#c9c0d5;font:10px/1.25 Georgia,serif;
+}
+#page-collection .living-rarity-label strong{color:#f4dfc4;font-size:11px}
+#page-collection .living-rarity-track{
+  height:4px;margin-top:7px;border-radius:4px;overflow:hidden;background:#101427;
+}
+#page-collection .living-rarity-track span{
+  display:block;height:100%;background:linear-gradient(90deg,#9586bd,#e0bb8a);
+}
+#page-collection .living-completions{
+  display:flex;flex-wrap:wrap;gap:6px;margin:0;
+}
+#page-collection .living-complete-badge{
+  padding:7px 9px;border:1px solid #9a8c79;border-radius:3px;
+  background:#332e3e;color:#e9d2a6;font:11px/1.25 Georgia,serif;
+}
+#page-collection .living-completion-note{margin:0;color:#bcb3c9;font:12px/1.45 Georgia,serif}
+@media(max-width:1150px){
+  #page-collection .living-tiles{grid-template-columns:1fr}
+}
+@media(max-width:850px){
+  #page-collection .living-summary{padding:10px;gap:8px;min-height:69px}
+  #page-collection .living-glyph{width:34px;height:34px;font-size:19px}
+  #page-collection .living-summary-name strong{font-size:17px}
+  #page-collection .living-summary-progress{max-width:110px;font-size:10px}
+  #page-collection .living-content{padding:12px 10px}
+  #page-collection .living-spotlights,#page-collection .living-lower{grid-template-columns:1fr;gap:14px}
+  #page-collection .living-tiles{grid-template-columns:repeat(3,minmax(0,1fr))}
+  #page-collection .living-tile{flex-direction:column;align-items:stretch;gap:5px}
+  #page-collection .living-tile img{width:100%;height:auto;aspect-ratio:3/4;object-fit:cover}
+  #page-collection .living-rarity-list{grid-template-columns:repeat(3,minmax(0,1fr))}
+  #page-collection .living-lower{margin-top:14px;padding-top:12px}
+}
+@media(max-width:390px){
+  #page-collection .living-tiles{grid-template-columns:repeat(2,minmax(0,1fr))}
+  #page-collection .living-summary-progress{max-width:88px}
+}
+@media(prefers-reduced-motion:reduce){
+  #page-collection .living-summary::after{transition:none}
+}

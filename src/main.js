@@ -2,6 +2,7 @@ import {CARDS,RARITIES,PACK_PRICE,drawPack} from './data.js';
 import {CRAFT_COSTS,getCraftCost,craftCard} from './crafting.js';
 import {applyCardIllustration,hasApprovedArt,CARD_ART} from './card-art.js';
 import {codexProgress,filterCodex} from './codex.js';
+import {sanitizeRecentFinds,recordRecentFind,buildLivingArchive} from './living-archives.js';
 import {SEASONS,seasonById,collectionById,cardsForCollection,collectionForCard,seasonProgress} from './seasons.js';
 import {milestonesFor,sanitizeMilestoneClaims,uniqueCardsOwned,collectionMilestoneStatus,claimCollectionMilestone} from './collection-milestones.js';
 import {DIFFICULTIES,validDifficulty,trialRules,trialObjective,trialScore,trialReward,emptyTrialStats,sanitizedTrialStats,recordTrialWin,masteryLevel} from './trial-progress.js';
@@ -96,8 +97,8 @@ mobileView.addEventListener('change',syncMobileSheets);
 // approved Collection mockup. These are *visual placeholders*, not final art
 // for the corresponding 24 catalogue entries. All gameplay/save data is unchanged.
 const SAVE='aetherium-save-v1';
-const fresh=()=>({coins:300,dust:0,owned:{},shiny:{},wins:0,earned:0,opened:0,goalId:null,difficulty:'aventure',trialStats:[],collectionMilestones:{},alchemyKnown:[],trialRecords:[],titleId:null,expedition:{route:null,step:0,mode:null,armed:false,completedRoutes:[]}});
-function load(){try{const raw=JSON.parse(localStorage.getItem(SAVE));if(!raw||typeof raw!=='object')return fresh();const s=fresh();for(const field of ['coins','dust','wins','earned','opened'])if(Number.isSafeInteger(raw[field])&&raw[field]>=0&&raw[field]<1e9)s[field]=raw[field];for(const c of CARDS){const n=raw.owned?.[c.id];if(Number.isSafeInteger(n)&&n>0&&n<1e6)s.owned[c.id]=n;if(raw.shiny?.[c.id]===true&&s.owned[c.id])s.shiny[c.id]=true}if(Number.isSafeInteger(raw.goalId)&&CARDS.some(c=>c.id===raw.goalId)&&!s.owned[raw.goalId])s.goalId=raw.goalId;if(['initiation','aventure','maitrise'].includes(raw.difficulty))s.difficulty=raw.difficulty;if(Array.isArray(raw.trialStats))s.trialStats=raw.trialStats;if(Array.isArray(raw.trialRecords))s.trialRecords=sanitizedTrialRecords(raw.trialRecords);s.collectionMilestones=sanitizeMilestoneClaims(raw.collectionMilestones);if(Array.isArray(raw.alchemyKnown))s.alchemyKnown=sanitizeAlchemyKnown(raw.alchemyKnown);if(Number.isInteger(raw.titleId)&&raw.titleId>=0&&raw.titleId<5)s.titleId=raw.titleId;if(raw.expedition)s.expedition=sanitizeExpedition(raw.expedition);return s}catch{return fresh()}}
+const fresh=()=>({coins:300,dust:0,owned:{},shiny:{},wins:0,earned:0,opened:0,goalId:null,difficulty:'aventure',trialStats:[],collectionMilestones:{},recentFinds:[],alchemyKnown:[],trialRecords:[],titleId:null,expedition:{route:null,step:0,mode:null,armed:false,completedRoutes:[]}});
+function load(){try{const raw=JSON.parse(localStorage.getItem(SAVE));if(!raw||typeof raw!=='object')return fresh();const s=fresh();for(const field of ['coins','dust','wins','earned','opened'])if(Number.isSafeInteger(raw[field])&&raw[field]>=0&&raw[field]<1e9)s[field]=raw[field];for(const c of CARDS){const n=raw.owned?.[c.id];if(Number.isSafeInteger(n)&&n>0&&n<1e6)s.owned[c.id]=n;if(raw.shiny?.[c.id]===true&&s.owned[c.id])s.shiny[c.id]=true}if(Number.isSafeInteger(raw.goalId)&&CARDS.some(c=>c.id===raw.goalId)&&!s.owned[raw.goalId])s.goalId=raw.goalId;if(['initiation','aventure','maitrise'].includes(raw.difficulty))s.difficulty=raw.difficulty;if(Array.isArray(raw.trialStats))s.trialStats=raw.trialStats;if(Array.isArray(raw.trialRecords))s.trialRecords=sanitizedTrialRecords(raw.trialRecords);s.collectionMilestones=sanitizeMilestoneClaims(raw.collectionMilestones);s.recentFinds=sanitizeRecentFinds(raw.recentFinds);if(Array.isArray(raw.alchemyKnown))s.alchemyKnown=sanitizeAlchemyKnown(raw.alchemyKnown);if(Number.isInteger(raw.titleId)&&raw.titleId>=0&&raw.titleId<5)s.titleId=raw.titleId;if(raw.expedition)s.expedition=sanitizeExpedition(raw.expedition);return s}catch{return fresh()}}
 let state=load();
 state.trialStats=sanitizedTrialStats(state.trialStats);
 state.trialRecords=sanitizedTrialRecords(state.trialRecords);
@@ -261,6 +262,7 @@ function completeCraft(){
   const result=craftCard(state,card);
   if(!result.ok)return notify(result.reason);
   state=result.state;
+  state.recentFinds=recordRecentFind(state.recentFinds,card.id,'forge');
   forgeSelectedId=null;
   update(); // Saves the new card and the spent Éclats in one state update.
   renderCollection();
@@ -1671,6 +1673,82 @@ function renderCollectionMilestones(cards){
     holder.append(tile);
   }
 }
+function renderLivingArchives(cards){
+  const panel=$('#codex-living');
+  panel.hidden=!cards.length;
+  if(!cards.length)return;
+  const archive=buildLivingArchive(cards,CARDS,state.owned,state.shiny,state.recentFinds);
+  $('#living-summary').textContent=archive.discovered+' / '+cards.length+
+    ' cartes · '+archive.completed.length+' / '+archive.publishedCount+' collection'+
+    (archive.publishedCount>1?'s':'')+' complète'+(archive.publishedCount>1?'s':'');
+  $('#living-recent-caption').textContent=archive.recent.length
+    ?'Les nouveaux trésors du registre':'À partir de ta prochaine trouvaille';
+  const recentHolder=$('#living-recent');
+  const featuredHolder=$('#living-featured');
+  recentHolder.replaceChildren();
+  featuredHolder.replaceChildren();
+
+  const addCard=(holder,card,note)=>{
+    const chromatic=!!state.shiny[card.id];
+    const tile=button('',()=>inspect(card,chromatic),
+      'living-tile'+(chromatic?' is-chromatic':''));
+    tile.style.setProperty('--living-edge',RARITIES[card.rarity].color);
+    tile.setAttribute('aria-label','Voir '+card.name+' · '+RARITIES[card.rarity].label+
+      (chromatic?' · Chromatique':''));
+    const art=el('img');
+    applyCardIllustration(art,card,{shiny:chromatic,size:'thumbnail'});
+    art.alt='';
+    art.loading='lazy';
+    const info=el('span','living-tile-info');
+    info.append(el('strong','living-tile-name',card.name),
+      el('span','living-tile-note',note));
+    tile.append(art,info);
+    holder.append(tile);
+  };
+  if(archive.recent.length){
+    for(const event of archive.recent){
+      const note=event.kind==='forge'?'Façonnée à la Forge':
+        event.kind==='chromatic'?'✧ Découverte Chromatique':'Première découverte';
+      addCard(recentHolder,event.card,note);
+    }
+  }else recentHolder.append(el('p','living-empty',
+    'Tes prochaines découvertes apparaîtront ici. Tes anciennes cartes sont toujours présentes dans le Codex.'));
+  if(archive.featured.length){
+    for(const card of archive.featured)addCard(featuredHolder,card,
+      RARITIES[card.rarity].label+(state.shiny[card.id]?' · ✧ Chromatique':''));
+  }else featuredHolder.append(el('p','living-empty',
+    'Les cartes les plus précieuses de ta collection prendront place ici.'));
+
+  const rarityHolder=$('#living-rarities');
+  rarityHolder.replaceChildren();
+  for(const entry of archive.rarities){
+    const line=el('div','living-rarity-line');
+    const label=el('div','living-rarity-label');
+    label.append(el('span','',entry.label),
+      el('strong','',entry.collected+' / '+entry.total));
+    const track=el('div','living-rarity-track');
+    track.setAttribute('role','progressbar');
+    track.setAttribute('aria-label',entry.label+' découvertes');
+    track.setAttribute('aria-valuemin','0');
+    track.setAttribute('aria-valuemax',String(entry.total));
+    track.setAttribute('aria-valuenow',String(entry.collected));
+    const fill=el('span');
+    fill.style.width=(100*entry.collected/entry.total)+'%';
+    track.append(fill);
+    line.append(label,track);
+    rarityHolder.append(line);
+  }
+  $('#living-complete-count').textContent=archive.completed.length+
+    ' / '+archive.publishedCount+' disponibles';
+  const completeHolder=$('#living-completions');
+  completeHolder.replaceChildren();
+  if(archive.completed.length){
+    for(const item of archive.completed)completeHolder.append(
+      el('span','living-complete-badge',
+        '✦ Saison '+item.season.number+' · '+item.collection.title+' achevée'));
+  }else completeHolder.append(el('p','living-completion-note',
+    'Rassemble toutes les cartes d’une collection pour voir son sceau apparaître ici.'));
+}
 function renderCollection(){
   renderCodexSeasons();
   const selectedPart=collectionById(activeSeason,activeCollection);
@@ -1680,6 +1758,7 @@ function renderCollection(){
   $('#collection-layout').hidden=isUpcoming;
   if(isUpcoming){
     $('#codex-milestones').hidden=true;
+    $('#codex-living').hidden=true;
     $('#codex-upcoming-title').textContent='Partie '+selectedPart.number+' · '+selectedPart.title;
     $('#codex-upcoming-description').textContent=selectedPart.subtitle;
     $('#codex-upcoming-note').textContent=selectedPart.signature
@@ -1691,6 +1770,7 @@ function renderCollection(){
     return;
   }
   renderCollectionMilestones(availableCards);
+  renderLivingArchives(availableCards);
   const gallery=$('#card-grid');
   const q=$('#search').value.trim();
   const cards=filterCodex(availableCards,{type:filterType,rarity:filterRarity,
@@ -1936,7 +2016,12 @@ function openOriginesBooster(){
     const isNew=!state.owned[card.id];
     if(isNew)newCount++;else{duplicates++;state.dust+=5}
     state.owned[card.id]=(state.owned[card.id]||0)+1;
+    const firstChromatic=item.shiny&&!state.shiny[card.id];
     if(item.shiny){state.shiny[card.id]=true;shinyCount++}
+    if(firstChromatic||isNew){
+      state.recentFinds=recordRecentFind(state.recentFinds,card.id,
+        firstChromatic?'chromatic':'new');
+    }
     return {...item,card,isNew};
   });
   drawSummary={newCount,duplicates,shinyCount};
