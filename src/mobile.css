@@ -83,8 +83,7 @@
   .gallery .card img{aspect-ratio:112/136;object-fit:cover}
   .gallery .card .name{font-size:clamp(12px,3.5vw,15px);line-height:1.2;min-height:32px}
   .gallery .card .meta{font-size:11px}
-  .gallery .card .info{padding:7px 3px 5px}
-  .gallery .card:before{bottom:47px}
+  .gallery .card .info{padding:17px 3px 5px}
   .sheet-scrim{position:fixed;inset:0;z-index:109;background:#080914b9;backdrop-filter:blur(3px);display:block}
   .filters{position:fixed!important;display:block!important;left:0;top:0;bottom:0;width:min(88vw,345px)!important;max-width:345px;overflow-y:auto;overscroll-behavior:contain;padding:calc(15px + env(safe-area-inset-top)) 16px calc(22px + env(safe-area-inset-bottom));margin:0;border-radius:0 14px 14px 0;background:#1a1932;border-right:1px solid #947c9e;box-shadow:10px 0 32px #050811b0;z-index:120;transform:translateX(-105%);visibility:hidden;transition:transform .2s,visibility .2s}
   .filters.is-open{transform:translateX(0);visibility:visible}
