@@ -196,13 +196,13 @@ const uiCtx={mini,definitions,state:{trialStats:[
 runInNewContext(renderCode+'renderTrialMastery()',uiCtx);
 const firstRecords=mini[0].recordsEl.querySelector('tbody');
 assert.equal(firstRecords.children.length,3,'Each game renders one row per difficulty');
-assert.equal(mini[0].recordsEl.querySelector('.trial-challenges-summary').textContent,'✦ 1/3',
- 'The existing legacy mastery counts for Bronze only');
+assert.equal(mini[0].recordsEl.querySelector('.trial-challenges-summary').textContent,'✦ 2/3',
+ 'Old aggregate wins secure Bronze, while the qualifying Mastery record secures Silver');
 const firstChallenges=mini[0].recordsEl.querySelector('.trial-challenges-list');
 assert.equal(firstChallenges.children.length,3,'Every records panel renders the three medals');
 assert.equal(firstChallenges.children[0].children[1].textContent,'Bronze');
 assert.equal(firstChallenges.children[0].classList.contains('is-earned'),true);
-assert.equal(firstChallenges.children[1].classList.contains('is-earned'),false);
+assert.equal(firstChallenges.children[1].classList.contains('is-earned'),true);
 assert.equal(firstChallenges.children[2].classList.contains('is-earned'),false);
 assert.equal(mini[2].recordsEl.querySelector('.trial-challenges-summary').textContent,'✦ 2/3',
  'An Aventure challenge may award the Silver tier');
