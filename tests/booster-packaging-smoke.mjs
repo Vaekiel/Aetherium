@@ -11,7 +11,8 @@ const pack=html.match(/<div class="pack pack-origines" id="booster-pack" aria-hi
 assert.ok(pack,'Pack Origines is a decorative wrapper preserving the opening handler target');
 for(const name of [
  'pack-artwork','pack-foil','pack-sidefold','pack-crimp-top','pack-crimp-bottom',
- 'pack-wordmark','pack-collection','pack-crest','pack-title','pack-edition'
+ 'pack-wordmark','pack-collection','pack-crest','pack-title','pack-edition',
+ 'pack-seal','pack-seal-left','pack-seal-right','pack-rip'
 ]) assert.ok(pack.includes('class="'+name+'"')||
  pack.includes(' '+name+'"'),'Pack structure contains '+name);
 assert.ok(pack.includes('AETHERIUM'));
@@ -24,7 +25,7 @@ assert.ok(!pack.includes('derniere-etoile')&&!pack.includes('dragon-de-cristal')
 assert.ok(!pack.includes('<button'),'Decorative artwork cannot accidentally trigger purchases');
 assert.equal((html.match(/id="booster-pack"/g)||[]).length,1);
 assert.ok(html.includes('src/booster.css'));
-assert.ok(html.includes('src/booster-packaging.css?v=origines-182'));
+assert.ok(html.includes('src/booster-packaging.css?v=ouverture-183'));
 assert.ok(!css.includes('data:image/')&&!css.includes('cards/derniere-etoile'),
  'Packaging has an independent asset rather than copied card art');
 assert.ok(css.includes('.pack.pack-origines'));
