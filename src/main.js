@@ -5,6 +5,7 @@ import {codexProgress,filterCodex} from './codex.js';
 import {SEASONS,seasonById,collectionById,cardsForCollection,collectionForCard,seasonProgress} from './seasons.js';
 import {milestonesFor,sanitizeMilestoneClaims,uniqueCardsOwned,collectionMilestoneStatus,claimCollectionMilestone} from './collection-milestones.js';
 import {DIFFICULTIES,validDifficulty,trialRules,trialObjective,trialScore,trialReward,emptyTrialStats,sanitizedTrialStats,recordTrialWin,masteryLevel} from './trial-progress.js';
+import {nextRuneRitual,runeExpectedAt} from './rune-rituals.js';
 
 const $=(q,root=document)=>root.querySelector(q);
 const $$=(q,root=document)=>Array.from(root.querySelectorAll(q));
@@ -341,15 +342,19 @@ function complete(i,description,performance={}){
   renderTrialMastery();
 }
 const runeNames=['Soleil','Lune','Constellations','Œil','Spirale','Arbre','Rose des vents','Étoiles','Montagne','Vagues','Sablier','Flamme'];
+let previousRuneRitual=null;
 function startRunes(){
   const g=mini[0];
   g.ended=false;g.mode=state.difficulty;
+  const ritual=nextRuneRitual(g.mode,previousRuneRitual);
+  previousRuneRitual=ritual.id;
+  const blind=g.mode==='maitrise';
   const maxErrors=trialRules(0,g.mode).maxErrors;
   g.card.classList.add('rune-trial');
   g.board.classList.add('rune-board');
   g.status.classList.add('rune-statusline');
   g.status.classList.remove('is-complete','is-failed');
-  let next=1,errors=0;
+  let step=0,next=runeExpectedAt(ritual,0),errors=0;
   let hud=g.card.querySelector('.rune-hud');
   if(!hud){
     hud=el('div','rune-hud');
@@ -359,13 +364,23 @@ function startRunes(){
     const meter=el('div','rune-meter');
     meter.setAttribute('aria-hidden','true');
     for(let index=0;index<12;index++)meter.append(el('span'));
-    g.board.before(hud,meter);
+    const banner=el('div','rune-ritual');
+    banner.append(el('span','rune-ritual-glyph','✧'),
+      el('div','rune-ritual-copy'));
+    $('.rune-ritual-copy',banner).append(el('strong','rune-ritual-name'),
+      el('span','rune-ritual-rule'));
+    g.board.before(banner,hud,meter);
   }
+  const ritualBanner=g.card.querySelector('.rune-ritual');
+  $('.rune-ritual-name',ritualBanner).textContent=ritual.title;
+  $('.rune-ritual-rule',ritualBanner).textContent=ritual.rule;
   const meter=g.card.querySelector('.rune-meter');
   const updateHud=()=>{
-    $('.rune-target',hud).textContent=next>12?'12 / 12 ✓':String(next).padStart(2,'0')+' / 12';
+    $('.rune-target',hud).textContent=step===12?'12 / 12 ✓':
+      blind?'Étape '+String(step+1).padStart(2,'0')+' / 12':
+      String(next).padStart(2,'0')+' / 12';
     $('.rune-faults',hud).textContent='Erreurs : '+errors+' / '+maxErrors;
-    [...meter.children].forEach((node,i)=>node.classList.toggle('filled',i<next-1));
+    [...meter.children].forEach((node,i)=>node.classList.toggle('filled',i<step));
   };
   g.board.replaceChildren();
   g.board.style.setProperty('--cols',4);
@@ -384,12 +399,15 @@ function startRunes(){
       if(value===next){
         b.disabled=true;
         b.classList.add('done');
-        next++;
+        step++;
+        next=runeExpectedAt(ritual,step);
         updateHud();
-        if(next===13){
+        if(step===12){
           g.status.classList.add('is-complete');
           complete(0,'Sceau restauré ! Les douze runes brillent de nouveau.',{errors});
-        }else g.status.textContent='Rune '+value+' activée · cherche la '+next+'.';
+        }else g.status.textContent=blind?
+          'Rune '+value+' activée · poursuis le rituel.':
+          'Rune '+value+' activée · cherche la '+next+'.';
       }else{
         errors++;
         b.classList.remove('wrong');
@@ -401,13 +419,17 @@ function startRunes(){
           g.ended=true;
           g.status.classList.add('is-failed');
           g.status.textContent='Le sceau s’est brisé. Relance une grille pour réessayer.';
-        }else g.status.textContent='Ce n’est pas la rune '+next+' · '+errors+'/'+maxErrors+' erreurs.';
+        }else g.status.textContent=blind?
+          'La rune ne répond pas · '+errors+'/'+maxErrors+' erreurs.':
+          'Ce n’est pas la rune '+next+' · '+errors+'/'+maxErrors+' erreurs.';
       }
     });
     g.board.append(b);
   }
   updateHud();
-  g.status.textContent='Active les pierres dans l’ordre des numéros, de 1 à 12.';
+  g.status.textContent=blind?
+    'Observe la règle du rituel : le prochain numéro n’est pas indiqué en Maîtrise.':
+    'Observe le rituel et suis l’ordre indiqué pour réveiller les pierres.';
   g.actions.replaceChildren(button('✧ Nouvelle grille',startRunes));
 }
 const memoryRunes=[
