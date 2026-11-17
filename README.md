@@ -29,6 +29,10 @@ Ouvrir ensuite `http://localhost:8000`.
 
 Le workflow `.github/workflows/pages.yml` valide les modules JavaScript et publie automatiquement la racine du dépôt sur GitHub Pages à chaque push sur `main`.
 
+## AETHERIUM 1.6.0.1 — Sélecteur et objectifs réparés
+
+Les trois boutons de difficulté étaient bloqués par une erreur JavaScript : le code utilisait `querySelector` (un élément) au lieu de `querySelectorAll` (une liste de boutons) et interrompait son initialisation. La correction permet de changer immédiatement de mode et relance l'épreuve active. Le texte de l'objectif est maintenant généré à partir des **règles réelles** de chacune des cinq épreuves (erreurs, essais, coups ou nombre de dalles). L'affichage est mobile-first, sans changement de sauvegarde, de tirages, ni de probabilité des boosters.
+
 ## AETHERIUM 1.6.0 — Épreuves : difficultés et maîtrise
 
 Trois difficultés immédiatement accessibles, **Initiation / Aventure / Maîtrise**, sont désormais sélectionnables sur l'écran Épreuves (PC et mobile). Le changement relance la seule épreuve active pour que les nouvelles règles soient cohérentes ; les autres épreuves adoptent le mode lorsqu'elles sont sélectionnées. **Aventure** conserve les conditions historiques et les cinq récompenses de base.
