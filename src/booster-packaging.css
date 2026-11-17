@@ -1,0 +1,171 @@
+/* AETHERIUM 1.8.2 — Origines · collectible foil wrapper.
+   Original scenery illustration (not a discoverable card): a shared visual
+   language for future booster families, with restrained foil and sharp type. */
+#page-boosters .pack-side .pack.pack-origines{
+ --foil-gold:#d8b68c;
+ --foil-blue:#8bbcd0;
+ position:relative;isolation:isolate;overflow:hidden;
+ display:block;flex:none;
+ width:188px;height:270px;margin:4px auto 19px;
+ border:2px solid #e3c79f;border-radius:5px;
+ outline:1px solid #695379;
+ background:#15182e;
+ box-shadow:
+  inset 0 0 0 2px #b9a3b36b,
+  inset 0 0 0 6px #19162db9,
+  0 18px 25px #060818b3,
+  0 0 23px #9f84bb30;
+ transform-origin:center 62%;
+}
+#page-boosters .pack.pack-origines .pack-artwork{
+ position:absolute;z-index:0;inset:0;
+ display:block;width:100%;height:100%;object-fit:cover;
+ opacity:.96;pointer-events:none;
+}
+#page-boosters .pack.pack-origines::before{
+ content:"";position:absolute;z-index:1;inset:0;
+ border:0;box-shadow:none;pointer-events:none;
+ background:
+  linear-gradient(90deg,#080c23b8 0%,transparent 18%,transparent 80%,#0a08229e 100%),
+  linear-gradient(180deg,#111021ed 0%,#1b183caa 19%,transparent 38%,transparent 56%,#15152eba 76%,#0d1226f2 100%),
+  radial-gradient(ellipse at 53% 43%,transparent 35%,#16122e73 97%);
+}
+#page-boosters .pack.pack-origines::after{
+ content:"";position:absolute;z-index:8;inset:18px 8px 16px;
+ border:1px solid #edd4a48c;
+ background:
+  linear-gradient(#e3c59199,#e3c59199) top 4px left 4px/15px 1px no-repeat,
+  linear-gradient(#e3c59199,#e3c59199) bottom 4px right 4px/15px 1px no-repeat;
+ opacity:.93;pointer-events:none;
+ box-shadow:inset 0 0 0 3px #211a3694;
+}
+#page-boosters .pack.pack-origines .pack-foil{
+ position:absolute;z-index:6;inset:0;
+ clip-path:none;border:0;pointer-events:none;
+ background:
+  linear-gradient(119deg,
+    transparent 12%,#f3d5b516 25%,transparent 34%,
+    #99e2eb10 53%,#f4c6df17 61%,transparent 74%),
+  radial-gradient(ellipse at 50% 54%,#fff6d50c,transparent 70%);
+ mix-blend-mode:screen;opacity:.73;
+}
+#page-boosters .pack.pack-origines .pack-foil::before,
+#page-boosters .pack.pack-origines .pack-foil::after{
+ display:none;content:none;
+}
+#page-boosters .pack.pack-origines .pack-sidefold{
+ position:absolute;z-index:5;inset:0;pointer-events:none;
+ border-left:5px solid #101226a6;
+ border-right:5px solid #0e112795;
+ box-shadow:inset 3px 0 3px #e8d1d92b,inset -3px 0 3px #cd9fbd3b;
+}
+#page-boosters .pack.pack-origines .pack-crimp{
+ position:absolute;z-index:11;left:0;right:0;height:15px;pointer-events:none;
+ border-top:1px solid #fae1b4a9;
+ border-bottom:1px solid #e3c99675;
+ background:
+  repeating-linear-gradient(90deg,
+   #cfad87 0 2px,#886e8b 2px 4px,#322f51 4px 8px,
+   #b89da1 8px 10px,#ebd5ad 10px 11px,#32253e 11px 14px),
+  linear-gradient(180deg,#c3b1b8,#34283e);
+ box-shadow:0 2px 5px #05091eb0;
+}
+#page-boosters .pack.pack-origines .pack-crimp-top{top:0}
+#page-boosters .pack.pack-origines .pack-crimp-bottom{
+ bottom:0;height:13px;transform:rotate(180deg);
+}
+#page-boosters .pack.pack-origines .pack-wordmark,
+#page-boosters .pack.pack-origines .pack-collection,
+#page-boosters .pack.pack-origines .pack-crest,
+#page-boosters .pack.pack-origines .pack-title,
+#page-boosters .pack.pack-origines .pack-edition{
+ position:absolute;z-index:9;left:0;right:0;
+ display:block;max-width:100%;margin:0;padding:0 6px;
+ text-align:center;white-space:nowrap;
+ font-family:Georgia,"Times New Roman",serif;font-weight:400;
+ line-height:1.1;letter-spacing:0;
+}
+#page-boosters .pack.pack-origines .pack-wordmark{
+ top:29px;color:#fff0cb;
+ font-size:21px;font-variant:small-caps;letter-spacing:.085em;
+ text-shadow:0 1px 1px #030518,0 2px 7px #07051a,0 0 11px #d7bbf477;
+}
+#page-boosters .pack.pack-origines .pack-collection{
+ top:56px;font-size:9px;letter-spacing:.12em;
+ color:#cfe5ee;
+ text-shadow:0 1px 5px #02081a,0 0 4px #0d163b;
+}
+#page-boosters .pack.pack-origines .pack-crest{
+ top:70px;left:calc(50% - 9px);right:auto;
+ width:18px;height:18px;padding:0;
+ color:#ffe6b8;font:19px/18px Georgia,serif;
+ text-shadow:0 0 8px #fff0c2,0 0 17px #8bcbd0;
+}
+#page-boosters .pack.pack-origines .pack-title{
+ bottom:31px;padding:6px 0 5px;
+ background:linear-gradient(90deg,transparent,#15122cdb 12%,#15122ce3 88%,transparent);
+ border-top:1px solid #d2b89055;border-bottom:1px solid #d2b89069;
+ font-size:23px;font-weight:bold;letter-spacing:.13em;
+ color:#fff0cf;text-shadow:0 2px 1px #0b112a,0 0 9px #8aa3df66;
+}
+#page-boosters .pack.pack-origines .pack-edition{
+ bottom:18px;padding:0 5px;
+ color:#d8cdb9;font:8px/1.1 Georgia,serif;letter-spacing:.16em;
+ text-shadow:0 0 4px #070817;
+}
+#page-boosters .pack.pack-origines:not(.is-opening):hover{
+ box-shadow:
+  inset 0 0 0 2px #e9d9c989,inset 0 0 0 6px #19162db9,
+  0 18px 25px #060818b3,0 0 29px #baa6d966;
+}
+#page-boosters .pack.pack-origines:not(.is-opening):hover .pack-foil{
+ background:
+  linear-gradient(113deg,transparent 23%,#e5d5f21f 37%,#aaf3ff3b 45%,#f7d99e25 54%,transparent 70%);
+ opacity:.9;
+}
+#page-boosters .pack.pack-origines.is-opening .pack-crimp-top{
+ animation:aetherium-foil-unseal .56s ease-in-out both;
+}
+#page-boosters .pack.pack-origines.is-opening .pack-foil{
+ animation:aetherium-foil-flash .56s ease-in-out both;
+}
+@keyframes aetherium-foil-unseal{
+ 0%,17%{transform:translateY(0)}
+ 47%{transform:translateY(-9px) skew(-7deg)}
+ 100%{transform:translateY(0)}
+}
+@keyframes aetherium-foil-flash{
+ 0%,100%{opacity:.7;filter:brightness(1)}
+ 55%{opacity:1;filter:brightness(1.65)}
+}
+/* Mobile layout retains the established two-column shop, only sharpens the pack. */
+@media(max-width:850px){
+ #page-boosters .pack-side .pack.pack-origines{
+  width:107px;height:153px;grid-column:1;grid-row:1/5;
+  margin:0;border-width:1px;outline-width:1px;
+  box-shadow:inset 0 0 0 1px #b9a3b36b,0 8px 15px #07091ca3;
+ }
+ #page-boosters .pack.pack-origines .pack-crimp{height:9px}
+ #page-boosters .pack.pack-origines .pack-crimp-bottom{height:8px}
+ #page-boosters .pack.pack-origines::after{inset:10px 5px 10px}
+ #page-boosters .pack.pack-origines .pack-sidefold{border-left-width:3px;border-right-width:3px}
+ #page-boosters .pack.pack-origines .pack-wordmark{top:17px;font-size:12px;letter-spacing:.045em}
+ #page-boosters .pack.pack-origines .pack-collection{top:33px;font-size:5.7px;letter-spacing:.08em}
+ #page-boosters .pack.pack-origines .pack-crest{top:43px;font-size:12px;line-height:12px}
+ #page-boosters .pack.pack-origines .pack-title{bottom:21px;font-size:14px;letter-spacing:.06em;padding:4px 0 3px}
+ #page-boosters .pack.pack-origines .pack-edition{bottom:11px;font-size:5.4px;letter-spacing:.07em}
+}
+@media(max-width:420px){
+ #page-boosters .pack-side .pack.pack-origines{width:91px;height:130px}
+ #page-boosters .pack.pack-origines .pack-wordmark{top:16px;font-size:10px}
+ #page-boosters .pack.pack-origines .pack-collection{top:29px;font-size:5.2px}
+ #page-boosters .pack.pack-origines .pack-crest{top:36px;font-size:11px}
+ #page-boosters .pack.pack-origines .pack-title{bottom:19px;font-size:12px}
+ #page-boosters .pack.pack-origines .pack-edition{bottom:10px;font-size:4.8px}
+}
+@media(prefers-reduced-motion:reduce){
+ #page-boosters .pack.pack-origines .pack-crimp-top,
+ #page-boosters .pack.pack-origines .pack-foil{
+  animation:none!important;transition:none!important;
+ }
+}
