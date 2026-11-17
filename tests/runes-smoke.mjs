@@ -20,7 +20,8 @@ assert.ok(code.includes('Array.from({length:12}'),'Douze runes dans une grille')
 assert.ok(code.includes("g.board.style.setProperty('--cols',4)"),'Grille de quatre colonnes');
 assert.ok(code.includes("if(value===next)"),'Validation de l’ordre des runes conservée');
 assert.ok(code.includes('if(next===13)'), 'Victoire après la douzième rune');
-assert.ok(code.includes('if(errors>=3)'), 'Trois erreurs provoquent une défaite');
+assert.ok(code.includes('if(errors>=maxErrors)'), 'Le nombre d’erreurs dépend de la difficulté');
+assert.ok(code.includes('trialRules(0,g.mode).maxErrors'),'Les règles des runes suivent le mode choisi');
 assert.ok(code.includes("complete(0,'Sceau restauré !"),'Récompense existante conservée');
 assert.ok(main.includes('reward:35'),'Gain du Chemin runique inchangé');
 assert.ok(code.includes("setAttribute('aria-label'"),'Chaque rune doit être accessible au lecteur d’écran');
