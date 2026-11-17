@@ -80,6 +80,16 @@ assert.ok(main.includes('state.trialRecords=recordPersonalBest(state.trialRecord
 assert.ok(main.includes('state.trialStats=recordTrialWin(state.trialStats,i,g.mode,score)'));
 assert.ok(main.includes("el('details','trial-records')"));
 assert.ok(main.includes('recordMetricLabel(index,best.bestMetric)'));
+assert.ok(main.includes("['Mode','Victoires','Score',TRIAL_RECORD_METRICS[i].label]"),
+ 'The final column names the concrete skill instead of generic Performance');
+assert.ok(main.includes("el('span','trial-records-heading','Records')"),
+ 'The record heading is concise');
+assert.ok(!main.includes('Suivi détaillé depuis la version'),
+ 'Redundant release notes are not displayed in every game');
+assert.ok(!main.includes('première victoire à découvrir'),
+ 'The empty record label stays compact');
+assert.ok(!main.includes("' · record '+entry.bestScore"),
+ 'The global record is not shown twice beside the detailed book');
 assert.ok(main.includes('const body=$(\'tbody\',g.recordsEl)'));
 assert.ok(main.includes("complete(3,'Fouille accomplie ! '+safeTarget+' dalles sûres ont été explorées.',{hints:sondes})"));
 const freshCode=main.slice(main.indexOf('const fresh='),main.indexOf('function load(){'));
@@ -141,8 +151,8 @@ const css=read('src/trial-progress.css'),html=read('index.html');
 assert.ok(css.includes('.trial-records-summary'));
 assert.ok(css.includes('.trial-records-table'));
 assert.ok(css.includes('@media(max-width:850px)'));
-assert.ok(html.includes('src/trial-progress.css?v=records-1.7.3'));
-assert.ok(html.includes('src/main.js?v=records-1.7.3'));
+assert.ok(html.includes('src/trial-progress.css?v=records-clean-1.7.3'));
+assert.ok(html.includes('src/main.js?v=records-clean-1.7.3'));
 // Render the actual responsive record UI using a minimal, DOM-shaped tree.
 const renderCode=main.slice(main.indexOf('function renderTrialMastery(){'),
  main.indexOf('function complete(i,description,performance={}){'));
@@ -187,7 +197,8 @@ assert.equal(firstRecords.children.length,3,'Each game renders one row per diffi
 assert.equal(firstRecords.children[0].children[2].textContent,'100/100');
 assert.equal(firstRecords.children[0].children[3].textContent,'0 erreur');
 assert.equal(firstRecords.children[2].children[2].textContent,'85/100');
-assert.ok(mini[0].recordsEl.querySelector('.trial-records-current').textContent.includes('100/100'));
+assert.equal(mini[0].recordsEl.querySelector('.trial-records-current').textContent,'100/100',
+ 'Current best is displayed without a redundant mode name');
 assert.ok(mini[0].masteryEl.textContent.includes('11 victoires'),
  'Legacy aggregate mastery remains visible alongside the new mode records');
 assert.equal(mini[1].recordsEl.querySelector('tbody').children[2].children[3].textContent,'13 coups');
@@ -195,6 +206,6 @@ assert.equal(mini[3].recordsEl.querySelector('tbody').children[2].children[3].te
 assert.equal(mini[4].recordsEl.querySelector('tbody').children[2].children[3].textContent,'2 mélanges ratés');
 mini[0].mode='maitrise';
 runInNewContext('renderTrialMastery()',uiCtx);
-assert.ok(mini[0].recordsEl.querySelector('.trial-records-current').textContent.includes('85/100'),
+assert.equal(mini[0].recordsEl.querySelector('.trial-records-current').textContent,'85/100',
  'Changing difficulty updates the visible current record without touching the save');
 console.log('AETHERIUM 1.7.3 — Carnet : UI réel, modes séparés, ancienne sauvegarde et victoires protégées OK');
