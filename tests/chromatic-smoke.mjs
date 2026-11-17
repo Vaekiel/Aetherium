@@ -33,10 +33,10 @@ assert.ok(main.includes('drawSummary.shinyCount+\' Chromatique(s)\''),'Booster r
 assert.ok(html.includes('data-finish="chromatic"')&&html.includes('data-finish="normal"'),'Variant filter options exist');
 assert.ok(html.includes('Chromatique : 3 % par carte'),'Booster odds are visible to players');
 assert.ok(html.includes('src/chromatic.css?v=chromatiques-4'),'Enhanced foil CSS is cache-busted');
-assert.ok(html.includes('src/main.js?v=chromatiques-2'),'Chromatic Codex JS is cache-busted');
+assert.ok(html.includes('src/main.js?v=codex-1.5'),'Current Codex JS is cache-busted');
 assert.ok(css.includes('.card.is-chromatic')&&css.includes('var(--chrom-edge)'),'Static foil border is present');
 assert.ok(css.includes('.inspector-art-shell.is-chromatic'),'Full inspector displays prismatic art frame');
-assert.ok(html.includes('id="chromatic-showcase"')&&html.includes('id="chromatic-showcase" open'),'Codex compares finishes by default');
+assert.ok(html.includes('id="chromatic-showcase"'),'Codex keeps an expandable comparison of Chromatiques');
 assert.ok(html.includes('id="chromatic-example-normal"')&&html.includes('id="chromatic-example-special"'),'Comparison uses two examples');
 assert.ok(html.includes('elle ne débloque aucune carte'),'Comparison is visibly marked as preview, without rewards');
 assert.ok(main.includes("const comparisonCard=CARDS[0]"),'Comparison references one canonical card');
