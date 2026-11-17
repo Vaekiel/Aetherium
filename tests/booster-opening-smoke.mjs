@@ -52,7 +52,7 @@ function simulate(reduced){
  let saves=0,draws=0,cancels=0;
  const state={coins:300,opened:0,owned:{},shiny:{},dust:0};
  const sandbox={
-  boosterBusy:false,state,CARDS:[{id:4,name:'Floraison Cendrée'}],
+  boosterBusy:false,state,CARDS:Array.from({length:4},(_,i)=>({id:i+1,name:i===3?'Floraison Cendrée':'Carte'})),
   PACK_PRICE:100,
   drawPack(){draws++;return Array.from({length:5},(_,i)=>({id:4,shiny:i===0}))},
   update(){saves++},
