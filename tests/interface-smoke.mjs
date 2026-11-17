@@ -50,7 +50,7 @@ assert.ok(mobileCSS.includes('.sheet-scrim{position:fixed;inset:0;z-index:109;')
   'Backdrop remains below the mobile panel');
 assert.ok(mobileCSS.includes('.inspector-shell{position:fixed!important;inset:0;z-index:121;'),
   'Inspected artwork is above the blur backdrop');
-assert.ok(html.includes('LES TRÉSORS DU CODEX'),'Boutique scénarisée');
+assert.ok(html.includes('SAISON I · LES MARCHES DE VERRE · PARTIE I'),'Booster Origines rattaché à la première saison');
 assert.ok(html.includes('Chroniques & Succès'),'Registre des succès');
 assert.ok(main.includes('const trialSubtitles='),'Sélecteur de jeux enrichi');
 assert.ok(main.includes("el('span','game-choice-name'"),'Titres des jeux conservés');
