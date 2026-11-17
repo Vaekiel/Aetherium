@@ -79,4 +79,54 @@ assert.equal(loaded.coins,75);assert.equal(loaded.dust,23);
 assert.equal(loaded.owned[1],2);assert.equal(loaded.shiny[1],true);
 assert.equal(loaded.difficulty,'aventure','Old saves start on classic difficulty');
 assert.deepEqual(Array.from(loaded.trialStats),[],'Old saves do not invent past performance');
+
+// Exercise the actual browser-side selector wiring with DOM-shaped button objects.
+// In particular, this catches querying only one element and trying to iterate it.
+const makeButton=mode=>({
+  dataset:{difficulty:mode},
+  handlers:{},
+  attributes:{},
+  classList:{toggle(){}},
+  setAttribute(name,value){this.attributes[name]=value;},
+  addEventListener(name,handler){this.handlers[name]=handler;},
+  click(){assert.equal(typeof this.handlers.click,'function');this.handlers.click();}
+});
+const modeButtons=DIFFICULTIES.map(mode=>makeButton(mode.id));
+const pickerButtons=Array.from({length:5},()=>makeButton(null));
+const mockGame=()=>({mode:'aventure',card:{classList:{toggle(){}}}});
+const mockHint={textContent:''};
+const browser={state:{difficulty:'aventure'},mini:Array.from({length:5},mockGame),
+ selectedGame:0,DIFFICULTIES,validDifficulty,picker:{},starts:[0,0,0,0,0],
+ goals:Array(5).fill(''),messages:[],saves:0,
+ $:selector=>selector==='#difficulty-hint'?mockHint:null,
+ $:selector=>selector==='#difficulty-options [data-difficulty]'?modeButtons:
+   selector==='.game-choice'?pickerButtons:[],
+ renderTrialMastery:null,
+ save(){this.saves++;},
+ notify(message){this.messages.push(message);}
+};
+browser.trialStarters=browser.mini.map((_,i)=>()=>{browser.mini[i].mode=browser.state.difficulty;browser.starts[i]++;});
+browser.renderTrialMastery=()=>browser.mini.forEach((item,i)=>{browser.goals[i]=trialObjective(i,item.mode);});
+const uiStart=main.indexOf('function selectGame(index){');
+const uiEnd=main.indexOf('function makeCard(',uiStart);
+assert.ok(uiStart>0&&uiEnd>uiStart,'Extract current in-game difficulty UI');
+runInNewContext(main.slice(uiStart,uiEnd),browser);
+assert.equal(modeButtons.filter(button=>button.attributes['aria-pressed']==='true').length,1);
+assert.equal(modeButtons[1].attributes['aria-pressed'],'true','Aventure selected by default');
+modeButtons[2].click();
+assert.equal(browser.state.difficulty,'maitrise','Expert button changes actual game state');
+assert.equal(browser.starts[0],1,'Changing mode restarts the selected game');
+assert.equal(browser.goals[0],trialObjective(0,'maitrise'),'Expert rune objective updates');
+assert.equal(modeButtons[2].attributes['aria-pressed'],'true','Selected expert button updates visually');
+pickerButtons[3].click();
+assert.equal(browser.selectedGame,3);
+assert.equal(browser.starts[3],1,'Choosing another game applies selected difficulty');
+assert.equal(browser.goals[3],trialObjective(3,'maitrise'),'Excavation target updates to 12');
+modeButtons[0].click();
+assert.equal(browser.state.difficulty,'initiation','Initiation button changes actual state');
+assert.equal(browser.starts[3],2,'Initiation restarts the active excavation');
+assert.equal(browser.goals[3],trialObjective(3,'initiation'),'Excavation target updates to 8');
+assert.equal(browser.saves,2,'Each mode switch is saved');
+assert.equal(browser.messages.length,2,'Both mode switches give user feedback');
+
 console.log('AETHERIUM 1.6.0 — difficultés, progression, Couronnes et anciennes sauvegardes OK');
