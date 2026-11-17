@@ -2,6 +2,7 @@ import {CARDS,RARITIES,PACK_PRICE,drawPack} from './data.js';
 import {CRAFT_COSTS,getCraftCost,craftCard} from './crafting.js';
 import {applyCardIllustration,hasApprovedArt,CARD_ART} from './card-art.js';
 import {CODEX_CHAPTERS,chapterFor,chapterCards,codexProgress,filterCodex} from './codex.js';
+import {DIFFICULTIES,validDifficulty,trialRules,trialScore,trialReward,emptyTrialStats,sanitizedTrialStats,recordTrialWin,masteryLevel} from './trial-progress.js';
 
 const $=(q,root=document)=>root.querySelector(q);
 const $$=(q,root=document)=>Array.from(root.querySelectorAll(q));
@@ -84,9 +85,10 @@ mobileView.addEventListener('change',syncMobileSheets);
 // approved Collection mockup. These are *visual placeholders*, not final art
 // for the corresponding 24 catalogue entries. All gameplay/save data is unchanged.
 const SAVE='aetherium-save-v1';
-const fresh=()=>({coins:300,dust:0,owned:{},shiny:{},wins:0,earned:0,opened:0,goalId:null});
-function load(){try{const raw=JSON.parse(localStorage.getItem(SAVE));if(!raw||typeof raw!=='object')return fresh();const s=fresh();for(const field of ['coins','dust','wins','earned','opened'])if(Number.isSafeInteger(raw[field])&&raw[field]>=0&&raw[field]<1e9)s[field]=raw[field];for(const c of CARDS){const n=raw.owned?.[c.id];if(Number.isSafeInteger(n)&&n>0&&n<1e6)s.owned[c.id]=n;if(raw.shiny?.[c.id]===true&&s.owned[c.id])s.shiny[c.id]=true}if(Number.isSafeInteger(raw.goalId)&&CARDS.some(c=>c.id===raw.goalId)&&!s.owned[raw.goalId])s.goalId=raw.goalId;return s}catch{return fresh()}}
+const fresh=()=>({coins:300,dust:0,owned:{},shiny:{},wins:0,earned:0,opened:0,goalId:null,difficulty:'aventure',trialStats:[]});
+function load(){try{const raw=JSON.parse(localStorage.getItem(SAVE));if(!raw||typeof raw!=='object')return fresh();const s=fresh();for(const field of ['coins','dust','wins','earned','opened'])if(Number.isSafeInteger(raw[field])&&raw[field]>=0&&raw[field]<1e9)s[field]=raw[field];for(const c of CARDS){const n=raw.owned?.[c.id];if(Number.isSafeInteger(n)&&n>0&&n<1e6)s.owned[c.id]=n;if(raw.shiny?.[c.id]===true&&s.owned[c.id])s.shiny[c.id]=true}if(Number.isSafeInteger(raw.goalId)&&CARDS.some(c=>c.id===raw.goalId)&&!s.owned[raw.goalId])s.goalId=raw.goalId;if(['initiation','aventure','maitrise'].includes(raw.difficulty))s.difficulty=raw.difficulty;if(Array.isArray(raw.trialStats))s.trialStats=raw.trialStats;return s}catch{return fresh()}}
 let state=load();
+state.trialStats=sanitizedTrialStats(state.trialStats);
 let boosterBusy=false;
 function save(){try{localStorage.setItem(SAVE,JSON.stringify(state))}catch{notify('Sauvegarde indisponible dans ce navigateur.')}}
 let toastTimer;
@@ -299,12 +301,46 @@ const definitions=[
 {name:'Laboratoire arcanique',description:'Reproduis trois recettes. Trois mauvaises préparations terminent l’épreuve.',reward:60}
 ];
 const mini=[];
-definitions.forEach((d,i)=>{const card=el('article','game');card.append(el('h3','',String(i+1).padStart(2,'0')+' · '+d.name),el('p','',d.description),el('div','reward','♛ +'+d.reward+' Couronnes'));const status=el('div','status');status.setAttribute('aria-live','polite');const board=el('div','board');const actions=el('div','small-actions');card.append(board,status,actions);$('#games').append(card);mini.push({card,board,status,actions,reward:d.reward,won:false,ended:false});});
-function complete(i,description){const g=mini[i];if(g.ended)return;g.ended=true;g.status.textContent='✓ '+description;grant(g.reward)}
+definitions.forEach((d,i)=>{
+  const card=el('article','game');
+  const rewardEl=el('div','reward','♛ +'+d.reward+' Couronnes');
+  const masteryEl=el('div','trial-mastery');
+  const status=el('div','status');status.setAttribute('aria-live','polite');
+  const board=el('div','board'),actions=el('div','small-actions');
+  card.append(el('h3','',String(i+1).padStart(2,'0')+' · '+d.name),
+    el('p','',d.description),rewardEl,masteryEl,board,status,actions);
+  $('#games').append(card);
+  mini.push({card,board,status,actions,reward:d.reward,rewardEl,masteryEl,mode:state.difficulty,ended:false});
+});
+function renderTrialMastery(){
+  const stats=sanitizedTrialStats(state.trialStats);
+  mini.forEach((g,index)=>{
+    const entry=stats[index],level=masteryLevel(entry.wins);
+    g.masteryEl.textContent='✧ '+level.title+' · '+entry.wins+' victoire'+(entry.wins>1?'s':'')+
+      (entry.wins?' · record '+entry.bestScore+'/100':' · première victoire à découvrir');
+    g.masteryEl.setAttribute('aria-label','Maîtrise de '+definitions[index].name+' : '+level.title+
+      ', '+entry.wins+' victoires, meilleur score '+entry.bestScore+' sur 100');
+    const levelMode=DIFFICULTIES.find(d=>d.id===g.mode)||DIFFICULTIES[1];
+    const high=trialReward(g.reward,g.mode,100);
+    g.rewardEl.textContent='♛ '+g.reward+' Couronnes'+(high>g.reward?' · jusqu’à +'+(high-g.reward)+' bonus':'');
+    g.rewardEl.title='Mode '+levelMode.label+' · récompense de base conservée';
+  });
+}
+function complete(i,description,performance={}){
+  const g=mini[i];if(g.ended)return;
+  g.ended=true;
+  const score=trialScore(i,performance);
+  const earned=trialReward(g.reward,g.mode,score);
+  state.trialStats=recordTrialWin(state.trialStats,i,g.mode,score);
+  g.status.textContent='✓ '+description+' · '+score+'/100 · +'+earned+' Couronnes';
+  grant(earned);
+  renderTrialMastery();
+}
 const runeNames=['Soleil','Lune','Constellations','Œil','Spirale','Arbre','Rose des vents','Étoiles','Montagne','Vagues','Sablier','Flamme'];
 function startRunes(){
   const g=mini[0];
-  g.ended=false;
+  g.ended=false;g.mode=state.difficulty;
+  const maxErrors=trialRules(0,g.mode).maxErrors;
   g.card.classList.add('rune-trial');
   g.board.classList.add('rune-board');
   g.status.classList.add('rune-statusline');
@@ -324,7 +360,7 @@ function startRunes(){
   const meter=g.card.querySelector('.rune-meter');
   const updateHud=()=>{
     $('.rune-target',hud).textContent=next>12?'12 / 12 ✓':String(next).padStart(2,'0')+' / 12';
-    $('.rune-faults',hud).textContent='Erreurs : '+errors+' / 3';
+    $('.rune-faults',hud).textContent='Erreurs : '+errors+' / '+maxErrors;
     [...meter.children].forEach((node,i)=>node.classList.toggle('filled',i<next-1));
   };
   g.board.replaceChildren();
@@ -348,7 +384,7 @@ function startRunes(){
         updateHud();
         if(next===13){
           g.status.classList.add('is-complete');
-          complete(0,'Sceau restauré ! Les douze runes brillent de nouveau.');
+          complete(0,'Sceau restauré ! Les douze runes brillent de nouveau.',{errors});
         }else g.status.textContent='Rune '+value+' activée · cherche la '+next+'.';
       }else{
         errors++;
@@ -357,11 +393,11 @@ function startRunes(){
         b.classList.add('wrong');
         setTimeout(()=>b.classList.remove('wrong'),360);
         updateHud();
-        if(errors>=3){
+        if(errors>=maxErrors){
           g.ended=true;
           g.status.classList.add('is-failed');
           g.status.textContent='Le sceau s’est brisé. Relance une grille pour réessayer.';
-        }else g.status.textContent='Ce n’est pas la rune '+next+' · '+errors+'/3 erreurs.';
+        }else g.status.textContent='Ce n’est pas la rune '+next+' · '+errors+'/'+maxErrors+' erreurs.';
       }
     });
     g.board.append(b);
@@ -385,6 +421,8 @@ let memorySession=0;
 let memoryTurnTimer=null;
 function startMemory(){
   const g=mini[1];
+  g.mode=state.difficulty;
+  const maxMoves=trialRules(1,g.mode).maxMoves;
   const session=++memorySession;
   if(memoryTurnTimer!==null){clearTimeout(memoryTurnTimer);memoryTurnTimer=null;}
   g.ended=false;
@@ -416,7 +454,7 @@ function startMemory(){
   const meter=g.card.querySelector('.memory-meter');
   const updateHud=()=>{
     $('.memory-pairs',hud).textContent=`${matches} / 8`;
-    $('.memory-moves',hud).textContent=String(moves);
+    $('.memory-moves',hud).textContent=String(moves)+(maxMoves===null?'':' / '+maxMoves);
     $('.memory-faults',hud).textContent=`Erreurs : ${mistakes}`;
     [...meter.children].forEach((node,i)=>node.classList.toggle('filled',i<matches));
   };
@@ -494,7 +532,7 @@ function startMemory(){
 
         if(matches===8){
           g.status.classList.add('is-complete');
-          complete(1,'La Mémoire ancienne est restaurée ! Les huit paires scintillent de nouveau.');
+          complete(1,'La Mémoire ancienne est restaurée ! Les huit paires scintillent de nouveau.',{moves,errors:mistakes});
         }
       }else{
         mistakes++;
@@ -504,11 +542,16 @@ function startMemory(){
         pair.forEach(tile=>tile.classList.add('is-wrong'));
         memoryTurnTimer=setTimeout(()=>{
           memoryTurnTimer=null;
-          if(session!==memorySession)return;
+          if(session!==memorySession||g.ended)return;
           pair.forEach(tile=>{tile.classList.remove('is-wrong');conceal(tile)});
           first=null;second=null;lock=false;
           g.status.textContent='Observe bien les symboles et retrouve leurs paires.';
         },560);
+      }
+      if(maxMoves!==null&&moves>=maxMoves&&!g.ended){
+        g.ended=true;
+        g.status.classList.add('is-failed');
+        g.status.textContent='Limite de '+maxMoves+' coups atteinte. Lance une nouvelle table pour réessayer.';
       }
     });
 
@@ -516,14 +559,15 @@ function startMemory(){
   });
 
   updateHud();
-  g.status.textContent='Retourne les tablettes runiques et recompose les huit paires anciennes.';
+  g.status.textContent='Retourne les tablettes runiques et recompose les huit paires anciennes.'+
+    (maxMoves===null?'':' Objectif Maîtrise : '+maxMoves+' coups maximum.');
   g.actions.replaceChildren(button('✧ Nouvelle table',startMemory));
 }
 
 /* Serrure d'Éther — a three-crystal sum lock with authentic illustrated sprites. */
 function startLock(){
   const g=mini[2];
-  g.ended=false;
+  g.ended=false;g.mode=state.difficulty;
   g.card.classList.add('lock-trial');
   g.board.classList.add('ether-lock-board');
   g.status.classList.add('ether-lock-status');
@@ -534,7 +578,7 @@ function startLock(){
   const target=solution.reduce((a,b)=>a+b,0);
   const numbers=shuffle([...solution,...Array.from({length:3},()=>1+Math.floor(Math.random()*10))]);
   let selected=[],tries=0;
-  const totalAttempts=3;
+  const totalAttempts=trialRules(2,g.mode).maxAttempts;
 
   let hud=g.card.querySelector('.ether-lock-hud');
   if(!hud){
@@ -624,7 +668,7 @@ function startLock(){
       g.card.classList.add('lock-solved');
       g.status.classList.add('is-complete');
       validateButton.disabled=true;
-      complete(2,'Serrure d’Éther ouverte ! Les trois cristaux sont alignés.');
+      complete(2,'Serrure d’Éther ouverte ! Les trois cristaux sont alignés.',{attempts:tries});
       return;
     }
     tries++;
@@ -656,7 +700,8 @@ function startLock(){
 /* Fouilles interdites: 25 sealed excavation sites, five traps, ten safe discoveries. */
 function startMines(){
   const g=mini[3];
-  g.ended=false;
+  g.ended=false;g.mode=state.difficulty;
+  const safeTarget=trialRules(3,g.mode).safeTarget;
   g.card.classList.add('excavation-trial');
   g.board.classList.add('excavation-board');
   g.status.classList.add('excavation-status');
@@ -699,10 +744,11 @@ function startMines(){
   const relic=$('.excavation-relic',hud);
   relic.classList.remove('is-victorious','is-failed');
   const meter=g.card.querySelector('.excavation-meter');
+  meter.replaceChildren(...Array.from({length:safeTarget},()=>el('span')));
   const updateHud=()=>{
-    $('.excavation-counter',hud).textContent=safe+' / 10 cases sûres';
+    $('.excavation-counter',hud).textContent=safe+' / '+safeTarget+' cases sûres';
     $('.excavation-danger',hud).textContent=g.ended
-      ?(safe===10?'Fouille accomplie':'Piège déclenché'):'5 pièges dissimulés';
+      ?(safe===safeTarget?'Fouille accomplie':'Piège déclenché'):'5 pièges dissimulés';
     [...meter.children].forEach((node,index)=>node.classList.toggle('filled',index<safe));
   };
 
@@ -755,11 +801,11 @@ function startMines(){
       }
       safe++;
       updateHud();
-      if(safe===10){
+      if(safe===safeTarget){
         relic.classList.add('is-victorious');
         g.status.classList.add('is-complete');
         tiles.forEach(b=>b.disabled=true);
-        complete(3,'Fouille accomplie ! Dix dalles sûres ont été explorées.');
+        complete(3,'Fouille accomplie ! '+safeTarget+' dalles sûres ont été explorées.');
       }else g.status.textContent='Dalle '+(i+1)+' : '+(adjacent?adjacent+' piège(s) voisin(s).':'aucun piège adjacent.')+' Continue la fouille.';
     });
     g.board.append(tile);
@@ -778,6 +824,8 @@ let alchemySession=0;
 let alchemyTimer=null;
 function startAlchemy(){
   const g=mini[4];
+  g.mode=state.difficulty;
+  const maxErrors=trialRules(4,g.mode).maxErrors;
   const session=++alchemySession;
   if(alchemyTimer!==null){clearTimeout(alchemyTimer);alchemyTimer=null}
   g.ended=false;
@@ -826,7 +874,7 @@ function startAlchemy(){
     $('.alchemy-name',hud).textContent=name;
     $('.alchemy-requirement',hud).textContent='Ingrédients : '+required.map(i=>ingredientNames[i]).join(' + ');
     $('.alchemy-round',hud).textContent='Potion '+Math.min(round+1,3)+' / 3';
-    $('.alchemy-errors',hud).textContent='Erreurs '+errors+' / 3';
+    $('.alchemy-errors',hud).textContent='Erreurs '+errors+' / '+maxErrors;
     [...meter.children].forEach((node,i)=>node.classList.toggle('filled',i<round));
     slots.forEach((slot,i)=>{
       const filled=i<selected.length;
@@ -901,7 +949,7 @@ function startAlchemy(){
         if(round===3){
           g.status.classList.add('is-complete');
           ingredientButtons.forEach(button=>button.disabled=true);
-          complete(4,'Alchimie maîtrisée ! Trois potions créées dans les Archives.');
+          complete(4,'Alchimie maîtrisée ! Trois potions créées dans les Archives.',{errors});
           if(mixButton)mixButton.disabled=true;
           return;
         }
@@ -910,7 +958,7 @@ function startAlchemy(){
         errors++;
         cauldron.classList.add('is-error');
         updateHud();
-        if(errors===3){
+        if(errors===maxErrors){
           g.ended=true;
           g.status.classList.add('is-failed');
           ingredientButtons.forEach(button=>button.disabled=true);
@@ -918,7 +966,7 @@ function startAlchemy(){
           if(mixButton)mixButton.disabled=true;
           return;
         }
-        g.status.textContent='Mélange instable : il reste '+(3-errors)+' erreur'+(3-errors>1?'s':'')+' possible'+(3-errors>1?'s':'')+'.';
+        g.status.textContent='Mélange instable : il reste '+(maxErrors-errors)+' erreur'+(maxErrors-errors>1?'s':'')+' possible'+(maxErrors-errors>1?'s':'')+'.';
       }
       alchemyTimer=setTimeout(()=>{
         alchemyTimer=null;
@@ -931,7 +979,9 @@ function startAlchemy(){
   showRecipe();
 }
 
-[startRunes,startMemory,startLock,startMines,startAlchemy].forEach(fn=>fn());
+const trialStarters=[startRunes,startMemory,startLock,startMines,startAlchemy];
+trialStarters.forEach(fn=>fn());
+renderTrialMastery();
 const picker=$('#game-picker');
 let selectedGame=0;
 const trialSubtitles=['Ordre & observation','Mémoire & association','Logique des cristaux','Exploration & prudence','Recettes & alchimie'];
@@ -944,6 +994,7 @@ definitions.forEach((entry,index)=>{
   picker.append(control);
 });
 function selectGame(index){
+  if(mini[index].mode!==state.difficulty){trialStarters[index]();renderTrialMastery();}
   selectedGame=index;
   mini.forEach((item,i)=>item.card.classList.toggle('mobile-active',i===index));
   $$('.game-choice',picker).forEach((b,i)=>{
@@ -952,6 +1003,27 @@ function selectGame(index){
   });
 }
 selectGame(0);
+const difficultyButtons=$('#difficulty-options [data-difficulty]');
+function renderDifficultyChoice(){
+  for(const control of difficultyButtons){
+    const active=control.dataset.difficulty===state.difficulty;
+    control.classList.toggle('is-active',active);
+    control.setAttribute('aria-pressed',String(active));
+  }
+  const mode=DIFFICULTIES.find(d=>d.id===state.difficulty);
+  $('#difficulty-hint').textContent=mode.description;
+}
+difficultyButtons.forEach(control=>control.addEventListener('click',()=>{
+  const next=validDifficulty(control.dataset.difficulty);
+  if(next===state.difficulty)return;
+  state.difficulty=next;
+  trialStarters[selectedGame]();
+  renderDifficultyChoice();
+  renderTrialMastery();
+  save();
+  notify('Mode '+DIFFICULTIES.find(d=>d.id===next).label+' · épreuve relancée.');
+}));
+renderDifficultyChoice();
 function makeCard(c,isShiny=false,locked=false){
   const chromatic=!!isShiny&&!locked;
   const preview=locked&&(c.id===1||(previewArt&&hasApprovedArt(c.id)));
