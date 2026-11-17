@@ -25,6 +25,6 @@ for(const fragment of [
 ]) assert.ok(game.includes(fragment),'Missing gameplay marker: '+fragment);
 assert.ok(!game.includes('tileGrid(g.board'),'No generic HTML grid in redesigned mini-game');
 assert.ok(html.includes('src/mines.css?v=fouilles-1.7.2'),'New excavation CSS bypasses cache');
-assert.ok(html.includes('src/main.js?v=records-clean-1.7.3'),'New excavation runtime bypasses cache');
+assert.ok(html.includes('src/main.js?v=defis-1.7.3'),'New excavation runtime bypasses cache');
 assert.ok(main.includes("from './excavation-sites.js'"),'Fair site generator is imported');
 console.log('AETHERIUM Fouilles interdites : HD, sites variés et sonde de sécurité OK');
