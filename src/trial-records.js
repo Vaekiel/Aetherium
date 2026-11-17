@@ -5,9 +5,9 @@ export const TRIAL_RECORD_MODES=Object.freeze(['initiation','aventure','maitrise
 export const TRIAL_RECORD_METRICS=Object.freeze([
  Object.freeze({key:'errors',label:'Erreurs',unit:'erreur'}),
  Object.freeze({key:'moves',label:'Coups',unit:'coup'}),
- Object.freeze({key:'attempts',label:'Essais ratés',unit:'essai raté'}),
+ Object.freeze({key:'attempts',label:'Essais ratés',unit:'essai raté',plural:'essais ratés'}),
  Object.freeze({key:'hints',label:'Sondes utilisées',unit:'sonde'}),
- Object.freeze({key:'errors',label:'Mélanges ratés',unit:'mélange raté'})
+ Object.freeze({key:'errors',label:'Mélanges ratés',unit:'mélange raté',plural:'mélanges ratés'})
 ]);
 const MAX_WINS=999999;
 const validInt=(value,max=MAX_WINS)=>Number.isSafeInteger(value)&&value>=0&&value<=max;
@@ -60,5 +60,5 @@ export function recordPersonalBest(raw,index,difficulty,score,performance={}){
 export function recordMetricLabel(index,value){
  const definition=TRIAL_RECORD_METRICS[index];
  if(!definition||value===null||!validInt(value))return '—';
- return value+' '+definition.unit+(value>1?'s':'');
+ return value+' '+(value>1?(definition.plural??definition.unit+'s'):definition.unit);
 }
