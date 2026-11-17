@@ -1800,15 +1800,29 @@ function clearBoosterScene(){
   boosterSummary.hidden=true;
   boosterSummary.replaceChildren();
 }
-/** The face-up card is decorative: tapping it should not leave the reveal sequence. */
+/** The face-up card is decorative: tapping it should not leave the reveal sequence.
+ * Loading the artwork eagerly is important: on Android WebView a lazy image
+ * inside an initially hidden, flipping card can remain a blank rectangle. */
 function boosterCardArtwork(item){
   const buttonCard=makeCard(item.card,item.shiny);
   const artwork=el('div',buttonCard.className);
   artwork.style.cssText=buttonCard.style.cssText;
   while(buttonCard.firstChild)artwork.append(buttonCard.firstChild);
-  // Booster reveals are full-size views, not enlarged thumbnails.
+  // Use the full-size art, not the Codex thumbnail, and request it before
+  // the player turns the face up. Keep applyCardIllustration's error fallback.
   const revealedImage=artwork.querySelector('img');
-  if(revealedImage)applyCardIllustration(revealedImage,item.card,{shiny:item.shiny,size:'full'});
+  if(revealedImage){
+    revealedImage.loading='eager';
+    revealedImage.decoding='sync';
+    revealedImage.fetchPriority='high';
+    applyCardIllustration(revealedImage,item.card,{shiny:item.shiny,size:'full'});
+    // The shared helper normally decodes asynchronously. Only the booster
+    // preview needs synchronous paint immediately after reveal.
+    revealedImage.loading='eager';
+    revealedImage.decoding='sync';
+    revealedImage.fetchPriority='high';
+    revealedImage.alt='Illustration de '+item.card.name;
+  }
   return artwork;
 }
 function showBoosterCard(index,focus=true){
