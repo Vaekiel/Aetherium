@@ -29,34 +29,34 @@ for(let index=0;index<5;index++){
  let records=emptyTrialRecords();
  const aggregate={wins:0,bestScore:0,bestMode:null};
  records=recordPersonalBest(records,index,'initiation',scoreFor(index,0),{[relevant[index]]:0});
- assert.deepEqual(trialChallengesFor(index,aggregate,records).map(m=>m.earned),[true,false,false],
+ assert.deepEqual(trialChallengesFor(index,aggregate,records[index]).map(m=>m.earned),[true,false,false],
   'Initiation cannot unlock advanced medals even with a flawless score');
  records=recordPersonalBest(records,index,'aventure',scoreFor(index,silverLimit+1),
   {[relevant[index]]:silverLimit+1});
- assert.deepEqual(trialChallengesFor(index,aggregate,records).map(m=>m.earned),[true,false,false],
+ assert.deepEqual(trialChallengesFor(index,aggregate,records[index]).map(m=>m.earned),[true,false,false],
   'A performance above the Silver threshold must not unlock it');
  records=recordPersonalBest(records,index,'aventure',scoreFor(index,silverLimit),
   {[relevant[index]]:silverLimit});
- assert.deepEqual(trialChallengesFor(index,aggregate,records).map(m=>m.earned),[true,true,false],
+ assert.deepEqual(trialChallengesFor(index,aggregate,records[index]).map(m=>m.earned),[true,true,false],
   'Silver unlocks precisely at the target threshold');
  records=recordPersonalBest(records,index,'maitrise',scoreFor(index,goldLimit+1),
   {[relevant[index]]:goldLimit+1});
- assert.deepEqual(trialChallengesFor(index,aggregate,records).map(m=>m.earned),[true,true,false],
+ assert.deepEqual(trialChallengesFor(index,aggregate,records[index]).map(m=>m.earned),[true,true,false],
   'An unqualified Mastery performance cannot unlock Gold');
  records=recordPersonalBest(records,index,'maitrise',scoreFor(index,goldLimit),
   {[relevant[index]]:goldLimit});
- assert.deepEqual(trialChallengesFor(index,aggregate,records).map(m=>m.earned),[true,true,true],
+ assert.deepEqual(trialChallengesFor(index,aggregate,records[index]).map(m=>m.earned),[true,true,true],
   'Gold can be earned in a qualifying Mastery game');
- assert.equal(trialChallengeCount(index,aggregate,records),3);
+ assert.equal(trialChallengeCount(index,aggregate,records[index]),3);
  const preserved=JSON.stringify(records);
- const medal1=trialChallengesFor(index,aggregate,records);
- const medal2=trialChallengesFor(index,aggregate,records);
+ const medal1=trialChallengesFor(index,aggregate,records[index]);
+ const medal2=trialChallengesFor(index,aggregate,records[index]);
  assert.deepEqual(medal1,medal2,'Medals are deterministic on each re-render');
  assert.equal(JSON.stringify(records),preserved,'Reading medals must never mutate saves');
  const masteryOnly=emptyTrialRecords();
  const justGold=recordPersonalBest(masteryOnly,index,'maitrise',scoreFor(index,goldLimit),
   {[relevant[index]]:goldLimit});
- assert.deepEqual(trialChallengesFor(index,{wins:0},justGold).map(m=>m.earned),
+ assert.deepEqual(trialChallengesFor(index,{wins:0},justGold[index]).map(m=>m.earned),
   [true,true,true],'A hard Gold result should also satisfy easier medal tiers');
 }
 assert.deepEqual(trialChallengesFor(-1,{},{}),[]);
