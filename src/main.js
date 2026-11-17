@@ -2167,11 +2167,11 @@ backupFile.addEventListener('change',async()=>{
     const parsed=await decodeBackup(await file.text(),CARDS.map(card=>card.id));
     const {stats,createdAt}=parsed;
     const date=new Date(createdAt).toLocaleString('fr-FR');
-    const message='Sauvegarde du '+date+'\\n\\n'+
-      stats.cards+' cartes · '+stats.chromatic+' Chromatiques\\n'+
-      stats.crowns+' Couronnes · '+stats.shards+' Éclats\\n'+
-      stats.opened+' boosters ouverts\\n\\n'+
-      'Remplacer la progression de ce navigateur par cette sauvegarde ?\\n'+
+    const message='Sauvegarde du '+date+'\n\n'+
+      stats.cards+' cartes · '+stats.chromatic+' Chromatiques\n'+
+      stats.crowns+' Couronnes · '+stats.shards+' Éclats\n'+
+      stats.opened+' boosters ouverts\n\n'+
+      'Remplacer la progression de ce navigateur par cette sauvegarde ?\n'+
       'La progression actuelle sera conservée localement pour annuler cet import.';
     if(!window.confirm(message)){
       backupMessage('Importation annulée : ta progression n’a pas été modifiée.');
