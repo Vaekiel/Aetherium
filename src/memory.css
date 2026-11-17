@@ -123,3 +123,87 @@
 .memory-front{border:0;box-shadow:0 8px 14px #090e20b8}
 .memory-front::before{display:none}
 .memory-front-art{inset:0}
+
+
+/* AETHERIUM 1.7.2 · Memory rituals and gradually revealed fresco. */
+.memory-ritual{
+ display:flex;align-items:center;gap:10px;min-width:0;padding:10px 12px;margin:0 0 9px;
+ border:1px solid #97829f85;border-radius:3px;
+ background:linear-gradient(128deg,#302b4c,#1d2843);
+ box-shadow:inset 0 1px #ffffff12;
+}
+.memory-ritual-glyph{
+ flex:none;display:grid;place-items:center;width:33px;height:33px;
+ background:radial-gradient(circle,#484367,#292941);
+ border:1px solid #afa0c7;border-radius:50%;
+ color:#e4d3ef;text-shadow:0 0 11px #9fc8ea;
+ font:25px/1 Georgia,serif;
+}
+.memory-ritual-copy{display:flex;flex-direction:column;gap:3px;min-width:0}
+.memory-ritual-title{color:#f3dec0;font:small-caps 16px/1.2 Georgia,serif}
+.memory-ritual-rule{color:#d3c9dc;font:12px/1.45 Georgia,serif}
+.memory-fresco{
+ position:relative;overflow:hidden;padding:10px 11px 11px;margin:0 0 11px;
+ border:1px solid #816f8694;border-radius:3px;
+ background:linear-gradient(145deg,#22233b,#131a2d);
+ box-shadow:inset 0 0 0 1px #d3ad8b10,0 3px 10px #050a1852;
+}
+.memory-fresco-header{
+ display:flex;justify-content:space-between;align-items:center;gap:10px;
+ margin:0 0 7px;
+}
+.memory-fresco-title{font:small-caps 15px/1.2 Georgia,serif;color:#f3d9b5}
+.memory-fresco-count{font:11px/1.2 Georgia,serif;color:#bdd9df;text-align:right}
+.memory-fresco-grid{
+ display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:3px;
+ border:1px solid #977b8a7a;background:#0c1326;padding:3px;
+}
+.memory-fresco-piece{
+ position:relative;display:block;min-width:0;aspect-ratio:1.6/1;
+ overflow:hidden;border:1px solid #6d617e;
+ background:radial-gradient(circle at 50% 45%,#39304e,#151c30 75%);
+}
+.memory-fresco-piece::before{
+ content:'';position:absolute;inset:0;
+ background-image:url('../assets/scenery/dusk-horizon.webp');
+ background-size:400% 200%;background-repeat:no-repeat;
+ background-position:var(--fresco-x) var(--fresco-y);
+ opacity:0;transition:opacity .38s ease-out;
+}
+.memory-fresco-piece::after{
+ content:'✦';position:absolute;inset:0;display:grid;place-items:center;
+ color:#9e8ea8;font:15px Georgia,serif;text-shadow:0 1px #101124;
+ transition:opacity .25s ease;
+}
+.memory-fresco-piece:nth-child(4n + 1){--fresco-x:0%}
+.memory-fresco-piece:nth-child(4n + 2){--fresco-x:33.333333%}
+.memory-fresco-piece:nth-child(4n + 3){--fresco-x:66.666667%}
+.memory-fresco-piece:nth-child(4n + 4){--fresco-x:100%}
+.memory-fresco-piece:nth-child(-n + 4){--fresco-y:0%}
+.memory-fresco-piece:nth-child(n + 5){--fresco-y:100%}
+.memory-fresco-piece.is-revealed{border-color:#a3b5c1}
+.memory-fresco-piece.is-revealed::before{opacity:1}
+.memory-fresco-piece.is-revealed::after{opacity:0}
+.memory-fresco.is-restored .memory-fresco-grid{
+ border-color:#ddc79c;box-shadow:0 0 13px #7eced43e;
+}
+.memory-fresco.is-restored .memory-fresco-count{color:#afead2}
+.memory-board.is-previewing .memory-tile .memory-shell{
+ transform:rotateY(180deg);
+}
+.memory-board.is-previewing .memory-tile{cursor:wait}
+.memory-board.is-previewing .memory-tile:hover{filter:none;transform:none}
+@media(max-width:850px){
+ .memory-ritual{gap:8px;padding:9px 10px}
+ .memory-ritual-glyph{width:29px;height:29px;font-size:21px}
+ .memory-ritual-title{font-size:15px}
+ .memory-ritual-rule{font-size:11px}
+ .memory-fresco{padding:8px;margin-bottom:10px}
+ .memory-fresco-title{font-size:14px}
+ .memory-fresco-count{font-size:10px}
+ .memory-fresco-grid{gap:2px;padding:2px}
+ .memory-fresco-piece::after{font-size:12px}
+}
+@media(prefers-reduced-motion:reduce){
+ .memory-fresco-piece::before,.memory-fresco-piece::after{transition:none!important}
+}
