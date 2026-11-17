@@ -2,7 +2,7 @@ import {CARDS,RARITIES,PACK_PRICE,drawPack} from './data.js';
 import {CRAFT_COSTS,getCraftCost,craftCard} from './crafting.js';
 import {applyCardIllustration,hasApprovedArt,CARD_ART} from './card-art.js';
 import {CODEX_CHAPTERS,chapterFor,chapterCards,codexProgress,filterCodex} from './codex.js';
-import {DIFFICULTIES,validDifficulty,trialRules,trialScore,trialReward,emptyTrialStats,sanitizedTrialStats,recordTrialWin,masteryLevel} from './trial-progress.js';
+import {DIFFICULTIES,validDifficulty,trialRules,trialObjective,trialScore,trialReward,emptyTrialStats,sanitizedTrialStats,recordTrialWin,masteryLevel} from './trial-progress.js';
 
 const $=(q,root=document)=>root.querySelector(q);
 const $$=(q,root=document)=>Array.from(root.querySelectorAll(q));
@@ -303,19 +303,21 @@ const definitions=[
 const mini=[];
 definitions.forEach((d,i)=>{
   const card=el('article','game');
+  const descriptionEl=el('p','trial-objective',trialObjective(i,state.difficulty));
   const rewardEl=el('div','reward','♛ +'+d.reward+' Couronnes');
   const masteryEl=el('div','trial-mastery');
   const status=el('div','status');status.setAttribute('aria-live','polite');
   const board=el('div','board'),actions=el('div','small-actions');
   card.append(el('h3','',String(i+1).padStart(2,'0')+' · '+d.name),
-    el('p','',d.description),rewardEl,masteryEl,board,status,actions);
+    descriptionEl,rewardEl,masteryEl,board,status,actions);
   $('#games').append(card);
-  mini.push({card,board,status,actions,reward:d.reward,rewardEl,masteryEl,mode:state.difficulty,ended:false});
+  mini.push({card,board,status,actions,reward:d.reward,rewardEl,masteryEl,descriptionEl,mode:state.difficulty,ended:false});
 });
 function renderTrialMastery(){
   const stats=sanitizedTrialStats(state.trialStats);
   mini.forEach((g,index)=>{
     const entry=stats[index],level=masteryLevel(entry.wins);
+    g.descriptionEl.textContent=trialObjective(index,g.mode);
     g.masteryEl.textContent='✧ '+level.title+' · '+entry.wins+' victoire'+(entry.wins>1?'s':'')+
       (entry.wins?' · record '+entry.bestScore+'/100':' · première victoire à découvrir');
     g.masteryEl.setAttribute('aria-label','Maîtrise de '+definitions[index].name+' : '+level.title+
