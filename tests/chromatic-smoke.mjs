@@ -32,30 +32,29 @@ assert.ok(main.includes('item.shiny?950:420'),'Reveals remain player-controlled 
 assert.ok(main.includes('drawSummary.shinyCount+\' Chromatique(s)\''),'Booster recap announces Chromatiques');
 assert.ok(html.includes('data-finish="chromatic"')&&html.includes('data-finish="normal"'),'Variant filter options exist');
 assert.ok(html.includes('Chromatique : 3 % par carte'),'Booster odds are visible to players');
-assert.ok(html.includes('src/chromatic.css?v=chromatiques-5'),'Enhanced foil CSS is cache-busted');
-assert.ok(html.includes('src/main.js?v=arcanes-1.6.0.2'),'Current Codex JS is cache-busted');
+assert.ok(html.includes('src/chromatic.css?v=chromatiques-6'),'Enhanced foil CSS is cache-busted');
+assert.ok(html.includes('src/main.js?v=arcanes-1.6.0.3'),'Current Codex JS is cache-busted');
 assert.ok(css.includes('.card.is-chromatic')&&css.includes('var(--chrom-edge)'),'Static foil border is present');
 assert.ok(css.includes('.inspector-art-shell.is-chromatic'),'Full inspector displays prismatic art frame');
-assert.ok(html.includes('id="chromatic-showcase"'),'Codex keeps an expandable comparison of Chromatiques');
-assert.ok(html.includes('id="chromatic-example-normal"')&&html.includes('id="chromatic-example-special"'),'Comparison uses two examples');
-assert.ok(html.includes('elle ne débloque aucune carte'),'Comparison is visibly marked as preview, without rewards');
-assert.ok(main.includes("const comparisonCard=CARDS[0]"),'Comparison references one canonical card');
-assert.ok(main.includes("applyCardIllustration($('#chromatic-example-normal'),comparisonCard,{shiny:false,size:'full'})"),'Normal sample uses the approved original art');
-assert.ok(main.includes("applyCardIllustration($('#chromatic-example-special'),comparisonCard,{shiny:false,size:'full'})"),'Chromatic sample uses that exact same art, not a different artwork');
+assert.ok(!html.includes('id="chromatic-showcase"')&&!html.includes('Normale ou Chromatique ?'),
+  'The separate Codex Chromatic comparison box is removed');
+assert.ok(!html.includes('id="chromatic-example-normal"')&&!html.includes('id="chromatic-example-special"'),
+  'Old comparison images are removed');
+assert.ok(!main.includes('comparisonCard')&&!main.includes('chromatic-example-'),
+  'Runtime no longer loads detached comparison images');
+assert.ok(!css.includes('chromatic-showcase'),'Orphaned comparison CSS removed');
 assert.ok(main.includes("const previewChromatic=!!shiny&&!ownedChromatic&&!!chromaticPreview;"),'Non-owned Chromatiques can be previewed without being granted');
 assert.ok(main.includes("selectedCard={id:c.id,shiny:chromatic,preview:previewChromatic};"),'Preview status is tracked without editing the save');
 assert.ok(main.includes('✧ Prévisualiser en Chromatique'),'Inspector lets users compare their chosen card');
 assert.ok(main.includes('APERÇU · NON POSSÉDÉ'),'Inspector marks unowned chromatic finish');
 assert.ok(main.includes("const art=el('span','chromatic-art-window')"),'Owned Chromatic thumbnails receive a separate art overlay');
 assert.ok(css.includes('.card.is-chromatic .chromatic-art-window:after'),'Prismatic foil overlays the illustration');
-assert.ok(css.includes('.chromatic-showcase-card.is-chromatic .chromatic-showcase-art'),'Preview has a strong Chromatic frame');
 assert.ok(css.includes('border-width:3px!important'),'Chromatic thumbnails are distinct even when still');
 assert.ok(css.includes('@media(max-width:850px)'),'Comparison stays responsive on phones');
 assert.ok(css.includes('@keyframes chromatic-rim-orbit'),'Chromatique has a visibly rotating border');
 assert.ok(css.includes('animation:chromatic-rim-orbit 5.5s linear infinite'),'Prismatic frame movement is continuous');
 assert.ok(css.includes('.chromatic-art-window::before'),'Chromatic collection and booster frames have an animated rim');
 assert.ok(css.includes('.inspector-art-shell.is-chromatic::before'),'Full-size inspector has an animated rim');
-assert.ok(css.includes('.chromatic-showcase-art::before'),'Comparison example has an animated rim');
 assert.ok(css.includes('animation:none!important;'),'Reduced-motion keeps a static chromatic border');
 assert.ok(main.includes("front.append(boosterCardArtwork(item))"),'The booster face-up view uses the same Chromatique artwork and frame');
 assert.ok(css.includes('.booster-single .pull-front .card.is-chromatic .chromatic-art-window'),'Revealed booster card has its own visible prismatic rim');
