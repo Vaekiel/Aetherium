@@ -1005,7 +1005,7 @@ function selectGame(index){
   });
 }
 selectGame(0);
-const difficultyButtons=$('#difficulty-options [data-difficulty]');
+const difficultyButtons=$$('#difficulty-options [data-difficulty]');
 function renderDifficultyChoice(){
   for(const control of difficultyButtons){
     const active=control.dataset.difficulty===state.difficulty;
