@@ -8,6 +8,7 @@ import {DIFFICULTIES,validDifficulty,trialRules,trialObjective,trialScore,trialR
 import {TRIAL_RECORD_MODES,TRIAL_RECORD_METRICS,sanitizedTrialRecords,recordPersonalBest,recordMetricLabel} from './trial-records.js';
 import {trialChallengesFor} from './trial-challenges.js';
 import {TRIAL_TITLES,earnedTrialTitles,validEquippedTitle,toggleEquippedTitle} from './trial-titles.js';
+import {EXPEDITION_ROUTES,emptyExpedition,sanitizeExpedition,startExpedition,abandonExpedition,armExpedition,expeditionVictory,expeditionSummary} from './expeditions.js';
 import {nextRuneRitual,runeExpectedAt} from './rune-rituals.js';
 import {makeEtherPuzzle,etherRule,evaluateEtherAttempt,etherAttemptFeedback} from './ether-lock-puzzles.js';
 import {nextMemoryRitual,buildMemoryDeck} from './memory-rituals.js';
@@ -95,12 +96,13 @@ mobileView.addEventListener('change',syncMobileSheets);
 // approved Collection mockup. These are *visual placeholders*, not final art
 // for the corresponding 24 catalogue entries. All gameplay/save data is unchanged.
 const SAVE='aetherium-save-v1';
-const fresh=()=>({coins:300,dust:0,owned:{},shiny:{},wins:0,earned:0,opened:0,goalId:null,difficulty:'aventure',trialStats:[],collectionMilestones:{},alchemyKnown:[],trialRecords:[],titleId:null});
-function load(){try{const raw=JSON.parse(localStorage.getItem(SAVE));if(!raw||typeof raw!=='object')return fresh();const s=fresh();for(const field of ['coins','dust','wins','earned','opened'])if(Number.isSafeInteger(raw[field])&&raw[field]>=0&&raw[field]<1e9)s[field]=raw[field];for(const c of CARDS){const n=raw.owned?.[c.id];if(Number.isSafeInteger(n)&&n>0&&n<1e6)s.owned[c.id]=n;if(raw.shiny?.[c.id]===true&&s.owned[c.id])s.shiny[c.id]=true}if(Number.isSafeInteger(raw.goalId)&&CARDS.some(c=>c.id===raw.goalId)&&!s.owned[raw.goalId])s.goalId=raw.goalId;if(['initiation','aventure','maitrise'].includes(raw.difficulty))s.difficulty=raw.difficulty;if(Array.isArray(raw.trialStats))s.trialStats=raw.trialStats;if(Array.isArray(raw.trialRecords))s.trialRecords=sanitizedTrialRecords(raw.trialRecords);s.collectionMilestones=sanitizeMilestoneClaims(raw.collectionMilestones);if(Array.isArray(raw.alchemyKnown))s.alchemyKnown=sanitizeAlchemyKnown(raw.alchemyKnown);if(Number.isInteger(raw.titleId)&&raw.titleId>=0&&raw.titleId<5)s.titleId=raw.titleId;return s}catch{return fresh()}}
+const fresh=()=>({coins:300,dust:0,owned:{},shiny:{},wins:0,earned:0,opened:0,goalId:null,difficulty:'aventure',trialStats:[],collectionMilestones:{},alchemyKnown:[],trialRecords:[],titleId:null,expedition:emptyExpedition()});
+function load(){try{const raw=JSON.parse(localStorage.getItem(SAVE));if(!raw||typeof raw!=='object')return fresh();const s=fresh();for(const field of ['coins','dust','wins','earned','opened'])if(Number.isSafeInteger(raw[field])&&raw[field]>=0&&raw[field]<1e9)s[field]=raw[field];for(const c of CARDS){const n=raw.owned?.[c.id];if(Number.isSafeInteger(n)&&n>0&&n<1e6)s.owned[c.id]=n;if(raw.shiny?.[c.id]===true&&s.owned[c.id])s.shiny[c.id]=true}if(Number.isSafeInteger(raw.goalId)&&CARDS.some(c=>c.id===raw.goalId)&&!s.owned[raw.goalId])s.goalId=raw.goalId;if(['initiation','aventure','maitrise'].includes(raw.difficulty))s.difficulty=raw.difficulty;if(Array.isArray(raw.trialStats))s.trialStats=raw.trialStats;if(Array.isArray(raw.trialRecords))s.trialRecords=sanitizedTrialRecords(raw.trialRecords);s.collectionMilestones=sanitizeMilestoneClaims(raw.collectionMilestones);if(Array.isArray(raw.alchemyKnown))s.alchemyKnown=sanitizeAlchemyKnown(raw.alchemyKnown);if(Number.isInteger(raw.titleId)&&raw.titleId>=0&&raw.titleId<5)s.titleId=raw.titleId;s.expedition=sanitizeExpedition(raw.expedition);return s}catch{return fresh()}}
 let state=load();
 state.trialStats=sanitizedTrialStats(state.trialStats);
 state.trialRecords=sanitizedTrialRecords(state.trialRecords);
 state.titleId=validEquippedTitle(state.titleId,state.trialStats,state.trialRecords);
+state.expedition=sanitizeExpedition(state.expedition);
 let boosterBusy=false;
 function save(){try{localStorage.setItem(SAVE,JSON.stringify(state))}catch{notify('Sauvegarde indisponible dans ce navigateur.')}}
 let toastTimer;
@@ -401,9 +403,12 @@ function complete(i,description,performance={}){
   const earned=trialReward(g.reward,g.mode,score);
   state.trialStats=recordTrialWin(state.trialStats,i,g.mode,score);
   state.trialRecords=recordPersonalBest(state.trialRecords,i,g.mode,score,performance);
+  const expeditionResult=expeditionVictory(state.expedition,i,g.mode);
+  if(expeditionResult.advanced)state.expedition=expeditionResult.state;
   g.status.textContent='✓ '+description+' · '+score+'/100 · +'+earned+' Couronnes';
   grant(earned);
   renderTrialMastery();
+  if(expeditionResult.advanced)renderExpedition();
 }
 const runeNames=['Soleil','Lune','Constellations','Œil','Spirale','Arbre','Rose des vents','Étoiles','Montagne','Vagues','Sablier','Flamme'];
 let previousRuneRitual=null;
@@ -1273,6 +1278,99 @@ difficultyButtons.forEach(control=>control.addEventListener('click',()=>{
   notify('Mode '+DIFFICULTIES.find(d=>d.id===next).label+' · épreuve relancée.');
 }));
 renderDifficultyChoice();
+function renderExpedition(){
+  const view=expeditionSummary(state.expedition);
+  $('#expedition-counter').textContent=view.discovered+'/'+view.total+' fragments';
+  const host=$('#expedition-content');
+  host.replaceChildren();
+  const lead=el('div','expedition-lead');
+  const leadText=el('div','expedition-lead-text');
+  leadText.append(el('span','expedition-kicker','CHAPITRE I · LE SEUIL DES VERRIERS'),
+    el('h3','expedition-title','Le Seuil des Verriers'));
+  lead.append(leadText);
+  const discoveries=el('span','expedition-discoveries',
+    view.discovered+' / '+view.total+' chemins révélés');
+  lead.append(discoveries);
+  host.append(lead);
+  const startRoute=routeId=>{
+    state.expedition=startExpedition(state.expedition,routeId,state.difficulty);
+    save();
+    renderExpedition();
+  };
+  const chooser=(heading)=>{
+    if(heading)host.append(el('p','expedition-description',heading));
+    const choices=el('div','expedition-choices');
+    EXPEDITION_ROUTES.forEach(route=>{
+      const done=view.current.completedRoutes.includes(route.id);
+      const pick=button('',()=>startRoute(route.id),'expedition-choice'+(done?' is-discovered':''));
+      pick.append(el('span','expedition-choice-symbol',route.symbol));
+      const copy=el('span','expedition-choice-copy');
+      copy.append(el('strong','',route.name),el('small','',route.hint));
+      pick.append(copy,el('span','expedition-choice-status',done?'✓':'›'));
+      pick.setAttribute('aria-label',route.name+', '+route.hint+(done?', parcours déjà découvert':''));
+      choices.append(pick);
+    });
+    host.append(choices);
+  };
+  if(!view.route){
+    chooser('Deux voies s’ouvrent dans les Marches de Verre. Choisis ton premier itinéraire.');
+    return;
+  }
+  if(view.complete){
+    host.append(el('p','expedition-chapter',view.route.symbol+' '+view.route.name+' · parcours achevé'),
+      el('h4','expedition-fragment','✦ '+view.route.fragment),
+      el('p','expedition-description',view.route.ending));
+    chooser('Un autre chemin reste à explorer, ou repars sur celui-ci.');
+    return;
+  }
+  const stage=view.stage,mode=DIFFICULTIES.find(d=>d.id===view.current.mode).label;
+  host.append(el('p','expedition-chapter',view.route.symbol+' '+view.route.name+
+    ' · '+mode+' · étape '+(view.current.step+1)+'/3'));
+  const progress=el('div','expedition-progress');
+  progress.setAttribute('role','list');
+  view.route.stages.forEach((item,index)=>{
+    const label=el('span','expedition-progress-step'+
+      (index<view.current.step?' is-done':index===view.current.step?' is-now':''),
+      index<view.current.step?'✓':String(index+1));
+    label.setAttribute('role','listitem');
+    label.setAttribute('aria-label',item.title+(index<view.current.step?' terminée':
+      index===view.current.step?' en cours':' à venir'));
+    progress.append(label);
+  });
+  host.append(progress);
+  if(view.current.step===0){
+    host.append(el('p','expedition-description',view.route.prologue));
+  }else{
+    host.append(el('p','expedition-after',view.route.stages[view.current.step-1].after));
+  }
+  host.append(el('h4','expedition-stage-title',stage.title),
+    el('p','expedition-description',stage.text));
+  const controls=el('div','expedition-actions');
+  const play=button(view.current.armed?'↻ Rejouer l’étape':'✧ Rejoindre l’épreuve',()=>{
+    // The route remembers its starting difficulty; changing the global
+    // mode cannot silently count an easier victory for this expedition.
+    if(state.difficulty!==view.current.mode){
+      state.difficulty=view.current.mode;
+      renderDifficultyChoice();
+    }
+    state.expedition=armExpedition(state.expedition);
+    save();
+    trialStarters[stage.game]();
+    selectGame(stage.game);
+    renderTrialMastery();
+    renderExpedition();
+    const target=mini[stage.game].card;
+    if(mobileView.matches)target.scrollIntoView({behavior:'smooth',block:'start'});
+    target.querySelector('button:not([disabled])')?.focus({preventScroll:true});
+  },'primary expedition-continue');
+  controls.append(play,button('Quitter le parcours',()=>{
+    state.expedition=abandonExpedition(state.expedition);
+    save();
+    renderExpedition();
+  },'secondary expedition-leave'));
+  host.append(controls);
+}
+renderExpedition();
 function makeCard(c,isShiny=false,locked=false){
   const chromatic=!!isShiny&&!locked;
   const preview=locked&&(c.id===1||(previewArt&&hasApprovedArt(c.id)));
@@ -1886,7 +1984,7 @@ function renderAchievements(){
   }
   renderHonorifics();
 }
-$('#reset').addEventListener('click',()=>{if(!confirm('Effacer définitivement les cartes et la progression sauvegardées sur cet appareil ?'))return;clearBoosterScene();state=fresh();state.trialStats=sanitizedTrialStats(state.trialStats);trialStarters.forEach(start=>start());renderTrialMastery();renderDifficultyChoice();selectedCard=null;forgeSelectedId=null;forgeFilter='all';$('#atelier-filter').value='all';$('#atelier-result').hidden=true;$('#inspector').replaceChildren(el('p','muted','Sélectionne une carte découverte pour l’admirer.'));$('#pulls').replaceChildren();$('#pack-title').textContent='Les archives attendent leur voyageur.';$('#pack-msg').textContent='Gagne des Couronnes en jouant pour ouvrir des boosters.';update();renderCollection();notify('Progression réinitialisée.')});
+$('#reset').addEventListener('click',()=>{if(!confirm('Effacer définitivement les cartes et la progression sauvegardées sur cet appareil ?'))return;clearBoosterScene();state=fresh();state.trialStats=sanitizedTrialStats(state.trialStats);trialStarters.forEach(start=>start());renderTrialMastery();renderDifficultyChoice();renderExpedition();selectedCard=null;forgeSelectedId=null;forgeFilter='all';$('#atelier-filter').value='all';$('#atelier-result').hidden=true;$('#inspector').replaceChildren(el('p','muted','Sélectionne une carte découverte pour l’admirer.'));$('#pulls').replaceChildren();$('#pack-title').textContent='Les archives attendent leur voyageur.';$('#pack-msg').textContent='Gagne des Couronnes en jouant pour ouvrir des boosters.';update();renderCollection();notify('Progression réinitialisée.')});
 syncMobileSheets();
 update();
 navigate(APP_PAGES.includes(location.hash.slice(1))?location.hash.slice(1):'jouer');
