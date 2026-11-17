@@ -1,5 +1,6 @@
 import {CARDS,RARITIES,PACK_PRICE,drawPack} from './data.js';
 import {CRAFT_COSTS,getCraftCost,craftCard} from './crafting.js';
+import {duplicateDustReward} from './duplicate-rewards.js';
 import {applyCardIllustration,hasApprovedArt,CARD_ART} from './card-art.js';
 import {codexProgress,filterCodex} from './codex.js';
 import {sanitizeRecentFinds,recordRecentFind,buildLivingArchive} from './living-archives.js';
@@ -1931,7 +1932,7 @@ function showBoosterCard(index,focus=true){
   front.append(boosterCardArtwork(item));
   frame.append(back,front);
   const tag=el('div','pull-tag'+(item.shiny?' is-chromatic':item.isNew?' is-new':' is-duplicate'),
-    item.shiny?'✧ CARTE CHROMATIQUE':item.isNew?'✧ Nouvelle carte':'Doublon · +5 Éclats');
+    item.shiny?'✧ CARTE CHROMATIQUE':item.isNew?'✧ Nouvelle carte':'Doublon · +'+item.dustGain+' Éclats');
   tile.append(frame,tag);
   boosterGrid.append(tile);
   boosterProgressFill.style.width=(index/currentDraw.length*100)+'%';
@@ -1956,7 +1957,7 @@ function revealBoosterCard(){
   const item=currentDraw[currentIndex];
   $('#pack-title').textContent=item.card.name;
   $('#pack-msg').textContent=RARITIES[item.card.rarity].label+(item.shiny?' · ✧ CHROMATIQUE !':'')+
-    (item.isNew?' · Nouvelle carte':' · Doublon (+5 Éclats)');
+    (item.isNew?' · Nouvelle carte':' · Doublon (+'+item.dustGain+' Éclats)');
   nextPullButton.textContent=currentIndex===currentDraw.length-1?'Voir les cinq cartes':'Carte suivante ›';
   nextPullButton.hidden=false;
   // Keep the card on screen until the player chooses to continue.
@@ -1976,7 +1977,7 @@ function completeBoosterReveal(){
   boosterSummary.hidden=false;
   boosterSummary.replaceChildren(
     el('span','',drawSummary.newCount+' nouvelle(s)'),
-    el('span','',drawSummary.duplicates+' doublon(s) · +'+(drawSummary.duplicates*5)+' Éclats'),
+    el('span','',drawSummary.duplicates+' doublon(s) · +'+drawSummary.dustEarned+' Éclats'),
     el('span',drawSummary.shinyCount?'booster-star':'',drawSummary.shinyCount+' Chromatique(s)')
   );
   $('#pack-title').textContent='Archive ouverte · '+state.opened;
@@ -2011,11 +2012,12 @@ function openOriginesBooster(){
   const results=drawPack();
   state.coins-=PACK_PRICE;
   state.opened++;
-  let newCount=0,duplicates=0,shinyCount=0;
+  let newCount=0,duplicates=0,shinyCount=0,dustEarned=0;
   currentDraw=results.map(item=>{
     const card=CARDS[item.id-1];
     const isNew=!state.owned[card.id];
-    if(isNew)newCount++;else{duplicates++;state.dust+=5}
+    const dustGain=isNew?0:duplicateDustReward(card);
+    if(isNew)newCount++;else{duplicates++;state.dust+=dustGain;dustEarned+=dustGain}
     state.owned[card.id]=(state.owned[card.id]||0)+1;
     const firstChromatic=item.shiny&&!state.shiny[card.id];
     if(item.shiny){state.shiny[card.id]=true;shinyCount++}
@@ -2023,9 +2025,9 @@ function openOriginesBooster(){
       state.recentFinds=recordRecentFind(state.recentFinds,card.id,
         firstChromatic?'chromatic':'new');
     }
-    return {...item,card,isNew};
+    return {...item,card,isNew,dustGain};
   });
-  drawSummary={newCount,duplicates,shinyCount};
+  drawSummary={newCount,duplicates,shinyCount,dustEarned};
   update(); // Persists the purchase before any animation or navigation.
   boosterSummary.hidden=true;
   boosterSummary.replaceChildren();
