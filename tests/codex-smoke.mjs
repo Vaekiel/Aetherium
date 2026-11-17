@@ -72,7 +72,7 @@ assert.ok(html.includes('id="codex-milestones"')&&html.includes('id="codex-miles
 assert.ok(main.includes('renderCollectionMilestones(availableCards)'),
  'Season collections render actual unique-card milestones');
 assert.ok(html.includes('src/codex.css?v=seasons-1.7.1'),'Season CSS is cache-busted');
-assert.ok(html.includes('src/main.js?v=booster-reveal-fix-1821'),'Season JS is cache-busted');
+assert.ok(html.includes('src/main.js?v=ouverture-183'),'Season JS is cache-busted');
 assert.ok(main.includes("from './seasons.js'"),'Main imports season catalogue');
 assert.ok(main.includes("from './codex.js'"),'Main imports filtering and counts');
 assert.ok(main.includes('function renderCodexSeasons()'),'Season controls are wired');
