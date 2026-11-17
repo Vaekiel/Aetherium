@@ -9,6 +9,9 @@ const mobileView=window.matchMedia('(max-width:850px)');
 const sheetScrim=$('#sheet-scrim'), filterDrawer=$('#collection-filters'), inspectorShell=$('#inspector-shell');
 let sheetReturnFocus=null;
 function closeSheets(restoreFocus=true){
+  // A mobile Codex inspection lives in the browser top layer, not inside
+  // the animated page stacking context beneath the blurred scrim.
+  if(inspectorShell.matches(':popover-open'))inspectorShell.hidePopover();
   document.body.classList.remove('sheet-open');
   sheetScrim.hidden=true;
   filterDrawer.classList.remove('is-open');
@@ -32,6 +35,9 @@ function openSheet(kind){
   target.inert=false;
   target.setAttribute('aria-hidden','false');
   target.classList.add('is-open');
+  // Native popover top layer is always in front of backdrop-filter and the
+  // animated Codex page; its content never receives background blur.
+  if(kind==='inspector'&&typeof target.showPopover==='function')target.showPopover();
   sheetScrim.hidden=false;
   document.body.classList.add('sheet-open');
   if(kind==='filters')$('#filter-open').setAttribute('aria-expanded','true');
@@ -41,11 +47,13 @@ function syncMobileSheets(){
   closeSheets(false);
   for(const target of [filterDrawer,inspectorShell]){
     if(mobileView.matches){
+      if(target===inspectorShell)target.setAttribute('popover','manual');
       target.setAttribute('role','dialog');
       target.setAttribute('aria-modal','true');
       target.setAttribute('aria-hidden','true');
       target.inert=true;
     }else{
+      if(target===inspectorShell)target.removeAttribute('popover');
       target.removeAttribute('role');
       target.removeAttribute('aria-modal');
       target.removeAttribute('aria-hidden');
