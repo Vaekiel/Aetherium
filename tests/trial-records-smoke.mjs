@@ -9,6 +9,8 @@ const {TRIAL_RECORD_MODES,TRIAL_RECORD_METRICS,emptyTrialRecords,
 const {trialScore,trialReward,recordTrialWin,sanitizedTrialStats,masteryLevel,
  trialObjective,DIFFICULTIES}=await import('data:text/javascript;charset=utf-8,'+
  encodeURIComponent(read('src/trial-progress.js')));
+const {trialChallengesFor}=await import('data:text/javascript;charset=utf-8,'+
+ encodeURIComponent(read('src/trial-challenges.js')));
 assert.deepEqual(TRIAL_RECORD_MODES,['initiation','aventure','maitrise']);
 assert.deepEqual(TRIAL_RECORD_METRICS.map(x=>x.key),
  ['errors','moves','attempts','hints','errors']);
@@ -158,8 +160,8 @@ const renderCode=main.slice(main.indexOf('function renderTrialMastery(){'),
  main.indexOf('function complete(i,description,performance={}){'));
 assert.ok(renderCode.startsWith('function renderTrialMastery(){'));
 function dom(tag='',cls='',value=''){
- const classes=new Set(cls.split(/\\s+/).filter(Boolean));
- const n={tagName:tag,textContent:value,children:[],attrs:{},
+ const classes=new Set(cls.split(' ').filter(Boolean));
+ const n={tagName:tag,textContent:value,children:[],attrs:{},dataset:{},
   classList:{contains:token=>classes.has(token)},
   append(...items){n.children.push(...items)},
   replaceChildren(...items){n.children=[...items]},
@@ -178,8 +180,8 @@ const definitions=['Chemin runique','Mémoire ancienne','Serrure d’Éther',
  'Fouilles interdites','Laboratoire arcanique'].map(name=>({name}));
 const mini=Array.from({length:5},(_,index)=>{
  const recordsEl=dom('details','trial-records'),summary=dom('summary','trial-records-summary');
- summary.append(dom('span','trial-records-current'));
- recordsEl.append(summary,dom('tbody'));
+ summary.append(dom('span','trial-records-current'),dom('span','trial-challenges-summary'));
+ recordsEl.append(summary,dom('tbody'),dom('div','trial-challenges-list'));
  return {mode:index===0?'initiation':'aventure',reward:[35,45,50,65,60][index],
   descriptionEl:{textContent:''},rewardEl:{textContent:'',title:''},
   masteryEl:{textContent:'',attrs:{},setAttribute(name,value){this.attrs[name]=value}},
@@ -188,12 +190,25 @@ const mini=Array.from({length:5},(_,index)=>{
 const uiCtx={mini,definitions,state:{trialStats:[
  {wins:11,bestScore:100,bestMode:'maitrise'}],trialRecords:records},
   sanitizedTrialStats,sanitizedTrialRecords,masteryLevel,
-  TRIAL_RECORD_MODES,TRIAL_RECORD_METRICS,recordMetricLabel,
+  TRIAL_RECORD_MODES,TRIAL_RECORD_METRICS,recordMetricLabel,trialChallengesFor,
   DIFFICULTIES,trialObjective,trialReward,
   $:(selector,root)=>root.querySelector(selector),el:dom};
 runInNewContext(renderCode+'renderTrialMastery()',uiCtx);
 const firstRecords=mini[0].recordsEl.querySelector('tbody');
 assert.equal(firstRecords.children.length,3,'Each game renders one row per difficulty');
+assert.equal(mini[0].recordsEl.querySelector('.trial-challenges-summary').textContent,'✦ 1/3',
+ 'The existing legacy mastery counts for Bronze only');
+const firstChallenges=mini[0].recordsEl.querySelector('.trial-challenges-list');
+assert.equal(firstChallenges.children.length,3,'Every records panel renders the three medals');
+assert.equal(firstChallenges.children[0].children[1].textContent,'Bronze');
+assert.equal(firstChallenges.children[0].classList.contains('is-earned'),true);
+assert.equal(firstChallenges.children[1].classList.contains('is-earned'),false);
+assert.equal(firstChallenges.children[2].classList.contains('is-earned'),false);
+assert.equal(mini[2].recordsEl.querySelector('.trial-challenges-summary').textContent,'✦ 2/3',
+ 'An Aventure challenge may award the Silver tier');
+assert.equal(mini[3].recordsEl.querySelector('.trial-challenges-summary').textContent,'✦ 3/3',
+ 'Qualifying Mastery excavation grants all three medals');
+assert.equal(mini[3].recordsEl.querySelector('.trial-challenges-list').children[2].dataset.grade,'or');
 assert.equal(firstRecords.children[0].children[2].textContent,'100/100');
 assert.equal(firstRecords.children[0].children[3].textContent,'0 erreur');
 assert.equal(firstRecords.children[2].children[2].textContent,'85/100');
