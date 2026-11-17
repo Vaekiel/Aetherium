@@ -1,0 +1,72 @@
+import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
+import {runInNewContext} from 'node:vm';
+
+const read=p=>readFileSync(p,'utf8');
+const {
+ DIFFICULTIES,TRIAL_COUNT,validDifficulty,trialRules,trialScore,trialReward,
+ sanitizedTrialStats,recordTrialWin,masteryLevel
+}=await import('data:text/javascript;charset=utf-8,'+encodeURIComponent(read('src/trial-progress.js')));
+assert.deepEqual(DIFFICULTIES.map(m=>m.id),['initiation','aventure','maitrise']);
+assert.equal(TRIAL_COUNT,5);
+assert.equal(validDifficulty('nonsense'),'aventure');
+assert.deepEqual([0,1,2].map(i=>trialRules(0,DIFFICULTIES[i].id).maxErrors),[5,3,2],'Rune failure budgets vary');
+assert.deepEqual([0,1,2].map(i=>trialRules(1,DIFFICULTIES[i].id).maxMoves),[null,null,16],'Memory expert limited to 16 turns');
+assert.deepEqual([0,1,2].map(i=>trialRules(2,DIFFICULTIES[i].id).maxAttempts),[5,3,2],'Lock difficulty varies');
+assert.deepEqual([0,1,2].map(i=>trialRules(3,DIFFICULTIES[i].id).safeTarget),[8,10,12],'Excavation safe target varies');
+assert.deepEqual([0,1,2].map(i=>trialRules(4,DIFFICULTIES[i].id).maxErrors),[5,3,2],'Alchemy errors vary');
+assert.equal(trialScore(0,{errors:0}),100);
+assert.equal(trialScore(0,{errors:3}),46);
+assert.equal(trialScore(1,{moves:16}),68);
+assert.equal(trialScore(2,{attempts:2}),60);
+assert.equal(trialScore(3,{}),80);
+assert.equal(trialScore(4,{errors:1}),80);
+assert.equal(trialReward(35,'initiation',100),35,'Easy mode is not more profitable');
+assert.equal(trialReward(35,'aventure',100),40,'Flawless adventure offers small bonus');
+assert.equal(trialReward(35,'maitrise',100),50,'Expert gives maximum 15 bonus');
+assert.equal(trialReward(65,'maitrise',80),75,'Excavation bonus is moderated');
+assert.equal(sanitizedTrialStats({}).length,5);
+const bad=[{wins:-7,bestScore:120,bestMode:'unlocked'},{wins:3,bestScore:80,bestMode:'aventure'}];
+const clean=sanitizedTrialStats(bad);
+assert.deepEqual(clean[0],{wins:0,bestScore:0,bestMode:null});
+assert.deepEqual(clean[1],{wins:3,bestScore:80,bestMode:'aventure'});
+const first=recordTrialWin([],0,'initiation',93);
+assert.equal(first[0].wins,1);
+assert.equal(first[0].bestScore,93);
+const second=recordTrialWin(first,0,'maitrise',75);
+assert.equal(second[0].wins,2);
+assert.equal(second[0].bestScore,93);
+assert.equal(second[0].bestMode,'maitrise');
+assert.equal(first[0].wins,1,'Recording another victory does not mutate previous stats');
+assert.equal(masteryLevel(0).title,'À découvrir');
+assert.equal(masteryLevel(3).title,'Apprenti');
+assert.equal(masteryLevel(8).title,'Initié');
+assert.equal(masteryLevel(20).title,'Maître');
+
+const main=read('src/main.js'),html=read('index.html'),style=read('src/trial-progress.css');
+assert.ok(main.includes("from './trial-progress.js'"),'Game imports pure progression');
+assert.ok(main.includes("const SAVE='aetherium-save-v1'"),'Legacy save key preserved');
+assert.ok(main.includes('state.trialStats=recordTrialWin('),'Victory records stored');
+assert.ok(main.includes('grant(earned)'),'Actual bonus reaches saved wallet');
+assert.ok(main.includes('trialStarters[selectedGame]()'),'Switching mode restarts the active trial');
+assert.ok(main.includes('if(mini[index].mode!==state.difficulty)'),'Switching games applies new difficulty');
+for(const selector of ['difficulty-options','difficulty-hint','data-difficulty="initiation"',
+ 'data-difficulty="aventure"','data-difficulty="maitrise"'])
+  assert.ok(html.includes(selector),'Difficulty UI contains '+selector);
+assert.ok(html.includes('src/trial-progress.css?v=arcanes-1.6.0'),'Difficulty stylesheet versioned');
+assert.ok(html.includes('src/main.js?v=arcanes-1.6.0'),'Current script versioned');
+assert.ok(style.includes('@media(max-width:850px)'),'Mobile difficulty controls supported');
+assert.ok(style.includes('min-height:44px'),'Difficulty mode targets have mobile tap area');
+const freshCode=main.slice(main.indexOf('const fresh='),main.indexOf('function load(){'));
+const loadCode=main.slice(main.indexOf('function load(){'),main.indexOf('let state=load();'));
+const legacy={coins:75,dust:23,wins:7,earned:890,opened:4,owned:{1:2},shiny:{1:true},goalId:2};
+const loaded=runInNewContext(freshCode+loadCode+'load()',{
+ localStorage:{getItem:key=>key==='aetherium-save-v1'?JSON.stringify(legacy):null},
+ CARDS:await import('data:text/javascript;charset=utf-8,'+encodeURIComponent(read('src/data.js'))).then(m=>m.CARDS),
+ SAVE:'aetherium-save-v1'
+});
+assert.equal(loaded.coins,75);assert.equal(loaded.dust,23);
+assert.equal(loaded.owned[1],2);assert.equal(loaded.shiny[1],true);
+assert.equal(loaded.difficulty,'aventure','Old saves start on classic difficulty');
+assert.deepEqual(Array.from(loaded.trialStats),[],'Old saves do not invent past performance');
+console.log('AETHERIUM 1.6.0 — difficultés, progression, Couronnes et anciennes sauvegardes OK');
