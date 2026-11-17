@@ -68,6 +68,10 @@ jobs:
           test -s src/codex.js
           test -s src/save-backup.js
           test -s src/reflets-brises-catalog.js
+          test -s src/reflets-preview.css
+          test -s tests/reflets-pilot-preview-smoke.mjs
+          test -s assets/cards/cerf-sans-reflet.webp
+          test -s assets/cards/cerf-sans-reflet-thumb.webp
           test -s tests/reflets-brises-smoke.mjs
           test -s docs/reflets-brises-design.md
           test -s src/duplicate-rewards.js
@@ -124,6 +128,8 @@ jobs:
           grep -q 'src/navigation.css' index.html
           grep -q 'src/crafting.css' index.html
           grep -q 'src/chromatic.css' index.html
+          grep -q 'id="reflets-art-preview"' index.html
+          grep -q 'src/reflets-preview.css' index.html
           grep -q 'src/save-backup.css' index.html
           grep -q 'id="backup-dialog"' index.html
           grep -q 'data-finish="chromatic"' index.html
@@ -199,6 +205,7 @@ jobs:
           node --experimental-default-type=module --test tests/duplicate-rewards.test.mjs
           node tests/save-backup-smoke.mjs
           node tests/reflets-brises-smoke.mjs
+          node tests/reflets-pilot-preview-smoke.mjs
           node tests/booster-smoke.mjs
           node tests/booster-reveal-smoke.mjs
           node tests/booster-opening-smoke.mjs
