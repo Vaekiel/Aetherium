@@ -1255,6 +1255,9 @@ function boosterCardArtwork(item){
   const artwork=el('div',buttonCard.className);
   artwork.style.cssText=buttonCard.style.cssText;
   while(buttonCard.firstChild)artwork.append(buttonCard.firstChild);
+  // Booster reveals are full-size views, not enlarged thumbnails.
+  const revealedImage=artwork.querySelector('img');
+  if(revealedImage)applyCardIllustration(revealedImage,item.card,{shiny:item.shiny,size:'full'});
   return artwork;
 }
 function showBoosterCard(index,focus=true){
