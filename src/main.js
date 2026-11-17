@@ -5,6 +5,7 @@ import {codexProgress,filterCodex} from './codex.js';
 import {SEASONS,seasonById,collectionById,cardsForCollection,collectionForCard,seasonProgress} from './seasons.js';
 import {milestonesFor,sanitizeMilestoneClaims,uniqueCardsOwned,collectionMilestoneStatus,claimCollectionMilestone} from './collection-milestones.js';
 import {DIFFICULTIES,validDifficulty,trialRules,trialObjective,trialScore,trialReward,emptyTrialStats,sanitizedTrialStats,recordTrialWin,masteryLevel} from './trial-progress.js';
+import {TRIAL_RECORD_MODES,TRIAL_RECORD_METRICS,sanitizedTrialRecords,recordPersonalBest,recordMetricLabel} from './trial-records.js';
 import {nextRuneRitual,runeExpectedAt} from './rune-rituals.js';
 import {makeEtherPuzzle,etherRule,evaluateEtherAttempt,etherAttemptFeedback} from './ether-lock-puzzles.js';
 import {nextMemoryRitual,buildMemoryDeck} from './memory-rituals.js';
@@ -92,10 +93,11 @@ mobileView.addEventListener('change',syncMobileSheets);
 // approved Collection mockup. These are *visual placeholders*, not final art
 // for the corresponding 24 catalogue entries. All gameplay/save data is unchanged.
 const SAVE='aetherium-save-v1';
-const fresh=()=>({coins:300,dust:0,owned:{},shiny:{},wins:0,earned:0,opened:0,goalId:null,difficulty:'aventure',trialStats:[],collectionMilestones:{},alchemyKnown:[]});
-function load(){try{const raw=JSON.parse(localStorage.getItem(SAVE));if(!raw||typeof raw!=='object')return fresh();const s=fresh();for(const field of ['coins','dust','wins','earned','opened'])if(Number.isSafeInteger(raw[field])&&raw[field]>=0&&raw[field]<1e9)s[field]=raw[field];for(const c of CARDS){const n=raw.owned?.[c.id];if(Number.isSafeInteger(n)&&n>0&&n<1e6)s.owned[c.id]=n;if(raw.shiny?.[c.id]===true&&s.owned[c.id])s.shiny[c.id]=true}if(Number.isSafeInteger(raw.goalId)&&CARDS.some(c=>c.id===raw.goalId)&&!s.owned[raw.goalId])s.goalId=raw.goalId;if(['initiation','aventure','maitrise'].includes(raw.difficulty))s.difficulty=raw.difficulty;if(Array.isArray(raw.trialStats))s.trialStats=raw.trialStats;s.collectionMilestones=sanitizeMilestoneClaims(raw.collectionMilestones);if(Array.isArray(raw.alchemyKnown))s.alchemyKnown=sanitizeAlchemyKnown(raw.alchemyKnown);return s}catch{return fresh()}}
+const fresh=()=>({coins:300,dust:0,owned:{},shiny:{},wins:0,earned:0,opened:0,goalId:null,difficulty:'aventure',trialStats:[],collectionMilestones:{},alchemyKnown:[],trialRecords:[]});
+function load(){try{const raw=JSON.parse(localStorage.getItem(SAVE));if(!raw||typeof raw!=='object')return fresh();const s=fresh();for(const field of ['coins','dust','wins','earned','opened'])if(Number.isSafeInteger(raw[field])&&raw[field]>=0&&raw[field]<1e9)s[field]=raw[field];for(const c of CARDS){const n=raw.owned?.[c.id];if(Number.isSafeInteger(n)&&n>0&&n<1e6)s.owned[c.id]=n;if(raw.shiny?.[c.id]===true&&s.owned[c.id])s.shiny[c.id]=true}if(Number.isSafeInteger(raw.goalId)&&CARDS.some(c=>c.id===raw.goalId)&&!s.owned[raw.goalId])s.goalId=raw.goalId;if(['initiation','aventure','maitrise'].includes(raw.difficulty))s.difficulty=raw.difficulty;if(Array.isArray(raw.trialStats))s.trialStats=raw.trialStats;if(Array.isArray(raw.trialRecords))s.trialRecords=sanitizedTrialRecords(raw.trialRecords);s.collectionMilestones=sanitizeMilestoneClaims(raw.collectionMilestones);if(Array.isArray(raw.alchemyKnown))s.alchemyKnown=sanitizeAlchemyKnown(raw.alchemyKnown);return s}catch{return fresh()}}
 let state=load();
 state.trialStats=sanitizedTrialStats(state.trialStats);
+state.trialRecords=sanitizedTrialRecords(state.trialRecords);
 let boosterBusy=false;
 function save(){try{localStorage.setItem(SAVE,JSON.stringify(state))}catch{notify('Sauvegarde indisponible dans ce navigateur.')}}
 let toastTimer;
@@ -313,12 +315,28 @@ definitions.forEach((d,i)=>{
   const descriptionEl=el('p','trial-objective',trialObjective(i,state.difficulty));
   const rewardEl=el('div','reward','♛ +'+d.reward+' Couronnes');
   const masteryEl=el('div','trial-mastery');
+  const recordsEl=el('details','trial-records');
+  const recordsHeader=el('summary','trial-records-summary');
+  recordsHeader.append(el('span','trial-records-symbol','✧'),
+    el('span','trial-records-heading','Carnet des records'),
+    el('span','trial-records-current'));
+  const recordsTable=el('table','trial-records-table');
+  recordsTable.setAttribute('aria-label','Records personnels par difficulté');
+  const recordsHead=el('thead');
+  const headerRow=el('tr');
+  for(const name of ['Difficulté','Victoires','Meilleur score','Performance']){
+    headerRow.append(el('th','',name));
+  }
+  recordsHead.append(headerRow);
+  recordsTable.append(recordsHead,el('tbody'));
+  recordsEl.append(recordsHeader,recordsTable,
+    el('p','trial-records-note','Suivi détaillé depuis la version 1.7.3. Les anciens scores globaux restent conservés.'));
   const status=el('div','status');status.setAttribute('aria-live','polite');
   const board=el('div','board'),actions=el('div','small-actions');
   card.append(el('h3','',String(i+1).padStart(2,'0')+' · '+d.name),
-    descriptionEl,rewardEl,masteryEl,board,status,actions);
+    descriptionEl,rewardEl,masteryEl,recordsEl,board,status,actions);
   $('#games').append(card);
-  mini.push({card,board,status,actions,reward:d.reward,rewardEl,masteryEl,descriptionEl,mode:state.difficulty,ended:false});
+  mini.push({card,board,status,actions,reward:d.reward,rewardEl,masteryEl,recordsEl,descriptionEl,mode:state.difficulty,ended:false});
 });
 function renderTrialMastery(){
   const stats=sanitizedTrialStats(state.trialStats);
@@ -329,6 +347,25 @@ function renderTrialMastery(){
       (entry.wins?' · record '+entry.bestScore+'/100':' · première victoire à découvrir');
     g.masteryEl.setAttribute('aria-label','Maîtrise de '+definitions[index].name+' : '+level.title+
       ', '+entry.wins+' victoires, meilleur score '+entry.bestScore+' sur 100');
+    const record=sanitizedTrialRecords(state.trialRecords)[index];
+    const current=record[g.mode];
+    $('.trial-records-current',g.recordsEl).textContent=current.wins?
+      '· '+current.bestScore+'/100 en '+DIFFICULTIES.find(d=>d.id===g.mode).label:
+      '· aucun record en '+DIFFICULTIES.find(d=>d.id===g.mode).label;
+    const body=$('tbody',g.recordsEl);
+    body.replaceChildren();
+    TRIAL_RECORD_MODES.forEach(mode=>{
+      const best=record[mode],row=el('tr',mode===g.mode?'is-current':'');
+      const label=DIFFICULTIES.find(d=>d.id===mode).label;
+      row.append(el('th','',label),
+        el('td','',String(best.wins)),
+        el('td','',best.bestScore===null?'—':best.bestScore+'/100'),
+        el('td','',recordMetricLabel(index,best.bestMetric)));
+      body.append(row);
+    });
+    const metric=TRIAL_RECORD_METRICS[index];
+    g.recordsEl.setAttribute('aria-label','Carnet des records de '+definitions[index].name+
+      ' · '+metric.label+' · '+current.wins+' victoires dans la difficulté actuelle');
     const levelMode=DIFFICULTIES.find(d=>d.id===g.mode)||DIFFICULTIES[1];
     const high=trialReward(g.reward,g.mode,100);
     g.rewardEl.textContent='♛ '+g.reward+' Couronnes'+(high>g.reward?' · jusqu’à +'+(high-g.reward)+' bonus':'');
@@ -341,6 +378,7 @@ function complete(i,description,performance={}){
   const score=trialScore(i,performance);
   const earned=trialReward(g.reward,g.mode,score);
   state.trialStats=recordTrialWin(state.trialStats,i,g.mode,score);
+  state.trialRecords=recordPersonalBest(state.trialRecords,i,g.mode,score,performance);
   g.status.textContent='✓ '+description+' · '+score+'/100 · +'+earned+' Couronnes';
   grant(earned);
   renderTrialMastery();
@@ -796,7 +834,7 @@ function startMines(){
   const bombs=site.bombs;
   const countNearby=i=>site.numbers[i];
   const dug=new Set();
-  let safe=0;
+  let safe=0,sondes=0;
   let guidedIndex=null;
   const setArtwork=(tile,index)=>{
     tile.style.setProperty('--exc-x',((index%3)/2*100)+'%');
@@ -926,7 +964,7 @@ function startMines(){
         g.status.classList.add('is-complete');
         tiles.forEach(b=>b.disabled=true);
         if(sondeButton)sondeButton.disabled=true;
-        complete(3,'Fouille accomplie ! '+safeTarget+' dalles sûres ont été explorées.');
+        complete(3,'Fouille accomplie ! '+safeTarget+' dalles sûres ont été explorées.',{hints:sondes});
       }else g.status.textContent='Dalle '+(i+1)+' : '+(adjacent?adjacent+' piège(s) voisin(s).':'aucun piège adjacent.')+' Continue la fouille.';
     });
     g.board.append(tile);
@@ -936,7 +974,7 @@ function startMines(){
   let sondeButton=button('✧ Sonder un passage',()=>{
     if(g.ended)return;
     const hint=chooseExcavationGuide(site,dug);
-    if(hint)markGuide(hint);
+    if(hint){sondes++;markGuide(hint)}
     else g.status.textContent='Tous les passages sûrs ont été explorés.';
   });
   g.actions.replaceChildren(sondeButton,button('✧ Nouvelle fouille',startMines));
