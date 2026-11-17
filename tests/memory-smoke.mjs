@@ -15,7 +15,12 @@ const start=main.indexOf('const memoryRunes='),end=main.indexOf('function startL
 assert.ok(start>=0&&end>start,'Memory logic present');
 const logic=main.slice(start,end);
 assert.equal((logic.match(/sprite:\d/g)||[]).length,8,'Eight illustrated rune types');
-assert.ok(logic.includes('memoryRunes.flatMap'),'Eight pairs form sixteen tiles');
+assert.ok(logic.includes('buildMemoryDeck(memoryRunes,ritual,shuffle)'),'Eight real pairs form sixteen tiles in the new memory layouts');
+assert.ok(logic.includes("$('.memory-ritual-title',g.card).textContent=ritual.title"),
+  'Ritual briefing must reflect the selected rule');
+assert.ok(logic.includes("frescoPieces.forEach"),'Each pair reveals an additional fresco piece');
+assert.ok(logic.includes("if(ritual.previewMs)"),'Mastery can show a temporary opening glimpse');
+assert.ok(html.includes('src/memory.css?v=memoire-1.7.2'),'Memory styles bypass browser cache');
 assert.ok(logic.includes('g.board.style.setProperty(\'--cols\',4)'),'Four-column layout');
 assert.ok(logic.includes('if(matches===8)'),'Victory requires eight pairs');
 assert.ok(logic.includes("complete(1,'La Mémoire ancienne"),'Victory grants the existing reward');
@@ -23,4 +28,4 @@ assert.ok(logic.includes('memoryTurnTimer=setTimeout'),'Incorrect pairs turn bac
 assert.ok(logic.includes('const session=++memorySession'),'New game invalidates old actions');
 assert.ok(logic.includes('clearTimeout(memoryTurnTimer)'),'Restart clears previous flip timer');
 assert.ok(logic.includes("setAttribute('aria-label'"),'Tiles have accessible labels');
-console.log('AETHERIUM — Mémoire ancienne HD: OK');
+console.log('AETHERIUM — Mémoire ancienne HD et rituels : OK');
