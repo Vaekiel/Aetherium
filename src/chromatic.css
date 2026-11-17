@@ -45,7 +45,7 @@
  box-shadow:0 0 0 1px #9d95c6b0,0 0 17px #8f9bda65,
             0 9px 24px #0a1025b0!important;
 }
-.card.is-chromatic:before{
+.card.is-chromatic .info:before{
  content:"✧"!important;color:#e2f9f4!important;
  text-shadow:0 0 7px #9ef2e7,0 0 13px #dca5ed!important;
  z-index:5!important;
