@@ -7,6 +7,7 @@ import {milestonesFor,sanitizeMilestoneClaims,uniqueCardsOwned,collectionMilesto
 import {DIFFICULTIES,validDifficulty,trialRules,trialObjective,trialScore,trialReward,emptyTrialStats,sanitizedTrialStats,recordTrialWin,masteryLevel} from './trial-progress.js';
 import {TRIAL_RECORD_MODES,TRIAL_RECORD_METRICS,sanitizedTrialRecords,recordPersonalBest,recordMetricLabel} from './trial-records.js';
 import {trialChallengesFor} from './trial-challenges.js';
+import {TRIAL_TITLES,earnedTrialTitles,validEquippedTitle,toggleEquippedTitle} from './trial-titles.js';
 import {nextRuneRitual,runeExpectedAt} from './rune-rituals.js';
 import {makeEtherPuzzle,etherRule,evaluateEtherAttempt,etherAttemptFeedback} from './ether-lock-puzzles.js';
 import {nextMemoryRitual,buildMemoryDeck} from './memory-rituals.js';
@@ -94,11 +95,12 @@ mobileView.addEventListener('change',syncMobileSheets);
 // approved Collection mockup. These are *visual placeholders*, not final art
 // for the corresponding 24 catalogue entries. All gameplay/save data is unchanged.
 const SAVE='aetherium-save-v1';
-const fresh=()=>({coins:300,dust:0,owned:{},shiny:{},wins:0,earned:0,opened:0,goalId:null,difficulty:'aventure',trialStats:[],collectionMilestones:{},alchemyKnown:[],trialRecords:[]});
-function load(){try{const raw=JSON.parse(localStorage.getItem(SAVE));if(!raw||typeof raw!=='object')return fresh();const s=fresh();for(const field of ['coins','dust','wins','earned','opened'])if(Number.isSafeInteger(raw[field])&&raw[field]>=0&&raw[field]<1e9)s[field]=raw[field];for(const c of CARDS){const n=raw.owned?.[c.id];if(Number.isSafeInteger(n)&&n>0&&n<1e6)s.owned[c.id]=n;if(raw.shiny?.[c.id]===true&&s.owned[c.id])s.shiny[c.id]=true}if(Number.isSafeInteger(raw.goalId)&&CARDS.some(c=>c.id===raw.goalId)&&!s.owned[raw.goalId])s.goalId=raw.goalId;if(['initiation','aventure','maitrise'].includes(raw.difficulty))s.difficulty=raw.difficulty;if(Array.isArray(raw.trialStats))s.trialStats=raw.trialStats;if(Array.isArray(raw.trialRecords))s.trialRecords=sanitizedTrialRecords(raw.trialRecords);s.collectionMilestones=sanitizeMilestoneClaims(raw.collectionMilestones);if(Array.isArray(raw.alchemyKnown))s.alchemyKnown=sanitizeAlchemyKnown(raw.alchemyKnown);return s}catch{return fresh()}}
+const fresh=()=>({coins:300,dust:0,owned:{},shiny:{},wins:0,earned:0,opened:0,goalId:null,difficulty:'aventure',trialStats:[],collectionMilestones:{},alchemyKnown:[],trialRecords:[],titleId:null});
+function load(){try{const raw=JSON.parse(localStorage.getItem(SAVE));if(!raw||typeof raw!=='object')return fresh();const s=fresh();for(const field of ['coins','dust','wins','earned','opened'])if(Number.isSafeInteger(raw[field])&&raw[field]>=0&&raw[field]<1e9)s[field]=raw[field];for(const c of CARDS){const n=raw.owned?.[c.id];if(Number.isSafeInteger(n)&&n>0&&n<1e6)s.owned[c.id]=n;if(raw.shiny?.[c.id]===true&&s.owned[c.id])s.shiny[c.id]=true}if(Number.isSafeInteger(raw.goalId)&&CARDS.some(c=>c.id===raw.goalId)&&!s.owned[raw.goalId])s.goalId=raw.goalId;if(['initiation','aventure','maitrise'].includes(raw.difficulty))s.difficulty=raw.difficulty;if(Array.isArray(raw.trialStats))s.trialStats=raw.trialStats;if(Array.isArray(raw.trialRecords))s.trialRecords=sanitizedTrialRecords(raw.trialRecords);s.collectionMilestones=sanitizeMilestoneClaims(raw.collectionMilestones);if(Array.isArray(raw.alchemyKnown))s.alchemyKnown=sanitizeAlchemyKnown(raw.alchemyKnown);if(Number.isInteger(raw.titleId)&&raw.titleId>=0&&raw.titleId<5)s.titleId=raw.titleId;return s}catch{return fresh()}}
 let state=load();
 state.trialStats=sanitizedTrialStats(state.trialStats);
 state.trialRecords=sanitizedTrialRecords(state.trialRecords);
+state.titleId=validEquippedTitle(state.titleId,state.trialStats,state.trialRecords);
 let boosterBusy=false;
 function save(){try{localStorage.setItem(SAVE,JSON.stringify(state))}catch{notify('Sauvegarde indisponible dans ce navigateur.')}}
 let toastTimer;
@@ -1841,7 +1843,49 @@ revealAllButton.addEventListener('click',revealBoosterAll);
 nextPullButton.addEventListener('click',advanceBoosterCard);
 
 const success=[['Premiers pas','Terminer une épreuve',()=>state.wins>=1],['Explorateur','Terminer 10 épreuves',()=>state.wins>=10],['Archéologue','Terminer 50 épreuves',()=>state.wins>=50],['Curieux','Ouvrir son premier booster',()=>state.opened>=1],['Collectionneur','Découvrir 12 cartes',()=>Object.keys(state.owned).length>=12],['Archiviste','Découvrir les 24 cartes',()=>Object.keys(state.owned).length>=24],['Éclat rare','Trouver une carte Chromatique',()=>Object.keys(state.shiny).length>=1],['Pactole','Gagner 1 000 Couronnes',()=>state.earned>=1000],['Chasseur de légendes','Obtenir une carte légendaire',()=>CARDS.some(c=>c.rarity==='legendary'&&state.owned[c.id])]];
-function renderAchievements(){const root=$('#achievements');root.replaceChildren();for(const [title,description,test] of success){const done=test();const box=el('article','achievement'+(done?'':' locked'));box.append(el('h3','',done?'✦ '+title:'◇ '+title),el('p','',description),el('small','muted',done?'Accompli':'À découvrir'));root.append(box)}}
+function renderHonorifics(){
+  const titles=earnedTrialTitles(state.trialStats,state.trialRecords);
+  const equipped=validEquippedTitle(state.titleId,state.trialStats,state.trialRecords);
+  const current=equipped===null?null:titles[equipped];
+  const active=$('#honorific-active');
+  active.textContent=current?'✦ '+current.name:'Aucun titre équipé';
+  const list=$('#honorific-list');
+  list.replaceChildren();
+  titles.forEach(title=>{
+    const selected=equipped===title.id;
+    const tile=button('',()=>{
+      if(!title.earned)return;
+      const next=toggleEquippedTitle(state.titleId,title.id,state.trialStats,state.trialRecords);
+      if(next===state.titleId)return;
+      state.titleId=next;
+      save();
+      renderHonorifics();
+      notify(next===null?'Titre retiré.':'Titre équipé : '+title.name);
+    },'honorific'+(title.earned?' is-unlocked':' is-locked')+(selected?' is-equipped':''));
+    tile.disabled=!title.earned;
+    tile.setAttribute('aria-pressed',String(selected));
+    tile.setAttribute('aria-label',title.name+' · '+(selected?'équipé, retirer le titre':
+      title.earned?'obtenu, équiper le titre':'verrouillé, médaille d’Or requise'));
+    tile.append(
+      el('span','honorific-symbol',title.earned?title.symbol:'◇'),
+      el('span','honorific-name',title.name),
+      el('span','honorific-state',selected?'Équipé':title.earned?'Choisir':'À débloquer')
+    );
+    list.append(tile);
+  });
+}
+function renderAchievements(){
+  const root=$('#achievements');
+  root.replaceChildren();
+  for(const [title,description,test] of success){
+    const done=test();
+    const box=el('article','achievement'+(done?'':' locked'));
+    box.append(el('h3','',done?'✦ '+title:'◇ '+title),el('p','',description),
+      el('small','muted',done?'Accompli':'À découvrir'));
+    root.append(box);
+  }
+  renderHonorifics();
+}
 $('#reset').addEventListener('click',()=>{if(!confirm('Effacer définitivement les cartes et la progression sauvegardées sur cet appareil ?'))return;clearBoosterScene();state=fresh();state.trialStats=sanitizedTrialStats(state.trialStats);trialStarters.forEach(start=>start());renderTrialMastery();renderDifficultyChoice();selectedCard=null;forgeSelectedId=null;forgeFilter='all';$('#atelier-filter').value='all';$('#atelier-result').hidden=true;$('#inspector').replaceChildren(el('p','muted','Sélectionne une carte découverte pour l’admirer.'));$('#pulls').replaceChildren();$('#pack-title').textContent='Les archives attendent leur voyageur.';$('#pack-msg').textContent='Gagne des Couronnes en jouant pour ouvrir des boosters.';update();renderCollection();notify('Progression réinitialisée.')});
 syncMobileSheets();
 update();
