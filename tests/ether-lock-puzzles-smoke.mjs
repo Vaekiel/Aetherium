@@ -65,7 +65,9 @@ const makeNode=(tag='div',cssClass='',text='')=>{
    classList:{
     add(...x){x.forEach(y=>names.add(y))},
     remove(...x){x.forEach(y=>names.delete(y))},
-    contains(n){return names.has(n)}
+    contains(n){return names.has(n)},
+    toggle(n,on){const active=on===undefined?!names.has(n):on;
+      if(active)names.add(n);else names.delete(n);return active}
    },
    setAttribute(key,value){this.attrs[key]=String(value)},
    append(...elements){for(const child of elements){child.parent=this;this.children.push(child)}},
