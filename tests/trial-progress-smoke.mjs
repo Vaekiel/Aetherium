@@ -64,7 +64,7 @@ for(const selector of ['difficulty-options','difficulty-hint','data-difficulty="
  'data-difficulty="aventure"','data-difficulty="maitrise"'])
   assert.ok(html.includes(selector),'Difficulty UI contains '+selector);
 assert.ok(html.includes('src/trial-progress.css?v=arcanes-1.6.0.1'),'Difficulty stylesheet versioned');
-assert.ok(html.includes('src/main.js?v=arcanes-1.6.0.2'),'Current script versioned');
+assert.ok(html.includes('src/main.js?v=arcanes-1.6.0.3'),'Current script versioned');
 assert.ok(style.includes('@media(max-width:850px)'),'Mobile difficulty controls supported');
 assert.ok(style.includes('min-height:44px'),'Difficulty mode targets have mobile tap area');
 const freshCode=main.slice(main.indexOf('const fresh='),main.indexOf('function load(){'));
