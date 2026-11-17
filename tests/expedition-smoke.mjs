@@ -78,7 +78,7 @@ assert.ok(main.includes('expedition:{route:null,step:0,mode:null,armed:false,com
 assert.ok(main.includes('if(raw.expedition)s.expedition=sanitizeExpedition(raw.expedition)'));
 assert.ok(main.includes('const expeditionResult=state.expedition?.route?'));
 assert.ok(main.includes('if(expeditionResult.advanced)state.expedition=expeditionResult.state;'));
-assert.ok(main.includes('if(expeditionResult.advanced)renderExpedition();'));
+assert.ok(main.includes('if(expeditionResult.advanced){\n    renderExpedition();'), 'Progression refreshes the story and exposes a return action');
 assert.ok(main.includes('state.expedition=armExpedition(state.expedition)'));
 assert.ok(main.includes('trialStarters[stage.game]()'));
 assert.ok(main.includes('selectGame(stage.game)'));
