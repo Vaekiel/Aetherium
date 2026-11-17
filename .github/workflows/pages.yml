@@ -69,9 +69,16 @@ jobs:
           test -s src/save-backup.js
           test -s src/reflets-brises-catalog.js
           test -s src/reflets-preview.css
+          test -s src/reflets-gallery.css
+          test -s src/reflets-gallery.js
+          test -s tests/reflets-gallery-smoke.mjs
           test -s tests/reflets-pilot-preview-smoke.mjs
           test -s assets/cards/cerf-sans-reflet.webp
           test -s assets/cards/cerf-sans-reflet-thumb.webp
+          for slug in eclat-fugueur guetteuse-du-revers papillon-de-silice pluie-a-l-envers miroir-d-ecorce loup-aux-deux-ombres cartographe-des-absents sentinelle-des-felures fil-des-deux-rives serment-retourne; do
+            test -s "assets/cards/${slug}.webp"
+            test -s "assets/cards/${slug}-thumb.webp"
+          done
           test -s tests/reflets-brises-smoke.mjs
           test -s docs/reflets-brises-design.md
           test -s src/duplicate-rewards.js
@@ -130,6 +137,8 @@ jobs:
           grep -q 'src/chromatic.css' index.html
           grep -q 'id="reflets-art-preview"' index.html
           grep -q 'src/reflets-preview.css' index.html
+          grep -q 'src/reflets-gallery.css' index.html
+          grep -q 'id="reflets-gallery-grid"' index.html
           grep -q 'src/save-backup.css' index.html
           grep -q 'id="backup-dialog"' index.html
           grep -q 'data-finish="chromatic"' index.html
@@ -187,6 +196,7 @@ jobs:
           node --check --input-type=module < src/main.js
           node --check --input-type=module < src/save-backup.js
           node --check --input-type=module < src/reflets-brises-catalog.js
+          node --check --input-type=module < src/reflets-gallery.js
           node --check --input-type=module < src/duplicate-rewards.js
           node --check --input-type=module < src/codex.js
           node --check --input-type=module < src/seasons.js
@@ -206,6 +216,7 @@ jobs:
           node tests/save-backup-smoke.mjs
           node tests/reflets-brises-smoke.mjs
           node tests/reflets-pilot-preview-smoke.mjs
+          node tests/reflets-gallery-smoke.mjs
           node tests/booster-smoke.mjs
           node tests/booster-reveal-smoke.mjs
           node tests/booster-opening-smoke.mjs
