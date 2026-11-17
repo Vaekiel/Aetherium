@@ -38,6 +38,6 @@ for(const marker of [
 ])assert.ok(logic.includes(marker),'Élément de jeu absent : '+marker);
 assert.ok(!logic.includes('tileGrid(g.board'),'Ancienne grille générique encore utilisée');
 assert.ok(html.includes('src/lock.css?v=logique-1.7.2'),'Lock CSS updated');
-assert.ok(html.includes('src/main.js?v=defis-1.7.3'),'New lock runtime is not cached');
+assert.ok(html.includes('src/main.js?v=titres-1.7.3'),'New lock runtime is not cached');
 assert.ok(main.includes("from './ether-lock-puzzles.js'"),'Logic module imported');
 console.log('AETHERIUM — Serrure d’Éther HD et énigmes logiques : smoke checks OK');
