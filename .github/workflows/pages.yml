@@ -36,6 +36,8 @@ jobs:
           test -f src/mobile.css
           test -s src/booster.css
           test -s src/runes.css
+          test -s src/rune-rituals.js
+          test -s tests/rune-rituals-smoke.mjs
           test -s src/memory.css
           test -s src/lock.css
           test -s src/mines.css
@@ -140,8 +142,10 @@ jobs:
           node --check --input-type=module < src/seasons.js
           node --check --input-type=module < src/collection-milestones.js
           node --check --input-type=module < src/trial-progress.js
+          node --check --input-type=module < src/rune-rituals.js
           node tests/booster-smoke.mjs
           node tests/runes-smoke.mjs
+          node tests/rune-rituals-smoke.mjs
           node tests/memory-smoke.mjs
           node tests/lock-smoke.mjs
           node tests/mines-smoke.mjs
