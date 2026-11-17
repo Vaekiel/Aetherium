@@ -37,7 +37,7 @@ for(const control of ['codex-chapter-list','codex-progress-discovered','codex-pr
   assert.ok(html.includes(control),'Codex markup includes '+control);
 }
 assert.ok(html.includes('src/codex.css?v=codex-1.5.1'),'Codex stylesheet versioned');
-assert.ok(html.includes('src/main.js?v=codex-1.5'),'Codex script versioned');
+assert.ok(html.includes('src/main.js?v=codex-1.5.2'),'Codex script versioned');
 assert.ok(main.includes("from './codex.js'"),'Main module imports chapter helpers');
 assert.ok(main.includes('function renderCodexChapters()'),'Album counters are connected');
 assert.ok(main.includes('function inspectSealed('),'Undiscovered cards have an inspection state');
