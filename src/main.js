@@ -1035,7 +1035,7 @@ function startAlchemy(){
   renderGrimoire();
   const cauldron=$('.alchemy-cauldron',hud);
   const meter=g.card.querySelector('.alchemy-meter');
-  const slots=$('.alchemy-slot',hud);
+  const slots=$$('.alchemy-slot',hud);
   slots.forEach((slot,index)=>slot.hidden=index>=requiredIngredients);
   $('.alchemy-slots',hud).style.setProperty('--alchemy-slot-count',requiredIngredients);
   const ingredientNames=ingredients.map(item=>item[1]);
