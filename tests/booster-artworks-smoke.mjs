@@ -7,7 +7,7 @@ const css=read('src/booster-artworks.css');
 const js=read('src/main.js');
 const packaging=read('src/booster-packaging.css');
 const reflets=read('src/reflets-booster.css');
-const assets=['origines-pack-hd.webp','reflets-brises-pack-hd.webp'];
+const assets=['origines-pack-pixel-hd-v2.webp','reflets-brises-pack-pixel-hd-v2.webp'];
 
 for(const file of assets){
   const path='assets/boosters/'+file;
@@ -20,14 +20,14 @@ for(const file of assets){
 assert.ok(html.includes('class="pack pack-origines pack-illustrated" id="booster-pack"'),
   'The original animated wrapper is retained and marked as illustrated');
 assert.equal((html.match(/id="booster-pack"/g)||[]).length,1,'Exactly one active pack');
-assert.ok(html.includes('booster-artworks.css?v=hd-packs-1'),'HD artwork stylesheet is cache busted');
+assert.ok(html.includes('booster-artworks.css?v=pixel-packs-2'),'HD artwork stylesheet is cache busted');
 assert.ok(html.indexOf('reflets-booster.css')<html.indexOf('booster-artworks.css'),
   'Art overrides old synthetic foil styles');
 assert.ok(css.includes('.pack-artwork-reflets')&&css.includes('display:none'),
-  'The inactive booster image is hidden');
+  'The inactive pixel-art booster image is hidden');
 assert.ok(css.includes('.pack-reflets .pack-artwork-reflets')&&css.includes('display:block'),
   'The correct image appears on selection');
-assert.ok(css.includes('filter:none')&&css.includes('image-rendering:auto'),
+assert.ok(css.includes('filter:none')&&css.includes('image-rendering:auto')&&css.includes('object-fit:contain'),
   'HD pixel art is not recolored or blurred by CSS filters');
 for(const duplicate of ['.pack-wordmark','.pack-collection','.pack-title','.pack-edition','.pack-sidefold']){
   assert.ok(css.includes(duplicate),'Previous redundant '+duplicate+' overlay is suppressed');
@@ -39,5 +39,5 @@ assert.ok(js.includes("boosterArt.classList.toggle('pack-reflets',isReflets);"),
 assert.ok(packaging.includes('aetherium-pack-rupture 980ms'),
   'The original one-purchase wrapper opening sequence still runs');
 assert.ok(reflets.includes('.booster-choice.is-selected'),'Selected booster indicator remains');
-assert.ok(!js.includes('origines-pack-hd.webp'),'Artwork switching does not couple gameplay to image paths');
+assert.ok(!js.includes('origines-pack-pixel-hd-v2.webp'),'Artwork switching does not couple gameplay to image paths');
 console.log('AETHERIUM — Two optimized HD booster wrappers, responsive art switch, no duplicates, seal animation intact');
