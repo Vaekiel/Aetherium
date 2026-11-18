@@ -1,6 +1,6 @@
 /* AETHERIUM — Reflets brisés, galerie complète des 24 illustrations.
-   Illustration previews only. Never append these drafts to src/data.js:
-   the existing booster, collection and crafting systems stay locked. */
+   Full illustration register for the second published collection.
+   This metadata is reused by the live card-art registry. */
 import {REFLETS_BRISES_DRAFT} from './reflets-brises-catalog.js';
 
 const slugs=Object.freeze([

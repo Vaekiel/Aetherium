@@ -1,8 +1,7 @@
 /* AETHERIUM — Saison I / Partie II — Les Reflets brisés.
-   CREATIVE CATALOGUE ONLY. Not imported by data.js, main.js or booster pools.
-   IDs 25–48 are RESERVED for the eventual release, not playable cards.
-   Illustration briefs describe original art to commission/create later.
-   Release only after full-resolution art, thumbnails, tests and balances exist. */
+   Source of truth for the released Reflets brisés card names, lore and rarities.
+   IDs 25–48 belong exclusively to the Reflets booster pool.
+   Illustration briefs are retained as archival references. */
 
 export const REFLETS_BRISES_DIRECTION=Object.freeze({
   collectionId:'reflets-brises',
@@ -22,7 +21,7 @@ export const REFLETS_BRISES_DIRECTION=Object.freeze({
     'Ruines en verre laiteux, eau sombre, brume irisée',
     'Un accent d’or vieilli seulement pour les révélations légendaires'
   ]),
-  released:false
+  released:true
 });
 
 const definitions=[

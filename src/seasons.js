@@ -1,6 +1,6 @@
 /* AETHERIUM 1.7 — Permanent seasons, 24-card collections, no fabricated cards.
-   The published card catalogue is still src/data.js (Origines, IDs 1–24).
-   Metadata for future collections does not create collectibles or booster pools. */
+   Published cards: Origines (1–24) and Les Reflets brisés (25–48).
+   Future chapter metadata does not create collectibles or booster pools. */
 export const CARDS_PER_COLLECTION=24;
 export const COLLECTIONS_PER_SEASON=3;
 export const CARDS_PER_SEASON=CARDS_PER_COLLECTION*COLLECTIONS_PER_SEASON;
@@ -15,7 +15,7 @@ export const SEASONS=Object.freeze([
   season('marches-de-verre',1,'Les Marches de Verre',
     'Une région de cristaux oubliés, de gardiens et de secrets enfouis.',[
       part('origines','I','Origines','Les premières légendes des Marches de Verre.',{released:true,first:1,last:24}),
-      part('reflets-brises','II','Les Reflets brisés','Dans les Marches de Verre, les miroirs n’obéissent plus.'),
+      part('reflets-brises','II','Les Reflets brisés','Dans les Marches de Verre, les miroirs n’obéissent plus.',{released:true,first:25,last:48}),
       part('au-dela-du-verre','III','Au-delà du Verre','L’ultime secret des Marches attend d’être découvert.',{signature:true})
     ]),
   season('plateau-nebuleux',2,'Le Plateau Nébuleux',

@@ -1,8 +1,9 @@
 import {artFor} from './art.js';
+import {REFLETS_GALLERY_ART} from './reflets-gallery.js';
 
 // Source of truth for authored artwork. Add an entry for every approved card;
 // the remaining cards keep their temporary atlas visuals until replaced.
-// Dedicated artwork: all 24 cards in Origines.
+// Dedicated artwork: 24 Origines cards and 24 Reflets brisés cards.
 export const CARD_ART = Object.freeze({
   1: Object.freeze({
     thumbnail: './assets/cards/veilleuse-de-nacre-thumb.webp',
@@ -30,7 +31,10 @@ export const CARD_ART = Object.freeze({
   21: Object.freeze({thumbnail: './assets/cards/coeur-du-colosse-thumb.webp', full: './assets/cards/coeur-du-colosse.webp'}),
   22: Object.freeze({thumbnail: './assets/cards/astra-reine-fractale-thumb.webp', full: './assets/cards/astra-reine-fractale.webp'}),
   23: Object.freeze({thumbnail: './assets/cards/vyrath-fleau-celeste-thumb.webp', full: './assets/cards/vyrath-fleau-celeste.webp'}),
-  24: Object.freeze({thumbnail: './assets/cards/derniere-etoile-thumb.webp', full: './assets/cards/derniere-etoile.webp'})
+  24: Object.freeze({thumbnail: './assets/cards/derniere-etoile-thumb.webp', full: './assets/cards/derniere-etoile.webp'}),
+  ...Object.fromEntries(REFLETS_GALLERY_ART.map(card=>[
+    card.id,Object.freeze({thumbnail:card.thumb,full:card.hd})
+  ]))
 });
 
 const REFERENCE_ART=[3,1,10,9,7,5,4,2,5,8,6,11,0,7,0,1,8,6,4,11,10,11,0,8];
@@ -59,7 +63,7 @@ export function applyCardIllustration(img,card,{shiny=false,size='thumbnail'}={}
   img.removeAttribute('sizes');
   const approved=CARD_ART[card.id];
   if(approved){
-    const version=card.id>=22?'?v=origines-b03':card.id>=12?'?v=origines-b02':'?v=20261116-unframed';
+    const version=card.id>=25?'?v=reflets-release-1':card.id>=22?'?v=origines-b03':card.id>=12?'?v=origines-b02':'?v=20261116-unframed';
     if(size==='thumbnail'){
       // Mobile cards can occupy ~150–220 CSS pixels at 3x density.
       // Let the browser select the original 1138px illustration when a

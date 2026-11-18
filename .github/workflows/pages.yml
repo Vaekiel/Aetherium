@@ -71,6 +71,9 @@ jobs:
           test -s src/reflets-preview.css
           test -s src/reflets-gallery.css
           test -s src/reflets-gallery.js
+          test -s src/collection-data.js
+          test -s src/reflets-booster.css
+          test -s tests/reflets-booster-smoke.mjs
           test -s tests/reflets-gallery-smoke.mjs
           test -s tests/reflets-pilot-preview-smoke.mjs
           test -s assets/cards/cerf-sans-reflet.webp
@@ -217,6 +220,7 @@ jobs:
           node tests/reflets-brises-smoke.mjs
           node tests/reflets-pilot-preview-smoke.mjs
           node tests/reflets-gallery-smoke.mjs
+          node tests/reflets-booster-smoke.mjs
           node tests/booster-smoke.mjs
           node tests/booster-reveal-smoke.mjs
           node tests/booster-opening-smoke.mjs

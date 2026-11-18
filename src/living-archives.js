@@ -1,7 +1,8 @@
 /* AETHERIUM 1.8.4 — Archives Vivantes.
    The showcase reads existing possessions without changing card odds, costs or
    unlock rules. Only future first discoveries are added to the local journal. */
-import {CARDS,RARITIES} from './data.js';
+import {RARITIES} from './data.js';
+import {CARDS} from './collection-data.js';
 import {SEASONS,cardsForCollection} from './seasons.js';
 
 export const RECENT_DISCOVERY_LIMIT=6;
