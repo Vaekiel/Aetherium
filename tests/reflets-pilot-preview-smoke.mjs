@@ -13,7 +13,7 @@ for(const id of ['codex-upcoming','reflets-art-preview']){
  assert.ok(html.includes('id="'+id+'"'),'The existing upcoming collection hosts '+id);
 }
 assert.ok(html.includes('src/reflets-preview.css?v=art-pilot-38'));
-assert.ok(html.includes('src/main.js?v=reflets-lot2-12'));
+assert.ok(html.includes('src/main.js?v=reflets-final-24'));
 assert.ok(html.includes('Aperçu visuel uniquement · Carte non disponible dans les boosters'));
 assert.ok(main.includes("const showRefletsPreview=isUpcoming&&activeSeason==='marches-de-verre'&&selectedPart.id==='reflets-brises';")&&main.includes("$('#reflets-art-preview').hidden=!showRefletsPreview"),
  'A preview must appear ONLY in the locked Reflets brisés chapter');

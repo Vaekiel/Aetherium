@@ -6,7 +6,7 @@ import {codexProgress,filterCodex} from './codex.js';
 import {sanitizeRecentFinds,recordRecentFind,buildLivingArchive} from './living-archives.js';
 import {createBackup,decodeBackup,installImportedSave,restorePreviousSave,PREVIOUS_SAVE_KEY,MAX_BACKUP_SIZE} from './save-backup.js';
 import {SEASONS,seasonById,collectionById,cardsForCollection,collectionForCard,seasonProgress} from './seasons.js';
-import {mountRefletsGallery} from './reflets-gallery.js';
+import {mountRefletsGallery} from './reflets-gallery.js?v=reflets-final-24';
 import {milestonesFor,sanitizeMilestoneClaims,uniqueCardsOwned,collectionMilestoneStatus,claimCollectionMilestone} from './collection-milestones.js';
 import {DIFFICULTIES,validDifficulty,trialRules,trialObjective,trialScore,trialReward,emptyTrialStats,sanitizedTrialStats,recordTrialWin,masteryLevel} from './trial-progress.js';
 import {TRIAL_RECORD_MODES,TRIAL_RECORD_METRICS,sanitizedTrialRecords,recordPersonalBest,recordMetricLabel} from './trial-records.js';

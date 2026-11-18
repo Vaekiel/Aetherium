@@ -12,12 +12,12 @@ const data=read('src/data.js');
 const art=read('src/card-art.js');
 const css=read('src/reflets-gallery.css');
 
-assert.equal(REFLETS_GALLERY_ART.length,19,'Exactly nineteen previews are in the grid, plus the Cerf pilot');
+assert.equal(REFLETS_GALLERY_ART.length,24,'Exactly twenty-four illustrations are in the gallery');
 assert.deepEqual(REFLETS_GALLERY_ART.map(x=>x.id),
- [...Array.from({length:10},(_,i)=>i+25),36,37,39,40,41,42,43,44,45],
- 'The two lots cover IDs 25–34 and 36–45, excluding unillustrated 35 and standalone Cerf 38');
-assert.equal(new Set(REFLETS_GALLERY_ART.map(x=>x.slug)).size,19,'No duplicate illustrations');
-assert.ok(!REFLETS_GALLERY_ART.some(x=>x.id===35||x.id===38),'The missing 35 and standalone Cerf 38 must not be duplicated');
+ Array.from({length:24},(_,i)=>i+25),
+ 'All 24 Reflets cards, IDs 25–48, appear in canonical order');
+assert.equal(new Set(REFLETS_GALLERY_ART.map(x=>x.slug)).size,24,'No duplicate illustrations');
+assert.ok([35,38,46,47,48].every(id=>REFLETS_GALLERY_ART.some(x=>x.id===id)),'Previously missing and pilot cards are now included');
 assert.ok(REFLETS_GALLERY_ART.every(x=>Object.isFrozen(x)),'Preview metadata is immutable');
 
 for(const card of REFLETS_GALLERY_ART){
@@ -37,9 +37,9 @@ for(const card of REFLETS_GALLERY_ART){
 for(const id of ['reflets-gallery','reflets-gallery-grid','reflets-art-preview']){
  assert.ok(html.includes('id="'+id+'"'),'Codex gallery DOM element: '+id);
 }
-assert.ok(html.includes('reflets-gallery.css?v=lot2-12'),'Gallery stylesheet is cache busted');
-assert.ok(html.includes('main.js?v=reflets-lot2-12'),'Main JS controller is cache busted');
-assert.ok(main.includes("import {mountRefletsGallery} from './reflets-gallery.js';"));
+assert.ok(html.includes('reflets-gallery.css?v=reflets-final-24'),'Gallery stylesheet is cache busted');
+assert.ok(html.includes('main.js?v=reflets-final-24'),'Main JS controller is cache busted');
+assert.ok(main.includes("import {mountRefletsGallery} from './reflets-gallery.js?v=reflets-final-24';"));
 assert.ok(main.includes("$('#reflets-gallery').hidden=!showRefletsPreview"));
 assert.ok(main.includes("if(showRefletsPreview)mountRefletsGallery($('#reflets-gallery-grid'));"));
 assert.ok(css.includes('@media(max-width:570px)'),'Supports phone grid');
@@ -62,4 +62,4 @@ assert.ok(!data.includes('reflets-gallery'),'Booster logic never imports preview
 assert.ok(!art.includes('reflets-gallery'),'Playable art pool never imports previews');
 assert.ok(!main.includes('reflets-brises-catalog'),'Draft catalogue is only imported by preview module');
 assert.ok(main.includes("const SAVE='aetherium-save-v1'"),'Legacy save key stays stable');
-console.log('AETHERIUM Reflets brisés — 19 complete HD + thumbnails; 20 previews including Cerf pilot; no gameplay leaks');
+console.log('AETHERIUM Reflets brisés — 24 complete HD + thumbnails; 24 previews including Cerf pilot; no gameplay leaks');
