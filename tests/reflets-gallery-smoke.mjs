@@ -61,7 +61,7 @@ for(const value of [0,0.025,0.13,0.31,0.65,0.95,0.999]){
   'Original boosters cannot contain any Reflets previews');
 }
 assert.ok(!data.includes('reflets-gallery'),'Booster logic never imports previews');
-assert.ok(!art.includes('reflets-gallery'),'Playable art pool never imports previews');
+assert.ok(art.includes('REFLETS_GALLERY_ART'),'Published art uses the complete registered Reflets illustrations');
 assert.ok(!main.includes('reflets-brises-catalog'),'Draft catalogue is only imported by preview module');
 assert.ok(main.includes("const SAVE='aetherium-save-v1'"),'Legacy save key stays stable');
 console.log('AETHERIUM Reflets brisés — all 24 HD illustrations connect to the published booster and Codex');

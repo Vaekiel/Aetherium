@@ -24,8 +24,9 @@ jobs:
         run: node --experimental-default-type=module --test tests/duplicate-rewards.test.mjs
       - name: Run full game and future collection smoke test suite
         run: |
-          set -eu
+          failed=0
           for test_file in tests/*-smoke.mjs; do
             echo "Running $test_file"
-            node "$test_file"
+            node "$test_file" || failed=1
           done
+          exit "$failed"
