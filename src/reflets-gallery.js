@@ -1,4 +1,4 @@
-/* AETHERIUM — Reflets brisés, LOTS 1 + 2.
+/* AETHERIUM — Reflets brisés, galerie complète des 24 illustrations.
    Illustration previews only. Never append these drafts to src/data.js:
    the existing booster, collection and crafting systems stay locked. */
 import {REFLETS_BRISES_DRAFT} from './reflets-brises-catalog.js';
@@ -14,16 +14,21 @@ const slugs=Object.freeze([
   [32,'sentinelle-des-felures'],
   [33,'fil-des-deux-rives'],
   [34,'serment-retourne'],
-  // Lot 2 — #35 awaits its approved illustration; #38 has a dedicated pilot.
+  // Ensemble complet des 24 cartes de l’extension.
+  [35,'dame-de-l-autre-aube'],
   [36,'ronce-reflechie'],
   [37,'copiste-des-visages'],
+  [38,'cerf-sans-reflet'],
   [39,'sablier-des-heures-doubles'],
   [40,'maree-de-verre'],
   [41,'gardien-du-seuil-inverse'],
   [42,'lame-de-parallaxe'],
   [43,'palais-des-dedoubles'],
   [44,'cendre-de-l-autre-soleil'],
-  [45,'elyra-la-sans-visage']
+  [45,'elyra-la-sans-visage'],
+  [46,'nemeria-mere-des-reflets'],
+  [47,'leviathan-du-revers'],
+  [48,'fracture-primordiale']
 ]);
 const rarityLabels=Object.freeze({
   common:'Commune',
