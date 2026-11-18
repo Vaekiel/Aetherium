@@ -103,4 +103,47 @@ for(const id of ['booster-collection-kicker','booster-family-title','booster-fam
 assert.ok(html.includes('data-booster="origines"')&&html.includes('data-booster="reflets-brises"'));
 assert.ok(html.includes('reflets-booster.css?v=reflets-release-1'));
 assert.ok(css.includes('@media(max-width:850px)')&&css.includes('.pack.pack-reflets'));
+
+/* Browser startup regression: the booster selector must use querySelectorAll.
+   querySelector (single HTMLElement) has no forEach and is not iterable. */
+const all=String.fromCharCode(36,36);
+assert.ok(source.includes("for(const control of "+all+"('.booster-choice'))"),
+  'Both booster controls must be updated using querySelectorAll');
+assert.ok(source.includes(all+"('.booster-choice').forEach(control=>control.addEventListener('click'"),
+  'The click handlers must be registered on both booster buttons');
+const selectorStart=source.indexOf('function selectBooster(edition){');
+const selectorEnd=source.indexOf('/** The face-up card',selectorStart);
+assert.ok(selectorStart>0&&selectorEnd>selectorStart);
+const selectorScript=source.slice(selectorStart,selectorEnd);
+const choices=['origines','reflets-brises'].map(booster=>({
+ dataset:{booster},
+ classList:{toggle(){}},
+ setAttribute(){},
+ addEventListener(name,fn){if(name==='click')this.activate=fn}
+}));
+const fields=Object.fromEntries([
+ '#booster-pack .pack-title','#booster-pack .pack-edition',
+ '#booster-collection-kicker','#booster-family-title',
+ '#booster-family-description','#pack-title','#pack-msg'
+].map(id=>[id,{textContent:''}]));
+let refreshed=0,cleared=0;
+const selectorContext={
+ boosterBusy:false,selectedBooster:'origines',
+ boosterArt:{classList:{toggle(){}}},
+ clearBoosterScene(){cleared++},
+ update(){refreshed++},
+ [String.fromCharCode(36)]:sel=>fields[sel]??null,
+ [all]:sel=>sel==='.booster-choice'?choices:[]
+};
+runInNewContext(selectorScript,selectorContext);
+assert.ok(choices.every(choice=>typeof choice.activate==='function'),
+  'Both booster options respond to touch/click');
+choices[1].activate();
+assert.equal(selectorContext.selectedBooster,'reflets-brises');
+assert.equal(fields['#booster-family-title'].textContent,'Booster des Reflets brisés');
+choices[0].activate();
+assert.equal(selectorContext.selectedBooster,'origines');
+assert.equal(refreshed,2);
+assert.equal(cleared,2);
+
 console.log('AETHERIUM — Reflets brisés: 24 cartes, tirage isolé, images HD, sauvegardes et Origines préservés');

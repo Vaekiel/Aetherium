@@ -13,7 +13,7 @@ for(const id of ['codex-upcoming','reflets-art-preview']){
  assert.ok(html.includes('id="'+id+'"'),'The existing upcoming collection hosts '+id);
 }
 assert.ok(html.includes('src/reflets-preview.css?v=art-pilot-38'));
-assert.ok(html.includes('src/main.js?v=reflets-booster-1'));
+assert.ok(html.includes('src/main.js?v=reflets-selector-fix-2'));
 assert.ok(html.includes('Aperçu visuel uniquement · Carte non disponible dans les boosters'));
 assert.ok(main.includes("$('#reflets-art-preview').hidden=!showRefletsPreview"),
  'The historic pilot preview remains hidden once its chapter is released');
