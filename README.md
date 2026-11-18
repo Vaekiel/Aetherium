@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/scenery/dusk-horizon.webp" alt="AETHERIUM — les horizons crépusculaires des Marches de Verre" width="860">
+  <img src="assets/scenery/readme-banner.png" alt="AETHERIUM — les horizons crépusculaires des Marches de Verre" width="860">
 </p>
 
 <h1 align="center">✦ AETHERIUM ✦</h1>
