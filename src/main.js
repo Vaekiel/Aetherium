@@ -112,7 +112,7 @@ let boosterBusy=false;
 function save(){try{localStorage.setItem(SAVE,JSON.stringify(state))}catch{notify('Sauvegarde indisponible dans ce navigateur.')}}
 let toastTimer;
 function notify(message){const el=$('#toast');el.textContent=message;el.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove('show'),3000)}
-function update(){if(state.goalId&&state.owned[state.goalId])state.goalId=null;save();$('#coins').textContent=state.coins.toLocaleString('fr-FR');$('#dust').textContent=state.dust.toLocaleString('fr-FR');$('#buy').disabled=state.coins<PACK_PRICE||boosterBusy;for(const control of $('.booster-choice'))control.disabled=boosterBusy;$('#collection-progress').textContent=Object.keys(state.owned).length+' / '+CARDS.length;
+function update(){if(state.goalId&&state.owned[state.goalId])state.goalId=null;save();$('#coins').textContent=state.coins.toLocaleString('fr-FR');$('#dust').textContent=state.dust.toLocaleString('fr-FR');$('#buy').disabled=state.coins<PACK_PRICE||boosterBusy;for(const control of $$('.booster-choice'))control.disabled=boosterBusy;$('#collection-progress').textContent=Object.keys(state.owned).length+' / '+CARDS.length;
 $('#mobile-collection-progress').textContent=Object.keys(state.owned).length+' / '+CARDS.length+' obtenues';
   const chromaticTotal=Object.keys(state.shiny).length;
   $('#codex-card-count').textContent=Object.keys(state.owned).length+' / '+CARDS.length;
@@ -1911,7 +1911,7 @@ function selectBooster(edition){
   $('#booster-family-description').textContent=isReflets
     ?'Partie II des Marches de Verre. Cinq cartes du Revers, dont une Inhabituelle au minimum. Les 24 nouvelles légendes t’attendent.'
     :'Partie I des Marches de Verre. Cinq cartes, dont au moins une Inhabituelle ou mieux. Une chance de découvrir une version Chromatique.';
-  for(const control of $('.booster-choice')){
+  for(const control of $$('.booster-choice')){
     const active=control.dataset.booster===edition;
     control.classList.toggle('is-selected',active);
     control.setAttribute('aria-pressed',String(active));
@@ -1920,7 +1920,7 @@ function selectBooster(edition){
   $('#pack-msg').textContent='Choisis ton booster puis dépense 100 Couronnes pour révéler cinq cartes.';
   update();
 }
-$('.booster-choice').forEach(control=>control.addEventListener('click',
+$$('.booster-choice').forEach(control=>control.addEventListener('click',
   ()=>selectBooster(control.dataset.booster)));
 
 /** The face-up card is decorative: tapping it should not leave the reveal sequence.
