@@ -7,7 +7,7 @@ const legacyCss=read('src/booster.css');
 const image=read('assets/boosters/origines-portal.svg');
 const data=read('src/data.js');
 const main=read('src/main.js');
-const pack=html.match(/<div class="pack pack-origines" id="booster-pack" aria-hidden="true">([\s\S]*?)<\/div>/)?.[1];
+const pack=html.match(/<div class="pack pack-origines pack-illustrated" id="booster-pack" aria-hidden="true">([\s\S]*?)<\/div>/)?.[1];
 assert.ok(pack,'Pack Origines is a decorative wrapper preserving the opening handler target');
 for(const name of [
  'pack-artwork','pack-foil','pack-sidefold','pack-crimp-top','pack-crimp-bottom',
@@ -19,7 +19,8 @@ assert.ok(pack.includes('AETHERIUM'));
 assert.ok(pack.includes('LES MARCHES DE VERRE'));
 assert.ok(pack.includes('ORIGINES'));
 assert.ok(pack.includes('SAISON I · 5 CARTES'));
-assert.ok(pack.includes('src="./assets/boosters/origines-portal.svg"'));
+assert.ok(pack.includes('src="./assets/boosters/origines-pack-hd.webp"'));
+assert.ok(pack.includes('src="./assets/boosters/reflets-brises-pack-hd.webp"'));
 assert.ok(!pack.includes('derniere-etoile')&&!pack.includes('dragon-de-cristal'),
  'The wrapper never spoils a collectible by showing its art');
 assert.ok(!pack.includes('<button'),'Decorative artwork cannot accidentally trigger purchases');

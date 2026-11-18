@@ -43,6 +43,10 @@ jobs:
           test -f src/mobile.css
           test -s src/booster.css
           test -s src/booster-packaging.css
+          test -s src/booster-artworks.css
+          test -s assets/boosters/origines-pack-hd.webp
+          test -s assets/boosters/reflets-brises-pack-hd.webp
+          test -s tests/booster-artworks-smoke.mjs
           test -s assets/boosters/origines-portal.svg
           test -s tests/booster-packaging-smoke.mjs
           test -s src/runes.css
@@ -225,6 +229,7 @@ jobs:
           node tests/booster-reveal-smoke.mjs
           node tests/booster-opening-smoke.mjs
           node tests/booster-packaging-smoke.mjs
+          node tests/booster-artworks-smoke.mjs
           node tests/runes-smoke.mjs
           node tests/rune-rituals-smoke.mjs
           node tests/memory-smoke.mjs

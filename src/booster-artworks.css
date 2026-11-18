@@ -1,0 +1,84 @@
+/* AETHERIUM — Illustrated high-definition pixel-art booster wrappers.
+   Keeps the proven foil tear/flip flow; the visual is now authored artwork,
+   never a tinted SVG or a copied collectible card. */
+#page-boosters .pack.pack-origines.pack-illustrated{
+  border:1px solid #7d668f;
+  outline:1px solid #322544;
+  background:#100e27;
+  box-shadow:0 17px 27px #070615ba,0 0 22px #9d73c03b;
+}
+#page-boosters .pack.pack-origines.pack-illustrated.pack-reflets{
+  border-color:#8e82b7;
+  outline-color:#3e3a65;
+  box-shadow:0 17px 27px #070615ba,0 0 24px #75bcdf48;
+}
+#page-boosters .pack.pack-origines.pack-illustrated .pack-artwork{
+  inset:0;
+  width:100%;height:100%;
+  display:block;
+  object-fit:cover;
+  object-position:center;
+  image-rendering:auto;
+  filter:none;
+  opacity:1;
+  pointer-events:none;
+}
+#page-boosters .pack.pack-origines.pack-illustrated .pack-artwork-reflets{
+  display:none;
+}
+#page-boosters .pack.pack-origines.pack-illustrated.pack-reflets .pack-artwork:not(.pack-artwork-reflets){
+  display:none;
+}
+#page-boosters .pack.pack-origines.pack-illustrated.pack-reflets .pack-artwork-reflets{
+  display:block;
+}
+/* Lettering, gold frame, folds and crimping are already in the approved pixels.
+   Do not draw the older synthetic wrapper a second time on top of the art. */
+#page-boosters .pack.pack-origines.pack-illustrated .pack-wordmark,
+#page-boosters .pack.pack-origines.pack-illustrated .pack-collection,
+#page-boosters .pack.pack-origines.pack-illustrated .pack-crest,
+#page-boosters .pack.pack-origines.pack-illustrated .pack-title,
+#page-boosters .pack.pack-origines.pack-illustrated .pack-edition,
+#page-boosters .pack.pack-origines.pack-illustrated .pack-sidefold,
+#page-boosters .pack.pack-origines.pack-illustrated .pack-crimp-bottom{
+  display:none;
+}
+#page-boosters .pack.pack-origines.pack-illustrated::before{
+  background:linear-gradient(90deg,#100c2218,transparent 24%,transparent 76%,#100c2218),
+    linear-gradient(180deg,#160f2e10,transparent 27%,transparent 71%,#160f2e14);
+}
+#page-boosters .pack.pack-origines.pack-illustrated::after{
+  display:none;
+}
+/* Keep only a light foil glint while idle. The original 980ms rip sequence
+   uses these very same nodes, so no changes to purchase/reveal JS are needed. */
+#page-boosters .pack.pack-origines.pack-illustrated .pack-foil{
+  background:linear-gradient(113deg,transparent 22%,#efe0ff0c 39%,
+    #a5eeff14 47%,#efbce20e 55%,transparent 74%);
+  mix-blend-mode:screen;
+  opacity:.38;
+}
+#page-boosters .pack.pack-origines.pack-illustrated .pack-crimp-top,
+#page-boosters .pack.pack-origines.pack-illustrated .pack-seal{
+  opacity:0;
+}
+#page-boosters .pack.pack-origines.pack-illustrated.is-opening .pack-crimp-top,
+#page-boosters .pack.pack-origines.pack-illustrated.is-opening .pack-seal{
+  opacity:1;
+}
+#page-boosters .pack.pack-origines.pack-illustrated:not(.is-opening):hover{
+  box-shadow:0 18px 30px #070615cd,0 0 28px #c29ce45e;
+}
+#page-boosters .pack.pack-origines.pack-illustrated.pack-reflets:not(.is-opening):hover{
+  box-shadow:0 18px 30px #070615cd,0 0 28px #91dbf175;
+}
+@media(max-width:850px){
+  #page-boosters .pack.pack-origines.pack-illustrated .pack-artwork{
+    object-position:center;
+  }
+}
+@media(prefers-reduced-motion:reduce){
+  #page-boosters .pack.pack-origines.pack-illustrated:not(.is-opening):hover{
+    box-shadow:0 17px 27px #070615ba,0 0 22px #9d73c03b;
+  }
+}
