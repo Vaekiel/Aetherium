@@ -1,4 +1,5 @@
-import {CARDS,RARITIES,PACK_PRICE,drawPack} from './data.js';
+import {RARITIES,PACK_PRICE,drawPack} from './data.js';
+import {CARDS,drawRefletsPack} from './collection-data.js';
 import {CRAFT_COSTS,getCraftCost,craftCard} from './crafting.js';
 import {duplicateDustReward} from './duplicate-rewards.js';
 import {applyCardIllustration,hasApprovedArt,CARD_ART} from './card-art.js';
@@ -111,7 +112,7 @@ let boosterBusy=false;
 function save(){try{localStorage.setItem(SAVE,JSON.stringify(state))}catch{notify('Sauvegarde indisponible dans ce navigateur.')}}
 let toastTimer;
 function notify(message){const el=$('#toast');el.textContent=message;el.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove('show'),3000)}
-function update(){if(state.goalId&&state.owned[state.goalId])state.goalId=null;save();$('#coins').textContent=state.coins.toLocaleString('fr-FR');$('#dust').textContent=state.dust.toLocaleString('fr-FR');$('#buy').disabled=state.coins<PACK_PRICE||boosterBusy;$('#collection-progress').textContent=Object.keys(state.owned).length+' / '+CARDS.length;
+function update(){if(state.goalId&&state.owned[state.goalId])state.goalId=null;save();$('#coins').textContent=state.coins.toLocaleString('fr-FR');$('#dust').textContent=state.dust.toLocaleString('fr-FR');$('#buy').disabled=state.coins<PACK_PRICE||boosterBusy;for(const control of $('.booster-choice'))control.disabled=boosterBusy;$('#collection-progress').textContent=Object.keys(state.owned).length+' / '+CARDS.length;
 $('#mobile-collection-progress').textContent=Object.keys(state.owned).length+' / '+CARDS.length+' obtenues';
   const chromaticTotal=Object.keys(state.shiny).length;
   $('#codex-card-count').textContent=Object.keys(state.owned).length+' / '+CARDS.length;
@@ -169,7 +170,7 @@ function renderAtelier(){
   gallery.replaceChildren();
   $('#atelier-empty').hidden=visible.length>0;
   $('#atelier-empty').textContent=missing.length===0
-    ?'Ton Codex est complet ! Tu possèdes les 24 cartes des Origines.'
+    ?'Ton Codex est complet ! Tu possèdes les 48 cartes des collections publiées.'
     :'Aucune carte manquante ne correspond à ce filtre.';
   for(const card of visible){
     const selected=card.id===forgeSelectedId;
@@ -202,7 +203,7 @@ function renderAtelier(){
   details.replaceChildren();
   if(!chooseFrom){
     const text=missing.length===0
-      ?'Toutes les cartes des Origines ont rejoint ton Codex. Les versions Chromatiques restent à découvrir en booster.'
+      ?'Toutes les cartes publiées ont rejoint ton Codex. Les versions Chromatiques restent à découvrir en booster.'
       :'Modifie le filtre pour choisir une carte à fabriquer.';
     details.append(el('p','kicker','LES FORGES DES ARCHIVES'),el('h3','',missing.length?'Aucune recette affichée':'Le Codex est complet'),el('p','atelier-detail-placeholder',text));
     if(missing.length===0)details.append(button('Explorer mon Codex ›',()=>navigate('collection'),'secondary atelier-detail-link'));
@@ -1423,7 +1424,11 @@ function makeCard(c,isShiny=false,locked=false){
     b.setAttribute('aria-label',c.name+' — version Chromatique, '+RARITIES[c.rarity].label);
   }
   b.addEventListener('click',()=>{
-    if($('#page-boosters').classList.contains('active'))navigate('collection');
+    if($('#page-boosters').classList.contains('active')){
+      const chapter=collectionForCard(c);
+      if(chapter){activeSeason=chapter.season.id;activeCollection=chapter.collection.id;}
+      navigate('collection');
+    }
     if(reallyLocked)inspectSealed(c);
     else inspect(c,chromatic);
   });
@@ -1857,7 +1862,7 @@ $$('[data-discovery]').forEach(b=>b.addEventListener('click',()=>{
   renderCollection();
 }));
 
-/* Origines booster: one sealed card at a time, from a five-card stack.
+/* Season I boosters: one sealed card at a time, from a five-card stack.
    A purchase is saved before presentation; revealing never re-rolls or charges. */
 const boosterArt=$('#booster-pack'),boosterOpening=$('#booster-opening');
 const boosterGrid=$('#pulls'),boosterProgress=$('#booster-progress'),boosterProgressFill=$('#booster-progress span');
@@ -1869,6 +1874,7 @@ const reducedMotion=window.matchMedia('(prefers-reduced-motion: reduce)');
 const BOOSTER_UNSEAL_MS=980;
 const boosterTimers=new Set();
 let currentDraw=[],drawSummary=null,currentIndex=0,cardFaceUp=false,changingCard=false;
+let selectedBooster='origines';
 function afterBooster(ms,action){
   const id=setTimeout(()=>{boosterTimers.delete(id);action()},ms);
   boosterTimers.add(id);
@@ -1890,6 +1896,33 @@ function clearBoosterScene(){
   boosterSummary.hidden=true;
   boosterSummary.replaceChildren();
 }
+/* Switch only between complete released collections. Never change a purchased
+   draw during its animation or re-roll cards on edition change. */
+function selectBooster(edition){
+  if(boosterBusy||!['origines','reflets-brises'].includes(edition))return;
+  const isReflets=edition==='reflets-brises';
+  selectedBooster=edition;
+  clearBoosterScene();
+  boosterArt.classList.toggle('pack-reflets',isReflets);
+  $('#booster-pack .pack-title').textContent=isReflets?'REFLETS BRISÉS':'ORIGINES';
+  $('#booster-pack .pack-edition').textContent='SAISON I · 5 CARTES';
+  $('#booster-collection-kicker').textContent='SAISON I · LES MARCHES DE VERRE · PARTIE '+(isReflets?'II':'I');
+  $('#booster-family-title').textContent='Booster '+(isReflets?'des Reflets brisés':'des Origines');
+  $('#booster-family-description').textContent=isReflets
+    ?'Partie II des Marches de Verre. Cinq cartes du Revers, dont une Inhabituelle au minimum. Les 24 nouvelles légendes t’attendent.'
+    :'Partie I des Marches de Verre. Cinq cartes, dont au moins une Inhabituelle ou mieux. Une chance de découvrir une version Chromatique.';
+  for(const control of $('.booster-choice')){
+    const active=control.dataset.booster===edition;
+    control.classList.toggle('is-selected',active);
+    control.setAttribute('aria-pressed',String(active));
+  }
+  $('#pack-title').textContent=isReflets?'Les miroirs du Revers t’attendent.':'Les archives attendent leur voyageur.';
+  $('#pack-msg').textContent='Choisis ton booster puis dépense 100 Couronnes pour révéler cinq cartes.';
+  update();
+}
+$('.booster-choice').forEach(control=>control.addEventListener('click',
+  ()=>selectBooster(control.dataset.booster)));
+
 /** The face-up card is decorative: tapping it should not leave the reveal sequence.
  * Loading the artwork eagerly is important: on Android WebView a lazy image
  * inside an initially hidden, flipping card can remain a blank rectangle. */
@@ -2014,7 +2047,8 @@ function openOriginesBooster(){
   if(boosterBusy||state.coins<PACK_PRICE)return;
   cancelBoosterTimers();
   boosterBusy=true;
-  const results=drawPack();
+  const edition=typeof selectedBooster==='undefined'?'origines':selectedBooster;
+  const results=edition==='origines'?drawPack():drawRefletsPack();
   state.coins-=PACK_PRICE;
   state.opened++;
   let newCount=0,duplicates=0,shinyCount=0,dustEarned=0;
@@ -2041,7 +2075,7 @@ function openOriginesBooster(){
   boosterActions.hidden=false;nextPullButton.hidden=true;
   boosterProgress.hidden=false;boosterProgressFill.style.width='0%';
   boosterStep.hidden=false;boosterStep.textContent='Préparation des cartes…';
-  $('#pack-title').textContent='Le sceau des Origines s’éveille…';
+  $('#pack-title').textContent=edition==='origines'?'Le sceau des Origines s’éveille…':'Le sceau des Reflets brisés s’éveille…';
   $('#pack-msg').textContent='Le paquet s’ouvre : cinq découvertes t’attendent.';
   boosterOpening.classList.add('is-unsealing');
   boosterArt.classList.add('is-opening');
@@ -2207,6 +2241,7 @@ backupRestore.addEventListener('click',()=>{
 });
 $('#reset').addEventListener('click',()=>{if(!confirm('Effacer définitivement les cartes et la progression sauvegardées sur cet appareil ?'))return;clearBoosterScene();try{localStorage.removeItem(PREVIOUS_SAVE_KEY)}catch{}state=fresh();state.trialStats=sanitizedTrialStats(state.trialStats);trialStarters.forEach(start=>start());renderTrialMastery();renderDifficultyChoice();renderExpedition();selectedCard=null;forgeSelectedId=null;forgeFilter='all';$('#atelier-filter').value='all';$('#atelier-result').hidden=true;$('#inspector').replaceChildren(el('p','muted','Sélectionne une carte découverte pour l’admirer.'));$('#pulls').replaceChildren();$('#pack-title').textContent='Les archives attendent leur voyageur.';$('#pack-msg').textContent='Gagne des Couronnes en jouant pour ouvrir des boosters.';update();renderCollection();notify('Progression réinitialisée.')});
 syncMobileSheets();
+selectBooster('origines');
 renderExpedition();
 update();
 navigate(APP_PAGES.includes(location.hash.slice(1))?location.hash.slice(1):'jouer');

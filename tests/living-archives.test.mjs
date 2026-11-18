@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {CARDS} from '../src/data.js';
+import {CARDS} from '../src/collection-data.js';
 import {
   sanitizeRecentFinds,recordRecentFind,buildLivingArchive,RECENT_DISCOVERY_LIMIT
 } from '../src/living-archives.js';
@@ -19,7 +19,7 @@ test('Seules les collections publiées sont considérées complétables',()=>{
   const result=buildLivingArchive(CARDS,CARDS,owned,{},[]);
   assert.equal(result.discovered,CARDS.length);
   assert.equal(result.publishedCount,1);
-  assert.equal(result.completed.length,1);
+  assert.equal(result.completed.length,2);
   assert.equal(result.completed[0].collection.id,'origines');
 });
 

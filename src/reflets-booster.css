@@ -1,0 +1,57 @@
+/* AETHERIUM — Reflets brisés: second booster, same one-purchase reveal flow. */
+#page-boosters .booster-selector{
+  display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:7px;
+  margin:0 0 17px;width:100%;
+}
+#page-boosters .booster-choice{
+  min-height:44px;min-width:0;padding:9px 6px;
+  color:#d6d1e2;background:#1d2038;border:1px solid #605774;
+  border-radius:4px;font:12px/1.25 Georgia,serif;
+  cursor:pointer;transition:border-color .15s ease,background .15s ease;
+}
+#page-boosters .booster-choice.is-selected{
+  color:#f5e5cc;background:linear-gradient(145deg,#393251,#24203e);
+  border-color:#cfb88e;box-shadow:inset 0 0 0 1px #cfb88e33;
+}
+#page-boosters .booster-choice:hover:not(:disabled){border-color:#b1a0d3}
+#page-boosters .booster-choice:focus-visible{outline:2px solid #d4bceb;outline-offset:3px}
+#page-boosters .booster-choice:disabled{opacity:.63;cursor:not-allowed}
+#page-boosters .pack-side .pack.pack-origines.pack-reflets{
+  border-color:#af94df;outline-color:#547f9b;
+  box-shadow:inset 0 0 0 2px #b8d6ec55,inset 0 0 0 6px #15142fc9,
+    0 18px 25px #060818b3,0 0 26px #9876d455;
+}
+#page-boosters .pack.pack-reflets .pack-artwork{
+  filter:hue-rotate(45deg) saturate(1.35) brightness(.77);
+}
+#page-boosters .pack.pack-reflets::before{
+  background:linear-gradient(175deg,#0d0d2af0 0%,#1c143988 25%,transparent 47%,#1a1238a3 67%,#111026f0 100%),
+  linear-gradient(95deg,#080a28cf 0%,transparent 26%,transparent 76%,#050f2ed0 100%);
+}
+#page-boosters .pack.pack-reflets .pack-foil{
+  background:linear-gradient(115deg,transparent 17%,#e7c9ff12 32%,#a2edff42 49%,#d39dea30 56%,transparent 76%);
+  opacity:.95;
+}
+#page-boosters .pack.pack-reflets .pack-title{
+  font-size:18px;letter-spacing:.035em;color:#f0d8ff;
+  text-shadow:0 0 9px #c6a1ed82,0 1px 1px #0b1029;
+}
+#page-boosters .pack.pack-reflets .pack-crest{color:#b3e1f7}
+#page-boosters .pack.pack-reflets .pack-crimp{
+  background:repeating-linear-gradient(90deg,
+    #b0b9d9 0 2px,#645e92 2px 4px,#29243f 4px 8px,
+    #8f9ecc 8px 10px,#d3c3e6 10px 11px,#302343 11px 14px);
+}
+@media(max-width:850px){
+  #page-boosters .pack-side .booster-selector{grid-column:1/-1;grid-row:1;margin:0 0 8px}
+  #page-boosters .pack-side .pack.pack-origines{grid-row:2/6}
+  #page-boosters .pack.pack-reflets .pack-title{font-size:10px;letter-spacing:0}
+  #page-boosters .booster-choice{min-height:39px;font-size:11px}
+}
+@media(max-width:420px){
+  #page-boosters .booster-choice{font-size:10px}
+  #page-boosters .pack.pack-reflets .pack-title{font-size:9px}
+}
+@media(prefers-reduced-motion:reduce){
+  #page-boosters .booster-choice{transition:none}
+}

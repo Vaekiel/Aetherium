@@ -13,17 +13,17 @@ for(const id of ['codex-upcoming','reflets-art-preview']){
  assert.ok(html.includes('id="'+id+'"'),'The existing upcoming collection hosts '+id);
 }
 assert.ok(html.includes('src/reflets-preview.css?v=art-pilot-38'));
-assert.ok(html.includes('src/main.js?v=reflets-final-24'));
+assert.ok(html.includes('src/main.js?v=reflets-booster-1'));
 assert.ok(html.includes('Aperçu visuel uniquement · Carte non disponible dans les boosters'));
-assert.ok(main.includes("const showRefletsPreview=isUpcoming&&activeSeason==='marches-de-verre'&&selectedPart.id==='reflets-brises';")&&main.includes("$('#reflets-art-preview').hidden=!showRefletsPreview"),
- 'A preview must appear ONLY in the locked Reflets brisés chapter');
+assert.ok(main.includes("$('#reflets-art-preview').hidden=!showRefletsPreview"),
+ 'The historic pilot preview remains hidden once its chapter is released');
 assert.ok(main.includes("$('#collection-layout').hidden=isUpcoming"),'Unreleased collection does not display a playable gallery');
 assert.ok(main.includes("const SAVE='aetherium-save-v1'"),'Existing save key unchanged');
-assert.ok(!main.includes("from './reflets-brises-catalog.js'"),'A preview cannot inject cards into the active game');
+assert.ok(main.includes("from './collection-data.js'"),'The released catalogue loads through the dedicated published module');
 assert.ok(!gameData.includes('reflets-brises-catalog.js'),'Origines pools are not modified');
-assert.ok(!artwork.includes('cerf-sans-reflet'),'Pilot artwork is not counted as an owned or obtainable card');
+assert.ok(artwork.includes('REFLETS_GALLERY_ART'),'The former pilot joins the published art registry');
 assert.ok(season.includes("part('reflets-brises'"),'Reflets stays planned');
-assert.ok(!season.includes("released:true,first:25,last:48"),'Reflets must not be published before art release');
+assert.ok(season.includes("released:true,first:25,last:48"),'Reflets is published after all 24 illustrations were approved');
 assert.ok(css.includes('@media(max-width:680px)'),'Preview remains usable on phones');
 assert.ok(css.includes('#page-collection #reflets-art-preview[hidden]'),'Unavailable preview must remain hidden');
 
@@ -36,4 +36,4 @@ for(const path of [
  assert.equal(image.toString('ascii',0,4),'RIFF','Real WebP asset expected: '+path);
  assert.equal(image.toString('ascii',8,12),'WEBP','Real WebP asset expected: '+path);
 }
-console.log('AETHERIUM Reflets brisés pilot preview: real HD/thumbnail assets, locked Codex and original collection preserved');
+console.log('AETHERIUM Reflets brisés: former pilot artwork and live Codex release verified');

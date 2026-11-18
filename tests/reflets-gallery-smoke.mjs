@@ -3,6 +3,7 @@ import {readFileSync} from 'node:fs';
 import {REFLETS_GALLERY_ART} from '../src/reflets-gallery.js';
 import {REFLETS_BRISES_DRAFT} from '../src/reflets-brises-catalog.js';
 import {CARDS,PACK_PRICE,CHROMATIC_RATE,drawPack} from '../src/data.js';
+import {CARDS as ALL_CARDS} from '../src/collection-data.js';
 import {collectionById,cardsForCollection} from '../src/seasons.js';
 
 const read=path=>readFileSync(path,'utf8');
@@ -38,7 +39,7 @@ for(const id of ['reflets-gallery','reflets-gallery-grid','reflets-art-preview']
  assert.ok(html.includes('id="'+id+'"'),'Codex gallery DOM element: '+id);
 }
 assert.ok(html.includes('reflets-gallery.css?v=reflets-final-24'),'Gallery stylesheet is cache busted');
-assert.ok(html.includes('main.js?v=reflets-final-24'),'Main JS controller is cache busted');
+assert.ok(html.includes('main.js?v=reflets-booster-1'),'Main JS controller is cache busted');
 assert.ok(main.includes("import {mountRefletsGallery} from './reflets-gallery.js?v=reflets-final-24';"));
 assert.ok(main.includes("$('#reflets-gallery').hidden=!showRefletsPreview"));
 assert.ok(main.includes("if(showRefletsPreview)mountRefletsGallery($('#reflets-gallery-grid'));"));
@@ -48,10 +49,11 @@ assert.ok(read('src/reflets-gallery.js').includes("picture.loading='lazy'"));
 assert.ok(read('src/reflets-gallery.js').includes("link.target='_blank'"));
 
 const part=collectionById('marches-de-verre','reflets-brises');
-assert.equal(part.released,false,'Reflets brisés remains unreleased');
+assert.equal(part.released,true,'Reflets brisés is published');
 assert.equal(CARDS.length,24,'Original card database unchanged');
-assert.equal(cardsForCollection(CARDS,'marches-de-verre','reflets-brises').length,0,
- 'Preview images are not collectible cards');
+assert.equal(ALL_CARDS.length,48,'Combined game catalogue publishes both collections');
+assert.equal(cardsForCollection(ALL_CARDS,'marches-de-verre','reflets-brises').length,24,
+ 'All 24 preview illustrations are now collectible');
 assert.equal(PACK_PRICE,100);
 assert.equal(CHROMATIC_RATE,0.03);
 for(const value of [0,0.025,0.13,0.31,0.65,0.95,0.999]){
@@ -62,4 +64,4 @@ assert.ok(!data.includes('reflets-gallery'),'Booster logic never imports preview
 assert.ok(!art.includes('reflets-gallery'),'Playable art pool never imports previews');
 assert.ok(!main.includes('reflets-brises-catalog'),'Draft catalogue is only imported by preview module');
 assert.ok(main.includes("const SAVE='aetherium-save-v1'"),'Legacy save key stays stable');
-console.log('AETHERIUM Reflets brisés — 24 complete HD + thumbnails; 24 previews including Cerf pilot; no gameplay leaks');
+console.log('AETHERIUM Reflets brisés — all 24 HD illustrations connect to the published booster and Codex');
