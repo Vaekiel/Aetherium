@@ -68,7 +68,7 @@ Les fichiers ne sont **jamais envoyés à un serveur** : tout se passe sur ton a
 
 Trois collections composent maintenant le premier cycle : **Origines**, **Les Reflets brisés** et **Au-delà du Verre**. Chaque édition possède son propre booster et ses propres illustrations en pixel art HD, à découvrir au rythme des épreuves.
 
-La troisième collection contient **23 cartes disponibles en booster** et une **carte Signature** réservée à une future aventure finale. Elle ne peut être obtenue ni par hasard ni à la Forge.
+La troisième collection contient **23 cartes disponibles en booster** et une **carte Signature** à remporter dans l’aventure finale *Le Dernier Accord*. Termine les trois premières expéditions pour ouvrir ce dernier parcours en quatre actes, puis rejoue-le en Maîtrise pour gagner la finition Chromatique de la Signature. Elle n’apparaît jamais dans les boosters ni à la Forge.
 
 **Aucune course contre la montre : les collections déjà publiées ne disparaîtront pas.**
 

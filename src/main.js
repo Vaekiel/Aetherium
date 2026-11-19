@@ -15,7 +15,7 @@ import {DIFFICULTIES,validDifficulty,trialRules,trialObjective,trialScore,trialR
 import {TRIAL_RECORD_MODES,TRIAL_RECORD_METRICS,sanitizedTrialRecords,recordPersonalBest,recordMetricLabel} from './trial-records.js';
 import {trialChallengesFor} from './trial-challenges.js';
 import {TRIAL_TITLES,earnedTrialTitles,validEquippedTitle,toggleEquippedTitle} from './trial-titles.js';
-import {EXPEDITION_ROUTES,sanitizeExpedition,startExpedition,abandonExpedition,armExpedition,expeditionVictory,expeditionSummary} from './expeditions.js?v=revers-expedition-1';
+import {EXPEDITION_ROUTES,FINALE_ID,FINALE_PREREQUISITES,FINALE_VOWS,canStartFinale,chooseFinaleVow,awardFinaleCard,sanitizeExpedition,startExpedition,abandonExpedition,armExpedition,expeditionVictory,expeditionSummary} from './expeditions.js?v=dernier-accord-1';
 import {nextRuneRitual,runeExpectedAt} from './rune-rituals.js';
 import {makeEtherPuzzle,etherRule,evaluateEtherAttempt,etherAttemptFeedback} from './ether-lock-puzzles.js';
 import {nextMemoryRitual,buildMemoryDeck} from './memory-rituals.js';
@@ -415,9 +415,19 @@ function complete(i,description,performance={}){
   state.trialRecords=recordPersonalBest(state.trialRecords,i,g.mode,score,performance);
   const expeditionResult=state.expedition?.route?
     expeditionVictory(state.expedition,i,g.mode):{advanced:false};
-  if(expeditionResult.advanced)state.expedition=expeditionResult.state;
+  let finaleAward=null;
+  if(expeditionResult.advanced){
+    state.expedition=expeditionResult.state;
+    if(expeditionResult.finished&&state.expedition.route==='dernier-accord'){
+      finaleAward=awardFinaleCard(state,expeditionResult);
+      if(finaleAward.normal)state.recentFinds=recordRecentFind(state.recentFinds,72,'new');
+      if(finaleAward.chromatic)state.recentFinds=recordRecentFind(state.recentFinds,72,'chromatic');
+    }
+  }
   g.status.textContent='✓ '+description+' · '+score+'/100 · +'+earned+' Couronnes';
-  grant(earned);
+  grant(earned); // Persists the completed act and the Signature in the same save.
+  if(finaleAward?.chromatic)notify('✧ Cœur des Marches Chromatique obtenu !');
+  else if(finaleAward?.normal)notify('✦ Cœur des Marches rejoint ton Codex !');
   renderTrialMastery();
   if(expeditionResult.advanced){
     renderExpedition();
@@ -1308,42 +1318,85 @@ function renderExpedition(){
   const lead=el('div','expedition-lead');
   const leadText=el('div','expedition-lead-text');
   const isRevers=view.route?.id==='traversee-reflets';
+  const isFinale=view.route?.id===FINALE_ID;
   leadText.append(el('span','expedition-kicker',!view.route?'LES EXPÉDITIONS · MARCHES DE VERRE':
+    isFinale?'FINALE · AU-DELÀ DU VERRE':
     isRevers?'CHAPITRE II · LES REFLETS BRISÉS':'CHAPITRE I · LE SEUIL DES VERRIERS'),
     el('h3','expedition-title',!view.route?'Les Chemins des Marches':
-      isRevers?'Le Passage du Revers':'Le Seuil des Verriers'));
+      isFinale?'Le Dernier Accord':isRevers?'Le Passage du Revers':'Le Seuil des Verriers'));
   lead.append(leadText);
   host.append(lead);
   const startRoute=routeId=>{
-    state.expedition=startExpedition(state.expedition,routeId,state.difficulty);
+    const isNewFinale=routeId===FINALE_ID&&!view.current.completedRoutes.includes(FINALE_ID);
+    const isMasteryReprise=routeId===FINALE_ID&&!isNewFinale&&!state.shiny?.[72];
+    const mode=isMasteryReprise?'maitrise':
+      isNewFinale&&state.difficulty==='maitrise'?'aventure':state.difficulty;
+    state.expedition=startExpedition(state.expedition,routeId,mode);
     save();
     renderExpedition();
   };
-  const chooser=(heading)=>{
+  const chooser=heading=>{
     if(heading)host.append(el('p','expedition-description',heading));
     const choices=el('div','expedition-choices');
     EXPEDITION_ROUTES.forEach(route=>{
       const done=view.current.completedRoutes.includes(route.id);
-      const pick=button('',()=>startRoute(route.id),'expedition-choice'+(done?' is-discovered':'')+
-        (route.id==='traversee-reflets'?' is-reflets':''));
+      const locked=route.id===FINALE_ID&&!canStartFinale(view.current);
+      const pick=button('',()=>{if(!locked)startRoute(route.id)},
+        'expedition-choice'+(done?' is-discovered':'')+
+        (route.id==='traversee-reflets'?' is-reflets':'')+
+        (route.id===FINALE_ID?' is-finale':''));
+      pick.disabled=locked;
       pick.append(el('span','expedition-choice-symbol',route.symbol));
       const copy=el('span','expedition-choice-copy');
-      copy.append(el('strong','',route.name),el('small','',route.hint));
-      pick.append(copy,el('span','expedition-choice-status',done?'✓':'›'));
-      pick.setAttribute('aria-label',route.name+', '+route.hint+(done?', parcours déjà découvert':''));
+      let hint=route.hint;
+      if(route.id===FINALE_ID){
+        const have=FINALE_PREREQUISITES.filter(id=>view.current.completedRoutes.includes(id)).length;
+        hint=locked?'Scellé · '+have+'/3 expéditions achevées':
+          done&&!state.shiny?.[72]?'✧ Rejouer en Maîtrise pour la Chromatique':
+          done?'La Signature est acquise · chapitre rejouable':'Le Cœur des Marches t’attend';
+      }
+      copy.append(el('strong','',route.name),el('small','',hint));
+      pick.append(copy,el('span','expedition-choice-status',locked?'🔒':done?'✓':'›'));
+      pick.setAttribute('aria-label',route.name+', '+hint+(done?', parcours déjà découvert':''));
       choices.append(pick);
     });
     host.append(choices);
   };
   if(!view.route){
-    chooser('Trois itinéraires t’attendent dans les Marches de Verre, dont un passage vers le Revers. Choisis celui qui t’intrigue.');
+    chooser('Les trois premiers chemins conduisent à la Convergence. Termine les expéditions des Verriers, des Veilleurs et du Revers pour ouvrir Le Dernier Accord.');
     return;
   }
   if(view.complete){
     host.append(el('p','expedition-chapter',view.route.symbol+' '+view.route.name+' · parcours achevé'),
       el('h4','expedition-fragment','✦ '+view.route.fragment),
       el('p','expedition-description',view.route.ending));
-    chooser('Choisis un autre itinéraire, ou repars sur celui-ci.');
+    if(isFinale){
+      const vow=FINALE_VOWS.find(item=>item.id===view.current.choice);
+      if(vow)host.append(el('p','expedition-after',vow.ending));
+      if(state.owned?.[72]){
+        const reward=el('div','expedition-finale-reward');
+        const art=el('img','expedition-finale-art');
+        applyCardIllustration(art,CARDS[71],{shiny:!!state.shiny?.[72],size:'thumbnail'});
+        art.alt='Cœur des Marches'+(state.shiny?.[72]?' Chromatique':'');
+        const text=el('div','expedition-finale-copy');
+        text.append(el('small','expedition-finale-eyebrow','✦ RÉCOMPENSE UNIQUE · ARCHIVE 072'),
+          el('h4','',state.shiny?.[72]?'Cœur des Marches · Chromatique':'Cœur des Marches'),
+          el('p','expedition-description',state.shiny?.[72]
+            ?'Le serment a traversé le rite de Maîtrise. La Signature Chromatique est désormais gravée dans ton Codex.'
+            :'La Signature a rejoint ton Codex. Reviens en difficulté Maîtrise pour éveiller sa version Chromatique.'));
+        const see=button('Voir la Signature dans le Codex',()=>{
+          activeSeason='marches-de-verre';
+          activeCollection='au-dela-du-verre';
+          navigate('collection');
+          inspect(CARDS[71],!!state.shiny?.[72]);
+        },'secondary expedition-finale-link');
+        text.append(see);
+        reward.append(art,text);
+        host.append(reward);
+      }
+    }
+    chooser(isFinale?'Le chemin reste ouvert. Tu peux rejouer l’aventure ou explorer les autres routes.':
+      'Choisis un autre itinéraire, ou repars sur celui-ci.');
     return;
   }
   const stage=view.stage,mode=DIFFICULTIES.find(d=>d.id===view.current.mode).label;
@@ -1368,15 +1421,32 @@ function renderExpedition(){
   }
   host.append(el('h4','expedition-stage-title',stage.title),
     el('p','expedition-description',stage.text));
+  if(isFinale&&view.current.step===3){
+    host.append(el('p','expedition-description',
+      'Néméria t’écoute. Il n’existe pas de mauvaise réponse : ce choix façonnera l’épilogue, sans modifier la récompense.'));
+    const vows=el('div','expedition-final-vows');
+    for(const vow of FINALE_VOWS){
+      const active=view.current.choice===vow.id;
+      const pick=button('',()=>{
+        state.expedition=chooseFinaleVow(state.expedition,vow.id);
+        save();
+        renderExpedition();
+      },'expedition-vow'+(active?' is-selected':''));
+      pick.setAttribute('aria-pressed',String(active));
+      pick.append(el('strong','',vow.name),el('small','',vow.text));
+      vows.append(pick);
+    }
+    host.append(vows);
+  }
   const controls=el('div','expedition-actions');
   const play=button(view.current.armed?'↻ Rejouer l’étape':'✧ Rejoindre l’épreuve',()=>{
-    // The route remembers its starting difficulty; changing the global
-    // mode cannot silently count an easier victory for this expedition.
+    // The route remembers its starting difficulty; an easier win cannot skip a stage.
     if(state.difficulty!==view.current.mode){
       state.difficulty=view.current.mode;
       renderDifficultyChoice();
     }
     state.expedition=armExpedition(state.expedition);
+    if(!state.expedition.armed)return;
     save();
     trialStarters[stage.game]();
     selectGame(stage.game);
@@ -1387,6 +1457,7 @@ function renderExpedition(){
     target.scrollIntoView({behavior:'smooth',block:'start'});
     target.querySelector('button:not([disabled])')?.focus({preventScroll:true});
   },'primary expedition-continue');
+  play.disabled=isFinale&&view.current.step===3&&!view.current.choice;
   controls.append(play,button('Quitter le parcours',()=>{
     state.expedition=abandonExpedition(state.expedition);
     save();

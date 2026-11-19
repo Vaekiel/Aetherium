@@ -131,6 +131,8 @@ jobs:
           test -s src/trial-titles.css
           test -s src/expeditions.js
           test -s src/expedition.css
+          test -s src/expedition-finale.css
+          test -s tests/finale-smoke.mjs
           test -s tests/expedition-smoke.mjs
           test -s tests/trial-titles-smoke.mjs
           test -s tests/trial-challenges-smoke.mjs
@@ -292,6 +294,7 @@ jobs:
           node tests/trial-challenges-smoke.mjs
           node tests/trial-titles-smoke.mjs
           node tests/expedition-smoke.mjs
+          node tests/finale-smoke.mjs
           node --check --input-type=module < src/crafting.js
           node --check --input-type=module < src/data.js
           node --check --input-type=module < src/art.js

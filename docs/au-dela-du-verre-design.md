@@ -1,7 +1,7 @@
 # AETHERIUM — Au-delà du Verre
 ## Saison I / Partie III — Bible créative et publication du booster
 
-> **État : booster publié.** Les 24 illustrations sont intégrées au Codex et les 23 cartes n° 49–71 peuvent être découvertes via le booster « Au-delà du Verre » ou la Forge. La Signature n° 72 est scellée et réservée à l’aventure finale (à développer).
+> **État : saison I complète.** Les 24 illustrations sont intégrées au Codex et les 23 cartes n° 49–71 peuvent être obtenues dans le booster ou à la Forge. La Signature n° 72 se gagne dans Le Dernier Accord, puis en Chromatique lors de sa reprise en difficulté Maîtrise.
 
 ### Promesse narrative
 
@@ -47,10 +47,10 @@ Le fil du scénario part de **La Traversée des Reflets** (l'expédition existan
 ### Règles de publication et de progression
 
 - **23 cartes classiques** (49–71) sont distribuées par un booster dédié *Au-delà du Verre*, au prix de **100 Couronnes**, avec les taux historiques, 3 % de Chromatiques, variété intra-booster, une Inhabituelle garantie et les mêmes Éclats et coûts de Forge.
-- **La carte 72 Signature**, `Cœur des Marches`, **n’entre jamais** dans les boosters. Elle doit être obtenue en achevant le dernier chapitre narratif/une expédition finale conçue pour cela, sans achat ni monnaie supplémentaire. Une variante Chromatique devra rester gagnable par une maîtrise complémentaire, afin que la complétion Chromatique totale reste possible et ne soit jamais bloquée par une carte inaccessible au tirage.
-- Le seuil exact de réussite et le parcours du final seront décidés **avant l'implémentation des récompenses**, avec tests d’unicité de l’attribution et de restauration des sauvegardes.
+- **La carte 72 Signature**, `Cœur des Marches`, **n’entre jamais** dans les boosters ni à la Forge. Elle est attribuée une fois après Le Dernier Accord (quatre étapes). Une seconde victoire en difficulté Maîtrise débloque exclusivement sa version Chromatique, sans duplication de la carte.
+- Le parcours final exige les trois expéditions historiques (Verriers, Veilleurs, Traversée des Reflets), puis quatre épreuves sur le mode choisi. Le premier passage s’effectue en Initiation ou Aventure ; la Maîtrise s’ouvre après la première victoire.
 - Un nouveau palier narratif pourra prolonger ceux d’Origines et des Reflets brisés, mais ne doit jamais distribuer la Signature deux fois.
-- La collection est `released:true` avec les 24 entrées Codex, mais l’accès à la Signature reste bloqué : aucun tirage et aucune fabrication. Son obtention demandera l’aventure finale et des tests anti-doublons avant activation.
+- La collection est `released:true` avec les 24 entrées Codex. L’accès à la Signature passe exclusivement par l’expédition finale et un passage complémentaire en Maîtrise ; aucun tirage ou fabrication n’est autorisé.
 - Éviter le piège d’un « premier booster » qui révèle des images manquantes ou des faux visuels : aucun tirage dans les pools incomplets, même temporairement.
 - Les sauvegardes locales utilisent toujours `aetherium-save-v1`, avec export/import ; les anciennes cartes, succès, routes, devises et trophées restent intacts.
 
@@ -73,7 +73,7 @@ Leur taille et leurs empreintes SHA-256 figurent dans `docs/au-dela-pilot-assets
 2. **Illustration pilote validée** : la carte n° **49, Passeur des Aubes** dispose maintenant d’un visuel HD 1024 × 1536 et d’une miniature 350 × 525. Ces fichiers sont intégrés à GitHub et montrés dans le Codex en aperçu non jouable, sans ajout au catalogue publié.
 3. **Images** : les trois lots **24/24 sont intégrés** (n° 49–72), chacun en HD et miniature WebP. Le booster dédié 49–71 est publié ; la Signature reste scellée.
 4. **Booster** : pochette originale et pool indépendant de **23 cartes** livrés, avec tests (Inhabituelle ou mieux au cinquième tirage, Chromatique, absence de la Signature).
-5. **Finale de saison** : développer une aventure courte et l'obtention sécurisée de la Signature ainsi que sa version Chromatique, sans doubler la récompense lors d'une reprise ou d'un replay.
+5. **Finale de saison** : aventure « Le Dernier Accord » développée, avec choix de serment mémorisé, quatre épreuves, Cœur des Marches normal et Chromatique attribués une seule fois, même après relecture, import ou reprise.
 6. **Publication** : valider sur mobile portrait/paysage, tablette et PC, puis ouvrir les 24 cartes d'un seul coup ; contrôler l’export/import et tous les anciens parcours.
 
 ### Fichiers du premier pilote
@@ -137,10 +137,27 @@ Les quatre dernières illustrations sont intégrées à la galerie en aperçu, a
 | 71 | Phénix des Destins réunis | `phenix-des-destins-reunis` | Légendaire |
 | 72 | Cœur des Marches | `coeur-des-marches` | Légendaire · Signature (hors boosters) |
 
-**État artistique : 24 sur 24.** Le Codex affiche les 24 cartes : les 23 premières sont disponibles dans le booster ou la Forge, tandis que le Cœur des Marches est marqué « Signature », réservé à la future aventure finale. Les deux anciens boosters et le format de sauvegarde restent compatibles.
+**État artistique : 24 sur 24.** Le Codex affiche toutes les cartes : les 23 premières sont disponibles dans le booster ou à la Forge. Le Cœur des Marches est une récompense exclusive de la finale, dont la finition Chromatique nécessite une victoire supplémentaire en Maîtrise. Les deux anciens boosters et le format de sauvegarde restent compatibles.
 
 ### Règles responsive (non négociables)
 
 Vérification visuelle au minimum sur **320×568, 360×740, 390×844, 667×375 paysage, 768×1024, 1024×768, 1280×800 et 1920×1080** en pixels CSS, ainsi que la navigation clavier et `prefers-reduced-motion`. Le Codex montre une grille fluide, un inspecteur mobile en plein écran et une image HD nette ; le futur booster réutilise le séquençage existant sans blocage tactile. Les faux contrôles et la surcharge d’encadrés sont exclus.
 
 *La bible est lisible publiquement dans GitHub. Le jeu ne doit pas révéler ces textes avant la progression prévue : le teaser du Codex reste volontairement discret.*
+
+### Aventure finale jouable — Le Dernier Accord
+
+**Déblocage :** terminer *Le Sentier des Verriers*, *La Veille des Échos* et *La Traversée des Reflets*. La quatrième expédition apparaît d’abord verrouillée, avec sa progression 0/3 à 3/3. Aucun quota de cartes tirées, aucune dépense de Couronnes.
+
+| Acte | Épreuve existante | Enjeu |
+| --- | --- | --- |
+| I — Les Voix oubliées | Mémoire ancienne | Réconcilier les témoignages sans effacer les Dédoublés |
+| II — Le Chemin des possibles | Fouilles interdites | Bâtir un passage sûr dans les ruines |
+| III — Les Runes de l’Accord | Runes des Origines | Composer un langage commun |
+| IV — Le Dernier Serment | Laboratoire arcanique | Choisir un serment et accomplir le rite final |
+
+**Choix de conclusion :** *Bâtir des ponts*, *Garder les mémoires* ou *Ouvrir les passages*. Les trois choix donnent un épilogue différent mais récompensent équitablement les joueurs. Le choix est enregistré avant le rite et ne peut être changé pendant l’épreuve.
+
+**Récompenses :** première conclusion (mode Initiation ou Aventure) = une seule carte n° 72 normale, sans Éclats supplémentaires. Le parcours peut être rejoué en **Maîtrise** pour débloquer la finition Chromatique de la même carte ; pas de deuxième exemplaire. Les victoires de mini-jeux continuent de payer leurs Couronnes habituelles, mais l’expédition ne crée aucune prime ni booster gratuit. Aucun doublon lors d’un double clic, d’un replay, d’un import ou d’un rafraîchissement.
+
+**Technique :** la sauvegarde conserve la clé `aetherium-save-v1` et la structure racine existante ; le choix rejoint simplement l’état de l’expédition finale. La vraie validation des épreuves reste obligatoire pour progresser. Les anciens parcours et leurs fragments gardent leurs identifiants et leurs étapes.

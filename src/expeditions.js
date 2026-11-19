@@ -1,6 +1,25 @@
-/* AETHERIUM 1.8 — Les Expéditions des Marches de Verre.
-   Three replayable routes (including the Revers), three validated mini-game stages each.
-   No added currency, no duplicate win rewards and no changes to old games. */
+/* AETHERIUM — Les Expéditions des Marches de Verre.
+   Three existing routes plus the four-stage finale, with a story choice
+   and a one-time Signature reward. No changes to trial odds or currency. */
+export const FINALE_ID='dernier-accord';
+export const FINALE_PREREQUISITES=Object.freeze(['verriers','veilleurs','traversee-reflets']);
+export const FINALE_VOWS=Object.freeze([
+ Object.freeze({id:'ponts',name:'Bâtir des ponts',
+  text:'Chaque rive garde ses racines ; des ponts permettront aux destins de se rencontrer.',
+  ending:'Des arches s’élèvent dans l’aube. Les peuples restent libres de traverser, sans renier leur origine.'}),
+ Object.freeze({id:'memoires',name:'Garder les mémoires',
+  text:'Aucune voix ne sera effacée, même lorsqu’elle contredit le récit des anciens.',
+  ending:'Les pierres des Marches se couvrent de noms oubliés. Deux histoires peuvent désormais être racontées ensemble.'}),
+ Object.freeze({id:'passages',name:'Ouvrir les passages',
+  text:'Les chemins demeureront ouverts à ceux qui désirent choisir leur avenir.',
+  ending:'Le premier passage se déplie vers une terre inconnue. De nouveaux horizons attendent leurs voyageurs.'})
+]);
+export const canStartFinale=raw=>{
+ const completed=completedRoutes(raw?.completedRoutes);
+ return FINALE_PREREQUISITES.every(id=>completed.includes(id));
+};
+export const finaleVowById=id=>FINALE_VOWS.find(vow=>vow.id===id)||null;
+
 export const EXPEDITION_ROUTES=Object.freeze([
  Object.freeze({
   id:'verriers',name:'Le Sentier des Verriers',symbol:'✧',
@@ -43,12 +62,39 @@ export const EXPEDITION_ROUTES=Object.freeze([
     text:'Un mécanisme de cristal garde la dernière salle du Revers. Trouve la combinaison exacte pour ouvrir le passage.',
     after:'La porte cède. Derrière le verre, quelqu’un a laissé un témoignage à l’intention des voyageurs.'})
   ])
+ }),
+ Object.freeze({
+  id:FINALE_ID,name:'Le Dernier Accord',symbol:'✦',
+  lead:'Réunir les deux rives · finale de la Saison I',
+  hint:'4 actes · Signature à gagner',
+  prologue:'Le sceau des Marches s’est fendu en trois. Les bornes des Verriers, les voix des Veilleurs et la Lettre du Revers forment maintenant une même carte. Néméria attend devant les arches : elle refuse de condamner une rive pour sauver l’autre.',
+  fragment:'Le Serment des Deux Rives',
+  ending:'Ni une victoire sur l’autre rive, ni une porte refermée : le monde a choisi d’accueillir plusieurs destins. Néméria dépose dans tes mains un cœur de verre vivant, témoin de cet accord.',
+  stages:Object.freeze([
+   Object.freeze({game:1,title:'Acte I · Les Voix oubliées',
+    text:'Deux fresques racontent la même nuit avec des souvenirs opposés. Retrouve leurs échos sans effacer aucune version.',
+    after:'Les mémoires se répondent. Une silhouette de l’autre rive prononce ton nom sans crainte.'}),
+   Object.freeze({game:3,title:'Acte II · Le Chemin des possibles',
+    text:'Sous les arches fissurées, les dalles du passage vacillent. Trouve une route sûre pour les voyageurs des deux rives.',
+    after:'Tu traverses les dalles sans qu’aucun chemin ne s’effondre derrière toi. Le verre ne sépare plus : il soutient.'}),
+   Object.freeze({game:0,title:'Acte III · Les Runes de l’Accord',
+    text:'Les anciens glyphes et l’écriture du Revers se mêlent. Retrouve leur séquence commune pour réveiller le cœur endormi.',
+    after:'Les signes ne se combattent plus. Une lumière turquoise rejoint l’aube corail au-dessus des Marches.'}),
+   Object.freeze({game:4,title:'Acte IV · Le Dernier Serment',
+    text:'Choisis le serment que tu transmettras aux générations futures, puis réalise le rituel alchimique de la Convergence.',
+    after:'Les deux lumières se rejoignent sans se confondre. Le Cœur des Marches s’éveille au creux de tes mains.'})
+  ])
  })
 ]);
 const routeById=id=>EXPEDITION_ROUTES.find(route=>route.id===id)||null;
 const MODE_IDS=Object.freeze(['initiation','aventure','maitrise']);
-const completedRoutes=raw=>Array.isArray(raw)?
- EXPEDITION_ROUTES.filter(route=>raw.includes(route.id)).map(route=>route.id):[];
+const completedRoutes=raw=>{
+ if(!Array.isArray(raw))return [];
+ const ids=EXPEDITION_ROUTES.filter(route=>raw.includes(route.id)).map(route=>route.id);
+ // A finale flag is meaningful only if its three prerequisite stories exist.
+ return ids.includes(FINALE_ID)&&!FINALE_PREREQUISITES.every(id=>ids.includes(id))
+  ?ids.filter(id=>id!==FINALE_ID):ids;
+};
 export function emptyExpedition(){
  return {route:null,step:0,mode:null,armed:false,completedRoutes:[]};
 }
@@ -60,15 +106,38 @@ export function sanitizeExpedition(raw){
  if(!route||!MODE_IDS.includes(raw.mode))return clean;
  if(!Number.isSafeInteger(raw.step)||raw.step<0||raw.step>route.stages.length)return clean;
  if(raw.step===route.stages.length&&!clean.completedRoutes.includes(route.id))return clean;
+ if(route.id===FINALE_ID&&!canStartFinale(clean))return clean;
+ if(route.id===FINALE_ID&&raw.mode==='maitrise'&&!clean.completedRoutes.includes(FINALE_ID))
+  return clean;
  clean.route=route.id;clean.mode=raw.mode;clean.step=raw.step;
- clean.armed=raw.step<route.stages.length&&raw.armed===true;
+ if(route.id===FINALE_ID){
+  clean.choice=finaleVowById(raw.choice)?.id||null;
+  if(raw.step===route.stages.length&&!clean.choice)return emptyExpeditionWithAchievements(clean);
+ }
+ clean.armed=raw.step<route.stages.length&&raw.armed===true&&
+   !(route.id===FINALE_ID&&raw.step===3&&!clean.choice);
  return clean;
+}
+function emptyExpeditionWithAchievements(data){
+ return {...emptyExpedition(),completedRoutes:data.completedRoutes};
+}
+export function chooseFinaleVow(raw,vowId){
+ const current=sanitizeExpedition(raw);
+ if(current.route!==FINALE_ID||current.step!==3||current.armed||!finaleVowById(vowId))
+  return current;
+ return {...current,choice:vowId};
 }
 export function startExpedition(raw,routeId,mode){
  const prior=sanitizeExpedition(raw);
  const route=routeById(routeId);
  if(!route||!MODE_IDS.includes(mode))return prior;
- return {route:route.id,step:0,mode,armed:false,completedRoutes:prior.completedRoutes};
+ if(route.id===FINALE_ID){
+  if(!canStartFinale(prior))return prior;
+  // First playthrough must be in Initiation or Aventure; Maîtrise is a true replay.
+  if(mode==='maitrise'&&!prior.completedRoutes.includes(FINALE_ID))return prior;
+ }
+ return {route:route.id,step:0,mode,armed:false,completedRoutes:prior.completedRoutes,
+  ...(route.id===FINALE_ID?{choice:null}:{})};
 }
 export function abandonExpedition(raw){
  return {...emptyExpedition(),completedRoutes:sanitizeExpedition(raw).completedRoutes};
@@ -80,7 +149,9 @@ export function expeditionStage(raw){
 }
 export function armExpedition(raw){
  const current=sanitizeExpedition(raw);
- return expeditionStage(current)?{...current,armed:true}:current;
+ const stage=expeditionStage(current);
+ if(!stage||current.route===FINALE_ID&&current.step===3&&!current.choice)return current;
+ return {...current,armed:true};
 }
 export function expeditionVictory(raw,gameIndex,mode){
  const current=sanitizeExpedition(raw);
@@ -97,6 +168,23 @@ export function expeditionVictory(raw,gameIndex,mode){
    completedRoutes:finished?completedRoutes([...current.completedRoutes,route.id]):current.completedRoutes
   }
  };
+}
+// Reward is granted by the game only on a verified final-stage victory.
+// In the same save: normal collectible once, Chromatic once on a Maîtrise replay.
+// This never changes card quantity for a replay or rewards another expedition.
+export function awardFinaleCard(state,result){
+ if(!result?.advanced||!result.finished||result.state?.route!==FINALE_ID||!state)
+  return {normal:false,chromatic:false};
+ const owned=state.owned||{},shiny=state.shiny||{};
+ const normal=!(Number(owned[72])>0);
+ const chromatic=result.state.mode==='maitrise'&&shiny[72]!==true;
+ if(normal)state.owned={...owned,72:1};
+ if(chromatic){
+  // Maîtrise is locked until a first completion has been recorded.
+  if(!result.state.completedRoutes.includes(FINALE_ID))return {normal,chromatic:false};
+  state.shiny={...shiny,72:true};
+ }
+ return {normal,chromatic};
 }
 export function expeditionSummary(raw){
  const current=sanitizeExpedition(raw),route=routeById(current.route);

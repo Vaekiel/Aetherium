@@ -3,16 +3,17 @@ import {readFileSync} from 'node:fs';
 import {runInNewContext} from 'node:vm';
 const read=p=>readFileSync(p,'utf8');
 const load=p=>import('data:text/javascript;charset=utf-8,'+encodeURIComponent(read(p)));
-const {EXPEDITION_ROUTES,emptyExpedition,sanitizeExpedition,startExpedition,
+const {EXPEDITION_ROUTES,FINALE_ID,FINALE_PREREQUISITES,FINALE_VOWS,canStartFinale,
+ chooseFinaleVow,awardFinaleCard,emptyExpedition,sanitizeExpedition,startExpedition,
  abandonExpedition,armExpedition,expeditionStage,expeditionVictory,expeditionSummary}=await load('src/expeditions.js');
 const {trialScore,trialReward,recordTrialWin}=await load('src/trial-progress.js');
 const {recordPersonalBest,sanitizedTrialRecords}=await load('src/trial-records.js');
 const {sanitizeMilestoneClaims}=await load('src/collection-milestones.js');
 const {sanitizeAlchemyKnown}=await load('src/alchemy-rituals.js');
 const {CARDS}=await load('src/data.js');
-assert.equal(EXPEDITION_ROUTES.length,3);
-assert.deepEqual(EXPEDITION_ROUTES.map(r=>r.stages.map(s=>s.game)),[[0,3,4],[1,2,4],[1,0,2]]);
-assert.ok(EXPEDITION_ROUTES.every(r=>r.stages.length===3&&r.fragment&&r.ending&&r.prologue));
+assert.equal(EXPEDITION_ROUTES.length,4);
+assert.deepEqual(EXPEDITION_ROUTES.map(r=>r.stages.map(s=>s.game)),[[0,3,4],[1,2,4],[1,0,2],[1,3,0,4]]);
+assert.ok(EXPEDITION_ROUTES.every(r=>(r.id===FINALE_ID?r.stages.length===4:r.stages.length===3)&&r.fragment&&r.ending&&r.prologue));
 assert.ok(EXPEDITION_ROUTES.flatMap(r=>r.stages).every(s=>s.title&&s.text&&s.after));
 assert.deepEqual(emptyExpedition(),{route:null,step:0,mode:null,armed:false,completedRoutes:[]});
 assert.deepEqual(sanitizeExpedition(null),emptyExpedition());
@@ -57,7 +58,7 @@ for(const game of [1,2,4]){
 assert.equal(expeditionSummary(echoes).complete,true);
 assert.deepEqual(echoes.completedRoutes,['verriers','veilleurs']);
 assert.equal(expeditionSummary(echoes).discovered,2);
-assert.equal(expeditionSummary(echoes).total,3);
+assert.equal(expeditionSummary(echoes).total,4);
 assert.equal(expeditionSummary(echoes).discovered,2,'Earlier routes remain completed');
 // New Revers route uses exactly the existing Memory, Runes and Lock challenges.
 let revers=startExpedition(echoes,'traversee-reflets','maitrise');
@@ -77,7 +78,7 @@ for(const [index,game] of [1,0,2].entries()){
   revers=result.state;
 }
 assert.deepEqual(revers.completedRoutes,['verriers','veilleurs','traversee-reflets']);
-assert.equal(expeditionSummary(revers).total,3);
+assert.equal(expeditionSummary(revers).total,4);
 assert.equal(expeditionSummary(revers).discovered,3);
 assert.equal(expeditionSummary(revers).complete,true);
 assert.equal(expeditionVictory(revers,2,'maitrise').advanced,false,
@@ -105,11 +106,12 @@ assert.equal(sanitizeExpedition({route:'traversee-reflets',mode:'aventure',step:
 assert.deepEqual(armExpedition(emptyExpedition()),emptyExpedition());
 
 const main=read('src/main.js'),html=read('index.html'),css=read('src/expedition.css');
-assert.ok(main.includes("from './expeditions.js?v=revers-expedition-1'"));
+assert.ok(main.includes("from './expeditions.js?v=dernier-accord-1'"));
 assert.ok(main.includes('expedition:{route:null,step:0,mode:null,armed:false,completedRoutes:[]}'));
 assert.ok(main.includes('if(raw.expedition)s.expedition=sanitizeExpedition(raw.expedition)'));
 assert.ok(main.includes('const expeditionResult=state.expedition?.route?'));
-assert.ok(main.includes('if(expeditionResult.advanced)state.expedition=expeditionResult.state;'));
+assert.ok(main.includes('state.expedition=expeditionResult.state;'));
+assert.ok(main.includes('awardFinaleCard(state,expeditionResult)'),'Only finishing the final story can grant the Signature');
 assert.ok(main.includes('if(expeditionResult.advanced){\n    renderExpedition();'), 'Progression refreshes the story and exposes a return action');
 assert.ok(main.includes('state.expedition=armExpedition(state.expedition)'));
 assert.ok(main.includes('trialStarters[stage.game]()'));
@@ -254,7 +256,8 @@ const cards=Array.from({length:5},(_,index)=>({card:{
  scrollIntoView(){calls.scrolled.push(index)}
 }}));
 const choicesSandbox={
- state:domState,EXPEDITION_ROUTES,expeditionSummary,startExpedition,
+ state:domState,EXPEDITION_ROUTES,FINALE_ID,FINALE_PREREQUISITES,FINALE_VOWS,
+ canStartFinale,chooseFinaleVow,expeditionSummary,startExpedition,
  abandonExpedition,armExpedition,DIFFICULTIES:[
  {id:'initiation',label:'Initiation'},
  {id:'aventure',label:'Aventure'},
@@ -279,10 +282,10 @@ const uiCode=main.slice(main.indexOf('function renderExpedition(){'),
 assert.ok(uiCode.startsWith('function renderExpedition(){'));
 const ui=runInNewContext(uiCode+'({renderExpedition})',choicesSandbox);
 ui.renderExpedition();
-assert.equal(chapterCounter.textContent,'0/3 fragments');
-assert.equal(portalText.textContent,'3 chemins à découvrir');
+assert.equal(chapterCounter.textContent,'0/4 fragments');
+assert.equal(portalText.textContent,'4 chemins à découvrir');
 const choiceBlock=chapterContent.children.find(e=>e.classList.contains('expedition-choices'));
-assert.equal(choiceBlock.children.length,3);
+assert.equal(choiceBlock.children.length,4);
 choiceBlock.children[1].click();
 assert.equal(domState.expedition.route,'veilleurs');
 assert.equal(domState.expedition.mode,'maitrise');
@@ -304,7 +307,7 @@ assert.equal(domState.expedition.route,null);
 assert.equal(calls.saved,3);
 // Real screen selection + stage launch for the Revers route, on the same controls.
 const afterExit=chapterContent.children.find(e=>e.classList.contains('expedition-choices'));
-assert.equal(afterExit.children.length,3);
+assert.equal(afterExit.children.length,4);
 afterExit.children[2].click();
 assert.equal(domState.expedition.route,'traversee-reflets');
 assert.equal(domState.expedition.mode,'maitrise');
@@ -320,4 +323,4 @@ assert.equal(calls.saved,5);
 assert.deepEqual(calls.navigated,['jouer','jouer']);
 assert.deepEqual(calls.scrolled,[1,1]);
 assert.ok(html.includes('Les Itinéraires des Marches'),'The expedition header includes all three routes');
-console.log('AETHERIUM — 3 parcours, 9 étapes, Le Revers, anciennes sauvegardes, commandes et récompenses sans duplication OK');
+console.log('AETHERIUM — 3 parcours historiques + Le Dernier Accord, checkpoints, navigation et sauvegardes compatibles');
