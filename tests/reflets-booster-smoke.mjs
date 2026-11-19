@@ -13,7 +13,7 @@ assert.equal(ORIGINES_CARDS.length,24);
 assert.equal(REFLETS_CARDS.length,24);
 assert.equal(CARDS.length,72);
 assert.deepEqual(CARDS.map(c=>c.id),Array.from({length:72},(_,i)=>i+1));
-assert.equal(new Set(CARDS.map(c=>c.name)).size,48);
+assert.equal(new Set(CARDS.map(c=>c.name)).size,72);
 assert.equal(PACK_PRICE,100);
 assert.equal(CHROMATIC_RATE,0.03);
 assert.equal(collectionById('marches-de-verre','reflets-brises').released,true);

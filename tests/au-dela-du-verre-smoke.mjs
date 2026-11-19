@@ -26,7 +26,7 @@ assert.equal(draft.length,24);
 assert.ok(Object.isFrozen(draft)&&draft.every(item=>Object.isFrozen(item)));
 assert.deepEqual(draft.map(c=>c.id),Array.from({length:24},(_,i)=>49+i));
 const names=draft.map(c=>c.name.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase());
-const legacyNames=published.map(c=>c.name.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase());
+const legacyNames=published.filter(c=>c.id<=48).map(c=>c.name.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase());
 assert.equal(new Set(names).size,24);
 assert.ok(!names.some(name=>legacyNames.includes(name)),'No published card is duplicated');
 assert.deepEqual(Object.fromEntries(['common','uncommon','rare','epic','legendary'].map(

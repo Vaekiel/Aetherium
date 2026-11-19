@@ -75,7 +75,7 @@ assert.ok(main.includes('renderCollectionMilestones(availableCards)'),
  'Season collections render actual unique-card milestones');
 assert.ok(html.includes('src/codex.css?v=au-dela-pilot-49'),'Season CSS is cache-busted');
 assert.ok(html.includes('src/main.js?v='),'Season JS is cache-busted');
-assert.ok(main.includes("from './seasons.js'"),'Main imports season catalogue');
+assert.ok(main.includes("from './seasons.js?v=au-dela-booster-1'"),'Main imports season catalogue');
 assert.ok(main.includes("from './codex.js'"),'Main imports filtering and counts');
 assert.ok(main.includes('function renderCodexSeasons()'),'Season controls are wired');
 assert.ok(main.includes('function renderCollection()'),'Collection panel remains reactive');

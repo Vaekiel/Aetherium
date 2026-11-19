@@ -51,7 +51,7 @@ assert.ok(read('src/reflets-gallery.js').includes("link.target='_blank'"));
 const part=collectionById('marches-de-verre','reflets-brises');
 assert.equal(part.released,true,'Reflets brisés is published');
 assert.equal(CARDS.length,24,'Original card database unchanged');
-assert.equal(ALL_CARDS.length,48,'Combined game catalogue publishes both collections');
+assert.equal(ALL_CARDS.length,72,'All three collections are published in the Codex');
 assert.equal(cardsForCollection(ALL_CARDS,'marches-de-verre','reflets-brises').length,24,
  'All 24 preview illustrations are now collectible');
 assert.equal(PACK_PRICE,100);

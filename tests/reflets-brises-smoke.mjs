@@ -41,7 +41,7 @@ assert.equal(part.first,25);
 assert.equal(part.last,48);
 assert.equal(cardsForCollection(ALL_CARDS,'marches-de-verre','reflets-brises').length,24,
  'All Reflets cards are collectible within their published chapter');
-assert.equal(ALL_CARDS.length,48);
+assert.equal(ALL_CARDS.length,72);
 assert.deepEqual(REFLETS_CARDS.map(c=>c.id),Array.from({length:24},(_,i)=>i+25));
 assert.equal(CARDS.length,24,'Production catalogue remains Origines only');
 assert.deepEqual(CARDS.map(c=>c.id),Array.from({length:24},(_,i)=>i+1));
@@ -52,9 +52,9 @@ for(const random of [0,0.03,0.25,0.49,0.76,0.9,0.999]){
   'Origines booster cannot draw the draft');
 }
 assert.deepEqual(seasonProgress(ALL_CARDS,{},{}),{
- planned:72,released:48,discovered:0,chromatic:0,
- collectionsReleased:2,collectionsPlanned:3,
- percentReleased:67,percentCollected:0
+ planned:72,released:72,discovered:0,chromatic:0,
+ collectionsReleased:3,collectionsPlanned:3,
+ percentReleased:100,percentCollected:0
 });
 for(const random of [0,0.03,0.25,0.49,0.76,0.9,0.999]){
  const cards=drawRefletsPack(()=>random);
