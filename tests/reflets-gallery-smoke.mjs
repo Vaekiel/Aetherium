@@ -39,7 +39,7 @@ for(const id of ['reflets-gallery','reflets-gallery-grid','reflets-art-preview']
  assert.ok(html.includes('id="'+id+'"'),'Codex gallery DOM element: '+id);
 }
 assert.ok(html.includes('reflets-gallery.css?v=reflets-final-24'),'Gallery stylesheet is cache busted');
-assert.ok(html.includes('main.js?v=reflets-selector-fix-2'),'Main JS controller is cache busted');
+assert.ok(html.includes('main.js?v=reflets-journal-1'),'Main JS controller is cache busted');
 assert.ok(main.includes("import {mountRefletsGallery} from './reflets-gallery.js?v=reflets-final-24';"));
 assert.ok(main.includes("$('#reflets-gallery').hidden=!showRefletsPreview"));
 assert.ok(main.includes("if(showRefletsPreview)mountRefletsGallery($('#reflets-gallery-grid'));"));
