@@ -1,9 +1,20 @@
 # AETHERIUM — Plan de fabrication holographique V3
 
 **Carte pilote :** #23 — Vyrath, Fléau Céleste (Origines, Créature, Légendaire)  
-**Statut :** cahier des charges validé pour fabrication ; les calques graphiques réels restent à produire.  
+**Statut :** V3 alpha fabriquée ; quatre assets WebP indépendants générés, démo interactive reliée. Détourage automatique à corriger manuellement avant intégration au Codex.  
 **Périmètre :** une seule carte de démonstration, puis inspection Chromatique si les tests sont concluants.  
 **Priorités :** pixel art HD intact, relief visible, confort tactile, performance, zéro modification économique.
+
+
+## État de réalisation au 19 novembre 2026 — premier prototype livré
+
+- Générateur reproductible : `tools/build_vyrath_layers.py`, appelé par `.github/workflows/vyrath-v3-assets.yml`.
+- Assets livrés sous `assets/cards/holo/vyrath/` : `background.webp`, `midground.webp`, `subject.webp`, `magic.webp`, plus `composite-preview.webp` pour le contrôle visuel.
+- Démonstration `holographie.html` : chargement conditionnel des quatre plans RGBA, mouvement différent pour le fond/ruines/dragon/magie, maintien de l'illustration originale en fallback, bouton « Voir l'image originale » pour comparer.
+- Vérification automatique : `tests/holography-v3-smoke.mjs`. Elle contrôle la présence des assets, le fallback, le code JavaScript et l'absence de mutations de sauvegarde.
+- **Limite visuelle constatée :** certains bords générés automatiquement créent des triangles ou des zones reconstruites artificielles, notamment autour de l'aile gauche, de la crête et des griffes. La couche de fond reconstituée est une approximation technique, pas un véritable décor réillustré.
+- **Prochaine correction prioritaire :** reprendre à la main les masques alpha et reconstituer derrière le dragon un décor cohérent en pixel art HD, puis vérifier les mouvements sur des téléphones et tablettes réels.
+- **Sécurité :** aucune modification de `src/main.js`, `src/data.js`, `state.shiny`, `state.owned` ni du taux de cartes Chromatiques. Le prototype demeure hors de l'inspecteur du jeu principal.
 
 ## 1. Point de départ réel (novembre 2026)
 
@@ -71,4 +82,4 @@ Conserver l'illustration originale comme référence pour le placement et la coh
 4. **Ajouter le composant à l'inspecteur** Chromatique en gardant l'original comme fallback.
 5. Envisager l'extension aux autres cartes **après** validation esthétique et performance.
 
-La réalisation n'est **pas achevée** tant que les quatre calques indépendants ne sont pas livrés et testés. Le présent document est un plan technique, pas une certification de rendu V3.
+La première génération des quatre calques est **effectuée**, mais le détourage n'est pas encore approuvé artistiquement et les tests de rendu sur appareils réels restent à réaliser. Ce document décrit une V3 alpha, pas une validation de qualité finale.
