@@ -43,10 +43,11 @@ assert.ok(!html.includes('id="chromatic-example-normal"')&&!html.includes('id="c
 assert.ok(!main.includes('comparisonCard')&&!main.includes('chromatic-example-'),
   'Runtime no longer loads detached comparison images');
 assert.ok(!css.includes('chromatic-showcase'),'Orphaned comparison CSS removed');
-assert.ok(main.includes("const previewChromatic=!!shiny&&!ownedChromatic&&!!chromaticPreview;"),'Non-owned Chromatiques can be previewed without being granted');
-assert.ok(main.includes("selectedCard={id:c.id,shiny:chromatic,preview:previewChromatic};"),'Preview status is tracked without editing the save');
-assert.ok(main.includes('✧ Prévisualiser en Chromatique'),'Inspector lets users compare their chosen card');
-assert.ok(main.includes('APERÇU · NON POSSÉDÉ'),'Inspector marks unowned chromatic finish');
+assert.ok(!main.includes('✧ Prévisualiser en Chromatique'),'No Chromatique effect preview before possession');
+assert.ok(!main.includes('APERÇU · NON POSSÉDÉ'),'Unowned finish effects cannot be simulated');
+assert.ok(main.includes("selector.disabled=quantity===0;"),'Unowned finish is locked in the inspector');
+assert.ok(main.includes("const activeFinish=requestedOwned?requestedFinish:"),'Unowned finish is never activated');
+assert.ok(main.includes("if(quantity)inspect(c,finish==='chromatic',false,false,finish)"),'Finish picker only opens acquired variants');
 assert.ok(main.includes("const art=el('span','chromatic-art-window')"),'Owned Chromatic thumbnails receive a separate art overlay');
 assert.ok(css.includes('.card.is-chromatic .chromatic-art-window:after'),'Prismatic foil overlays the illustration');
 assert.ok(css.includes('border-width:3px!important'),'Chromatic thumbnails are distinct even when still');
