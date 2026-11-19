@@ -97,7 +97,7 @@ const js=readFileSync('src/main.js','utf8');
 const html=readFileSync('index.html','utf8');
 assert.ok(js.includes("from './data.js?v=booster-variety-1'"));
 assert.ok(js.includes("from './collection-data.js?v=booster-variety-1'"));
-assert.ok(html.includes('main.js?v=booster-variety-1'));
+assert.ok(html.includes('main.js?v=mastery-balance-2'));
 assert.ok(js.includes("edition==='origines'?drawPack():drawRefletsPack()"),
  'The purchase and reveal handler still chooses the correct booster');
 assert.ok(js.includes('state.coins-=PACK_PRICE')&&js.includes('state.dust+=dustGain'),

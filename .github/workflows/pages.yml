@@ -112,6 +112,7 @@ jobs:
           test -s tests/trial-records-smoke.mjs
           test -s src/trial-progress.css
           test -s tests/trial-progress-smoke.mjs
+          test -s tests/mastery-economy-smoke.mjs
           test -s tests/codex-smoke.mjs
           test -s tests/chromatic-smoke.mjs
           test -s src/crafting.js
@@ -251,6 +252,7 @@ jobs:
           node tests/codex-smoke.mjs
           node tests/collection-milestones-smoke.mjs
           node tests/trial-progress-smoke.mjs
+          node tests/mastery-economy-smoke.mjs
           node tests/trial-records-smoke.mjs
           node tests/trial-challenges-smoke.mjs
           node tests/trial-titles-smoke.mjs

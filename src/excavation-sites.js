@@ -1,6 +1,6 @@
 /* AETHERIUM 1.7.2 — Fouilles interdites.
    Pure site maps with five traps, a safe entrance and an optional artifact.
-   The optional guide never charges, uncovers or alters victory scoring. */
+   An optional guide never charges or uncovers a tile. Requested probes reduce the completion score. */
 export const EXCAVATION_SIDE=5;
 export const EXCAVATION_TRAPS=5;
 export const EXCAVATION_SITES=Object.freeze([

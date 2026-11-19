@@ -9,7 +9,7 @@ import {createBackup,decodeBackup,installImportedSave,restorePreviousSave,PREVIO
 import {SEASONS,seasonById,collectionById,cardsForCollection,collectionForCard,seasonProgress} from './seasons.js';
 import {mountRefletsGallery} from './reflets-gallery.js?v=reflets-final-24';
 import {milestonesFor,sanitizeMilestoneClaims,uniqueCardsOwned,collectionMilestoneStatus,claimCollectionMilestone} from './collection-milestones.js?v=reflets-journal-1';
-import {DIFFICULTIES,validDifficulty,trialRules,trialObjective,trialScore,trialReward,emptyTrialStats,sanitizedTrialStats,recordTrialWin,masteryLevel} from './trial-progress.js';
+import {DIFFICULTIES,validDifficulty,trialRules,trialObjective,trialScore,trialReward,emptyTrialStats,sanitizedTrialStats,recordTrialWin,masteryLevel} from './trial-progress.js?v=mastery-balance-2';
 import {TRIAL_RECORD_MODES,TRIAL_RECORD_METRICS,sanitizedTrialRecords,recordPersonalBest,recordMetricLabel} from './trial-records.js';
 import {trialChallengesFor} from './trial-challenges.js';
 import {TRIAL_TITLES,earnedTrialTitles,validEquippedTitle,toggleEquippedTitle} from './trial-titles.js';
