@@ -1,0 +1,44 @@
+name: Build Vyrath V3 holographic layers
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'tools/build_vyrath_layers.py'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: aetherium-vyrath-v3-assets
+  cancel-in-progress: true
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source art
+        uses: actions/checkout@v4
+      - name: Python for image processing
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install image processing dependencies
+        run: python -m pip install --disable-pip-version-check pillow numpy opencv-python-headless
+      - name: Cut Vyrath into RGBA layers and rebuild backdrop
+        run: python tools/build_vyrath_layers.py
+      - name: Validate generated assets
+        run: python tools/build_vyrath_layers.py --verify
+      - name: Commit generated pixel-art assets
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add assets/cards/holo/vyrath/
+          if git diff --cached --quiet; then
+            echo "Assets are already up to date."
+          else
+            git commit -m "art: generate Vyrath RGBA layers for holographic V3"
+            git push origin HEAD:main
+          fi
