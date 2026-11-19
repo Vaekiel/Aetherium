@@ -34,7 +34,7 @@ export function restoreFinishCounts(owned={},shiny={},raw=null){
     }else{
       // The legacy boolean did not encode how many chromatic duplicates existed.
       const chromatic=shiny?.[id]===true?1:0;
-      finishCounts.normal[id]=count-chromatic;
+      if(count>chromatic)finishCounts.normal[id]=count-chromatic;
       if(chromatic)finishCounts.chromatic[id]=chromatic;
     }
   }
