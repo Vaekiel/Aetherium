@@ -11,12 +11,15 @@ export function codexProgress(cards,owned={},shiny={}){
   };
 }
 const normalized=text=>String(text??'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLocaleLowerCase('fr');
-export function filterCodex(cards,{type='all',rarity='all',finish='all',discovery='all',query='',owned={},shiny={}}={}){
+export function filterCodex(cards,{type='all',rarity='all',finish='all',discovery='all',query='',owned={},shiny={},finishCounts=null}={}){
   const term=normalized(query.trim());
   return cards.filter(card=>
     (type==='all'||card.type===type)&&
     (rarity==='all'||card.rarity===rarity)&&
     (finish!=='chromatic'||(Number(owned[card.id])>0&&shiny[card.id]===true))&&
+    (finish!=='normal'||!finishCounts||Number(finishCounts.normal?.[card.id])>0)&&
+    (finish!=='holographic'||Number(finishCounts?.holographic?.[card.id])>0)&&
+    (finish!=='calligraphic'||Number(finishCounts?.calligraphic?.[card.id])>0)&&
     (discovery==='all'||(discovery==='collected'?Number(owned[card.id])>0:!Number(owned[card.id])))&&
     normalized(card.name).includes(term)
   );
