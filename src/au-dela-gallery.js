@@ -1,4 +1,4 @@
-/* AETHERIUM — Au-delà du Verre, premier lot : aperçu artistique des cartes 49–58.
+/* AETHERIUM — Au-delà du Verre, deux premiers lots : aperçu artistique des cartes 49–68.
    Les 24 cartes de la partie III restent NON PUBLIÉES : pas de tirage, Forge,
    sauvegarde, attribution, ni achat via cette galerie. */
 import {AU_DELA_DU_VERRE_DRAFT} from './au-dela-du-verre-catalog.js';
@@ -13,7 +13,17 @@ const ILLUSTRATIONS=Object.freeze([
   [55,'emissaire-des-possibles'],
   [56,'tisserande-de-quartz'],
   [57,'clef-de-l-horizon'],
-  [58,'rite-des-voix-accordees']
+  [58,'rite-des-voix-accordees'],
+  [59,'renard-des-intervalles'],
+  [60,'veilleur-des-passages'],
+  [61,'soryn-des-deux-rives'],
+  [62,'horloge-du-premier-choix'],
+  [63,'griffon-de-verre-serein'],
+  [64,'marche-entre-les-mondes'],
+  [65,'serment-des-passages'],
+  [66,'armure-de-l-aube-intacte'],
+  [67,'observatoire-des-horizons'],
+  [68,'aelys-gardienne-des-liens']
 ]);
 
 const RARETE=Object.freeze({

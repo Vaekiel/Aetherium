@@ -32,7 +32,7 @@ const main=readFileSync('src/main.js','utf8');
 const html=readFileSync('index.html','utf8');
 const css=readFileSync('src/booster-feedback.css','utf8');
 assert.ok(html.includes('booster-feedback.css?v=booster-polish-1'));
-assert.ok(html.includes('main.js?v=au-dela-lot-1'),
+assert.ok(html.includes('main.js?v=au-dela-lot-2'),
  'Current controller is cache-busted while booster feedback stays intact');
 assert.ok(main.includes("from './booster-feedback.js?v=booster-polish-1'"));
 assert.ok(main.includes('const moment=boosterMoment(currentDraw);'));
