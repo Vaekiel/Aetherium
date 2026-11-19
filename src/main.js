@@ -1486,10 +1486,14 @@ function renderExpedition(){
   host.append(controls);
 }
 function makeCard(c,isShiny=false,locked=false){
-  const chromatic=!!isShiny&&!locked;
+  const finish=typeof isShiny==='string'?isShiny:(isShiny?'chromatic':'normal');
+  const chromatic=finish==='chromatic'&&!locked;
+  const holographic=finish==='holographic'&&!locked;
+  const calligraphic=finish==='calligraphic'&&!locked;
   const preview=locked&&(c.id===1||(previewArt&&hasApprovedArt(c.id)));
   const reallyLocked=locked&&!preview;
-  const b=el('button','card'+(reallyLocked?' is-sealed':'')+(chromatic?' is-chromatic':''));
+  const b=el('button','card'+(reallyLocked?' is-sealed':'')+(chromatic?' is-chromatic':'')+
+    (holographic?' is-holographic':'')+(calligraphic?' is-calligraphic':''));
   b.type='button';
   b.dataset.cardId=String(c.id);
   b.style.setProperty('--edge',RARITIES[c.rarity].color);
@@ -1505,14 +1509,20 @@ function makeCard(c,isShiny=false,locked=false){
     if(chromatic){
       const art=el('span','chromatic-art-window');
       art.append(img);b.append(art);
+    }else if(holographic||calligraphic){
+      const art=el('span','finish-art-window');
+      art.append(img);b.append(art);
     }else b.append(img);
   }
   const meta=el('div','info');
   meta.append(el('div','name',reallyLocked?(c.signature?'Signature scellée':'Archive scellée'):c.name),
     el('div','meta',reallyLocked?'À découvrir · '+RARITIES[c.rarity].label:RARITIES[c.rarity].label+' · '+c.type));
   b.append(meta);
-  if(!locked&&state.owned[c.id])b.append(el('span','amount','×'+state.owned[c.id]));
+  if(!locked&&finishQuantity(state.finishCounts,finish,c.id))
+    b.append(el('span','amount','×'+finishQuantity(state.finishCounts,finish,c.id)));
   if(chromatic)b.append(el('span','shine chromatic-seal','✧ CHROMATIQUE'));
+  if(holographic)b.append(el('span','shine holographic-seal','◈ HOLOGRAPHIQUE'));
+  if(calligraphic)b.append(el('span','shine calligraphic-seal','✒ CALLIGRAPHIQUE'));
   if(preview){
     b.append(el('span','shine','APERÇU'));
     b.setAttribute('aria-label','Voir l’illustration de '+c.name+' sans posséder cette carte');
@@ -1520,6 +1530,8 @@ function makeCard(c,isShiny=false,locked=false){
     b.setAttribute('aria-label','Archive '+String(c.id).padStart(3,'0')+', non découverte : ouvrir la fiche scellée');
   }else if(chromatic){
     b.setAttribute('aria-label',c.name+' — version Chromatique, '+RARITIES[c.rarity].label);
+  }else if(holographic||calligraphic){
+    b.setAttribute('aria-label',c.name+' — version '+FINISHES[finish].label+', '+RARITIES[c.rarity].label);
   }
   b.addEventListener('click',()=>{
     if($('#page-boosters').classList.contains('active')){
@@ -1528,7 +1540,7 @@ function makeCard(c,isShiny=false,locked=false){
       navigate('collection');
     }
     if(reallyLocked)inspectSealed(c);
-    else inspect(c,chromatic);
+    else inspect(c,chromatic,true,false,finish);
   });
   return b;
 }
@@ -1546,7 +1558,10 @@ function codexBrowseTo(card){
   if(!card)return;
   const locked=!state.owned[card.id]&&card.id!==1&&!(previewArt&&hasApprovedArt(card.id));
   if(locked)inspectSealed(card,false);
-  else inspect(card,filterFinish==='normal'?false:!!state.shiny[card.id],false);
+  else{
+    const finish=FINISHES[filterFinish]?filterFinish:preferredFinish(state.finishCounts,card.id);
+    inspect(card,finish==='chromatic',false,finish==='chromatic'&&!state.shiny[card.id],finish);
+  }
 }
 function addCodexNavigation(panel,c){
   const index=codexVisibleCards.findIndex(item=>item.id===c.id);
@@ -1594,25 +1609,35 @@ function inspectSealed(c,scroll=true){
     else if(matchMedia('(max-width:1050px)').matches)panel.scrollIntoView({behavior:'smooth',block:'nearest'});
   }
 }
-function inspect(c,shiny=false,scroll=true,chromaticPreview=false){
-  // Legacy shiny flags and owned quantities remain the only saved data.
+function inspect(c,shiny=false,scroll=true,chromaticPreview=false,finishOverride=null){
+  // Legacy shiny flags remain mirrored; actual quantities live in finishCounts.
   const ownedChromatic=!!state.shiny[c.id];
   const previewChromatic=!!shiny&&!ownedChromatic&&!!chromaticPreview;
   const chromatic=!!shiny&&(ownedChromatic||previewChromatic);
   selectedCard={id:c.id,shiny:chromatic,preview:previewChromatic};
+  const activeFinish=FINISHES[finishOverride]?finishOverride:(chromatic?'chromatic':'normal');
+  const ownedActive=finishQuantity(state.finishCounts,activeFinish,c.id)>0;
+  const previewFinish=!ownedActive;
+  selectedCard.finish=activeFinish;
+  selectedCard.preview=previewFinish;
   const panel=$('#inspector');
   panel.replaceChildren();
-  panel.classList.toggle('is-chromatic',chromatic);
+  panel.classList.toggle('is-chromatic',activeFinish==='chromatic');
+  panel.classList.toggle('is-holographic',activeFinish==='holographic');
+  panel.classList.toggle('is-calligraphic',activeFinish==='calligraphic');
   panel.style.setProperty('--edge',RARITIES[c.rarity].color);
   const img=el('img');
   applyCardIllustration(img,c,{shiny:chromatic,size:'full'});
   img.alt='Illustration de '+c.name+(chromatic?', version Chromatique':'');
-  const artwork=el('div','inspector-art-shell'+(chromatic?' is-chromatic':''));
+  const artwork=el('div','inspector-art-shell'+(chromatic?' is-chromatic':'')+
+    (activeFinish==='holographic'?' is-holographic':'')+
+    (activeFinish==='calligraphic'?' is-calligraphic':''));
   artwork.append(img);
   if(chromatic){
     artwork.append(el('span','inspector-chromatic-seal','✧ CHROMATIQUE'));
     if(previewChromatic)artwork.append(el('span','inspector-chromatic-preview','APERÇU · NON POSSÉDÉ'));
   }
+  if(activeFinish==='holographic')enableHolographicInspection(artwork);
   const kicker=el('p','kicker','ARCHIVE '+String(c.id).padStart(3,'0')+' · '+RARITIES[c.rarity].label);
   const title=el('h2','',c.name);
   const location=collectionForCard(c);
@@ -1622,8 +1647,17 @@ function inspect(c,shiny=false,scroll=true,chromaticPreview=false){
   stats.append(el('span','','⚔ '+c.attack),el('span','','♥ '+c.health),el('span','','×'+(state.owned[c.id]||0)));
   const copy=el('div','inspector-copy');
   copy.append(kicker,title,chapterLabel,el('p','muted',c.type+
-    (chromatic?' · ✧ Version Chromatique':' · Version normale')+
-    (previewChromatic?' · Aperçu uniquement':state.owned[c.id]?'':' · Aperçu non possédé')),desc,stats);
+    ' · '+FINISHES[activeFinish].symbol+' Version '+FINISHES[activeFinish].label+
+    (previewFinish?' · Aperçu non possédé':'')),desc,stats);
+  const ledger=el('div','variant-ledger');
+  ledger.setAttribute('aria-label','Quantités possédées par finition');
+  for(const finish of FINISH_KEYS){
+    const entry=el('span','');
+    entry.append(el('strong','',FINISHES[finish].symbol+' '+FINISHES[finish].label+': '),
+      document.createTextNode('×'+finishQuantity(state.finishCounts,finish,c.id)));
+    ledger.append(entry);
+  }
+  copy.append(ledger);
   if(ownedChromatic){
     copy.append(button(chromatic?'Voir la version normale':'Voir la version Chromatique',
       ()=>inspect(c,!chromatic,false),'secondary chromatic-toggle'));
@@ -1635,6 +1669,20 @@ function inspect(c,shiny=false,scroll=true,chromaticPreview=false){
     if(!chromatic)copy.append(el('p','chromatic-inspector-hint',
       'Tu ne possèdes pas cette variante : aperçu visuel sans déblocage.'));
   }
+  const picker=el('div','finish-picker');
+  picker.setAttribute('role','group');
+  picker.setAttribute('aria-label','Choisir une finition de cette carte');
+  for(const finish of FINISH_KEYS){
+    const quantity=finishQuantity(state.finishCounts,finish,c.id);
+    const selected=activeFinish===finish;
+    const selector=button(FINISHES[finish].symbol+' '+FINISHES[finish].label,
+      ()=>inspect(c,finish==='chromatic',false,finish==='chromatic'&&!quantity,finish),
+      'secondary finish-choice');
+    selector.setAttribute('aria-pressed',String(selected));
+    selector.append(el('span','finish-state',quantity?'Possédée · ×'+quantity:'Aperçu · non possédée'));
+    picker.append(selector);
+  }
+  copy.append(picker);
   addCodexNavigation(copy,c);
   panel.append(artwork,copy);
   markCodexSelected(c.id);
