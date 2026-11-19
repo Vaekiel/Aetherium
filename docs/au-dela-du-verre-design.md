@@ -49,7 +49,7 @@ Le fil du scénario part de **La Traversée des Reflets** (l'expédition existan
 - **23 cartes classiques** (49–71) sont distribuées par un booster dédié *Au-delà du Verre*, au prix de **100 Couronnes**, avec les taux historiques, 3 % de Chromatiques, variété intra-booster, une Inhabituelle garantie et les mêmes Éclats et coûts de Forge.
 - **La carte 72 Signature**, `Cœur des Marches`, **n’entre jamais** dans les boosters ni à la Forge. Elle est attribuée une fois après Le Dernier Accord (quatre étapes). Une seconde victoire en difficulté Maîtrise débloque exclusivement sa version Chromatique, sans duplication de la carte.
 - Le parcours final exige les trois expéditions historiques (Verriers, Veilleurs, Traversée des Reflets), puis quatre épreuves sur le mode choisi. Le premier passage s’effectue en Initiation ou Aventure ; la Maîtrise s’ouvre après la première victoire.
-- Un nouveau palier narratif pourra prolonger ceux d’Origines et des Reflets brisés, mais ne doit jamais distribuer la Signature deux fois.
+- Quatre fragments narratifs prolongent ceux d’Origines et des Reflets brisés, aux paliers 6/12/18/24 cartes différentes. Le dernier demande la Signature gagnée dans la finale ; aucun fragment ne distribue cette carte.
 - La collection est `released:true` avec les 24 entrées Codex. L’accès à la Signature passe exclusivement par l’expédition finale et un passage complémentaire en Maîtrise ; aucun tirage ou fabrication n’est autorisé.
 - Éviter le piège d’un « premier booster » qui révèle des images manquantes ou des faux visuels : aucun tirage dans les pools incomplets, même temporairement.
 - Les sauvegardes locales utilisent toujours `aetherium-save-v1`, avec export/import ; les anciennes cartes, succès, routes, devises et trophées restent intacts.
@@ -161,3 +161,16 @@ Vérification visuelle au minimum sur **320×568, 360×740, 390×844, 667×375 p
 **Récompenses :** première conclusion (mode Initiation ou Aventure) = une seule carte n° 72 normale, sans Éclats supplémentaires. Le parcours peut être rejoué en **Maîtrise** pour débloquer la finition Chromatique de la même carte ; pas de deuxième exemplaire. Les victoires de mini-jeux continuent de payer leurs Couronnes habituelles, mais l’expédition ne crée aucune prime ni booster gratuit. Aucun doublon lors d’un double clic, d’un replay, d’un import ou d’un rafraîchissement.
 
 **Technique :** la sauvegarde conserve la clé `aetherium-save-v1` et la structure racine existante ; le choix rejoint simplement l’état de l’expédition finale. La vraie validation des épreuves reste obligatoire pour progresser. Les anciens parcours et leurs fragments gardent leurs identifiants et leurs étapes.
+
+### Le journal des quatre fragments — Au-delà du Verre
+
+Le Codex propose quatre fragments narratifs originaux, chacun réclammable **une seule fois** après la découverte de 6, 12, 18 puis 24 cartes différentes de la partie III. Les doublons ne comptent pas. Les récompenses restent identiques à celles des collections précédentes ; le quatrième fragment ne donne jamais la carte Signature, qui demeure exclusive à l'expédition finale.
+
+| Seuil | Titre | Récompense | Rôle narratif |
+| --- | --- | --- | --- |
+| 6/24 | La couture invisible | 30 Couronnes | Les premières arches se rapprochent |
+| 12/24 | Ceux qui portent les deux noms | 55 Couronnes | Les habitants des deux rives apprennent à se reconnaître |
+| 18/24 | La carte des futurs | 20 Éclats | Néméria découvre la possibilité d'un pacte |
+| 24/24 | Le serment des horizons | 100 Couronnes | Le Cœur des Marches achève le Codex et ouvre la suite |
+
+Le dernier seuil devient accessible seulement après l'obtention de la carte 72 par l'aventure *Le Dernier Accord*. La version Chromatique n'est pas exigée pour révéler le quatrième texte. L'interface des Archives demeure compacte et reprend la présentation des autres collections. Les fragments déjà récupérés ailleurs sont conservés, y compris après export/import.

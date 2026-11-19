@@ -72,8 +72,10 @@ assert.deepEqual(seasonProgress(published,{},{}),{
  collectionsReleased:3,collectionsPlanned:3,
  percentReleased:100,percentCollected:0
 });
-assert.deepEqual(milestonesFor('marches-de-verre','au-dela-du-verre'),[],
- 'The Signature still cannot be granted by the ordinary collection milestones');
+assert.deepEqual(milestonesFor('marches-de-verre','au-dela-du-verre').map(x=>x.threshold),
+ [6,12,18,24],'The third collection now has four narrative fragments');
+assert.ok(milestonesFor('marches-de-verre','au-dela-du-verre').every(x=>!x.reward.cardId),
+ 'The narrative fragments do not grant the Signature: only the final adventure does');
 for(const rng of [0,.03,.17,.42,.67,.88,.999]){
  assert.ok(drawPack(()=>rng).every(card=>card.id<=24));
  assert.ok(drawRefletsPack(()=>rng).every(card=>card.id>=25&&card.id<=48));

@@ -3,6 +3,7 @@
    Locked narrative fragments are never rendered before a player claims them. */
 const originsKey='marches-de-verre/origines';
 const refletsKey='marches-de-verre/reflets-brises';
+const auDelaKey='marches-de-verre/au-dela-du-verre';
 const milestone=(threshold,title,fragment,currency,amount)=>Object.freeze({
   threshold,title,fragment,reward:Object.freeze({currency,amount})
 });
@@ -33,6 +34,20 @@ export const COLLECTION_MILESTONES=Object.freeze({
       'dust',20),
     milestone(24,'La première fêlure',
       'Les derniers fragments révèlent une vérité inquiétante : les miroirs n’ont pas inventé ces autres destinées. Ils ont seulement rendu visible une blessure bien plus ancienne. Derrière le verre, un dernier horizon attend encore son nom.',
+      'coins',100)
+  ]),
+  [auDelaKey]:Object.freeze([
+    milestone(6,'La couture invisible',
+      'Au pied des arches, une lueur turquoise court entre deux pierres qu’aucun mortier ne relie. Les artisans des deux rives comprennent qu’il ne faut pas effacer la fissure : elle peut devenir le commencement d’un passage.',
+      'coins',30),
+    milestone(12,'Ceux qui portent les deux noms',
+      'Une messagère présente deux noms gravés sur la même lanterne. L’un appartient aux Marches, l’autre au Revers. Aucun n’est mensonger. Les voyageurs commencent à entendre ces vies comme deux voix capables de chanter ensemble.',
+      'coins',55),
+    milestone(18,'La carte des futurs',
+      'Dans une salle ouverte sur deux aubes, Néméria déroule un atlas dont les routes n’apparaissent que lorsque deux mains en tiennent les bords. À son centre, quatre anciens signes attendent le retour des voyageurs et un serment encore sans mots.',
+      'dust',20),
+    milestone(24,'Le serment des horizons',
+      'Le Cœur des Marches a retrouvé sa place parmi les légendes. Sur la dernière page du Codex, les noms des deux rives demeurent distincts, mais une même lumière les éclaire. Le livre ne se referme pas : une page vierge porte déjà les contours d’un nouvel horizon.',
       'coins',100)
   ])
 });
