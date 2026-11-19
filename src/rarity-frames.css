@@ -1,0 +1,115 @@
+/* AETHERIUM — Rarity Frames v1.
+ * This is the final visual layer, loaded after all finish and Codex styles.
+ * Rarity belongs to the CARD, not its Normale/Chromatique/Holographique/
+ * Calligraphique finish. Preserve animated foil INSIDE the rarity frame.
+ * Only revealed artworks receive the new border; sealed archives stay neutral.
+ */
+.card[data-rarity="common"],
+#page-collection .inspector[data-rarity="common"]{
+  --rarity-line:#f9fbff;
+  --rarity-rim:#ffffffa8;
+  --rarity-glow:#ffffff49;
+  --rarity-glow-strong:#ffffff6b;
+}
+.card[data-rarity="uncommon"],
+#page-collection .inspector[data-rarity="uncommon"]{
+  --rarity-line:#62dfa8;
+  --rarity-rim:#a6f6d0a0;
+  --rarity-glow:#61e3b44b;
+  --rarity-glow-strong:#65edb979;
+}
+.card[data-rarity="rare"],
+#page-collection .inspector[data-rarity="rare"]{
+  --rarity-line:#64b9ff;
+  --rarity-rim:#b9e3ffb4;
+  --rarity-glow:#5aafff60;
+  --rarity-glow-strong:#6cbfff8b;
+}
+.card[data-rarity="epic"],
+#page-collection .inspector[data-rarity="epic"]{
+  --rarity-line:#cc82ff;
+  --rarity-rim:#ebbbffc1;
+  --rarity-glow:#c77bff68;
+  --rarity-glow-strong:#ce87ffa3;
+}
+.card[data-rarity="legendary"],
+#page-collection .inspector[data-rarity="legendary"]{
+  --rarity-line:#ffd27b;
+  --rarity-rim:#fff0c0d5;
+  --rarity-glow:#ffc66978;
+  --rarity-glow-strong:#ffd079ae;
+}
+
+/* Gallery, booster reveal and the five-card booster recap.
+ * A 3px SOLID rarity band remains readable at two cards per row on phones.
+ * It is applied over all four finishes without touching the art itself.
+ */
+.card[data-rarity]:not(.is-sealed){
+  border:3px solid var(--rarity-line,#f9fbff)!important;
+  box-shadow:
+    0 0 0 1px var(--rarity-rim,#ffffffb0),
+    inset 0 0 0 1px var(--rarity-rim,#ffffffb0),
+    0 0 12px 1px var(--rarity-glow,#ffffff4d),
+    0 7px 18px #050b1bba!important;
+}
+.card[data-rarity]:not(.is-sealed):hover:not(:disabled),
+.card[data-rarity]:not(.is-sealed):focus-visible{
+  box-shadow:
+    0 0 0 1px var(--rarity-rim,#ffffffb0),
+    inset 0 0 0 1px var(--rarity-rim,#ffffffb0),
+    0 0 16px 2px var(--rarity-glow-strong,#ffffff78),
+    0 10px 25px #050b1bd6!important;
+}
+
+/* An opening should feel rewarding without creating a moving neon sign.
+ * The back of the packet does NOT reveal its rarity before being turned. */
+#page-boosters .pull-flip.is-revealed .pull-front .card[data-rarity]{
+  border-width:4px!important;
+  box-shadow:
+    0 0 0 1px var(--rarity-rim,#ffffffb0),
+    inset 0 0 0 1px var(--rarity-rim,#ffffffb0),
+    0 0 17px 2px var(--rarity-glow-strong,#ffffff78),
+    0 9px 24px #050b1bcc!important;
+}
+#page-boosters .booster-gallery .card[data-rarity]{
+  border-width:3px!important;
+  box-shadow:
+    0 0 0 1px var(--rarity-rim,#ffffffb0),
+    inset 0 0 0 1px var(--rarity-rim,#ffffffb0),
+    0 0 13px 1px var(--rarity-glow,#ffffff4d),
+    0 7px 18px #050b1bbd!important;
+}
+
+/* Inspector: add a strong outer rarity ring around the intact artwork.
+ * Do not replace Chromatique's moving inner rim, Holographique's prism
+ * or Calligraphique's ink-and-paper material. */
+#page-collection .inspector[data-rarity] > .inspector-art-shell{
+  outline:0!important;
+  box-shadow:
+    0 0 0 3px var(--rarity-line,#f9fbff),
+    0 0 0 4px var(--rarity-rim,#ffffffb0),
+    0 0 21px 3px var(--rarity-glow,#ffffff4d),
+    0 9px 24px #050b1bc8!important;
+}
+#page-collection .inspector[data-rarity] > .inspector-art-shell.is-holographic{
+  /* No change to its rotation/inclination or its holographic overlay. */
+  transform-style:preserve-3d;
+}
+
+/* Common remains neutral white, even when placed beside purple fantasy UI.
+ * Existing Chromatique/Holographique borders still shimmer on the inside. */
+#page-collection .inspector[data-rarity="common"] > .inspector-art-shell,
+#page-boosters .pull-flip.is-revealed .pull-front .card[data-rarity="common"]{
+  --rarity-line:#fff;
+}
+
+@media(max-width:600px){
+  .card[data-rarity]:not(.is-sealed){border-width:3px!important}
+  #page-boosters .pull-flip.is-revealed .pull-front .card[data-rarity]{
+    border-width:4px!important;
+  }
+}
+@media(prefers-reduced-motion:reduce){
+  /* Entire effect is static and remains visible with reduced motion. */
+  .card[data-rarity]:not(.is-sealed){transition:none}
+}
