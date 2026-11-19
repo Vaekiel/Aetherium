@@ -57,23 +57,36 @@ export function preferredFinish(finishCounts,id){
   return 'normal';
 }
 export function synchronizeFinishCounts(state){
-  // Forge, expeditions and story finale can still grant cards via owned/shiny.
-  // Reconcile their grants as Normal cards without erasing existing finishes.
-  const counts=state.finishCounts=restoreFinishCounts(state.owned,state.shiny,state.finishCounts);
-  for(const [id,n] of Object.entries(state.owned)){
+  // Forge and story rewards may increment owned without updating per-finish counts.
+  // Fill only the missing difference as Normal; NEVER discard previously
+  // collected special finishes because of an out-of-band reward.
+  const counts=state.finishCounts||newFinishCounts();
+  for(const finish of FINISH_KEYS)if(!counts[finish]||typeof counts[finish]!=='object')counts[finish]={};
+  for(const [id,n] of Object.entries(state.owned||{})){
     if(!validCount(n)||n===0)continue;
-    if(state.shiny?.[id]===true&&!finishQuantity(counts,'chromatic',id)){
-      if(finishQuantity(counts,'normal',id)>0){
-        counts.normal[id]-=1;
-        if(!counts.normal[id])delete counts.normal[id];
-        counts.chromatic[id]=1;
+    let sum=FINISH_KEYS.reduce((t,f)=>t+finishQuantity(counts,f,id),0);
+    if(sum<n){counts.normal[id]=(counts.normal[id]||0)+(n-sum);sum=n;}
+    // Imported game states are pre-validated. If corrupt internal counters do
+    // not match, prefer the authoritative owned total, not inflated inventory.
+    if(sum>n){
+      const restored=restoreFinishCounts({[id]:n},state.shiny,null);
+      for(const finish of FINISH_KEYS){
+        delete counts[finish][id];
+        if(restored[finish][id])counts[finish][id]=restored[finish][id];
       }
     }
+    if(state.shiny?.[id]===true&&!finishQuantity(counts,'chromatic',id)&&finishQuantity(counts,'normal',id)>0){
+      counts.normal[id]-=1;
+      if(counts.normal[id]===0)delete counts.normal[id];
+      counts.chromatic[id]=1;
+    }
   }
-  for(const id of Object.keys(state.shiny||{})){
+  for(const finish of FINISH_KEYS)
+    for(const id of Object.keys(counts[finish]))
+      if(!state.owned?.[id])delete counts[finish][id];
+  for(const id of Object.keys(state.shiny||{}))
     if(!finishQuantity(counts,'chromatic',id))delete state.shiny[id];
-  }
   for(const id of Object.keys(counts.chromatic))
     if(finishQuantity(counts,'chromatic',id)>0)state.shiny[id]=true;
-  return counts;
+  return (state.finishCounts=counts);
 }
