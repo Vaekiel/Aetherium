@@ -54,6 +54,19 @@ Le fil du scénario part de **La Traversée des Reflets** (l'expédition existan
 - Éviter le piège d’un « premier booster » qui révèle des images manquantes ou des faux visuels : aucun tirage dans les pools incomplets, même temporairement.
 - Les sauvegardes locales utilisent toujours `aetherium-save-v1`, avec export/import ; les anciennes cartes, succès, routes, devises et trophées restent intacts.
 
+### Illustration pilote n° 49 — Passeur des Aubes (validée le 19 novembre 2026)
+
+Le rendu final du pilote a été **approuvé comme référence d’ambiance et de pixel art HD**. Il associe un personnage lisible, une architecture de passage, un horizon d’aube ivoire et corail, des accents turquoise et des ombres indigo. Cette image sert de **référence de qualité et de palette**, et **non de composition unique à recopier** : les autres cartes doivent mettre en scène des objets, créatures, sorts et héros très distincts.
+
+Deux fichiers WebP correspondant **exactement à cette image validée** ont été préparés hors dépôt :
+
+- `assets/cards/passeur-des-aubes.webp` — 1024 × 1536 px, image HD ;
+- `assets/cards/passeur-des-aubes-thumb.webp` — 350 × 525 px, vignette responsive.
+
+Leur taille et leurs empreintes SHA-256 figurent dans `docs/au-dela-pilot-assets.json` pour éviter toute substitution involontaire. La source PNG et le paquet des deux WebP ont été archivés sur Google Drive le 19 novembre.
+
+**Statut GitHub : les fichiers binaires ne sont pas encore enregistrés dans le dépôt.** Ne pas ajouter d’entrée dans `src/card-art.js` ni de visuel référencé par la page publique avant la présence vérifiée des fichiers. Aucun faux aperçu, aucun déblocage prématuré.
+
 ### Plan d'intégration progressive
 
 1. **Bible + brouillon** : 24 définitions non importées dans le gameplay et aperçu textuel du chapitre dans le Codex — c'est le jalon actuel.

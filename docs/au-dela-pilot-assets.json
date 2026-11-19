@@ -1,0 +1,29 @@
+{
+  "collection": "au-dela-du-verre",
+  "cardId": 49,
+  "name": "Passeur des Aubes",
+  "approved": "2026-11-19",
+  "status": "art approved; WebP files prepared outside repository; not yet published",
+  "sourceDimensions": [
+    1024,
+    1536
+  ],
+  "style": "HD pixel art; indigo, turquoise, ivory, subtle gold; coherent card art; no frame, text or badges",
+  "files": [
+    {
+      "path": "assets/cards/passeur-des-aubes.webp",
+      "width": 1024,
+      "height": 1536,
+      "bytes": 506954,
+      "sha256": "ea4cc185807c1ac1f14fa87b1796ca1ee2691af54ae3ba521a1abc6247ee99b3"
+    },
+    {
+      "path": "assets/cards/passeur-des-aubes-thumb.webp",
+      "width": 350,
+      "height": 525,
+      "bytes": 98942,
+      "sha256": "25102474800ce2b8f9dc1b2e914a7145b4b6ba7daa169862304a3f233c604f5a"
+    }
+  ],
+  "releaseGuard": "Only register artwork and enable previews after the two actual binaries have been uploaded and checked; never release cards 49–72 before all card art, booster and story reward are ready."
+}
