@@ -15,7 +15,7 @@ const extract=(a,b)=>{
 const code=extract('function markCodexSelected(id){','function renderCodexSeasons(){');
 assert.ok(css.includes('AETHERIUM — Codex responsive 1.9.0'));
 assert.ok(html.includes('codex.css?v=au-dela-pilot-49'));
-assert.ok(html.includes('main.js?v=au-dela-lot-1'));
+assert.ok(html.includes('main.js?v=au-dela-lot-2'));
 assert.ok(html.includes('width=device-width,initial-scale=1,viewport-fit=cover'));
 assert.ok(css.includes('repeat(auto-fill,minmax(min(100%,158px),1fr))'),
  'Desktop and wide tablet gallery uses fluid columns without overflowing');

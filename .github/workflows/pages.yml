@@ -89,6 +89,10 @@ jobs:
             test -s "assets/cards/${slug}.webp"
             test -s "assets/cards/${slug}-thumb.webp"
           done
+          for slug in renard-des-intervalles veilleur-des-passages soryn-des-deux-rives horloge-du-premier-choix griffon-de-verre-serein marche-entre-les-mondes serment-des-passages armure-de-l-aube-intacte observatoire-des-horizons aelys-gardienne-des-liens; do
+            test -s "assets/cards/${slug}.webp"
+            test -s "assets/cards/${slug}-thumb.webp"
+          done
           test -s src/reflets-preview.css
           test -s src/reflets-gallery.css
           test -s src/reflets-gallery.js

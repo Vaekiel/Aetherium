@@ -103,7 +103,7 @@ assert.ok(css.includes('@media(max-width:550px)'));
 assert.ok(css.includes('@media(max-width:350px)'));
 assert.ok(css.includes('prefers-reduced-motion:reduce'));
 assert.ok(html.includes('codex.css?v=au-dela-pilot-49'));
-assert.ok(html.includes('main.js?v=au-dela-lot-1'));
+assert.ok(html.includes('main.js?v=au-dela-lot-2'));
 assert.ok(read('docs/au-dela-du-verre-design.md').includes('23 cartes classiques'));
 assert.ok(!catalogue.includes('localStorage'),'Draft cannot edit saves');
 console.log('AETHERIUM Saison I — 24 concepts and non-spoiler responsive teaser, 48 old cards unchanged, Signature excluded, no new draws or saves');

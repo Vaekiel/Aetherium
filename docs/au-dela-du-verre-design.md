@@ -71,7 +71,7 @@ Leur taille et leurs empreintes SHA-256 figurent dans `docs/au-dela-pilot-assets
 
 1. **Bible + brouillon** : 24 définitions non importées dans le gameplay et aperçu textuel du chapitre dans le Codex — c'est le jalon actuel.
 2. **Illustration pilote validée** : la carte n° **49, Passeur des Aubes** dispose maintenant d’un visuel HD 1024 × 1536 et d’une miniature 350 × 525. Ces fichiers sont intégrés à GitHub et montrés dans le Codex en aperçu non jouable, sans ajout au catalogue publié.
-3. **Images** : premier lot **10/24 intégré** (pilote n° 49 + neuf cartes n° 50–58) en HD et miniatures WebP. Poursuivre les lots restants en contrôlant le ratio, le chargement et la diversité artistique.
+3. **Images** : deux lots **20/24 intégrés** (n° 49–68) en HD et miniatures WebP. Restent les n° 69–72, dont la Signature, à illustrer puis vérifier avant de publier les boosters.
 4. **Booster** : produire son emballage pixel art original et intégrer le pool séparé de **23 cartes** avec tests (rare garanti au cinquième tirage, Chromatique, non-présence de la Signature).
 5. **Finale de saison** : développer une aventure courte et l'obtention sécurisée de la Signature ainsi que sa version Chromatique, sans doubler la récompense lors d'une reprise ou d'un replay.
 6. **Publication** : valider sur mobile portrait/paysage, tablette et PC, puis ouvrir les 24 cartes d'un seul coup ; contrôler l’export/import et tous les anciens parcours.
@@ -106,6 +106,25 @@ La galerie des **dix premiers horizons** est consultable dans **Codex → Saison
 Les fichiers d'art sont nommés `assets/cards/<slug>.webp` et `assets/cards/<slug>-thumb.webp`. Le lien vers la grande illustration est accessible au clavier et sur mobile ; les miniatures chargent à la demande. L’interface s’adapte des téléphones aux grands écrans.
 
 **Protection avant sortie :** la collection reste `released:false` ; les cartes 49–72 ne sont disponibles ni dans le booster, ni dans la Forge, ni dans les sauvegardes. Les 48 cartes publiées gardent leurs images et leurs règles. L'intégration du lot est **visuelle uniquement**.
+
+### Deuxième lot d’illustrations — cartes 59 à 68
+
+Les dix visuels du deuxième lot ont été intégrés **sans modifier les noms ni la rareté des cartes** définies dans `src/au-dela-du-verre-catalog.js`. Chacun existe en WebP HD **1024 × 1536** et en miniature **350 × 525**. Les 20 fichiers ont été archivés dans Google Drive, puis transférés vers GitHub avec contrôle des empreintes Git des binaires.
+
+| N° | Carte | Nom de fichier (sans extension) | Rareté |
+| --- | --- | --- | --- |
+| 59 | Renard des Intervalles | `renard-des-intervalles` | Inhabituelle |
+| 60 | Veilleur des Passages | `veilleur-des-passages` | Inhabituelle |
+| 61 | Soryn des Deux Rives | `soryn-des-deux-rives` | Rare |
+| 62 | Horloge du Premier Choix | `horloge-du-premier-choix` | Rare |
+| 63 | Griffon de Verre Serein | `griffon-de-verre-serein` | Rare |
+| 64 | Marche entre les mondes | `marche-entre-les-mondes` | Rare |
+| 65 | Serment des Passages | `serment-des-passages` | Rare |
+| 66 | Armure de l’Aube intacte | `armure-de-l-aube-intacte` | Rare |
+| 67 | Observatoire des Horizons | `observatoire-des-horizons` | Épique |
+| 68 | Aelys, Gardienne des Liens | `aelys-gardienne-des-liens` | Épique |
+
+**État du projet : 20 illustrations sur 24.** La galerie du Codex montre les 20 aperçus en pixel art HD, avec chargement progressif et liens vers les images haute définition. Le contenu jouable conserve ses 48 cartes (Origines et Reflets brisés), les mêmes boosters et la même Forge. Aucune carte 49–72 n’entre dans les sauvegardes à ce stade.
 
 ### Règles responsive (non négociables)
 
