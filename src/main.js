@@ -1496,6 +1496,8 @@ function makeCard(c,isShiny=false,locked=false){
     (holographic?' is-holographic':'')+(calligraphic?' is-calligraphic':''));
   b.type='button';
   b.dataset.cardId=String(c.id);
+  // Show rarity only on revealed art; sealed archives keep their neutral frame.
+  if(!reallyLocked)b.dataset.rarity=c.rarity;
   b.style.setProperty('--edge',RARITIES[c.rarity].color);
   if(reallyLocked){
     const art=el('span','codex-sealed-art');
@@ -1584,6 +1586,7 @@ function inspectSealed(c,scroll=true){
   selectedCard={id:c.id,shiny:false,sealed:true};
   const panel=$('#inspector');
   panel.replaceChildren();
+  delete panel.dataset.rarity;
   panel.classList.remove('is-chromatic','is-holographic','is-calligraphic');
   const seal=el('div','codex-sealed-inspector');
   seal.setAttribute('aria-hidden','true');
@@ -1623,6 +1626,7 @@ function inspect(c,shiny=false,scroll=true,chromaticPreview=false,finishOverride
   selectedCard={id:c.id,shiny:chromatic,preview:false,finish:activeFinish};
   const panel=$('#inspector');
   panel.replaceChildren();
+  panel.dataset.rarity=c.rarity;
   panel.classList.toggle('is-chromatic',activeFinish==='chromatic');
   panel.classList.toggle('is-holographic',activeFinish==='holographic');
   panel.classList.toggle('is-calligraphic',activeFinish==='calligraphic');
@@ -1978,6 +1982,7 @@ function renderCollection(){
     selectedCard=null;
     const panel=$('#inspector');
     panel.classList.remove('is-chromatic','is-holographic','is-calligraphic');
+    delete panel.dataset.rarity;
     panel.replaceChildren(el('p','muted','Choisis une autre collection ou ajuste les filtres pour feuilleter les archives.'));
   }
   update();
