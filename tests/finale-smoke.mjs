@@ -64,7 +64,7 @@ assert.equal(finished.state.choice,'memoires');
 assert.deepEqual(finished.state.completedRoutes,[...FINALE_PREREQUISITES,FINALE_ID]);
 assert.equal(expeditionVictory(finished.state,4,'aventure').advanced,false,
  'A second callback cannot complete the same act twice');
-assert.deepEqual(sanitizeExpedition(JSON.parse(JSON.stringify(finished.state)),finished.state);
+assert.deepEqual(sanitizeExpedition(JSON.parse(JSON.stringify(finished.state))),finished.state);
 
 const rewardState={owned:{1:1,25:1},shiny:{},recentFinds:[]};
 const first=awardFinaleCard(rewardState,finished);
