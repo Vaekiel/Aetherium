@@ -26,7 +26,7 @@ assert.ok(main.includes("filterFinish==='chromatic'"),'Chromatic collection filt
 assert.ok(main.includes("filterFinish==='normal'"),'Normal collection filter active');
 assert.ok(main.includes("$('#codex-chromatic-count')"),'Desktop Codex count tracks chromatic discoveries');
 assert.ok(main.includes("$('#mobile-chromatic-count')"),'Mobile Codex count tracks chromatic discoveries');
-assert.ok(main.includes("Voir la version Chromatique"),'Inspector can switch to chromatic');
+assert.ok(main.includes("const picker=el('div','finish-picker')"),'Inspector can select owned Chromatiques');
 assert.ok(main.includes("tile.classList.add('chromatic-unveiling')"),'Special reveal triggers after flipping');
 assert.ok(main.includes('item.shiny?950:420'),'Reveals remain player-controlled with a slightly longer chromatic pause');
 assert.ok(main.includes('drawSummary.shinyCount+\' Chromatique(s)\''),'Booster recap announces Chromatiques');
