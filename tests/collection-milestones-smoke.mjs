@@ -117,7 +117,7 @@ assert.ok(css.includes('#page-collection .codex-milestones'),
 assert.ok(css.includes('@media(max-width:390px)'),
  'The smallest mobile screens display one clear tile per row');
 assert.ok(html.includes('src/main.js?v='));
-assert.ok(html.includes('src/codex.css?v=codex-responsive-1'));
+assert.ok(html.includes('src/codex.css?v=au-dela-conception-1'));
 
 // Execute the real source save loader in a VM with legacy player data.
 const freshCode=main.slice(main.indexOf('const fresh='),main.indexOf('function load(){'));

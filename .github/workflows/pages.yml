@@ -77,6 +77,8 @@ jobs:
           test -s src/codex.js
           test -s src/save-backup.js
           test -s src/reflets-brises-catalog.js
+          test -s src/au-dela-du-verre-catalog.js
+          test -s tests/au-dela-du-verre-smoke.mjs
           test -s src/reflets-preview.css
           test -s src/reflets-gallery.css
           test -s src/reflets-gallery.js
@@ -211,6 +213,7 @@ jobs:
           node --check --input-type=module < src/main.js
           node --check --input-type=module < src/save-backup.js
           node --check --input-type=module < src/reflets-brises-catalog.js
+          node --check --input-type=module < src/au-dela-du-verre-catalog.js
           node --check --input-type=module < src/reflets-gallery.js
           node --check --input-type=module < src/duplicate-rewards.js
           node --check --input-type=module < src/codex.js
@@ -230,6 +233,7 @@ jobs:
           node --experimental-default-type=module --test tests/duplicate-rewards.test.mjs
           node tests/save-backup-smoke.mjs
           node tests/reflets-brises-smoke.mjs
+          node tests/au-dela-du-verre-smoke.mjs
           node tests/reflets-pilot-preview-smoke.mjs
           node tests/reflets-gallery-smoke.mjs
           node tests/reflets-booster-smoke.mjs

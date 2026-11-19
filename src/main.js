@@ -1773,6 +1773,8 @@ function renderCollection(){
   const isUpcoming=!selectedPart.released;
   $('#codex-upcoming').hidden=!isUpcoming;
   const showRefletsPreview=isUpcoming&&activeSeason==='marches-de-verre'&&selectedPart.id==='reflets-brises';
+  const showAuDelaTeaser=isUpcoming&&activeSeason==='marches-de-verre'&&selectedPart.id==='au-dela-du-verre';
+  $('#au-dela-teaser').hidden=!showAuDelaTeaser;
   $('#reflets-art-preview').hidden=!showRefletsPreview;
   $('#reflets-gallery').hidden=!showRefletsPreview;
   if(showRefletsPreview)mountRefletsGallery($('#reflets-gallery-grid'));

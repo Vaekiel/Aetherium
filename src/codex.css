@@ -504,3 +504,69 @@
  }
  #page-collection .inspector-shell>.inspector .secondary{min-height:44px}
 }
+
+/* Saison I · Partie III — restrained pre-release teaser.
+   Text and symbolic geometry only; not a collectible or fake card image. */
+#page-collection #au-dela-teaser[hidden]{display:none!important}
+#page-collection .au-dela-teaser{
+ box-sizing:border-box;max-width:690px;margin:24px auto 4px;padding:18px;
+ display:grid;grid-template-columns:74px minmax(0,1fr);gap:18px;align-items:center;
+ text-align:left;border:1px solid #7ba7ac9c;border-radius:4px;
+ background:linear-gradient(123deg,#233246eb,#251f39f0 60%,#161f33f0);
+ box-shadow:inset 0 1px #d7ebee19,0 8px 22px #080c2230;
+}
+#page-collection .au-dela-teaser-glyph{
+ box-sizing:border-box;display:grid;place-items:center;
+ width:70px;height:88px;position:relative;
+ border:1px solid #b8b8c677;border-radius:2px;
+ background:
+  linear-gradient(120deg,transparent 43%,#76c8c35c 44%,#76c8c35c 46%,transparent 47%),
+  linear-gradient(65deg,transparent 55%,#dbb1ac5c 56%,#dbb1ac5c 58%,transparent 59%),
+  linear-gradient(140deg,#273e4f,#332b45);
+ color:#e9e2d3;font:42px/1 Georgia,serif;
+ text-shadow:0 0 15px #7bd6c898;
+}
+#page-collection .au-dela-teaser-copy{min-width:0}
+#page-collection .au-dela-teaser-eyebrow{
+ display:block;margin-bottom:5px;color:#91d0ca;
+ font:10px/1.35 Georgia,serif;letter-spacing:.11em;
+}
+#page-collection .au-dela-teaser-copy>strong{
+ display:block;color:#f5e7d7;
+ font:small-caps clamp(17px,2.1vw,22px)/1.23 Georgia,serif;
+ overflow-wrap:anywhere;
+}
+#page-collection .au-dela-teaser-copy>p{
+ max-width:none;margin:7px 0 10px!important;
+ color:#d9cddd!important;font:12px/1.5 Georgia,serif!important;
+}
+#page-collection .au-dela-teaser-motifs{
+ display:flex;gap:6px;flex-wrap:wrap;min-width:0;margin-bottom:10px;
+}
+#page-collection .au-dela-teaser-motifs>span{
+ display:inline-block;box-sizing:border-box;padding:5px 8px;min-width:0;
+ color:#d9e6e4;font:11px/1.2 Georgia,serif;overflow-wrap:anywhere;
+ border:1px solid #8caaa550;border-radius:3px;
+ background:#141d2f9c;
+}
+#page-collection .au-dela-teaser-copy>small{
+ display:block;color:#bfb5cb;font:11px/1.35 Georgia,serif;
+}
+@media(max-width:550px){
+ #page-collection .au-dela-teaser{
+  grid-template-columns:1fr;gap:9px;text-align:center;
+  margin-top:16px;padding:13px;
+ }
+ #page-collection .au-dela-teaser-glyph{
+  width:45px;height:45px;margin:0 auto;font-size:27px;
+ }
+ #page-collection .au-dela-teaser-motifs{justify-content:center}
+ #page-collection .au-dela-teaser-copy>strong{font-size:18px}
+}
+@media(max-width:350px){
+ #page-collection .au-dela-teaser{padding:10px}
+ #page-collection .au-dela-teaser-motifs>span{padding:4px 6px;font-size:10px}
+}
+@media(prefers-reduced-motion:reduce){
+ #page-collection .au-dela-teaser{transition:none!important;animation:none!important}
+}
