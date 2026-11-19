@@ -10,7 +10,6 @@ assert.equal(TRIAL_CHALLENGES.length,5);
 assert.deepEqual(TRIAL_MEDAL_NAMES,['Bronze','Argent','Or']);
 const relevant=['errors','moves','attempts','hints','errors'];
 const scoreFor=(index,value)=>{
- if(index===3)return 80;
  return trialScore(index,{[relevant[index]]:value});
 };
 for(let index=0;index<5;index++){

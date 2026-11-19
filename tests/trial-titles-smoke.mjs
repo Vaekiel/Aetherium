@@ -26,7 +26,7 @@ assert.equal(earnedTrialTitles(stats,records)[0].earned,false,'Legacy global sco
 const metrics=['errors','moves','attempts','hints','errors'];
 const winning=[0,10,0,2,0];
 for(let id=0;id<5;id++){
- const score=id===3?80:trialScore(id,{[metrics[id]]:winning[id]});
+ const score=trialScore(id,{[metrics[id]]:winning[id]});
  records=recordPersonalBest(records,id,'maitrise',score,{[metrics[id]]:winning[id]});
  const titles=earnedTrialTitles(stats,records);
  assert.equal(titles[id].earned,true,'Gold medal unlocks its exact title');

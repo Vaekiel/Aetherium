@@ -3,7 +3,7 @@
 export const DIFFICULTIES=Object.freeze([
   Object.freeze({id:'initiation',label:'Initiation',description:'Plus de souplesse pour découvrir les épreuves.',bonus:0}),
   Object.freeze({id:'aventure',label:'Aventure',description:'Les règles classiques, avec un petit bonus de maîtrise.',bonus:0}),
-  Object.freeze({id:'maitrise',label:'Maîtrise',description:'Des objectifs exigeants et une récompense légèrement supérieure.',bonus:10})
+  Object.freeze({id:'maitrise',label:'Maîtrise',description:'Des objectifs exigeants et une récompense légèrement supérieure.',bonus:15})
 ]);
 export const TRIAL_COUNT=5;
 export const validDifficulty=value=>DIFFICULTIES.some(mode=>mode.id===value)?value:'aventure';
@@ -31,10 +31,10 @@ export function trialObjective(index,difficulty='aventure'){
     default: return '';
   }
 }
-export function trialScore(index,{errors=0,moves=0,attempts=0}={}){
+export function trialScore(index,{errors=0,moves=0,attempts=0,hints=0}={}){
   const count=n=>Number.isFinite(n)?Math.max(0,Math.floor(n)):0;
   const penalties=[count(errors)*18,Math.max(0,count(moves)-8)*4,
-    count(attempts)*20,20,count(errors)*20];
+    count(attempts)*20,count(hints)*10,count(errors)*20];
   return Math.max(0,Math.min(100,100-(penalties[index]??0)));
 }
 export function trialReward(base,difficulty,score){

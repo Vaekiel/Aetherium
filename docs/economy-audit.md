@@ -41,6 +41,23 @@ La protection est **interne au paquet uniquement** : une carte déjà présente 
 
 Le test `tests/booster-variety-smoke.mjs` vérifie la diversité intra-paquet, les cas d'épuisement d'une rareté, l'absence de mélange entre éditions et les distributions des tirages sur 12 000 boosters simulés.
 
+## Étape 2 — Maîtrise, Fouilles et Forge
+
+**Audit du mode Maîtrise.** Avant cette correction, une victoire difficile ne rapportait que 10 Couronnes supplémentaires par rapport au même mini-jeu en Aventure. Les cinq jeux sont pourtant plus contraignants (moins d'erreurs autorisées, tentative réduite, fouilles plus longues, trois ingrédients en alchimie). Le bonus de victoire Maîtrise passe à **15 Couronnes** : cinq de plus qu'avant, sans multiplier les gains ni supprimer les bonus de précision.
+
+**Score des Fouilles interdites.** L'ancienne fonction renvoyait toujours **80/100**, quelle que soit l'utilisation des sondes : le bonus de précision de cinq Couronnes n'était jamais accessible. La nouvelle règle : **100 points - 10 points par sonde effectivement demandée**, avec plancher à zéro. Une victoire sans sonde ou avec une seule sonde donne le bonus de précision ordinaire. La première case sûre annoncée au départ ne compte pas comme sonde demandée. Les médailles et les records continuent d'utiliser le nombre de sondes réellement demandées.
+
+| Situation | Avant | Après |
+| --- | ---: | ---: |
+| Victoire en Maîtrise, chemin runique sans erreur | 50 Couronnes | 55 Couronnes |
+| Victoire en Maîtrise, Fouilles avec deux sondes | 75 Couronnes | 80 Couronnes |
+| Victoire en Maîtrise, Fouilles sans sonde | 75 Couronnes | 85 Couronnes |
+| Victoire en Aventure, Fouilles sans sonde | 65 Couronnes | 70 Couronnes |
+
+**Rôle de la Forge.** Un paquet entièrement composé de doublons rapporte en moyenne 36,11 Éclats. Une Légendaire ciblée à 450 Éclats représente environ **12,46 boosters intégralement doublons**, et davantage pendant les premières phases de découverte. Les coûts restent donc inchangés : la Forge garantit une issue à la malchance, sans remplacer la recherche de cartes rares dans les boosters. L'achat, les doubles et les récompenses narratives n'ont pas changé.
+
+Les fonctions `trialScore` et `trialReward` restent pures, la progression garde la même clé locale et les nouvelles règles sont vérifiées dans `tests/mastery-economy-smoke.mjs`. **Aucun déplacement de ressources ni changement de format de sauvegarde**.
+
 ## Prochain contrôle recommandé
 
-Observer à l'usage les gains d'Éclats, le temps nécessaire pour obtenir une Légendaire désirée et l'écart de difficulté/récompense en mode Maîtrise, **avant de retoucher les montants**. Ne pas accélérer l'économie au détriment de la satisfaction de collection à long terme.
+Recueillir quelques essais réels sur les cinq mini-jeux (temps moyen, échec en mode Maîtrise, réussites sans sonde), puis réévaluer les gains par minute plutôt que de modifier les probabilités des cartes sans données.
