@@ -80,7 +80,9 @@ function runCase(draw){
    boosterBusy:true,changingCard:true,
    boosterArt,boosterOpening,boosterActions,nextPullButton,boosterStep,
    boosterGrid,boosterSummary,boosterProgressFill,
-   currentDraw:draw,drawSummary:{newCount:2,duplicates:3,shinyCount:draw.filter(c=>c.shiny).length,dustEarned:21},
+   currentDraw:draw,drawSummary:{newCount:2,duplicates:3,shinyCount:draw.filter(c=>c.shiny).length,
+    holographicCount:draw.filter(c=>c.finish==='holographic').length,
+    calligraphicCount:draw.filter(c=>c.finish==='calligraphic').length,dustEarned:21},
    state,boosterMoment,
    cancelBoosterTimers(){cancels++},
    update(){updates++},
@@ -100,14 +102,16 @@ function runCase(draw){
  assert.equal(boosterActions.hidden,true);
  assert.equal(boosterSummary.hidden,false);
  assert.equal(boosterGrid.children.length,draw.length);
- assert.equal(boosterSummary.children.length,draw.some(c=>c.shiny||['epic','legendary'].includes(c.card.rarity))?4:3);
+ assert.equal(boosterSummary.children.length,draw.some(c=>c.shiny||['epic','legendary'].includes(c.card.rarity))?6:5);
+ assert.ok(boosterSummary.children.some(c=>c.textContent==='0 Holographique(s)'));
+ assert.ok(boosterSummary.children.some(c=>c.textContent==='0 Calligraphique(s)'));
  assert.ok(boosterSummary.children.some(c=>c.textContent==='2 nouvelle(s)'));
  assert.equal(boosterProgressFill.style.width,'100%');
  assert.equal(nextPullButton.hidden,true);
  return boosterSummary.children[0];
 }
 const quiet=runCase([...normals,item(7,'common'),item(8,'common')]);
-assert.equal(quiet.textContent,'2 nouvelle(s)','Normal booster summary keeps its three simple counters');
+assert.equal(quiet.textContent,'2 nouvelle(s)','Normal booster summary retains its first counter');
 const highlight=runCase([...normals,item(4,'epic'),item(6,'common',{shiny:true})]);
 assert.equal(highlight.className,'booster-moment booster-moment-chromatic');
 assert.equal(highlight.children[0].attributes['aria-hidden'],'true');
