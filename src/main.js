@@ -1,5 +1,5 @@
-import {RARITIES,PACK_PRICE,drawPack} from './data.js';
-import {CARDS,drawRefletsPack} from './collection-data.js';
+import {RARITIES,PACK_PRICE,drawPack} from './data.js?v=booster-variety-1';
+import {CARDS,drawRefletsPack} from './collection-data.js?v=booster-variety-1';
 import {CRAFT_COSTS,getCraftCost,craftCard} from './crafting.js';
 import {duplicateDustReward} from './duplicate-rewards.js';
 import {applyCardIllustration,hasApprovedArt,CARD_ART} from './card-art.js';

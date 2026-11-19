@@ -13,13 +13,13 @@ for(const id of ['codex-upcoming','reflets-art-preview']){
  assert.ok(html.includes('id="'+id+'"'),'The existing upcoming collection hosts '+id);
 }
 assert.ok(html.includes('src/reflets-preview.css?v=art-pilot-38'));
-assert.ok(html.includes('src/main.js?v=reflets-journal-1'));
+assert.ok(html.includes('src/main.js?v=booster-variety-1'));
 assert.ok(html.includes('Aperçu visuel uniquement · Carte non disponible dans les boosters'));
 assert.ok(main.includes("$('#reflets-art-preview').hidden=!showRefletsPreview"),
  'The historic pilot preview remains hidden once its chapter is released');
 assert.ok(main.includes("$('#collection-layout').hidden=isUpcoming"),'Unreleased collection does not display a playable gallery');
 assert.ok(main.includes("const SAVE='aetherium-save-v1'"),'Existing save key unchanged');
-assert.ok(main.includes("from './collection-data.js'"),'The released catalogue loads through the dedicated published module');
+assert.ok(main.includes("from './collection-data.js?v=booster-variety-1'"),'The released catalogue loads through the dedicated published module');
 assert.ok(!gameData.includes('reflets-brises-catalog.js'),'Origines pools are not modified');
 assert.ok(artwork.includes('REFLETS_GALLERY_ART'),'The former pilot joins the published art registry');
 assert.ok(season.includes("part('reflets-brises'"),'Reflets stays planned');
