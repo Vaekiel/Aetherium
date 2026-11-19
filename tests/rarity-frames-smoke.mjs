@@ -22,8 +22,8 @@ assert.equal(RARITIES.legendary.weight,1);
 assert.ok(html.includes('src/rarity-frames.css?v=rarity-halo-1'));
 assert.ok(html.indexOf('src/rarity-frames.css')>html.indexOf('src/finishes.css'),
   'Rarity overlay must load after all finishes to keep borders visible');
-assert.ok(html.indexOf('src/rarity-frames.css')>html.indexOf('src/codex.css'),
-  'Rarity overlay must load after Codex mobile rules');
+assert.ok(html.indexOf('src/rarity-frames.css')<html.indexOf('src/codex.css'),
+  'Retain existing Codex stylesheet order while using specific rarity frame overrides');
 assert.ok(html.includes('&amp;rarity=1'),'JS cache must refresh rarity data attributes');
 assert.ok(main.includes('if(!reallyLocked)b.dataset.rarity=c.rarity'),
   'Revealed gallery and booster cards expose rarity; sealed archives do not');
