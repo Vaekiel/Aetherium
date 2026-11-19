@@ -131,8 +131,14 @@ def build_subject(rgb: np.ndarray) -> np.ndarray:
         # Keep the high-contrast, small separated spikes that GrabCut sees.
         selected = cv2.morphologyEx(
             selected, cv2.MORPH_CLOSE,
-            cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (5, 5))
+            cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (15, 15))
         )
+        # Ensure that the dense dragon body remains continuous. GrabCut
+        # otherwise mistakes dark scales for the similarly tinted sky.
+        safe_interior = cv2.erode(
+            rough, cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (31, 31))
+        )
+        selected = np.maximum(selected, safe_interior)
         selected[core > 0] = 255
         return soften_alpha(selected)
     except cv2.error as exc:
@@ -168,7 +174,10 @@ def save_webp(rgba: np.ndarray | Image.Image, name: str):
         image = rgba
     else:
         image = Image.fromarray(rgba, "RGBA")
-    image.save(DEST / name, "WEBP", lossless=True, method=5)
+    image.save(
+        DEST / name, "WEBP", lossless=(name == "magic.webp"),
+        quality=94 if name == "subject.webp" else 91, method=6
+    )
     print(name, image.size, (DEST / name).stat().st_size, "bytes")
 
 
@@ -207,7 +216,9 @@ def generate():
     composite = Image.fromarray(backdrop, "RGBA")
     composite.alpha_composite(Image.fromarray(mid, "RGBA"))
     composite.alpha_composite(Image.fromarray(creature, "RGBA"))
-    composite.save(DEST / "composite-preview.webp", "WEBP", quality=92, method=5)
+    composite.save(DEST / "composite-preview.webp", "WEBP", quality=95, method=6)
+    difference = np.abs(np.asarray(composite.convert("RGB")).astype(np.int16) - original.astype(np.int16))
+    print("Composite mean absolute error:", round(float(difference.mean()), 2))
     print("Composite ready; original remains authoritative for static fallback.")
 
 
