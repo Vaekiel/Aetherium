@@ -123,6 +123,27 @@ finishPicker.children[0].click();
 assert.equal(host.children[0].className,'inspector-art-shell');
 assert.equal(shown,1,'Switching visual finish never reopens or scrolls the mobile sheet');
 assert.equal(host.children[1].querySelector('.codex-inspector-navigation').children.length,3);
+
+// Security of the collection surprise: direct calls, legacy preview flags,
+// and unowned finish choices must not expose their visual effects.
+api.inspect(cards[0],true,false,true,'chromatic');
+assert.equal(host.children[0].className,'inspector-art-shell',
+  'Requesting an unowned Chromatique must fall back to the owned Normal');
+assert.equal(host.children[1].querySelector('.finish-picker').children[1].disabled,true,
+  'Unowned Chromatique control is disabled');
+assert.equal(host.children[1].querySelector('.finish-picker').children[2].disabled,true,
+  'Unowned Holographique control is disabled');
+assert.equal(host.children[1].querySelector('.finish-picker').children[3].disabled,true,
+  'Unowned Calligraphique control is disabled');
+host.children[1].querySelector('.finish-picker').children[2].click();
+assert.equal(host.children[0].className,'inspector-art-shell',
+  'Forcing a disabled finish callback must still not reveal the foil');
+api.inspect(cards[1],false,false,false,'holographic');
+assert.equal(host.children[0].className,'inspector-art-shell is-chromatic',
+  'Unowned Holographique must fall back to an acquired finish');
+api.inspect(cards[1],false,false,false,'calligraphic');
+assert.equal(host.children[0].className,'inspector-art-shell is-chromatic',
+  'Unowned Calligraphique must never reveal its effect');
 api.inspectSealed({...cards[0],id:3},true);
 assert.equal(shown,2);
 assert.equal(host.children.length,2,'Sealed archives also use the new responsive layout');
