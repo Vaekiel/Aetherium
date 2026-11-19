@@ -1,4 +1,4 @@
-export const RARITIES={common:{label:'Commune',weight:55,color:'#a0a9bd'},uncommon:{label:'Inhabituelle',weight:27,color:'#59bd98'},rare:{label:'Rare',weight:12,color:'#64aeed'},epic:{label:'Épique',weight:5,color:'#c48bea'},legendary:{label:'Légendaire',weight:1,color:'#eebd68'}};
+export const RARITIES={common:{label:'Commune',weight:55,color:'#f9fbff'},uncommon:{label:'Inhabituelle',weight:27,color:'#59bd98'},rare:{label:'Rare',weight:12,color:'#64aeed'},epic:{label:'Épique',weight:5,color:'#c48bea'},legendary:{label:'Légendaire',weight:1,color:'#eebd68'}};
 const definitions=[
 ['Veilleuse de Nacre','Héros','common','Elle guide les égarés à travers les ruines englouties.'],
 ['Sylve, l’Éclaireuse','Héros','common','Elle connaît les sentiers que les cartes ont oubliés.'],
