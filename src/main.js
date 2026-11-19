@@ -130,7 +130,7 @@ function update(){if(state.goalId&&state.owned[state.goalId])state.goalId=null;s
 $('#mobile-collection-progress').textContent=Object.keys(state.owned).length+' / '+CARDS.length+' obtenues';
   const chromaticTotal=Object.keys(state.shiny).length;
   $('#codex-card-count').textContent=Object.keys(state.owned).length+' / '+CARDS.length;
-  $('#codex-chromatic-count').textContent=chromaticTotal+' / '+CARDS.length;
+  $('#codex-chromatic-count').textContent=chromaticTotal+' / '+CARDS.length+' · '+finishTotal(state.finishCounts,'chromatic',CARDS)+' ex.';
   $('#mobile-chromatic-count').textContent='✧ '+chromaticTotal+' / '+CARDS.length+' Chromatiques';
   for(const finish of FINISH_KEYS){
     const unique=finishUnique(state.finishCounts,finish,CARDS);
