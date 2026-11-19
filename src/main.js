@@ -2099,7 +2099,7 @@ $$('.booster-choice').forEach(control=>control.addEventListener('click',
  * Loading the artwork eagerly is important: on Android WebView a lazy image
  * inside an initially hidden, flipping card can remain a blank rectangle. */
 function boosterCardArtwork(item){
-  const buttonCard=makeCard(item.card,item.finish||(item.shiny?'chromatic':'normal'));
+  const buttonCard=makeCard(item.card,item.finish??item.shiny);
   const artwork=el('div',buttonCard.className);
   artwork.style.cssText=buttonCard.style.cssText;
   while(buttonCard.firstChild)artwork.append(buttonCard.firstChild);
@@ -2189,7 +2189,7 @@ function completeBoosterReveal(){
   boosterActions.hidden=true;nextPullButton.hidden=true;boosterStep.hidden=true;
   boosterGrid.classList.remove('booster-pulls','booster-single');
   boosterGrid.classList.add('booster-gallery');
-  boosterGrid.replaceChildren(...currentDraw.map(item=>makeCard(item.card,item.finish||(item.shiny?'chromatic':'normal'))));
+  boosterGrid.replaceChildren(...currentDraw.map(item=>makeCard(item.card,item.finish??item.shiny)));
   boosterSummary.hidden=false;
   // A single, late reveal highlight for exceptional finds. Never preview
   // hidden cards or alter the already-saved purchase and shard rewards.
