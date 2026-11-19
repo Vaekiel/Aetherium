@@ -49,6 +49,7 @@ jobs:
           test -s assets/boosters/origines-pack-pixel-hd-v2.webp
           test -s assets/boosters/reflets-brises-pack-pixel-hd-v2.webp
           test -s tests/booster-artworks-smoke.mjs
+          test -s tests/booster-variety-smoke.mjs
           test -s assets/boosters/origines-portal.svg
           test -s tests/booster-packaging-smoke.mjs
           test -s src/runes.css
@@ -228,6 +229,7 @@ jobs:
           node tests/reflets-gallery-smoke.mjs
           node tests/reflets-booster-smoke.mjs
           node tests/booster-smoke.mjs
+          node tests/booster-variety-smoke.mjs
           node tests/booster-reveal-smoke.mjs
           node tests/booster-opening-smoke.mjs
           node tests/booster-packaging-smoke.mjs
