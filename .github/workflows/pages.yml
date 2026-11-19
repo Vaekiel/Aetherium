@@ -274,6 +274,10 @@ jobs:
         uses: actions/upload-pages-artifact@v4
         with:
           path: .
+      # GitHub occasionally reports 0 artifacts immediately after a
+      # successful upload. Give the Actions artifact index time to catch up.
+      - name: Let GitHub index the Pages archive
+        run: sleep 12
       - name: Publish website
         id: deployment
         uses: actions/deploy-pages@v4
