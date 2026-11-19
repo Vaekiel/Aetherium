@@ -375,3 +375,132 @@
 @media(prefers-reduced-motion:reduce){
  #page-collection .codex-milestones-head::after{transition:none}
 }
+
+/* AETHERIUM — Codex responsive 1.9.0. Keep the HD card art and standard
+   desktop side-inspector. The inspector copy is grouped for landscape viewing.
+   Layout rules use available space, not assumed phone/tablet model names. */
+#page-collection .collection-layout,
+#page-collection .gallery,
+#page-collection .inspector-shell,
+#page-collection .inspector-copy{min-width:0}
+#page-collection .inspector-copy{overflow-wrap:anywhere}
+#page-collection .inspector-copy h2{overflow-wrap:anywhere}
+#page-collection .inspector-copy .codex-inspector-navigation{
+ display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);
+ align-items:center;gap:7px;
+}
+#page-collection .inspector-copy .codex-inspector-navigation button{
+ min-width:0;white-space:normal;overflow-wrap:anywhere;
+}
+#page-collection .inspector-copy .codex-inspector-navigation button:last-child{
+ justify-self:stretch;
+}
+#page-collection .gallery #card-grid{
+ display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,158px),1fr));
+ align-items:start;
+}
+#page-collection .gallery #card-grid .card{
+ width:100%;min-width:0;
+}
+#page-collection .gallery #card-grid .card .name{
+ overflow-wrap:anywhere;
+}
+#page-collection .codex-chapter-list{
+ min-width:0;overscroll-behavior-inline:contain;
+}
+#page-collection .codex-progress-panel,
+#page-collection .codex-season-list,
+#page-collection .codex-living{
+ min-width:0;
+}
+/* A desktop browser narrowed almost to a tablet: the selected card below the
+   gallery uses its width rather than stacking a second tall poster. */
+@media(min-width:851px) and (max-width:980px){
+ #page-collection .inspector-shell>.inspector:has(>.inspector-copy){
+  display:grid;grid-template-columns:minmax(145px,205px) minmax(0,1fr);
+  align-items:start;column-gap:16px;
+ }
+ #page-collection .inspector-shell>.inspector>.inspector-copy{
+  text-align:left;
+ }
+ #page-collection .inspector-shell>.inspector>.inspector-art-shell,
+ #page-collection .inspector-shell>.inspector>.codex-sealed-inspector{
+  width:100%;min-width:0;
+ }
+}
+@media(max-width:850px){
+ #page-collection .gallery #card-grid{
+  grid-template-columns:repeat(auto-fill,minmax(min(100%,clamp(132px,26vw,180px)),1fr));
+  gap:clamp(8px,1.6vw,13px);
+ }
+ #page-collection .gallery #card-grid .card{
+  min-height:0;
+ }
+ #page-collection .inspector-shell>.inspector>.inspector-art-shell,
+ #page-collection .inspector-shell>.inspector>.codex-sealed-inspector{
+  width:min(100%,clamp(180px,44svh,320px));
+  max-width:100%;margin-inline:auto;
+ }
+ #page-collection .inspector-shell>.inspector img{
+  width:100%;max-width:100%;max-height:none;
+  height:auto;object-fit:cover;
+ }
+ #page-collection .inspector-shell>.inspector>.inspector-copy{
+  max-width:540px;margin-inline:auto;
+ }
+ #page-collection .codex-discovery-tabs button{min-height:44px}
+ #page-collection .codex-chapter-list{
+  scroll-padding-inline:8px;-webkit-overflow-scrolling:touch;
+ }
+ #page-collection .inspector-copy .secondary{min-height:44px}
+}
+@media(max-width:420px){
+ #page-collection .codex-progress-panel{grid-template-columns:1fr;gap:11px}
+ #page-collection .codex-progress-line span{font-size:12px}
+ #page-collection .codex-progress-line strong{font-size:13px}
+ #page-collection .codex-milestones-head{flex-wrap:wrap}
+ #page-collection .codex-milestones-count{
+  flex:1 1 100%;max-width:none;text-align:left;
+  padding-inline-start:42px;
+ }
+ #page-collection .codex-inspector-navigation{gap:4px}
+ #page-collection .inspector-copy .codex-inspector-navigation button{
+  font-size:11px;padding:9px 6px;min-height:46px;
+ }
+}
+@media(max-width:350px){
+ #page-collection .codex-season-list{grid-template-columns:1fr}
+ #page-collection .codex-season{min-height:65px}
+ #page-collection .inspector-sheet-header{gap:6px}
+ #page-collection .inspector-sheet-header strong{font-size:16px}
+}
+/* In landscape the full-screen card sheet is genuinely a two-column reader.
+   Important for 360–450px-tall phones; no cropped text or off-screen controls. */
+@media(max-width:850px) and (orientation:landscape) and (max-height:550px) and (min-width:550px){
+ #page-collection .inspector-shell>.inspector:has(>.inspector-copy){
+  display:grid;grid-template-columns:minmax(140px, min(30vw,220px)) minmax(0,1fr);
+  gap:14px;align-items:start;
+  max-width:900px;padding:5px 8px 25px;
+ }
+ #page-collection .inspector-shell>.inspector>.inspector-art-shell,
+ #page-collection .inspector-shell>.inspector>.codex-sealed-inspector{
+  width:min(100%,42svh,220px);margin:0 auto;
+  min-height:0;
+ }
+ #page-collection .inspector-shell>.inspector>.inspector-copy{
+  text-align:left;width:100%;margin:0;
+ }
+ #page-collection .inspector-shell>.inspector h2{
+  font-size:clamp(18px,3.7vh,25px);margin:2px 0 5px;
+ }
+ #page-collection .inspector-shell>.inspector p{
+  font-size:12px;line-height:1.42;margin:4px 0;
+ }
+ #page-collection .inspector-shell>.inspector .stats{
+  padding:9px 2px;margin:8px 0;font-size:13px;
+ }
+ #page-collection .inspector-shell>.inspector .codex-inspector-navigation{
+  margin-top:9px;padding-top:8px;
+ }
+ #page-collection .inspector-shell>.inspector .secondary{min-height:44px}
+}
