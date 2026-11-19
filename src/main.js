@@ -1560,7 +1560,7 @@ function codexBrowseTo(card){
   if(locked)inspectSealed(card,false);
   else{
     const finish=FINISHES[filterFinish]?filterFinish:preferredFinish(state.finishCounts,card.id);
-    inspect(card,finish==='chromatic',false,finish==='chromatic'&&!state.shiny[card.id],finish);
+    inspect(card,finish==='chromatic',false,false,finish);
   }
 }
 function addCodexNavigation(panel,c){
@@ -1584,7 +1584,7 @@ function inspectSealed(c,scroll=true){
   selectedCard={id:c.id,shiny:false,sealed:true};
   const panel=$('#inspector');
   panel.replaceChildren();
-  panel.classList.remove('is-chromatic');
+  panel.classList.remove('is-chromatic','is-holographic','is-calligraphic');
   const seal=el('div','codex-sealed-inspector');
   seal.setAttribute('aria-hidden','true');
   seal.append(el('span','','✧'),el('span','','ARCHIVE '+String(c.id).padStart(3,'0')));
@@ -1610,16 +1610,17 @@ function inspectSealed(c,scroll=true){
   }
 }
 function inspect(c,shiny=false,scroll=true,chromaticPreview=false,finishOverride=null){
-  // Legacy shiny flags remain mirrored; actual quantities live in finishCounts.
-  const ownedChromatic=!!state.shiny[c.id];
-  const previewChromatic=!!shiny&&!ownedChromatic&&!!chromaticPreview;
-  const chromatic=!!shiny&&(ownedChromatic||previewChromatic);
-  selectedCard={id:c.id,shiny:chromatic,preview:previewChromatic};
-  const activeFinish=FINISHES[finishOverride]?finishOverride:(chromatic?'chromatic':'normal');
-  const ownedActive=finishQuantity(state.finishCounts,activeFinish,c.id)>0;
-  const previewFinish=!ownedActive;
-  selectedCard.finish=activeFinish;
-  selectedCard.preview=previewFinish;
+  // Finishes never render before being found. The old preview argument is
+  // kept only for compatibility with callers, but intentionally ignored.
+  const requestedFinish=FINISHES[finishOverride]?finishOverride:(shiny?'chromatic':'normal');
+  const requestedOwned=finishQuantity(state.finishCounts,requestedFinish,c.id)>0;
+  const fallback=preferredFinish(state.finishCounts,c.id);
+  // The original art can still be inspected as a normal illustration when
+  // a card is permitted as an art preview. No locked finish effects appear.
+  const activeFinish=requestedOwned?requestedFinish:
+    (state.owned[c.id]?fallback:'normal');
+  const chromatic=activeFinish==='chromatic';
+  selectedCard={id:c.id,shiny:chromatic,preview:false,finish:activeFinish};
   const panel=$('#inspector');
   panel.replaceChildren();
   panel.classList.toggle('is-chromatic',activeFinish==='chromatic');
@@ -1633,10 +1634,7 @@ function inspect(c,shiny=false,scroll=true,chromaticPreview=false,finishOverride
     (activeFinish==='holographic'?' is-holographic':'')+
     (activeFinish==='calligraphic'?' is-calligraphic':''));
   artwork.append(img);
-  if(chromatic){
-    artwork.append(el('span','inspector-chromatic-seal','✧ CHROMATIQUE'));
-    if(previewChromatic)artwork.append(el('span','inspector-chromatic-preview','APERÇU · NON POSSÉDÉ'));
-  }
+  if(chromatic)artwork.append(el('span','inspector-chromatic-seal','✧ CHROMATIQUE'));
   if(activeFinish==='holographic')enableHolographicInspection(artwork);
   const kicker=el('p','kicker','ARCHIVE '+String(c.id).padStart(3,'0')+' · '+RARITIES[c.rarity].label);
   const title=el('h2','',c.name);
@@ -1647,8 +1645,7 @@ function inspect(c,shiny=false,scroll=true,chromaticPreview=false,finishOverride
   stats.append(el('span','','⚔ '+c.attack),el('span','','♥ '+c.health),el('span','','×'+(state.owned[c.id]||0)));
   const copy=el('div','inspector-copy');
   copy.append(kicker,title,chapterLabel,el('p','muted',c.type+
-    ' · '+FINISHES[activeFinish].symbol+' Version '+FINISHES[activeFinish].label+
-    (previewFinish?' · Aperçu non possédé':'')),desc,stats);
+    ' · '+FINISHES[activeFinish].symbol+' Version '+FINISHES[activeFinish].label),desc,stats);
   const ledger=el('div','variant-ledger');
   ledger.setAttribute('aria-label','Quantités possédées par finition');
   for(const finish of FINISH_KEYS){
@@ -1658,17 +1655,6 @@ function inspect(c,shiny=false,scroll=true,chromaticPreview=false,finishOverride
     ledger.append(entry);
   }
   copy.append(ledger);
-  if(ownedChromatic){
-    copy.append(button(chromatic?'Voir la version normale':'Voir la version Chromatique',
-      ()=>inspect(c,!chromatic,false),'secondary chromatic-toggle'));
-  }else if(state.owned[c.id]||previewArt||c.id===1){
-    const toggle=button(chromatic?'Voir la version normale':'✧ Prévisualiser en Chromatique',
-      ()=>inspect(c,!chromatic,false,!chromatic),'secondary chromatic-toggle');
-    toggle.setAttribute('aria-label',chromatic?'Revenir à la carte normale':'Voir une simulation Chromatique sans débloquer cette carte');
-    copy.append(toggle);
-    if(!chromatic)copy.append(el('p','chromatic-inspector-hint',
-      'Tu ne possèdes pas cette variante : aperçu visuel sans déblocage.'));
-  }
   const picker=el('div','finish-picker');
   picker.setAttribute('role','group');
   picker.setAttribute('aria-label','Choisir une finition de cette carte');
@@ -1676,10 +1662,13 @@ function inspect(c,shiny=false,scroll=true,chromaticPreview=false,finishOverride
     const quantity=finishQuantity(state.finishCounts,finish,c.id);
     const selected=activeFinish===finish;
     const selector=button(FINISHES[finish].symbol+' '+FINISHES[finish].label,
-      ()=>inspect(c,finish==='chromatic',false,finish==='chromatic'&&!quantity,finish),
+      ()=>{if(quantity)inspect(c,finish==='chromatic',false,false,finish)},
       'secondary finish-choice');
+    selector.disabled=quantity===0;
     selector.setAttribute('aria-pressed',String(selected));
-    selector.append(el('span','finish-state',quantity?'Possédée · ×'+quantity:'Aperçu · non possédée'));
+    selector.setAttribute('aria-label',FINISHES[finish].label+
+      (quantity?' · Possédée, '+quantity+' exemplaire(s)':' · Non possédée, finition verrouillée'));
+    selector.append(el('span','finish-state',quantity?'Possédée · ×'+quantity:'Non possédée · verrouillée'));
     picker.append(selector);
   }
   copy.append(picker);
@@ -1983,7 +1972,7 @@ function renderCollection(){
         (selectedCard?.id===next.id&&selectedCard.finish?selectedCard.finish:
           preferredFinish(state.finishCounts,next.id));
       const chromatic=finish==='chromatic';
-      inspect(next,chromatic,false,chromatic&&finishQuantity(state.finishCounts,finish,next.id)===0,finish);
+      inspect(next,chromatic,false,false,finish);
     }
   }else{
     selectedCard=null;
