@@ -72,8 +72,8 @@
 
         // The ruins and vegetation are *stationary*. Only their own
         // light-facing and shadow-facing silhouette edges respond to tilt.
-        vec2 direction=normalize(vec2((uLight.x-.5)*1.8+.3,
-            (uLight.y-.5)*1.5+.45));
+        vec2 aim=vec2((uLight.x-.5)*1.8+.3,(uLight.y-.5)*1.5+.45);
+        vec2 direction=aim/max(length(aim),.05);
         vec2 offset=direction*uPixel*21.;
         float midAhead=texture2D(uRuins,uv+offset).a;
         float midBehind=texture2D(uRuins,uv-offset).a;
@@ -172,7 +172,7 @@
     const left=(1-vw)*.5,top=(1-vh)*.45;
     gl.uniform4f(locations.uRect,left,1-top-vh,vw,vh);
     gl.uniform2f(locations.uPixel,1/iw,1/ih);
-    gl.uniform2f(locations.uLight,px,1-py);
+    gl.uniform2f(locations.uLight,reduced?.5:px,reduced?.5:1-py);
     gl.uniform1f(locations.uDepth,Number(depth.value)/100);
     gl.uniform1f(locations.uFoil,Number(foil.value)/100);
     gl.drawArrays(gl.TRIANGLES,0,6);
