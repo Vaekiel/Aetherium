@@ -102,7 +102,7 @@ assert.ok(css.includes('#page-collection #au-dela-teaser[hidden]{display:none!im
 assert.ok(css.includes('@media(max-width:550px)'));
 assert.ok(css.includes('@media(max-width:350px)'));
 assert.ok(css.includes('prefers-reduced-motion:reduce'));
-assert.ok(html.includes('codex.css?v=au-dela-conception-1'));
+assert.ok(html.includes('codex.css?v=au-dela-pilot-49'));
 assert.ok(html.includes('main.js?v=au-dela-conception-1'));
 assert.ok(read('docs/au-dela-du-verre-design.md').includes('23 cartes classiques'));
 assert.ok(!catalogue.includes('localStorage'),'Draft cannot edit saves');

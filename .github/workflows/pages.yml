@@ -79,6 +79,9 @@ jobs:
           test -s src/reflets-brises-catalog.js
           test -s src/au-dela-du-verre-catalog.js
           test -s tests/au-dela-du-verre-smoke.mjs
+          test -s tests/au-dela-pilot-smoke.mjs
+          test -s assets/cards/passeur-des-aubes.webp
+          test -s assets/cards/passeur-des-aubes-thumb.webp
           test -s src/reflets-preview.css
           test -s src/reflets-gallery.css
           test -s src/reflets-gallery.js
@@ -234,6 +237,7 @@ jobs:
           node tests/save-backup-smoke.mjs
           node tests/reflets-brises-smoke.mjs
           node tests/au-dela-du-verre-smoke.mjs
+          node tests/au-dela-pilot-smoke.mjs
           node tests/reflets-pilot-preview-smoke.mjs
           node tests/reflets-gallery-smoke.mjs
           node tests/reflets-booster-smoke.mjs
