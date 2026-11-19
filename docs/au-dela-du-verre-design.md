@@ -57,11 +57,19 @@ Le fil du scénario part de **La Traversée des Reflets** (l'expédition existan
 ### Plan d'intégration progressive
 
 1. **Bible + brouillon** : 24 définitions non importées dans le gameplay et aperçu textuel du chapitre dans le Codex — c'est le jalon actuel.
-2. **Illustration pilote** : commencer par la carte n° **49, Passeur des Aubes**, avec personnage lisible à l’échelle d’un téléphone, puis valider la DA en vraie taille de carte.
+2. **Illustration pilote validée** : la carte n° **49, Passeur des Aubes** dispose maintenant d’un visuel HD 1024 × 1536 et d’une miniature 350 × 525. Ces fichiers sont intégrés à GitHub et montrés dans le Codex en aperçu non jouable, sans ajout au catalogue publié.
 3. **Images** : trois lots (10 + 10 + 4) avec leurs miniatures WebP et contrôles de taille/ratio/chargement. Garder une légende cohérente et des couleurs maîtrisées.
 4. **Booster** : produire son emballage pixel art original et intégrer le pool séparé de **23 cartes** avec tests (rare garanti au cinquième tirage, Chromatique, non-présence de la Signature).
 5. **Finale de saison** : développer une aventure courte et l'obtention sécurisée de la Signature ainsi que sa version Chromatique, sans doubler la récompense lors d'une reprise ou d'un replay.
 6. **Publication** : valider sur mobile portrait/paysage, tablette et PC, puis ouvrir les 24 cartes d'un seul coup ; contrôler l’export/import et tous les anciens parcours.
+
+### Fichiers du premier pilote
+
+- `assets/cards/passeur-des-aubes.webp` — illustration HD 1024 × 1536 pixels.
+- `assets/cards/passeur-des-aubes-thumb.webp` — miniature WebP 350 × 525 pixels.
+- Un lien du Codex ouvre l'illustration en grand. La miniature sert à l'affichage rapide sur téléphone ; le navigateur utilise `srcset` et `sizes` pour choisir l'image adaptée.
+- **Validation artistique :** une lumière d'aube chaude, des architectures qui se rejoignent, une palette turquoise / ivoire / bleu nuit, et un véritable rendu pixel art HD net. Les 23 cartes suivantes devront varier fortement les poses, décors et focales.
+- L'intégration est uniquement visuelle : `released:false`, aucun taux de tirage modifié, aucune carte 49–72 débloquée, aucun booster / Forge ajouté.
 
 ### Règles responsive (non négociables)
 
