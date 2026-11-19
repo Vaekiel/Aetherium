@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {runInNewContext} from 'node:vm';
 import {RARITIES} from '../src/data.js';
+import {FINISHES,FINISH_KEYS,restoreFinishCounts,finishQuantity,preferredFinish} from '../src/finishes.js';
 
 const main=readFileSync('src/main.js','utf8');
 const html=readFileSync('index.html','utf8');
@@ -77,12 +78,15 @@ const cards=[
   attack:33,health:28}
 ];
 const saved={coins:370,dust:75,owned:{1:1,22:2},shiny:{22:true},opened:8};
+saved.finishCounts=restoreFinishCounts(saved.owned,saved.shiny);
 const before=JSON.stringify(saved);
 let shown=0,scrolls=0,artCalls=0;
 const sandbox={
  state:saved,selectedCard:null,codexVisibleCards:cards,filterFinish:'all',
  previewArt:false,activeSeason:'marches-de-verre',activeCollection:'origines',
- RARITIES,el:elem,
+ RARITIES,FINISHES,FINISH_KEYS,finishQuantity,preferredFinish,el:elem,
+ document:{createTextNode:text=>elem('text','',text)},
+ enableHolographicInspection(){},
  button(label,handler,klass=''){const n=elem('button',klass,label);n.click=handler;return n},
  markNothing:null,mobileView:{matches:true},
  openSheet(kind){assert.equal(kind,'inspector');shown++},
