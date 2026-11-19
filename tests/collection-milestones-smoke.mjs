@@ -4,6 +4,7 @@ import {runInNewContext} from 'node:vm';
 const read=file=>readFileSync(file,'utf8');
 const load=path=>import('data:text/javascript;charset=utf-8,'+encodeURIComponent(read(path)));
 const {CARDS}=await load('src/data.js');
+const {CARDS:ALL_CARDS}=await import('../src/collection-data.js');
 const {cardsForCollection}=await load('src/seasons.js');
 const {
   COLLECTION_MILESTONES,collectionMilestoneKey,milestonesFor,
@@ -11,29 +12,49 @@ const {
   collectionMilestoneStatus,claimCollectionMilestone
 }=await load('src/collection-milestones.js');
 const seasonId='marches-de-verre',collectionId='origines';
-const cards=cardsForCollection(CARDS,seasonId,collectionId);
+const cards=cardsForCollection(ALL_CARDS,seasonId,collectionId);
+const refletsId='reflets-brises',refletsKey='marches-de-verre/reflets-brises';
+const refletsCards=cardsForCollection(ALL_CARDS,seasonId,refletsId);
 assert.equal(cards.length,24);
+assert.equal(refletsCards.length,24);
+assert.deepEqual(refletsCards.map(c=>c.id),Array.from({length:24},(_,i)=>i+25));
 assert.equal(collectionMilestoneKey(seasonId,collectionId),'marches-de-verre/origines');
 assert.deepEqual(milestonesFor(seasonId,collectionId).map(m=>m.threshold),[6,12,18,24]);
 assert.deepEqual(milestonesFor(seasonId,collectionId).map(m=>[m.reward.currency,m.reward.amount]),
   [['coins',30],['coins',55],['dust',20],['coins',100]]);
 assert.equal(milestonesFor('plateau-nebuleux','plateau-1').length,0,'Future seasons do not award anything');
-assert.equal(milestonesFor(seasonId,'reflets-brises').length,0,'Unreleased parts have no reward pool');
-assert.equal(Object.keys(COLLECTION_MILESTONES).length,1);
+assert.deepEqual(milestonesFor(seasonId,refletsId).map(m=>m.threshold),[6,12,18,24]);
+assert.deepEqual(milestonesFor(seasonId,refletsId).map(m=>[m.reward.currency,m.reward.amount]),
+  [['coins',30],['coins',55],['dust',20],['coins',100]],
+  'Reflets receives the same balanced one-time rewards as Origines');
+assert.ok(milestonesFor(seasonId,refletsId).every(m=>m.fragment.length>90),
+  'Each Reflets threshold has a complete original narrative fragment');
+assert.equal(milestonesFor(seasonId,'au-dela-du-verre').length,0,
+  'The unreleased Part III never grants advance rewards');
+assert.equal(Object.keys(COLLECTION_MILESTONES).length,2);
 const own=n=>Object.fromEntries(cards.slice(0,n).map((card,i)=>[card.id,i===0?2:1]));
+const ownReflets=n=>Object.fromEntries(refletsCards.slice(0,n).map((card,i)=>[card.id,i===0?3:1]));
 assert.equal(uniqueCardsOwned(cards,own(1)),1,'Copies do not increase distinct-card count');
 assert.equal(uniqueCardsOwned(cards,{1:-1,2:Infinity,3:1.5,4:'2',5:1}),1,
   'Malformed ownership never unlocks a threshold');
 for(const n of [0,5,6,11,12,17,18,23,24]){
  const expected=[6,12,18,24].map(t=>n>=t?'claimable':'locked');
  assert.deepEqual(collectionMilestoneStatus(seasonId,collectionId,cards,own(n),{}).map(x=>x.status),expected);
+ assert.deepEqual(collectionMilestoneStatus(seasonId,refletsId,refletsCards,ownReflets(n),{}).map(x=>x.status),expected);
 }
+assert.deepEqual(collectionMilestoneStatus(seasonId,refletsId,refletsCards,own(24),{})
+ .map(x=>x.status),['locked','locked','locked','locked'],
+ 'Owning all Origines cards cannot unlock Reflets milestones');
 const fullOwn=own(24);
 const corrupted={
  'marches-de-verre/origines':[6,6,12,1,24,'18',18,999],
+ [refletsKey]:[6,6,12,15,'24',24,999],
  'plateau-nebuleux/plateau-1':[6,12,18,24],garbage:1
 };
-assert.deepEqual(sanitizeMilestoneClaims(corrupted),{'marches-de-verre/origines':[6,12,18,24]});
+assert.deepEqual(sanitizeMilestoneClaims(corrupted),{
+ 'marches-de-verre/origines':[6,12,18,24],
+ [refletsKey]:[6,12,24]
+});
 assert.deepEqual(sanitizeMilestoneClaims([]),{});
 assert.deepEqual(sanitizeMilestoneClaims(null),{});
 const invalid=claimCollectionMilestone({
@@ -51,9 +72,22 @@ const repeat=claimCollectionMilestone({
 });
 assert.equal(repeat.ok,false,'Reward cannot be claimed a second time');
 const unknown=claimCollectionMilestone({
- seasonId,collectionId:'reflets-brises',threshold:6,cards,owned:fullOwn,claims:{}
+ seasonId,collectionId:'au-dela-du-verre',threshold:6,cards,owned:fullOwn,claims:{}
 });
 assert.equal(unknown.ok,false,'A future collection cannot trigger rewards');
+const refletsInitial=claimCollectionMilestone({
+ seasonId,collectionId:refletsId,threshold:6,cards:refletsCards,owned:ownReflets(6),claims:initial.claims
+});
+assert.equal(refletsInitial.ok,true,'Six Reflets cards unlock their own first fragment');
+assert.deepEqual(refletsInitial.claims,{
+ 'marches-de-verre/origines':[6],[refletsKey]:[6]
+},'Both collections retain independent one-time claim histories');
+assert.equal(claimCollectionMilestone({
+ seasonId,collectionId:refletsId,threshold:6,cards:refletsCards,owned:ownReflets(24),claims:refletsInitial.claims
+}).ok,false,'No repeat claim of a Reflets reward');
+assert.equal(claimCollectionMilestone({
+ seasonId,collectionId:refletsId,threshold:24,cards:refletsCards,owned:ownReflets(23),claims:{}
+}).ok,false,'The final Reflets story requires all 24 distinct cards');
 const wrong=claimCollectionMilestone({
  seasonId,collectionId,threshold:10,cards,owned:fullOwn,claims:{}
 });
@@ -64,8 +98,10 @@ for(const id of ['codex-milestones','codex-milestones-list','codex-milestones-co
 assert.ok(html.includes('<details id="codex-milestones"')&&html.includes('hidden>'),
  'The journal starts compact and hidden until a released collection is selected');
 assert.ok(!html.includes(milestonesFor(seasonId,collectionId)[0].fragment),
- 'No narrative spoilers are embedded in the initial HTML');
-assert.ok(main.includes("from './collection-milestones.js'"),'Pure collection milestones are imported');
+ 'No Origines story spoilers are embedded in the initial HTML');
+assert.ok(!html.includes(milestonesFor(seasonId,refletsId)[0].fragment),
+ 'No Reflets story spoilers are embedded in the initial HTML');
+assert.ok(main.includes("from './collection-milestones.js?v=reflets-journal-1'"),'Versioned milestone metadata is imported');
 assert.ok(main.includes('renderCollectionMilestones(availableCards)'),'Released collections render their journal');
 assert.ok(main.includes("$('#codex-milestones').hidden=true"),
  'Unreleased collections hide the journal');
@@ -106,6 +142,15 @@ const restored=runInNewContext(freshCode+loadCode+'load()',{
 });
 assert.deepEqual(JSON.parse(JSON.stringify(restored.collectionMilestones)),{'marches-de-verre/origines':[6]},
  'Already claimed rewards survive reload without duplication');
+const mixedSave={...legacy,owned:{...own(12),...ownReflets(18)},
+ collectionMilestones:{'marches-de-verre/origines':[6,12],[refletsKey]:[6,12,18]}};
+const restoredMixed=runInNewContext(freshCode+loadCode+'load()',{
+ SAVE:'aetherium-save-v1',CARDS:ALL_CARDS,sanitizeMilestoneClaims,
+ localStorage:{getItem:()=>JSON.stringify(mixedSave)}
+});
+assert.deepEqual(JSON.parse(JSON.stringify(restoredMixed.collectionMilestones)),mixedSave.collectionMilestones,
+ 'Combined Origines and Reflets claims survive existing-key local save reload');
+assert.equal(restoredMixed.owned[25],3);
 
 // Invoke the REAL game handler. One successful click must credit and persist once.
 const claimStart=main.indexOf('function claimDiscoveryFragment(');
@@ -116,7 +161,7 @@ let updates=0,refreshes=0;
 const notices=[];
 const sandbox={
  state:gameState,activeSeason:seasonId,activeCollection:collectionId,
- CARDS,cardsForCollection,claimCollectionMilestone,
+ CARDS:ALL_CARDS,cardsForCollection,claimCollectionMilestone,
  update(){updates++;},renderCollection(){refreshes++;},notify(message){notices.push(message);}
 };
 runInNewContext(main.slice(claimStart,claimEnd)+
@@ -130,5 +175,27 @@ assert.equal(updates,2,'Duplicate and locked claims never write a save');
 assert.equal(refreshes,2,'Only genuine claims rerender the journal');
 assert.equal(notices.length,4,'Every attempt has a feedback message');
 assert.equal(gameState.wins,3,'Collecting rewards cannot count as a mini-game victory');
+const gameReflets={coins:160,dust:18,earned:540,wins:4,
+ owned:{...own(8),...ownReflets(18)},collectionMilestones:{'marches-de-verre/origines':[6]}};
+let refletsUpdates=0,refletsRefreshes=0;
+const refletsNotifications=[];
+runInNewContext(main.slice(claimStart,claimEnd)+
+ 'claimDiscoveryFragment(6);claimDiscoveryFragment(12);claimDiscoveryFragment(18);'+
+ 'claimDiscoveryFragment(18);claimDiscoveryFragment(24);',{
+ state:gameReflets,activeSeason:seasonId,activeCollection:refletsId,
+ CARDS:ALL_CARDS,cardsForCollection,claimCollectionMilestone,
+ update(){refletsUpdates++},renderCollection(){refletsRefreshes++},
+ notify(message){refletsNotifications.push(message)}
+});
+assert.equal(gameReflets.coins,160+30+55,'Reflets Crowns are credited once');
+assert.equal(gameReflets.dust,18+20,'Reflets Shards are credited once');
+assert.equal(gameReflets.earned,540+30+55,'Crown earnings remain accurate');
+assert.equal(gameReflets.wins,4,'Milestones do not count as trial wins');
+assert.deepEqual(JSON.parse(JSON.stringify(gameReflets.collectionMilestones)),{
+ 'marches-de-verre/origines':[6],[refletsKey]:[6,12,18]
+},'Reflets claims never overwrite Origines claims');
+assert.equal(refletsUpdates,3,'Only three successful Reflets claims save the game');
+assert.equal(refletsRefreshes,3,'Only three successful claims refresh the Codex');
+assert.equal(refletsNotifications.length,5,'Duplicate and locked attempts return feedback');
 assert.ok(main.includes('state=fresh()'),'Reset still clears all milestones');
-console.log('AETHERIUM 1.7.1 — fragments scellés, récompenses uniques, anciens joueurs, UI et sauvegarde OK');
+console.log('AETHERIUM — Origines & Reflets: 8 fragments narratifs, récompenses uniques, anti-doublons, sauvegardes compatibles');

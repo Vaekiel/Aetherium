@@ -2,6 +2,7 @@
    Only released collections with authored milestones can award anything.
    Locked narrative fragments are never rendered before a player claims them. */
 const originsKey='marches-de-verre/origines';
+const refletsKey='marches-de-verre/reflets-brises';
 const milestone=(threshold,title,fragment,currency,amount)=>Object.freeze({
   threshold,title,fragment,reward:Object.freeze({currency,amount})
 });
@@ -18,6 +19,20 @@ export const COLLECTION_MILESTONES=Object.freeze({
       'dust',20),
     milestone(24,'La promesse des Marches',
       'La dernière page d’Origines ne ferme pas le livre. Elle laisse une question ouverte : que reste-t-il d’un monde lorsque ses reflets cessent de lui obéir ?',
+      'coins',100)
+  ]),
+  [refletsKey]:Object.freeze([
+    milestone(6,'Les images en retard',
+      'À l’aube, les vitres des maisons abandonnées continuent de refléter ceux qui les ont quittées. Une silhouette tarde à disparaître, puis lève la main vers un voyageur qui ne lui ressemble pas.',
+      'coins',30),
+    milestone(12,'Les voix du Revers',
+      'Les Dédoublés ne réclament ni conquête ni vengeance. Ils murmurent des noms que personne n’a portés, des promesses jamais faites, des chemins que le monde a oubliés de suivre.',
+      'coins',55),
+    milestone(18,'Le palais des possibles',
+      'Sous les arches renversées, les couloirs conduisent à des souvenirs contradictoires. Chaque porte conserve une vie différente. Au cœur du palais, quelqu’un tente de les préserver avant qu’elles ne s’effacent.',
+      'dust',20),
+    milestone(24,'La première fêlure',
+      'Les derniers fragments révèlent une vérité inquiétante : les miroirs n’ont pas inventé ces autres destinées. Ils ont seulement rendu visible une blessure bien plus ancienne. Derrière le verre, un dernier horizon attend encore son nom.',
       'coins',100)
   ])
 });
