@@ -1,0 +1,24 @@
+// AETHERIUM — V4.1: rigid foreground planes, fixed environment, isolated demo.
+import assert from 'node:assert/strict';
+import {readFileSync,statSync} from 'node:fs';
+import {resolve,dirname} from 'node:path';
+import {fileURLToPath} from 'node:url';
+const root=resolve(dirname(fileURLToPath(import.meta.url)),'..');
+const html=readFileSync(resolve(root,'holographie-v4-1.html'),'utf8');
+const js=readFileSync(resolve(root,'src/holo-v4-1.js'),'utf8');
+assert.match(html,/<script src="\.\/src\/holo-v4-1\.js"/);
+assert.match(html,/class="fallback"[^>]+vyrath-fleau-celeste\.webp/);
+assert.match(html,/<canvas id="volume-canvas"/);
+assert.doesNotMatch(html,/class="layer (?:backdrop|midground)"/,'No detached scenery');
+assert.match(js,/const polygons=\[/,'V4.1 anatomical pieces must be polygon planes');
+assert.doesNotMatch(js,/float heightAt|vec3 normal=|createRadialGradient/,'No soft moving heightmap');
+assert.match(js,/vec3 head=texture2D\(uImage,uv-travel\*\.0105\)/);
+assert.match(js,/vec3 claws=texture2D\(uImage,uv-travel\*\.0150\)/);
+assert.match(js,/destination-in/,'Rigid plates clipped to dragon alpha');
+assert.match(js,/gl_FragColor=vec4/);
+assert.match(js,/if\(!gl\)throw Error/,'Graceful fallback needed');
+assert.ok(statSync(resolve(root,'assets/cards/holo/vyrath/subject.webp')).size>1000);
+assert.doesNotMatch(js,/localStorage|sessionStorage|drawPack/);
+assert.doesNotMatch(html,/localStorage|sessionStorage|drawPack/);
+assert.doesNotThrow(()=>new Function(js));
+console.log('V4.1 verified: polygon anatomical planes, no bulging shader, no scenery motion, saves untouched.');
