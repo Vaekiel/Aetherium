@@ -7,7 +7,8 @@ const css=read('src/booster-artworks.css');
 const js=read('src/main.js');
 const packaging=read('src/booster-packaging.css');
 const reflets=read('src/reflets-booster.css');
-const assets=['origines-pack-pixel-hd-v2.webp','reflets-brises-pack-pixel-hd-v2.webp'];
+const auDela=read('src/au-dela-booster.css');
+const assets=['origines-pack-pixel-hd-v2.webp','reflets-brises-pack-pixel-hd-v2.webp','au-dela-du-verre-pack-pixel-hd.webp'];
 
 for(const file of assets){
   const path='assets/boosters/'+file;
@@ -39,5 +40,10 @@ assert.ok(js.includes("boosterArt.classList.toggle('pack-reflets',isReflets);"),
 assert.ok(packaging.includes('aetherium-pack-rupture 980ms'),
   'The original one-purchase wrapper opening sequence still runs');
 assert.ok(reflets.includes('.booster-choice.is-selected'),'Selected booster indicator remains');
+assert.ok(auDela.includes('.pack-artwork-au-dela')&&auDela.includes('grid-template-columns:repeat(3'),
+ 'Third illustrated foil wrapper and responsive edition selector are visible');
+assert.ok(html.includes('data-booster="au-dela-du-verre"'));
+assert.ok(html.includes('au-dela-booster.css?v=au-dela-booster-1'));
+assert.ok(js.includes("boosterArt.classList.toggle('pack-au-dela',isAuDela);"));
 assert.ok(!js.includes('origines-pack-pixel-hd-v2.webp'),'Artwork switching does not couple gameplay to image paths');
 console.log('AETHERIUM — Two optimized HD booster wrappers, responsive art switch, no duplicates, seal animation intact');

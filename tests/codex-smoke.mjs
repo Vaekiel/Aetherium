@@ -8,7 +8,7 @@ const {CARDS,REFLETS_CARDS}=await import('../src/collection-data.js');
 const {SEASONS,CARDS_PER_COLLECTION,COLLECTIONS_PER_SEASON,CARDS_PER_SEASON,seasonById,
   collectionById,cardsForCollection,collectionForCard,seasonProgress}=await import(asModule('src/seasons.js'));
 const {codexProgress,filterCodex}=await import(asModule('src/codex.js'));
-assert.equal(CARDS.length,48,'Two published sets contain 48 unique cards');
+assert.equal(CARDS.length,72,'Three published collections contain 72 unique cards');
 assert.equal(REFLETS_CARDS.length,24,'The second collection has 24 cards');
 assert.equal(CARDS_PER_COLLECTION,24);
 assert.equal(COLLECTIONS_PER_SEASON,3);
@@ -24,29 +24,29 @@ for(const season of SEASONS){
 assert.equal(seasonById('marches-de-verre').number,1);
 assert.equal(collectionById('marches-de-verre','origines').title,'Origines');
 assert.equal(collectionById('marches-de-verre','reflets-brises').released,true);
-assert.equal(collectionById('marches-de-verre','au-dela-du-verre').released,false);
+assert.equal(collectionById('marches-de-verre','au-dela-du-verre').released,true);
 assert.equal(cardsForCollection(CARDS,'marches-de-verre','origines').length,24);
 assert.deepEqual(cardsForCollection(CARDS,'marches-de-verre','origines').map(c=>c.id),CARDS.slice(0,24).map(c=>c.id),
  'The first collection contains all existing cards in their original order');
 assert.equal(cardsForCollection(CARDS,'marches-de-verre','reflets-brises').length,24);
-assert.equal(cardsForCollection(CARDS,'marches-de-verre','au-dela-du-verre').length,0);
+assert.equal(cardsForCollection(CARDS,'marches-de-verre','au-dela-du-verre').length,24);
 assert.equal(cardsForCollection(CARDS,'plateau-nebuleux','plateau-1').length,0);
 assert.equal(cardsForCollection(CARDS,'not-a-season','origines').length,0);
 assert.equal(collectionForCard(CARDS[0]).collection.id,'origines');
 assert.equal(collectionForCard(CARDS[23]).season.id,'marches-de-verre');
-assert.equal(collectionForCard({id:72}),null,'Future Signature card does not exist yet');
+assert.equal(collectionForCard({id:72}).collection.id,'au-dela-du-verre','Signature appears in the Codex');
 const owned={1:2,6:1,7:1,22:1},shiny={1:true,6:true,22:true,3:true};
 assert.deepEqual(seasonProgress(CARDS,owned,shiny,'marches-de-verre'),{
- planned:72,released:48,discovered:4,chromatic:3,
- collectionsReleased:2,collectionsPlanned:3,percentReleased:67,percentCollected:8
+ planned:72,released:72,discovered:4,chromatic:3,
+ collectionsReleased:3,collectionsPlanned:3,percentReleased:100,percentCollected:6
 });
 assert.deepEqual(seasonProgress(CARDS,owned,shiny,'plateau-nebuleux'),{
  planned:72,released:0,discovered:0,chromatic:0,
  collectionsReleased:0,collectionsPlanned:3,percentReleased:0,percentCollected:0
 });
 assert.deepEqual(codexProgress(CARDS,owned,shiny),{
- total:48,discovered:4,chromatic:3,missing:44,percent:8,chromaticPercent:6
-},'Counters include both released 24-card collections');
+ total:72,discovered:4,chromatic:3,missing:68,percent:6,chromaticPercent:4
+},'Counters include all three 24-card collections');
 assert.deepEqual(codexProgress([],owned,shiny),{
  total:0,discovered:0,chromatic:0,missing:0,percent:0,chromaticPercent:0
 });
@@ -130,4 +130,4 @@ assert.ok(!chromaticCSS.includes('.card.is-chromatic:before{'),'Chromatic cards 
 assert.ok(css.includes('.card.is-sealed .info:before'),'Sealed cards use the same aligned ornament');
 assert.ok(html.includes('theme.css?v=card-ornament-1')&&html.includes('mobile.css?v=inspector-layer-3'),
   'Caches refreshed for both the card ornament and mobile inspection layers');
-console.log('AETHERIUM : deux collections publiées, 48 cartes, filtres, HD et sauvegardes OK');
+console.log('AETHERIUM : trois collections publiées, 72 cartes, filtres, HD et sauvegardes OK');

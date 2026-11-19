@@ -1,9 +1,10 @@
 import {artFor} from './art.js';
 import {REFLETS_GALLERY_ART} from './reflets-gallery.js';
+import {AU_DELA_GALLERY_ART} from './au-dela-gallery.js';
 
 // Source of truth for authored artwork. Add an entry for every approved card;
 // the remaining cards keep their temporary atlas visuals until replaced.
-// Dedicated artwork: 24 Origines cards and 24 Reflets brisés cards.
+// Dedicated artwork: 24 cards each for Origines, Reflets brisés and Au-delà du Verre.
 export const CARD_ART = Object.freeze({
   1: Object.freeze({
     thumbnail: './assets/cards/veilleuse-de-nacre-thumb.webp',
@@ -34,6 +35,9 @@ export const CARD_ART = Object.freeze({
   24: Object.freeze({thumbnail: './assets/cards/derniere-etoile-thumb.webp', full: './assets/cards/derniere-etoile.webp'}),
   ...Object.fromEntries(REFLETS_GALLERY_ART.map(card=>[
     card.id,Object.freeze({thumbnail:card.thumb,full:card.hd})
+  ])),
+  ...Object.fromEntries(AU_DELA_GALLERY_ART.map(card=>[
+    card.id,Object.freeze({thumbnail:card.thumb,full:card.hd})
   ]))
 });
 
@@ -63,13 +67,13 @@ export function applyCardIllustration(img,card,{shiny=false,size='thumbnail'}={}
   img.removeAttribute('sizes');
   const approved=CARD_ART[card.id];
   if(approved){
-    const version=card.id>=25?'?v=reflets-release-1':card.id>=22?'?v=origines-b03':card.id>=12?'?v=origines-b02':'?v=20261116-unframed';
+    const version=card.id>=49?'?v=au-dela-release-1':card.id>=25?'?v=reflets-release-1':card.id>=22?'?v=origines-b03':card.id>=12?'?v=origines-b02':'?v=20261116-unframed';
     if(size==='thumbnail'){
       // Mobile cards can occupy ~150–220 CSS pixels at 3x density.
       // Let the browser select the original 1138px illustration when a
       // 350px miniature would otherwise appear soft or pixelated.
       img.sizes='(max-width: 589px) calc((100vw - 56px) / 2), (max-width: 850px) calc((100vw - 80px) / 3), (max-width: 1200px) 175px, 220px';
-      img.srcset=approved.thumbnail+version+' 350w, '+approved.full+version+' 1138w';
+      img.srcset=approved.thumbnail+version+' 350w, '+approved.full+version+(card.id>=49?' 1024w':' 1138w');
     }
     img.src=(size==='full'?approved.full:approved.thumbnail)+version;
     img.onerror=()=>{

@@ -2,8 +2,8 @@
    The showcase reads existing possessions without changing card odds, costs or
    unlock rules. Only future first discoveries are added to the local journal. */
 import {RARITIES} from './data.js';
-import {CARDS} from './collection-data.js';
-import {SEASONS,cardsForCollection} from './seasons.js';
+import {CARDS} from './collection-data.js?v=au-dela-booster-1';
+import {SEASONS,cardsForCollection} from './seasons.js?v=au-dela-booster-1';
 
 export const RECENT_DISCOVERY_LIMIT=6;
 const FIND_KINDS=new Set(['new','chromatic','forge']);

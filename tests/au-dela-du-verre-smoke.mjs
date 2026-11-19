@@ -16,7 +16,7 @@ const css=read('src/codex.css');
 const catalogue=read('src/au-dela-du-verre-catalog.js');
 const publishedSource=read('src/collection-data.js');
 const initialSaveKey="const SAVE='aetherium-save-v1'";
-assert.equal(direction.released,false);
+assert.equal(direction.released,true);
 assert.equal(direction.collectionId,'au-dela-du-verre');
 assert.equal(direction.seasonId,'marches-de-verre');
 assert.match(direction.artStyle,/Pixel art HD/);
@@ -56,30 +56,30 @@ for(const [i,chapter] of direction.chapters.entries()){
  assert.equal(draft.filter(c=>c.id>=chapter.first&&c.id<=chapter.last).length,
   [6,6,6,3,3][i]);
 }
-assert.equal(published.length,48,'Only the two released collections are playable');
+assert.equal(published.length,72,'Three published collections appear in the Codex');
 assert.equal(origines.length,24);
 assert.equal(REFLETS_CARDS.length,24);
-assert.deepEqual(published.map(c=>c.id),Array.from({length:48},(_,i)=>i+1));
+assert.deepEqual(published.map(c=>c.id),Array.from({length:72},(_,i)=>i+1));
 const part=collectionById('marches-de-verre','au-dela-du-verre');
-assert.equal(part.released,false);
+assert.equal(part.released,true);
 assert.equal(part.signature,true);
-assert.equal(part.first,null);
-assert.equal(part.last,null);
-assert.equal(cardsForCollection(published,'marches-de-verre','au-dela-du-verre').length,0);
-assert.equal(collectionForCard({id:72}),null);
+assert.equal(part.first,49);
+assert.equal(part.last,72);
+assert.equal(cardsForCollection(published,'marches-de-verre','au-dela-du-verre').length,24);
+assert.equal(collectionForCard({id:72}).collection.id,'au-dela-du-verre');
 assert.deepEqual(seasonProgress(published,{},{}),{
- planned:72,released:48,discovered:0,chromatic:0,
- collectionsReleased:2,collectionsPlanned:3,
- percentReleased:67,percentCollected:0
+ planned:72,released:72,discovered:0,chromatic:0,
+ collectionsReleased:3,collectionsPlanned:3,
+ percentReleased:100,percentCollected:0
 });
 assert.deepEqual(milestonesFor('marches-de-verre','au-dela-du-verre'),[],
- 'No unavailable narrative prize is granted early');
+ 'The Signature still cannot be granted by the ordinary collection milestones');
 for(const rng of [0,.03,.17,.42,.67,.88,.999]){
  assert.ok(drawPack(()=>rng).every(card=>card.id<=24));
  assert.ok(drawRefletsPack(()=>rng).every(card=>card.id>=25&&card.id<=48));
 }
-assert.ok(!publishedSource.includes('au-dela-du-verre-catalog'),
- 'Draft not imported into published catalogue or booster pool');
+assert.ok(publishedSource.includes('au-dela-du-verre-catalog'),
+ 'The third catalogue is imported with a separate 23-card booster pool');
 assert.ok(!main.includes("from './au-dela-du-verre-catalog"),
  'The future draft is excluded from live game loading');
 assert.ok(main.includes(initialSaveKey));
@@ -106,4 +106,4 @@ assert.ok(html.includes('codex.css?v=au-dela-pilot-49'));
 assert.ok(html.includes('main.js?v=au-dela-lot-3'));
 assert.ok(read('docs/au-dela-du-verre-design.md').includes('23 cartes classiques'));
 assert.ok(!catalogue.includes('localStorage'),'Draft cannot edit saves');
-console.log('AETHERIUM Saison I — 24 concepts and non-spoiler responsive teaser, 48 old cards unchanged, Signature excluded, no new draws or saves');
+console.log('AETHERIUM Saison I — 24 illustrated cards available in Codex, Signature outside boosters and Forge, original saves intact');

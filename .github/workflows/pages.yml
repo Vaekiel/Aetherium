@@ -84,6 +84,9 @@ jobs:
           test -s assets/cards/passeur-des-aubes-thumb.webp
           test -s src/au-dela-gallery.js
           test -s src/au-dela-gallery.css
+          test -s src/au-dela-booster.css
+          test -s assets/boosters/au-dela-du-verre-pack-pixel-hd.webp
+          test -s tests/au-dela-booster-smoke.mjs
           test -s tests/au-dela-gallery-smoke.mjs
           for slug in mousse-de-l-entreverre lanternes-jumelles brume-des-deux-rivages mesange-de-la-couture boussole-du-dedans emissaire-des-possibles tisserande-de-quartz clef-de-l-horizon rite-des-voix-accordees; do
             test -s "assets/cards/${slug}.webp"
@@ -255,6 +258,7 @@ jobs:
           node tests/au-dela-du-verre-smoke.mjs
           node tests/au-dela-pilot-smoke.mjs
           node tests/au-dela-gallery-smoke.mjs
+          node tests/au-dela-booster-smoke.mjs
           node tests/reflets-pilot-preview-smoke.mjs
           node tests/reflets-gallery-smoke.mjs
           node tests/reflets-booster-smoke.mjs

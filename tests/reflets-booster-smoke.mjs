@@ -11,14 +11,14 @@ import {validateSaveState} from '../src/save-backup.js';
 const read=path=>readFileSync(path,'utf8');
 assert.equal(ORIGINES_CARDS.length,24);
 assert.equal(REFLETS_CARDS.length,24);
-assert.equal(CARDS.length,48);
-assert.deepEqual(CARDS.map(c=>c.id),Array.from({length:48},(_,i)=>i+1));
+assert.equal(CARDS.length,72);
+assert.deepEqual(CARDS.map(c=>c.id),Array.from({length:72},(_,i)=>i+1));
 assert.equal(new Set(CARDS.map(c=>c.name)).size,48);
 assert.equal(PACK_PRICE,100);
 assert.equal(CHROMATIC_RATE,0.03);
 assert.equal(collectionById('marches-de-verre','reflets-brises').released,true);
 assert.equal(cardsForCollection(CARDS,'marches-de-verre','reflets-brises').length,24);
-assert.equal(seasonProgress(CARDS,{},{}).released,48);
+assert.equal(seasonProgress(CARDS,{},{}).released,72);
 for(const random of [0,0.02,0.031,0.2,0.49,0.72,0.9,0.999]){
  for(const [draw,first,last] of [[drawPack,1,24],[drawRefletsPack,25,48]]){
   const pack=draw(()=>random);

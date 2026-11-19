@@ -1,6 +1,6 @@
 /* AETHERIUM — Saison I / Partie III — Au-delà du Verre.
-   UNRELEASED narrative + illustration reference only: IDs 49–72.
-   Not imported into collection-data.js, main.js, boosters, Forge or saves.
+   Published collection with finale Signature reserved: IDs 49–72.
+   Imported into Codex; IDs 49–71 are booster-eligible and ID 72 is excluded.
    Card 72 is a story-earned Signature, never a random booster pull. */
 export const AU_DELA_DU_VERRE_DIRECTION=Object.freeze({
   seasonId:'marches-de-verre',
@@ -30,7 +30,7 @@ export const AU_DELA_DU_VERRE_DIRECTION=Object.freeze({
     Object.freeze({title:'La Convergence',first:67,last:69,theme:'Les deux mondes acceptent de se voir.'}),
     Object.freeze({title:'Le Dernier Serment',first:70,last:72,theme:'Le choix d’avenir appartient aux voyageurs.'})
   ]),
-  released:false
+  released:true
 });
 
 const definitions=[

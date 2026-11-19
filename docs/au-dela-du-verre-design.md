@@ -1,7 +1,7 @@
 # AETHERIUM — Au-delà du Verre
-## Saison I / Partie III — Bible créative, première version (non publiée)
+## Saison I / Partie III — Bible créative et publication du booster
 
-> **État : conception.** Les 24 cartes décrites ici sont des projets de contenu, pas des objets disponibles dans le jeu. Aucune mise à jour de ce document ne doit, à elle seule, activer des cartes dans le Codex, la Forge, les boosters ou les sauvegardes.
+> **État : booster publié.** Les 24 illustrations sont intégrées au Codex et les 23 cartes n° 49–71 peuvent être découvertes via le booster « Au-delà du Verre » ou la Forge. La Signature n° 72 est scellée et réservée à l’aventure finale (à développer).
 
 ### Promesse narrative
 
@@ -42,15 +42,15 @@ Le fil du scénario part de **La Traversée des Reflets** (l'expédition existan
 
 **Composition :** un sujet principal occupant la partie centrale, un premier plan pixel-art travaillé, une profondeur de décor en petits plans nets. Éviter les personnages génériques de photoréaliste, les silhouettes aux mains incohérentes et les brillances/effets lisses incompatibles avec des pixels HD nets. Priorité à la lisibilité des cartes de 132–180 px de large sur mobile.
 
-**Booster prévu :** pochette fantasy nuit/indigo, deux arches de verre se rejoignant autour d’une couture turquoise, une faible aube corail à l’arrière-plan. Conserver la structure physique de pochettes Origines et Reflets et la même séquence de déchirure/reveal ; une illustration d’emballage indépendante sera nécessaire, avec deux éditions graphiquement distinctes. Rien ne doit spoiler le visage ni l'illustration de la Signature.
+**Booster livré :** pochette originale en pixel art HD nuit/indigo, arches de verre réunies par une couture turquoise et aube corail, avec le même rituel de déchirure et le même affichage mobile que les autres éditions. Illustration indépendante dans `assets/boosters/au-dela-du-verre-pack-pixel-hd.webp`, sans reproduction de carte ni spoiler de la Signature.
 
 ### Règles de publication et de progression
 
-- **23 cartes classiques** (49–71) seront un jour distribuées par un booster dédié *Au-delà du Verre*, au même prix de **100 Couronnes**, avec les mêmes taux de rareté, 3 % de Chromatiques, variété intra-booster, Éclats et coûts de Forge — sauf décision d’équilibrage explicitement testée.
+- **23 cartes classiques** (49–71) sont distribuées par un booster dédié *Au-delà du Verre*, au prix de **100 Couronnes**, avec les taux historiques, 3 % de Chromatiques, variété intra-booster, une Inhabituelle garantie et les mêmes Éclats et coûts de Forge.
 - **La carte 72 Signature**, `Cœur des Marches`, **n’entre jamais** dans les boosters. Elle doit être obtenue en achevant le dernier chapitre narratif/une expédition finale conçue pour cela, sans achat ni monnaie supplémentaire. Une variante Chromatique devra rester gagnable par une maîtrise complémentaire, afin que la complétion Chromatique totale reste possible et ne soit jamais bloquée par une carte inaccessible au tirage.
 - Le seuil exact de réussite et le parcours du final seront décidés **avant l'implémentation des récompenses**, avec tests d’unicité de l’attribution et de restauration des sauvegardes.
 - Un nouveau palier narratif pourra prolonger ceux d’Origines et des Reflets brisés, mais ne doit jamais distribuer la Signature deux fois.
-- La collection ne devient `released:true` qu’après validation des **24 illustrations HD originales**, miniatures, entrées du registre d'images, booster dédié (23 cartes seulement), Forge, accès à la Signature et tests de bout en bout.
+- La collection est `released:true` avec les 24 entrées Codex, mais l’accès à la Signature reste bloqué : aucun tirage et aucune fabrication. Son obtention demandera l’aventure finale et des tests anti-doublons avant activation.
 - Éviter le piège d’un « premier booster » qui révèle des images manquantes ou des faux visuels : aucun tirage dans les pools incomplets, même temporairement.
 - Les sauvegardes locales utilisent toujours `aetherium-save-v1`, avec export/import ; les anciennes cartes, succès, routes, devises et trophées restent intacts.
 
@@ -71,8 +71,8 @@ Leur taille et leurs empreintes SHA-256 figurent dans `docs/au-dela-pilot-assets
 
 1. **Bible + brouillon** : 24 définitions non importées dans le gameplay et aperçu textuel du chapitre dans le Codex — c'est le jalon actuel.
 2. **Illustration pilote validée** : la carte n° **49, Passeur des Aubes** dispose maintenant d’un visuel HD 1024 × 1536 et d’une miniature 350 × 525. Ces fichiers sont intégrés à GitHub et montrés dans le Codex en aperçu non jouable, sans ajout au catalogue publié.
-3. **Images** : trois lots **24/24 intégrés** (n° 49–72), chacun en HD et miniature WebP. Les boosters restent non publiés jusqu’à l’implémentation et à la validation de l’aventure finale.
-4. **Booster** : produire son emballage pixel art original et intégrer le pool séparé de **23 cartes** avec tests (rare garanti au cinquième tirage, Chromatique, non-présence de la Signature).
+3. **Images** : les trois lots **24/24 sont intégrés** (n° 49–72), chacun en HD et miniature WebP. Le booster dédié 49–71 est publié ; la Signature reste scellée.
+4. **Booster** : pochette originale et pool indépendant de **23 cartes** livrés, avec tests (Inhabituelle ou mieux au cinquième tirage, Chromatique, absence de la Signature).
 5. **Finale de saison** : développer une aventure courte et l'obtention sécurisée de la Signature ainsi que sa version Chromatique, sans doubler la récompense lors d'une reprise ou d'un replay.
 6. **Publication** : valider sur mobile portrait/paysage, tablette et PC, puis ouvrir les 24 cartes d'un seul coup ; contrôler l’export/import et tous les anciens parcours.
 
@@ -82,7 +82,7 @@ Leur taille et leurs empreintes SHA-256 figurent dans `docs/au-dela-pilot-assets
 - `assets/cards/passeur-des-aubes-thumb.webp` — miniature WebP 350 × 525 pixels.
 - Un lien du Codex ouvre l'illustration en grand. La miniature sert à l'affichage rapide sur téléphone ; le navigateur utilise `srcset` et `sizes` pour choisir l'image adaptée.
 - **Validation artistique :** une lumière d'aube chaude, des architectures qui se rejoignent, une palette turquoise / ivoire / bleu nuit, et un véritable rendu pixel art HD net. Les 23 cartes suivantes devront varier fortement les poses, décors et focales.
-- L'intégration est uniquement visuelle : `released:false`, aucun taux de tirage modifié, aucune carte 49–72 débloquée, aucun booster / Forge ajouté.
+- Cette étape historique était uniquement visuelle ; depuis la sortie du troisième booster, le Codex et les cartes 49–71 sont jouables, la Signature restant réservée.
 
 ### Premier lot d'illustrations — 10 cartes sur 24 (49–58)
 
@@ -105,7 +105,7 @@ La galerie des **dix premiers horizons** est consultable dans **Codex → Saison
 
 Les fichiers d'art sont nommés `assets/cards/<slug>.webp` et `assets/cards/<slug>-thumb.webp`. Le lien vers la grande illustration est accessible au clavier et sur mobile ; les miniatures chargent à la demande. L’interface s’adapte des téléphones aux grands écrans.
 
-**Protection avant sortie :** la collection reste `released:false` ; les cartes 49–72 ne sont disponibles ni dans le booster, ni dans la Forge, ni dans les sauvegardes. Les 48 cartes publiées gardent leurs images et leurs règles. L'intégration du lot est **visuelle uniquement**.
+**Historique du lot 1 :** initialement aperçu uniquement. Depuis la publication de la partie III, les cartes 49–71 rejoignent les boosters, la Forge et les sauvegardes locales, sans changer les 48 premières. La carte 72 reste exclue des tirages et de la Forge.
 
 ### Deuxième lot d’illustrations — cartes 59 à 68
 
@@ -124,7 +124,7 @@ Les dix visuels du deuxième lot ont été intégrés **sans modifier les noms n
 | 67 | Observatoire des Horizons | `observatoire-des-horizons` | Épique |
 | 68 | Aelys, Gardienne des Liens | `aelys-gardienne-des-liens` | Épique |
 
-**État du projet : 20 illustrations sur 24.** La galerie du Codex montre les 20 aperçus en pixel art HD, avec chargement progressif et liens vers les images haute définition. Le contenu jouable conserve ses 48 cartes (Origines et Reflets brisés), les mêmes boosters et la même Forge. Aucune carte 49–72 n’entre dans les sauvegardes à ce stade.
+**Historique du lot 2 :** 20 images sur 24 étaient présentes, en aperçu uniquement. Le troisième lot a depuis achevé les illustrations et le booster dédié est disponible.
 
 ### Troisième et dernier lot — cartes 69 à 72
 
@@ -137,7 +137,7 @@ Les quatre dernières illustrations sont intégrées à la galerie en aperçu, a
 | 71 | Phénix des Destins réunis | `phenix-des-destins-reunis` | Légendaire |
 | 72 | Cœur des Marches | `coeur-des-marches` | Légendaire · Signature (hors boosters) |
 
-**État artistique : 24 sur 24.** La galerie du Codex montre toutes les cartes 49–72 sans en rendre aucune obtenable. Le Cœur des Marches est marqué « Signature », son futur déblocage reste lié à l’aventure finale. Les 48 anciennes cartes, boosters, Forge et sauvegardes restent inchangés.
+**État artistique : 24 sur 24.** Le Codex affiche les 24 cartes : les 23 premières sont disponibles dans le booster ou la Forge, tandis que le Cœur des Marches est marqué « Signature », réservé à la future aventure finale. Les deux anciens boosters et le format de sauvegarde restent compatibles.
 
 ### Règles responsive (non négociables)
 

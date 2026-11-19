@@ -9,7 +9,7 @@ export const CRAFT_COSTS=Object.freeze({
 });
 
 export function getCraftCost(card){
-  if(!card||!Object.prototype.hasOwnProperty.call(CRAFT_COSTS,card.rarity))return null;
+  if(!card||card.signature===true||card.id===72||!Object.prototype.hasOwnProperty.call(CRAFT_COSTS,card.rarity))return null;
   return CRAFT_COSTS[card.rarity];
 }
 

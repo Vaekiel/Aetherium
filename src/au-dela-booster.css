@@ -1,0 +1,69 @@
+/* AETHERIUM · Au-delà du Verre — third original HD pixel-art wrapper.
+   Retain the existing 980ms tear/reveal and keep the other two pack images unchanged. */
+#page-boosters .booster-selector{
+  grid-template-columns:repeat(3,minmax(0,1fr));
+}
+#page-boosters .booster-choice{
+  white-space:normal;overflow-wrap:anywhere;line-height:1.25;
+}
+#page-boosters .pack.pack-origines.pack-illustrated .pack-artwork-au-dela{display:none}
+#page-boosters .pack.pack-origines.pack-illustrated.pack-au-dela{
+  border-color:#9cc8c7;outline-color:#516b91;
+  background:#12142d;
+  box-shadow:0 17px 27px #070615ba,0 0 23px #7dd2c444;
+}
+#page-boosters .pack.pack-origines.pack-illustrated.pack-au-dela .pack-artwork{
+  display:none;
+}
+#page-boosters .pack.pack-origines.pack-illustrated.pack-au-dela .pack-artwork-au-dela{
+  display:block;object-fit:contain;opacity:1;filter:none;
+}
+#page-boosters .pack.pack-origines.pack-illustrated.pack-au-dela .pack-foil{
+  background:linear-gradient(113deg,transparent 22%,#e0f4ff12 40%,#8eead923 48%,#f8dbd213 56%,transparent 74%);
+  opacity:.45;
+}
+#page-boosters .pack.pack-origines.pack-illustrated.pack-au-dela .pack-wordmark,
+#page-boosters .pack.pack-origines.pack-illustrated.pack-au-dela .pack-title,
+#page-boosters .pack.pack-origines.pack-illustrated.pack-au-dela .pack-edition{
+  display:block;z-index:9;
+}
+#page-boosters .pack.pack-origines.pack-illustrated.pack-au-dela .pack-wordmark{
+  top:27px;font-size:16px;letter-spacing:.14em;
+  color:#fff7de;text-shadow:0 2px 5px #060821,0 0 9px #07091e;
+}
+#page-boosters .pack.pack-origines.pack-illustrated.pack-au-dela .pack-title{
+  bottom:34px;padding:5px 8px;white-space:normal;
+  font:small-caps bold 16px/1 Georgia,serif;letter-spacing:.02em;
+  background:linear-gradient(90deg,#071321dd,#0c1d35ed 20%,#0c1d35ed 80%,#071321dd);
+  color:#f7ecdd;text-shadow:0 1px 5px #030818;
+  border-top:1px solid #87d7c887;border-bottom:1px solid #87d7c887;
+}
+#page-boosters .pack.pack-origines.pack-illustrated.pack-au-dela .pack-edition{
+  bottom:17px;font-size:8px;letter-spacing:.08em;color:#def2e9;
+  text-shadow:0 1px 4px #030818;
+}
+#page-boosters .pack.pack-au-dela:not(.is-opening):hover{
+  box-shadow:0 18px 30px #070615cd,0 0 28px #8fe3d070;
+}
+@media(max-width:850px){
+  #page-boosters .booster-selector{gap:5px}
+  #page-boosters .booster-choice{padding:7px 4px;min-height:43px}
+  #page-boosters .pack.pack-origines.pack-illustrated.pack-au-dela .pack-wordmark{
+    top:14px;font-size:9px;letter-spacing:.04em;
+  }
+  #page-boosters .pack.pack-origines.pack-illustrated.pack-au-dela .pack-title{
+    bottom:22px;padding:3px 2px;font-size:9px;line-height:1.05;
+  }
+  #page-boosters .pack.pack-origines.pack-illustrated.pack-au-dela .pack-edition{
+    bottom:11px;font-size:5px;letter-spacing:0;
+  }
+}
+@media(max-width:420px){
+  #page-boosters .booster-choice{font-size:10px;min-height:46px}
+  #page-boosters .pack.pack-origines.pack-illustrated.pack-au-dela .pack-wordmark{top:13px;font-size:8px}
+  #page-boosters .pack.pack-origines.pack-illustrated.pack-au-dela .pack-title{bottom:19px;font-size:8px}
+  #page-boosters .pack.pack-origines.pack-illustrated.pack-au-dela .pack-edition{bottom:9px;font-size:4px}
+}
+@media(prefers-reduced-motion:reduce){
+  #page-boosters .booster-choice{transition:none}
+}

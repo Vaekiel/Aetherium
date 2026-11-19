@@ -50,7 +50,7 @@ assert.ok(html.includes('id="atelier-confirm"')&&html.includes('aria-labelledby=
 assert.ok(main.includes("import {CRAFT_COSTS,getCraftCost,craftCard} from './crafting.js'"),'Main app imports canonical craft rules');
 assert.ok(main.includes('const result=craftCard(state,card)'),'Actual crafting follows audited helper');
 assert.ok(main.includes('update(); // Saves the new card and the spent Éclats'),'Inventory and shard balance save atomically');
-assert.ok(main.includes("const goal=CARDS.find(card=>card.id===state.goalId&&!state.owned[card.id])"),'Goal only targets missing cards');
+assert.ok(main.includes("const goal=CARDS.find(card=>card.id===state.goalId&&!state.owned[card.id]&&getCraftCost(card)!==null)"),'Goal only targets missing cards');
 assert.ok(main.includes('raw.goalId'),'Old save formats migrate safely');
 assert.ok(main.includes("state.goalId=added?chooseFrom.id:null"),'Goal selection is persisted through update()');
 assert.ok(main.includes("applyCardIllustration(art,chooseFrom,{shiny:false,size:'full'})"),'Forged cards use approved normal artwork');

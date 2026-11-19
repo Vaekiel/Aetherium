@@ -67,10 +67,10 @@ for(const art of AU_DELA_GALLERY_ART){
 }
 // Les 24 illustrations des trois lots se consultent dans la
 // galerie ; aucune image ne se retrouve dans un pool de cartes obtenables.
-assert.equal(PUBLISHED.length,48);
+assert.equal(PUBLISHED.length,72);
 assert.equal(ORIGINES.length,24);
-assert.equal(collectionById('marches-de-verre','au-dela-du-verre').released,false);
-assert.deepEqual(cardsForCollection(PUBLISHED,'marches-de-verre','au-dela-du-verre'),[]);
+assert.equal(collectionById('marches-de-verre','au-dela-du-verre').released,true);
+assert.equal(cardsForCollection(PUBLISHED,'marches-de-verre','au-dela-du-verre').length,24);
 for(const fixed of [0,.05,.3,.62,.9,.999]){
  assert.ok(drawPack(()=>fixed).every(item=>item.id<=24));
  assert.ok(drawRefletsPack(()=>fixed).every(item=>item.id>=25&&item.id<=48));
@@ -131,4 +131,4 @@ for(let i=0;i<figures.length;i++){
 }
 mountAuDelaGallery(container);
 assert.equal(container.children.length,1,'Pas de double montage sur le même écran');
-console.log('AETHERIUM — 24 illustrations reliées aux cartes 49–72, 48 WebP valides, Signature identifiée et collection non publiée.');
+console.log('AETHERIUM — 24 illustrations reliées aux cartes 49–72, 48 WebP valides, Signature identifiée et collection publiée avec Signature réservée.');

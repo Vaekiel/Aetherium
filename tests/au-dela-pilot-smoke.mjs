@@ -43,17 +43,17 @@ const pilot=AU_DELA_DU_VERRE_DRAFT.find(c=>c.id===49);
 assert.equal(pilot.name,'Passeur des Aubes');
 assert.equal(pilot.rarity,'common');
 assert.equal(pilot.boosterEligible,true,'Future eligibility is metadata only, not live access');
-assert.equal(collectionById('marches-de-verre','au-dela-du-verre').released,false);
-assert.deepEqual(cardsForCollection(CARDS,'marches-de-verre','au-dela-du-verre'),[]);
-assert.equal(CARDS.length,48);
+assert.equal(collectionById('marches-de-verre','au-dela-du-verre').released,true);
+assert.equal(cardsForCollection(CARDS,'marches-de-verre','au-dela-du-verre').length,24);
+assert.equal(CARDS.length,72);
 assert.equal(ORIGINES.length,24);
 for(const random of [0,.02,.3,.6,.8,.98]){
  assert.ok(drawPack(()=>random).every(x=>x.id<25));
  assert.ok(drawRefletsPack(()=>random).every(x=>x.id>=25&&x.id<=48));
 }
-assert.ok(!read('src/collection-data.js').includes('au-dela-du-verre-catalog'),
+assert.ok(read('src/collection-data.js').includes('au-dela-du-verre-catalog'),
  'A pilot preview must not create a third pack');
 assert.ok(!read('src/card-art.js').includes('passeur-des-aubes'),
  'Pilot preview must not fake a collectible artwork entry before launch');
 assert.ok(main.includes("const SAVE='aetherium-save-v1'"));
-console.log('AETHERIUM Au-delà du Verre : Passeur des Aubes HD WebP + mobile thumbnail in locked Codex teaser; 48 released cards and old saves intact');
+console.log('AETHERIUM Au-delà du Verre : Passeur des Aubes HD WebP + mobile thumbnail in original HD art; 72 published Codex cards and old saves intact');

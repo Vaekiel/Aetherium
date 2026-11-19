@@ -1,13 +1,13 @@
 import {RARITIES,PACK_PRICE,drawPack} from './data.js?v=booster-variety-1';
-import {CARDS,drawRefletsPack} from './collection-data.js?v=booster-variety-1';
+import {CARDS,drawRefletsPack,drawAuDelaPack} from './collection-data.js?v=au-dela-booster-1';
 import {CRAFT_COSTS,getCraftCost,craftCard} from './crafting.js';
 import {duplicateDustReward} from './duplicate-rewards.js';
 import {boosterMoment} from './booster-feedback.js?v=booster-polish-1';
-import {applyCardIllustration,hasApprovedArt,CARD_ART} from './card-art.js';
+import {applyCardIllustration,hasApprovedArt,CARD_ART} from './card-art.js?v=au-dela-booster-1';
 import {codexProgress,filterCodex} from './codex.js';
-import {sanitizeRecentFinds,recordRecentFind,buildLivingArchive} from './living-archives.js';
+import {sanitizeRecentFinds,recordRecentFind,buildLivingArchive} from './living-archives.js?v=au-dela-booster-1';
 import {createBackup,decodeBackup,installImportedSave,restorePreviousSave,PREVIOUS_SAVE_KEY,MAX_BACKUP_SIZE} from './save-backup.js';
-import {SEASONS,seasonById,collectionById,cardsForCollection,collectionForCard,seasonProgress} from './seasons.js';
+import {SEASONS,seasonById,collectionById,cardsForCollection,collectionForCard,seasonProgress} from './seasons.js?v=au-dela-booster-1';
 import {mountRefletsGallery} from './reflets-gallery.js?v=reflets-final-24';
 import {mountAuDelaGallery} from './au-dela-gallery.js?v=au-dela-lot-3';
 import {milestonesFor,sanitizeMilestoneClaims,uniqueCardsOwned,collectionMilestoneStatus,claimCollectionMilestone} from './collection-milestones.js?v=reflets-journal-1';
@@ -104,7 +104,7 @@ mobileView.addEventListener('change',syncMobileSheets);
 // for the corresponding 24 catalogue entries. All gameplay/save data is unchanged.
 const SAVE='aetherium-save-v1';
 const fresh=()=>({coins:300,dust:0,owned:{},shiny:{},wins:0,earned:0,opened:0,goalId:null,difficulty:'aventure',trialStats:[],collectionMilestones:{},recentFinds:[],alchemyKnown:[],trialRecords:[],titleId:null,expedition:{route:null,step:0,mode:null,armed:false,completedRoutes:[]}});
-function load(){try{const raw=JSON.parse(localStorage.getItem(SAVE));if(!raw||typeof raw!=='object')return fresh();const s=fresh();for(const field of ['coins','dust','wins','earned','opened'])if(Number.isSafeInteger(raw[field])&&raw[field]>=0&&raw[field]<1e9)s[field]=raw[field];for(const c of CARDS){const n=raw.owned?.[c.id];if(Number.isSafeInteger(n)&&n>0&&n<1e6)s.owned[c.id]=n;if(raw.shiny?.[c.id]===true&&s.owned[c.id])s.shiny[c.id]=true}if(Number.isSafeInteger(raw.goalId)&&CARDS.some(c=>c.id===raw.goalId)&&!s.owned[raw.goalId])s.goalId=raw.goalId;if(['initiation','aventure','maitrise'].includes(raw.difficulty))s.difficulty=raw.difficulty;if(Array.isArray(raw.trialStats))s.trialStats=raw.trialStats;if(Array.isArray(raw.trialRecords))s.trialRecords=sanitizedTrialRecords(raw.trialRecords);s.collectionMilestones=sanitizeMilestoneClaims(raw.collectionMilestones);if(Array.isArray(raw.recentFinds))s.recentFinds=sanitizeRecentFinds(raw.recentFinds);if(Array.isArray(raw.alchemyKnown))s.alchemyKnown=sanitizeAlchemyKnown(raw.alchemyKnown);if(Number.isInteger(raw.titleId)&&raw.titleId>=0&&raw.titleId<5)s.titleId=raw.titleId;if(raw.expedition)s.expedition=sanitizeExpedition(raw.expedition);return s}catch{return fresh()}}
+function load(){try{const raw=JSON.parse(localStorage.getItem(SAVE));if(!raw||typeof raw!=='object')return fresh();const s=fresh();for(const field of ['coins','dust','wins','earned','opened'])if(Number.isSafeInteger(raw[field])&&raw[field]>=0&&raw[field]<1e9)s[field]=raw[field];for(const c of CARDS){const n=raw.owned?.[c.id];if(Number.isSafeInteger(n)&&n>0&&n<1e6)s.owned[c.id]=n;if(raw.shiny?.[c.id]===true&&s.owned[c.id])s.shiny[c.id]=true}if(Number.isSafeInteger(raw.goalId)&&CARDS.some(c=>c.id===raw.goalId&&c.signature!==true)&&!s.owned[raw.goalId])s.goalId=raw.goalId;if(['initiation','aventure','maitrise'].includes(raw.difficulty))s.difficulty=raw.difficulty;if(Array.isArray(raw.trialStats))s.trialStats=raw.trialStats;if(Array.isArray(raw.trialRecords))s.trialRecords=sanitizedTrialRecords(raw.trialRecords);s.collectionMilestones=sanitizeMilestoneClaims(raw.collectionMilestones);if(Array.isArray(raw.recentFinds))s.recentFinds=sanitizeRecentFinds(raw.recentFinds);if(Array.isArray(raw.alchemyKnown))s.alchemyKnown=sanitizeAlchemyKnown(raw.alchemyKnown);if(Number.isInteger(raw.titleId)&&raw.titleId>=0&&raw.titleId<5)s.titleId=raw.titleId;if(raw.expedition)s.expedition=sanitizeExpedition(raw.expedition);return s}catch{return fresh()}}
 let state=load();
 state.trialStats=sanitizedTrialStats(state.trialStats);
 state.trialRecords=sanitizedTrialRecords(state.trialRecords);
@@ -135,7 +135,7 @@ function renderAtelier(){
   $('#atelier-duplicates').textContent=duplicates.toLocaleString('fr-FR');
 
   // Keep a wanted card visible between sessions, even after a page reload.
-  const goal=CARDS.find(card=>card.id===state.goalId&&!state.owned[card.id]);
+  const goal=CARDS.find(card=>card.id===state.goalId&&!state.owned[card.id]&&getCraftCost(card)!==null);
   const summary=$('#atelier-goal-summary');
   summary.replaceChildren();
   if(goal){
@@ -161,7 +161,7 @@ function renderAtelier(){
     },'secondary atelier-side-link'));
   }else summary.append(el('p','atelier-goal-placeholder','Choisis une carte manquante et désigne-la comme objectif. Ta progression sera conservée.'));
 
-  const missing=CARDS.filter(card=>!state.owned[card.id]);
+  const missing=CARDS.filter(card=>!state.owned[card.id]&&getCraftCost(card)!==null);
   const visible=missing.filter(card=>
     forgeFilter==='all'||(forgeFilter==='affordable'?state.dust>=getCraftCost(card):card.rarity===forgeFilter));
   const chooseFrom=visible.find(c=>c.id===forgeSelectedId)
@@ -172,7 +172,7 @@ function renderAtelier(){
   gallery.replaceChildren();
   $('#atelier-empty').hidden=visible.length>0;
   $('#atelier-empty').textContent=missing.length===0
-    ?'Ton Codex est complet ! Tu possèdes les 48 cartes des collections publiées.'
+    ?'Tu possèdes toutes les cartes disponibles en booster ou à la Forge. La Signature du dernier chapitre se mérite en aventure.'
     :'Aucune carte manquante ne correspond à ce filtre.';
   for(const card of visible){
     const selected=card.id===forgeSelectedId;
@@ -205,7 +205,7 @@ function renderAtelier(){
   details.replaceChildren();
   if(!chooseFrom){
     const text=missing.length===0
-      ?'Toutes les cartes publiées ont rejoint ton Codex. Les versions Chromatiques restent à découvrir en booster.'
+      ?'Toutes les cartes accessibles à la Forge ont rejoint ton Codex. Les Chromatiques restent à découvrir en booster ; la Signature est une récompense d’aventure.'
       :'Modifie le filtre pour choisir une carte à fabriquer.';
     details.append(el('p','kicker','LES FORGES DES ARCHIVES'),el('h3','',missing.length?'Aucune recette affichée':'Le Codex est complet'),el('p','atelier-detail-placeholder',text));
     if(missing.length===0)details.append(button('Explorer mon Codex ›',()=>navigate('collection'),'secondary atelier-detail-link'));
@@ -247,9 +247,10 @@ function renderAtelier(){
 }
 
 function askCraft(cardId){
-  const card=CARDS.find(c=>c.id===cardId&&!state.owned[c.id]);
+  const card=CARDS.find(c=>c.id===cardId&&!state.owned[c.id]&&!c.signature);
   if(!card)return notify('Cette carte se trouve déjà dans ton Codex.');
   const cost=getCraftCost(card);
+  if(cost===null)return notify('Cette carte est réservée à une aventure, elle ne peut pas être fabriquée.');
   if(state.dust<cost)return notify('Tu ne possèdes pas encore assez d’Éclats.');
   pendingCraftId=card.id;
   $('#atelier-confirm-text').textContent='Fabriquer « '+card.name+' » pour '+cost+' Éclats ? Solde actuel : '+state.dust+' Éclats.';
@@ -1416,7 +1417,7 @@ function makeCard(c,isShiny=false,locked=false){
     }else b.append(img);
   }
   const meta=el('div','info');
-  meta.append(el('div','name',reallyLocked?'Archive scellée':c.name),
+  meta.append(el('div','name',reallyLocked?(c.signature?'Signature scellée':'Archive scellée'):c.name),
     el('div','meta',reallyLocked?'À découvrir · '+RARITIES[c.rarity].label:RARITIES[c.rarity].label+' · '+c.type));
   b.append(meta);
   if(!locked&&state.owned[c.id])b.append(el('span','amount','×'+state.owned[c.id]));
@@ -1488,9 +1489,12 @@ function inspectSealed(c,scroll=true){
     el('p','kicker','ARCHIVE '+String(c.id).padStart(3,'0')+' · '+RARITIES[c.rarity].label),
     el('h2','','Archive non découverte'),
     el('p','codex-inspector-chapter',collectionLabel),
-    el('p','muted','Cette page est encore scellée. Découvre cette carte dans les boosters ou façonne-la dans l’Atelier.'),
-    button('Ouvrir des boosters',()=>navigate('boosters'),'secondary'),
-    button('Explorer l’Atelier',()=>navigate('atelier'),'secondary'));
+    el('p','muted',c.signature
+      ?'Le Cœur des Marches est une Signature unique. Elle ne peut être obtenue ni dans les boosters ni à la Forge ; son déblocage sera lié à l’aventure finale.'
+      :'Cette page est encore scellée. Découvre cette carte dans les boosters ou façonne-la dans l’Atelier.'),
+    ...(c.signature
+      ?[button('Voir les expéditions',()=>navigate('expeditions'),'secondary')]
+      :[button('Ouvrir des boosters',()=>navigate('boosters'),'secondary'),button('Explorer l’Atelier',()=>navigate('atelier'),'secondary')]));
   addCodexNavigation(copy,c);
   panel.append(seal,copy);
   markCodexSelected(c.id);
@@ -1611,7 +1615,7 @@ function renderCodexSeasons(){
     const count=el('span','codex-chapter-count',
       part.released?stats.discovered+' / '+part.plannedCards+' · ✧ '+stats.chromatic:'À venir · '+part.plannedCards+' cartes');
     tile.append(eyebrow,title,count);
-    if(part.signature&&!part.released)tile.append(el('span','codex-part-signature','✧ Carte Signature'));
+    if(part.signature)tile.append(el('span','codex-part-signature','✧ Carte Signature'));
     if(part.released){
       const track=el('span','codex-chapter-track');
       track.setAttribute('aria-hidden','true');
@@ -1622,7 +1626,7 @@ function renderCodexSeasons(){
   }
   const collection=collectionById(activeSeason,activeCollection);
   $('#codex-chapter-title').textContent='Partie '+collection.number+' · '+collection.title;
-  $('#codex-chapter-subtitle').textContent=collection.subtitle;
+  $('#codex-chapter-subtitle').textContent=collection.subtitle+(collection.id==='au-dela-du-verre'?' · 23 cartes en booster, une Signature à mériter lors du final.':'');
   const stats=codexProgress(season.collections.flatMap(part=>cardsForCollection(CARDS,season.id,part.id)),state.owned,state.shiny);
   $('#codex-progress-discovered').textContent=stats.discovered+' / '+stats.total;
   $('#codex-progress-chromatic').textContent=stats.chromatic+' / '+stats.total;
@@ -1913,24 +1917,28 @@ function clearBoosterScene(){
 /* Switch only between complete released collections. Never change a purchased
    draw during its animation or re-roll cards on edition change. */
 function selectBooster(edition){
-  if(boosterBusy||!['origines','reflets-brises'].includes(edition))return;
+  if(boosterBusy||!['origines','reflets-brises','au-dela-du-verre'].includes(edition))return;
   const isReflets=edition==='reflets-brises';
+  const isAuDela=edition==='au-dela-du-verre';
   selectedBooster=edition;
   clearBoosterScene();
   boosterArt.classList.toggle('pack-reflets',isReflets);
-  $('#booster-pack .pack-title').textContent=isReflets?'REFLETS BRISÉS':'ORIGINES';
+  boosterArt.classList.toggle('pack-au-dela',isAuDela);
+  $('#booster-pack .pack-title').textContent=isAuDela?'AU-DELÀ DU VERRE':isReflets?'REFLETS BRISÉS':'ORIGINES';
   $('#booster-pack .pack-edition').textContent='SAISON I · 5 CARTES';
-  $('#booster-collection-kicker').textContent='SAISON I · LES MARCHES DE VERRE · PARTIE '+(isReflets?'II':'I');
-  $('#booster-family-title').textContent='Booster '+(isReflets?'des Reflets brisés':'des Origines');
-  $('#booster-family-description').textContent=isReflets
-    ?'Partie II des Marches de Verre. Cinq cartes du Revers, dont une Inhabituelle au minimum. Les 24 nouvelles légendes t’attendent.'
-    :'Partie I des Marches de Verre. Cinq cartes, dont au moins une Inhabituelle ou mieux. Une chance de découvrir une version Chromatique.';
+  $('#booster-collection-kicker').textContent='SAISON I · LES MARCHES DE VERRE · PARTIE '+(isAuDela?'III':isReflets?'II':'I');
+  $('#booster-family-title').textContent='Booster '+(isAuDela?'Au-delà du Verre':isReflets?'des Reflets brisés':'des Origines');
+  $('#booster-family-description').textContent=isAuDela
+    ?'Partie III des Marches de Verre. Cinq cartes parmi 23 découvertes, dont au moins une Inhabituelle ou mieux. La 24e, le Cœur des Marches, est une Signature à mériter dans l’aventure finale : elle ne peut jamais sortir du paquet.'
+    :isReflets
+      ?'Partie II des Marches de Verre. Cinq cartes du Revers, dont une Inhabituelle au minimum. Les 24 nouvelles légendes t’attendent.'
+      :'Partie I des Marches de Verre. Cinq cartes, dont au moins une Inhabituelle ou mieux. Une chance de découvrir une version Chromatique.';
   for(const control of $$('.booster-choice')){
     const active=control.dataset.booster===edition;
     control.classList.toggle('is-selected',active);
     control.setAttribute('aria-pressed',String(active));
   }
-  $('#pack-title').textContent=isReflets?'Les miroirs du Revers t’attendent.':'Les archives attendent leur voyageur.';
+  $('#pack-title').textContent=isAuDela?'Deux rives, un même horizon.':isReflets?'Les miroirs du Revers t’attendent.':'Les archives attendent leur voyageur.';
   $('#pack-msg').textContent='Choisis ton booster puis dépense 100 Couronnes pour révéler cinq cartes.';
   update();
 }
@@ -2075,7 +2083,7 @@ function openOriginesBooster(){
   cancelBoosterTimers();
   boosterBusy=true;
   const edition=typeof selectedBooster==='undefined'?'origines':selectedBooster;
-  const results=edition==='origines'?drawPack():drawRefletsPack();
+  const results=edition==='au-dela-du-verre'?drawAuDelaPack():edition==='origines'?drawPack():drawRefletsPack();
   state.coins-=PACK_PRICE;
   state.opened++;
   let newCount=0,duplicates=0,shinyCount=0,dustEarned=0;
@@ -2102,7 +2110,7 @@ function openOriginesBooster(){
   boosterActions.hidden=false;nextPullButton.hidden=true;
   boosterProgress.hidden=false;boosterProgressFill.style.width='0%';
   boosterStep.hidden=false;boosterStep.textContent='Préparation des cartes…';
-  $('#pack-title').textContent=edition==='origines'?'Le sceau des Origines s’éveille…':'Le sceau des Reflets brisés s’éveille…';
+  $('#pack-title').textContent=edition==='au-dela-du-verre'?'Les deux horizons s’accordent…':edition==='origines'?'Le sceau des Origines s’éveille…':'Le sceau des Reflets brisés s’éveille…';
   $('#pack-msg').textContent='Le paquet s’ouvre : cinq découvertes t’attendent.';
   boosterOpening.classList.add('is-unsealing');
   boosterArt.classList.add('is-opening');

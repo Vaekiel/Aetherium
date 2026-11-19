@@ -1,5 +1,5 @@
 /* AETHERIUM 1.7 — Permanent seasons, 24-card collections, no fabricated cards.
-   Published cards: Origines (1–24) and Les Reflets brisés (25–48).
+   Published cards: Origines (1–24), Reflets brisés (25–48) and Au-delà du Verre (49–72).
    Future chapter metadata does not create collectibles or booster pools. */
 export const CARDS_PER_COLLECTION=24;
 export const COLLECTIONS_PER_SEASON=3;
@@ -16,7 +16,7 @@ export const SEASONS=Object.freeze([
     'Une région de cristaux oubliés, de gardiens et de secrets enfouis.',[
       part('origines','I','Origines','Les premières légendes des Marches de Verre.',{released:true,first:1,last:24}),
       part('reflets-brises','II','Les Reflets brisés','Dans les Marches de Verre, les miroirs n’obéissent plus.',{released:true,first:25,last:48}),
-      part('au-dela-du-verre','III','Au-delà du Verre','Deux mémoires. Un seul horizon à construire.',{signature:true})
+      part('au-dela-du-verre','III','Au-delà du Verre','Deux mémoires. Un seul horizon à construire.',{released:true,first:49,last:72,signature:true})
     ]),
   season('plateau-nebuleux',2,'Le Plateau Nébuleux',
     'Un autre horizon d’Aetherium, encore inexploré.',[

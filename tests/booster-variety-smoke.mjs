@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import {CARDS as ORIGINES,drawPack,drawPackFromPool,
  RARITIES,PACK_PRICE,CHROMATIC_RATE} from '../src/data.js';
-import {REFLETS_CARDS,drawRefletsPack} from '../src/collection-data.js';
+import {REFLETS_CARDS,drawRefletsPack,AU_DELA_CARDS,AU_DELA_BOOSTER_CARDS,drawAuDelaPack} from '../src/collection-data.js';
 import {CRAFT_COSTS} from '../src/crafting.js';
 import {DUPLICATE_DUST} from '../src/duplicate-rewards.js';
 import {readFileSync} from 'node:fs';
@@ -93,12 +93,28 @@ assert.ok(Math.abs(chromaticCount/(draws*5)-.03)<.006,
 assert.ok(rareRepeats<50,
  'Remaining repeats should only happen when the same-rarity pool is exhausted');
 
+// A third, independent 23-card pool uses the same rarity and foil rules.
+assert.equal(AU_DELA_CARDS.length,24);
+assert.equal(AU_DELA_BOOSTER_CARDS.length,23);
+assert.ok(!AU_DELA_BOOSTER_CARDS.some(card=>card.id===72||card.signature));
+for(const fixed of [0,0.02999,0.03,0.2,0.49,0.72,0.9,0.999]){
+ const pack=drawAuDelaPack(()=>fixed);
+ assertPack(pack,{name:'Au-delà du Verre',cards:AU_DELA_BOOSTER_CARDS});
+ assert.ok(pack.every(item=>item.id>=49&&item.id<=71));
+}
+const auDelaRng=rngWithSeed(20261119);
+for(let i=0;i<12000;i++){
+ const pack=drawAuDelaPack(auDelaRng);
+ assert.ok(pack.every(item=>item.id!==72&&item.id>=49&&item.id<=71));
+ assert.notEqual(AU_DELA_CARDS.find(c=>c.id===pack[4].id).rarity,'common');
+}
+
 const js=readFileSync('src/main.js','utf8');
 const html=readFileSync('index.html','utf8');
 assert.ok(js.includes("from './data.js?v=booster-variety-1'"));
-assert.ok(js.includes("from './collection-data.js?v=booster-variety-1'"));
+assert.ok(js.includes("from './collection-data.js?v=au-dela-booster-1'"));
 assert.ok(html.includes('main.js?v=au-dela-lot-3'));
-assert.ok(js.includes("edition==='origines'?drawPack():drawRefletsPack()"),
+assert.ok(js.includes("edition==='au-dela-du-verre'?drawAuDelaPack():edition==='origines'?drawPack():drawRefletsPack()"),
  'The purchase and reveal handler still chooses the correct booster');
 assert.ok(js.includes('state.coins-=PACK_PRICE')&&js.includes('state.dust+=dustGain'),
  'Pack purchases and duplicate rewards are unchanged');

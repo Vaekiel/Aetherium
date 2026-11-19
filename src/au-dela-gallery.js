@@ -1,6 +1,6 @@
 /* AETHERIUM — Au-delà du Verre, collection complète en aperçu artistique : cartes 49–72.
-   Les 24 cartes de la partie III restent NON PUBLIÉES : pas de tirage, Forge,
-   sauvegarde, attribution, ni achat via cette galerie. */
+   Les illustrations alimentent le Codex publié. La carte Signature n° 72
+   n'est disponible ni dans les boosters ni à la Forge. */
 import {AU_DELA_DU_VERRE_DRAFT} from './au-dela-du-verre-catalog.js';
 
 const ILLUSTRATIONS=Object.freeze([
