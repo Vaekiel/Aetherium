@@ -44,6 +44,8 @@ jobs:
           test -s src/booster.css
           test -s src/booster-packaging.css
           test -s src/booster-artworks.css
+          test -s src/booster-feedback.css
+          test -s src/booster-feedback.js
           test -s assets/boosters/origines-pack-hd.webp
           test -s assets/boosters/reflets-brises-pack-hd.webp
           test -s assets/boosters/origines-pack-pixel-hd-v2.webp
@@ -132,6 +134,7 @@ jobs:
           test -s tests/runes-smoke.mjs
           test -f tests/booster-smoke.mjs
           test -s tests/booster-reveal-smoke.mjs
+          test -s tests/booster-feedback-smoke.mjs
           test -s tests/booster-opening-smoke.mjs
           grep -q 'id="filter-open"' index.html
           grep -q 'id="inspect-close"' index.html
@@ -232,6 +235,7 @@ jobs:
           node tests/booster-smoke.mjs
           node tests/booster-variety-smoke.mjs
           node tests/booster-reveal-smoke.mjs
+          node tests/booster-feedback-smoke.mjs
           node tests/booster-opening-smoke.mjs
           node tests/booster-packaging-smoke.mjs
           node tests/booster-artworks-smoke.mjs

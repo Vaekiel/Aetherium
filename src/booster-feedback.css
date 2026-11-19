@@ -1,0 +1,74 @@
+/* AETHERIUM — Subtle, pixel-sharp appreciation for notable booster pulls.
+   Decorative only, and never overlays the HD card illustration. */
+#page-boosters .booster-summary .booster-moment{
+  --moment-edge:#a6a0ca;
+  --moment-glow:#a6a0ca24;
+  box-sizing:border-box;flex:1 1 100%;min-width:0;
+  display:grid;grid-template-columns:32px minmax(0,1fr);column-gap:9px;
+  align-items:center;text-align:left;
+  padding:10px 12px;margin:0 0 3px;
+  border:1px solid var(--moment-edge);border-radius:3px;
+  background:linear-gradient(115deg,var(--moment-glow),#18172b82 65%);
+  box-shadow:inset 0 1px #ffffff15;
+  animation:aetherium-moment-appear .55s steps(5,end) both;
+}
+#page-boosters .booster-moment-legendary{
+  --moment-edge:#d8b778;--moment-glow:#b98c3326;
+}
+#page-boosters .booster-moment-epic{
+  --moment-edge:#bc98df;--moment-glow:#9165c426;
+}
+#page-boosters .booster-moment-chromatic{
+  --moment-edge:#b6a2f4;--moment-glow:#8779c82a;
+}
+#page-boosters .booster-summary .booster-moment-mark{
+  display:grid;place-items:center;padding:0;
+  width:28px;height:28px;border:1px solid var(--moment-edge);
+  border-radius:2px;background:#17162e;
+  font:21px/1 Georgia,serif;color:#f4e2ba;
+}
+#page-boosters .booster-moment-copy{
+  min-width:0;display:flex;flex-direction:column;gap:3px;
+}
+#page-boosters .booster-moment-title{
+  color:#f3e7d4;font:small-caps 16px/1.15 Georgia,serif;
+}
+#page-boosters .booster-moment-detail{
+  color:#d8d1e2;font:12px/1.3 Georgia,serif;overflow-wrap:anywhere;
+}
+@keyframes aetherium-moment-appear{
+  from{opacity:0;transform:translateY(6px)}
+  to{opacity:1;transform:none}
+}
+/* A short outline pulse on the FRAME, not on its image or 2D face.
+   Preserves the Android/WebView HD-art rendering fix. */
+#page-boosters .booster-single .pull-flip.is-revealed[data-rarity="epic"] .pull-frame,
+#page-boosters .booster-single .pull-flip.is-revealed[data-rarity="legendary"] .pull-frame,
+#page-boosters .booster-single .pull-flip.is-revealed.is-chromatic .pull-frame{
+  outline:2px solid transparent;outline-offset:3px;
+  animation:aetherium-rarity-frame .7s steps(5,end) 1;
+}
+#page-boosters .booster-single .pull-flip.is-revealed[data-rarity="epic"]{
+  --moment-pulse:#b695dc;
+}
+#page-boosters .booster-single .pull-flip.is-revealed[data-rarity="legendary"]{
+  --moment-pulse:#e1bf7c;
+}
+#page-boosters .booster-single .pull-flip.is-revealed.is-chromatic{
+  --moment-pulse:#c4abf5;
+}
+@keyframes aetherium-rarity-frame{
+  0%,100%{outline-color:transparent}
+  30%,70%{outline-color:var(--moment-pulse)}
+}
+@media(max-width:420px){
+  #page-boosters .booster-summary .booster-moment{padding:9px;grid-template-columns:27px minmax(0,1fr);gap:7px}
+  #page-boosters .booster-summary .booster-moment-mark{width:25px;height:25px;font-size:18px}
+  #page-boosters .booster-moment-title{font-size:14px}
+}
+@media(prefers-reduced-motion:reduce){
+  #page-boosters .booster-summary .booster-moment,
+  #page-boosters .booster-single .pull-flip.is-revealed .pull-frame{
+    animation:none!important;
+  }
+}
