@@ -1769,6 +1769,13 @@ function renderCodexSeasons(){
   const stats=codexProgress(season.collections.flatMap(part=>cardsForCollection(CARDS,season.id,part.id)),state.owned,state.shiny);
   $('#codex-progress-discovered').textContent=stats.discovered+' / '+stats.total;
   $('#codex-progress-chromatic').textContent=stats.chromatic+' / '+stats.total;
+  const chapterCards=season.collections.flatMap(part=>cardsForCollection(CARDS,season.id,part.id));
+  for(const finish of FINISH_KEYS){
+    const target=document.querySelector('#codex-progress-'+finish);
+    if(target)target.textContent=finishUnique(state.finishCounts,finish,chapterCards)+' / '+stats.total;
+    const fill=document.querySelector('#codex-'+finish+'-fill');
+    if(fill)fill.style.width=(stats.total?100*finishUnique(state.finishCounts,finish,chapterCards)/stats.total:0)+'%';
+  }
   $('#codex-progress-fill').style.width=stats.percent+'%';
   $('#codex-chromatic-fill').style.width=stats.chromaticPercent+'%';
   $('#codex-progress-track').setAttribute('aria-valuenow',String(stats.discovered));
@@ -1943,12 +1950,13 @@ function renderCollection(){
   const gallery=$('#card-grid');
   const q=$('#search').value.trim();
   const cards=filterCodex(availableCards,{type:filterType,rarity:filterRarity,
-    finish:filterFinish,discovery:discoveryFilter,query:q,owned:state.owned,shiny:state.shiny});
+    finish:filterFinish,discovery:discoveryFilter,query:q,owned:state.owned,shiny:state.shiny,
+    finishCounts:state.finishCounts});
   codexVisibleCards=cards;
   gallery.replaceChildren();
   for(const c of cards){
-    const chromatic=filterFinish==='normal'?false:!!state.shiny[c.id];
-    gallery.append(makeCard(c,chromatic,!state.owned[c.id]));
+    const finish=FINISHES[filterFinish]?filterFinish:preferredFinish(state.finishCounts,c.id);
+    gallery.append(makeCard(c,finish,!state.owned[c.id]));
   }
   const inChapter=availableCards.length;
   $('#codex-results').textContent=cards.length+' / '+inChapter+' archives';
@@ -1957,6 +1965,8 @@ function renderCollection(){
   empty.hidden=cards.length>0;
   empty.textContent=cards.length?'':filterFinish==='chromatic'?
     'Aucune Chromatique ne correspond à ces filtres. Essaie une autre rareté ou une autre collection.':
+    (filterFinish==='holographic'||filterFinish==='calligraphic')?
+    'Aucune '+FINISHES[filterFinish].label+' possédée pour cette collection.':
     discoveryFilter==='collected'?'Aucune carte découverte ne correspond à ces critères.':
     'Aucune archive ne correspond à cette recherche.';
   const appliedFilters=(filterType!=='all'?1:0)+(filterRarity!=='all'?1:0)+
@@ -1969,15 +1979,16 @@ function renderCollection(){
     const revealed=!!state.owned[next.id]||next.id===1||(previewArt&&hasApprovedArt(next.id));
     if(!revealed)inspectSealed(next,false);
     else{
-      const chromatic=filterFinish==='normal'?false:
-        filterFinish==='chromatic'?!!state.shiny[next.id]:
-        (selectedCard?.id===next.id?selectedCard.shiny:!!state.shiny[next.id]);
-      inspect(next,chromatic,false,!!(selectedCard?.id===next.id&&selectedCard?.preview&&chromatic));
+      const finish=FINISHES[filterFinish]?filterFinish:
+        (selectedCard?.id===next.id&&selectedCard.finish?selectedCard.finish:
+          preferredFinish(state.finishCounts,next.id));
+      const chromatic=finish==='chromatic';
+      inspect(next,chromatic,false,chromatic&&finishQuantity(state.finishCounts,finish,next.id)===0,finish);
     }
   }else{
     selectedCard=null;
     const panel=$('#inspector');
-    panel.classList.remove('is-chromatic');
+    panel.classList.remove('is-chromatic','is-holographic','is-calligraphic');
     panel.replaceChildren(el('p','muted','Choisis une autre collection ou ajuste les filtres pour feuilleter les archives.'));
   }
   update();
