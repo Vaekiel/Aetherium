@@ -1482,14 +1482,16 @@ function inspectSealed(c,scroll=true){
   seal.append(el('span','','✧'),el('span','','ARCHIVE '+String(c.id).padStart(3,'0')));
   const location=collectionForCard(c);
   const collectionLabel=location?'Saison '+location.season.number+' · '+location.collection.title:'Les Archives';
-  panel.append(seal,
+  const copy=el('div','inspector-copy');
+  copy.append(
     el('p','kicker','ARCHIVE '+String(c.id).padStart(3,'0')+' · '+RARITIES[c.rarity].label),
     el('h2','','Archive non découverte'),
     el('p','codex-inspector-chapter',collectionLabel),
-    el('p','muted','Cette page est encore scellée. Découvre cette carte dans les boosters ou façonne-la dans l’Atelier.'));
-  panel.append(button('Ouvrir des boosters',()=>navigate('boosters'),'secondary'),
+    el('p','muted','Cette page est encore scellée. Découvre cette carte dans les boosters ou façonne-la dans l’Atelier.'),
+    button('Ouvrir des boosters',()=>navigate('boosters'),'secondary'),
     button('Explorer l’Atelier',()=>navigate('atelier'),'secondary'));
-  addCodexNavigation(panel,c);
+  addCodexNavigation(copy,c);
+  panel.append(seal,copy);
   markCodexSelected(c.id);
   if(scroll){
     if(mobileView.matches)openSheet('inspector');
@@ -1522,21 +1524,23 @@ function inspect(c,shiny=false,scroll=true,chromaticPreview=false){
   const desc=el('p','','« '+c.lore+' »');
   const stats=el('div','stats');
   stats.append(el('span','','⚔ '+c.attack),el('span','','♥ '+c.health),el('span','','×'+(state.owned[c.id]||0)));
-  panel.append(artwork,kicker,title,chapterLabel,el('p','muted',c.type+
+  const copy=el('div','inspector-copy');
+  copy.append(kicker,title,chapterLabel,el('p','muted',c.type+
     (chromatic?' · ✧ Version Chromatique':' · Version normale')+
     (previewChromatic?' · Aperçu uniquement':state.owned[c.id]?'':' · Aperçu non possédé')),desc,stats);
   if(ownedChromatic){
-    panel.append(button(chromatic?'Voir la version normale':'Voir la version Chromatique',
+    copy.append(button(chromatic?'Voir la version normale':'Voir la version Chromatique',
       ()=>inspect(c,!chromatic,false),'secondary chromatic-toggle'));
   }else if(state.owned[c.id]||previewArt||c.id===1){
     const toggle=button(chromatic?'Voir la version normale':'✧ Prévisualiser en Chromatique',
       ()=>inspect(c,!chromatic,false,!chromatic),'secondary chromatic-toggle');
     toggle.setAttribute('aria-label',chromatic?'Revenir à la carte normale':'Voir une simulation Chromatique sans débloquer cette carte');
-    panel.append(toggle);
-    if(!chromatic)panel.append(el('p','chromatic-inspector-hint',
+    copy.append(toggle);
+    if(!chromatic)copy.append(el('p','chromatic-inspector-hint',
       'Tu ne possèdes pas cette variante : aperçu visuel sans déblocage.'));
   }
-  addCodexNavigation(panel,c);
+  addCodexNavigation(copy,c);
+  panel.append(artwork,copy);
   markCodexSelected(c.id);
   if(scroll){
     if(mobileView.matches)openSheet('inspector');
