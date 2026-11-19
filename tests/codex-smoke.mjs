@@ -107,8 +107,8 @@ assert.ok(!html.includes('</main><div id="sheet-scrim"'),
 assert.ok(!read('src/seasons.js').includes('localStorage'),'Season metadata cannot mutate saves');
 assert.ok(!read('src/codex.js').includes('localStorage'),'Codex helpers cannot mutate saves');
 const artSource=read('src/card-art.js');
-assert.ok(artSource.includes("img.srcset=approved.thumbnail+version+' 350w, '+approved.full+version+' 1138w'"),
-  'Gallery thumbnails support HD sources on dense mobile displays');
+assert.ok(artSource.includes("img.srcset=approved.thumbnail+version+' 350w, '+approved.full+version+(card.id>=49?' 1024w':' 1138w')"),
+  'Gallery thumbnails use the original HD dimensions for each collection without downsampling the new cards');
 assert.ok(artSource.includes("(max-width: 589px)")&&artSource.includes("(max-width: 850px)"),
   'Source selection respects the mobile two- and three-column layouts');
 assert.ok(artSource.includes("img.removeAttribute('srcset')"),
