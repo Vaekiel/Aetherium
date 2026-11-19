@@ -1955,7 +1955,7 @@ function renderCollection(){
   codexVisibleCards=cards;
   gallery.replaceChildren();
   for(const c of cards){
-    const finish=FINISHES[filterFinish]?filterFinish:preferredFinish(state.finishCounts,c.id);
+    const finish=filterFinish==='normal'?'normal':(FINISHES[filterFinish]?filterFinish:preferredFinish(state.finishCounts,c.id));
     gallery.append(makeCard(c,finish,!state.owned[c.id]));
   }
   const inChapter=availableCards.length;
