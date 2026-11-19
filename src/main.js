@@ -2,6 +2,7 @@ import {RARITIES,PACK_PRICE,drawPack} from './data.js?v=booster-variety-1';
 import {CARDS,drawRefletsPack} from './collection-data.js?v=booster-variety-1';
 import {CRAFT_COSTS,getCraftCost,craftCard} from './crafting.js';
 import {duplicateDustReward} from './duplicate-rewards.js';
+import {boosterMoment} from './booster-feedback.js?v=booster-polish-1';
 import {applyCardIllustration,hasApprovedArt,CARD_ART} from './card-art.js';
 import {codexProgress,filterCodex} from './codex.js';
 import {sanitizeRecentFinds,recordRecentFind,buildLivingArchive} from './living-archives.js';
@@ -2017,7 +2018,20 @@ function completeBoosterReveal(){
   boosterGrid.classList.add('booster-gallery');
   boosterGrid.replaceChildren(...currentDraw.map(item=>makeCard(item.card,item.shiny)));
   boosterSummary.hidden=false;
+  // A single, late reveal highlight for exceptional finds. Never preview
+  // hidden cards or alter the already-saved purchase and shard rewards.
+  const moment=boosterMoment(currentDraw);
+  const momentNote=moment?el('div','booster-moment booster-moment-'+moment.kind):null;
+  if(momentNote){
+    const copy=el('div','booster-moment-copy');
+    copy.append(el('strong','booster-moment-title',moment.title),
+      el('small','booster-moment-detail',moment.detail));
+    const mark=el('span','booster-moment-mark',moment.symbol);
+    mark.setAttribute('aria-hidden','true');
+    momentNote.append(mark,copy);
+  }
   boosterSummary.replaceChildren(
+    ...(momentNote?[momentNote]:[]),
     el('span','',drawSummary.newCount+' nouvelle(s)'),
     el('span','',drawSummary.duplicates+' doublon(s) · +'+drawSummary.dustEarned+' Éclats'),
     el('span',drawSummary.shinyCount?'booster-star':'',drawSummary.shinyCount+' Chromatique(s)')
