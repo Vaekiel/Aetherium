@@ -9,6 +9,7 @@ import {sanitizeRecentFinds,recordRecentFind,buildLivingArchive} from './living-
 import {createBackup,decodeBackup,installImportedSave,restorePreviousSave,PREVIOUS_SAVE_KEY,MAX_BACKUP_SIZE} from './save-backup.js';
 import {SEASONS,seasonById,collectionById,cardsForCollection,collectionForCard,seasonProgress} from './seasons.js';
 import {mountRefletsGallery} from './reflets-gallery.js?v=reflets-final-24';
+import {mountAuDelaGallery} from './au-dela-gallery.js?v=au-dela-lot-1';
 import {milestonesFor,sanitizeMilestoneClaims,uniqueCardsOwned,collectionMilestoneStatus,claimCollectionMilestone} from './collection-milestones.js?v=reflets-journal-1';
 import {DIFFICULTIES,validDifficulty,trialRules,trialObjective,trialScore,trialReward,emptyTrialStats,sanitizedTrialStats,recordTrialWin,masteryLevel} from './trial-progress.js?v=mastery-balance-2';
 import {TRIAL_RECORD_MODES,TRIAL_RECORD_METRICS,sanitizedTrialRecords,recordPersonalBest,recordMetricLabel} from './trial-records.js';
@@ -1775,6 +1776,8 @@ function renderCollection(){
   const showRefletsPreview=isUpcoming&&activeSeason==='marches-de-verre'&&selectedPart.id==='reflets-brises';
   const showAuDelaTeaser=isUpcoming&&activeSeason==='marches-de-verre'&&selectedPart.id==='au-dela-du-verre';
   $('#au-dela-teaser').hidden=!showAuDelaTeaser;
+  $('#au-dela-gallery').hidden=!showAuDelaTeaser;
+  if(showAuDelaTeaser)mountAuDelaGallery($('#au-dela-gallery-grid'));
   $('#reflets-art-preview').hidden=!showRefletsPreview;
   $('#reflets-gallery').hidden=!showRefletsPreview;
   if(showRefletsPreview)mountRefletsGallery($('#reflets-gallery-grid'));
