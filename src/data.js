@@ -28,6 +28,22 @@ const definitions=[
 export const CARDS=definitions.map(([name,type,rarity,lore],i)=>({id:i+1,name,type,rarity,lore,attack:3+Math.floor(i*1.4),health:5+Math.floor(i*1.2),series:'Origines'}));
 export const PACK_PRICE=100;
 export const CHROMATIC_RATE=0.03;
+export const HOLOGRAPHIC_RATE=0.02;
+export const CALLIGRAPHIC_RATE=0.02;
+export const FINISH_RATES=Object.freeze({
+  chromatic:CHROMATIC_RATE,
+  holographic:HOLOGRAPHIC_RATE,
+  calligraphic:CALLIGRAPHIC_RATE
+});
+// One finish per card. Keep the historical 3% chromatic chance unchanged,
+// and use a single independent finish roll per card to avoid stacked effects.
+export function rollFinish(rng=Math.random){
+  const chance=rng();
+  if(chance<CHROMATIC_RATE)return 'chromatic';
+  if(chance<CHROMATIC_RATE+HOLOGRAPHIC_RATE)return 'holographic';
+  if(chance<CHROMATIC_RATE+HOLOGRAPHIC_RATE+CALLIGRAPHIC_RATE)return 'calligraphic';
+  return 'normal';
+}
 export function rollRarity(rng=Math.random,guaranteed=false){let pool=guaranteed?[['uncommon',65],['rare',25],['epic',8],['legendary',2]]:Object.entries(RARITIES).map(([k,v])=>[k,v.weight]);let value=rng()*100;for(const [rarity,weight] of pool){value-=weight;if(value<0)return rarity;}return 'common'}
 /* Keep independent rarity rolls and Chromatic odds. Within each rarity, show
    another card from the same sealed packet whenever one is available.
@@ -42,7 +58,8 @@ export function drawPackFromPool(pool,rng=Math.random){
     const card=available[Math.floor(rng()*available.length)];
     if(!card)throw new Error('Booster : aucune carte disponible pour '+rarity);
     alreadyInPack.add(card.id);
-    return {id:card.id,shiny:rng()<CHROMATIC_RATE};
+    const finish=rollFinish(rng);
+    return {id:card.id,shiny:finish==='chromatic',finish};
   });
 }
 export function drawPack(rng=Math.random){return drawPackFromPool(CARDS,rng)}
