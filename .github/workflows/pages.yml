@@ -82,6 +82,13 @@ jobs:
           test -s tests/au-dela-pilot-smoke.mjs
           test -s assets/cards/passeur-des-aubes.webp
           test -s assets/cards/passeur-des-aubes-thumb.webp
+          test -s src/au-dela-gallery.js
+          test -s src/au-dela-gallery.css
+          test -s tests/au-dela-gallery-smoke.mjs
+          for slug in mousse-de-l-entreverre lanternes-jumelles brume-des-deux-rivages mesange-de-la-couture boussole-du-dedans emissaire-des-possibles tisserande-de-quartz clef-de-l-horizon rite-des-voix-accordees; do
+            test -s "assets/cards/${slug}.webp"
+            test -s "assets/cards/${slug}-thumb.webp"
+          done
           test -s src/reflets-preview.css
           test -s src/reflets-gallery.css
           test -s src/reflets-gallery.js
@@ -217,6 +224,7 @@ jobs:
           node --check --input-type=module < src/save-backup.js
           node --check --input-type=module < src/reflets-brises-catalog.js
           node --check --input-type=module < src/au-dela-du-verre-catalog.js
+          node --check --input-type=module < src/au-dela-gallery.js
           node --check --input-type=module < src/reflets-gallery.js
           node --check --input-type=module < src/duplicate-rewards.js
           node --check --input-type=module < src/codex.js
@@ -238,6 +246,7 @@ jobs:
           node tests/reflets-brises-smoke.mjs
           node tests/au-dela-du-verre-smoke.mjs
           node tests/au-dela-pilot-smoke.mjs
+          node tests/au-dela-gallery-smoke.mjs
           node tests/reflets-pilot-preview-smoke.mjs
           node tests/reflets-gallery-smoke.mjs
           node tests/reflets-booster-smoke.mjs

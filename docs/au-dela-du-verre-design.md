@@ -65,13 +65,13 @@ Deux fichiers WebP correspondant **exactement à cette image validée** ont ét�
 
 Leur taille et leurs empreintes SHA-256 figurent dans `docs/au-dela-pilot-assets.json` pour éviter toute substitution involontaire. La source PNG et le paquet des deux WebP ont été archivés sur Google Drive le 19 novembre.
 
-**Statut GitHub : les fichiers binaires ne sont pas encore enregistrés dans le dépôt.** Ne pas ajouter d’entrée dans `src/card-art.js` ni de visuel référencé par la page publique avant la présence vérifiée des fichiers. Aucun faux aperçu, aucun déblocage prématuré.
+**Statut GitHub : le pilote et sa miniature sont intégrés en aperçu dans le Codex.** Ils ne font pas partie du registre des cartes jouables (`src/card-art.js`) tant que la collection n’est pas publiée.
 
 ### Plan d'intégration progressive
 
 1. **Bible + brouillon** : 24 définitions non importées dans le gameplay et aperçu textuel du chapitre dans le Codex — c'est le jalon actuel.
 2. **Illustration pilote validée** : la carte n° **49, Passeur des Aubes** dispose maintenant d’un visuel HD 1024 × 1536 et d’une miniature 350 × 525. Ces fichiers sont intégrés à GitHub et montrés dans le Codex en aperçu non jouable, sans ajout au catalogue publié.
-3. **Images** : trois lots (10 + 10 + 4) avec leurs miniatures WebP et contrôles de taille/ratio/chargement. Garder une légende cohérente et des couleurs maîtrisées.
+3. **Images** : premier lot **10/24 intégré** (pilote n° 49 + neuf cartes n° 50–58) en HD et miniatures WebP. Poursuivre les lots restants en contrôlant le ratio, le chargement et la diversité artistique.
 4. **Booster** : produire son emballage pixel art original et intégrer le pool séparé de **23 cartes** avec tests (rare garanti au cinquième tirage, Chromatique, non-présence de la Signature).
 5. **Finale de saison** : développer une aventure courte et l'obtention sécurisée de la Signature ainsi que sa version Chromatique, sans doubler la récompense lors d'une reprise ou d'un replay.
 6. **Publication** : valider sur mobile portrait/paysage, tablette et PC, puis ouvrir les 24 cartes d'un seul coup ; contrôler l’export/import et tous les anciens parcours.
@@ -83,6 +83,29 @@ Leur taille et leurs empreintes SHA-256 figurent dans `docs/au-dela-pilot-assets
 - Un lien du Codex ouvre l'illustration en grand. La miniature sert à l'affichage rapide sur téléphone ; le navigateur utilise `srcset` et `sizes` pour choisir l'image adaptée.
 - **Validation artistique :** une lumière d'aube chaude, des architectures qui se rejoignent, une palette turquoise / ivoire / bleu nuit, et un véritable rendu pixel art HD net. Les 23 cartes suivantes devront varier fortement les poses, décors et focales.
 - L'intégration est uniquement visuelle : `released:false`, aucun taux de tirage modifié, aucune carte 49–72 débloquée, aucun booster / Forge ajouté.
+
+### Premier lot d'illustrations — 10 cartes sur 24 (49–58)
+
+Les neuf nouvelles illustrations ont été liées **aux fiches existantes du catalogue canonique**, sans changer les noms ni les raretés. Les originaux PNG ont été convertis en WebP HD **1024 × 1536** et en vignettes **350 × 525**. Le lot de **18 nouveaux WebP** a transité par Google Drive avant le commit GitHub ; les empreintes SHA des fichiers ont été comparées lors du transfert pour éviter toute substitution.
+
+| N° | Carte | Fichier (sans extension) | Rareté |
+| --- | --- | --- | --- |
+| 49 | Passeur des Aubes | `passeur-des-aubes` | Commune (pilote déjà publié en aperçu) |
+| 50 | Mousse de l’Entreverre | `mousse-de-l-entreverre` | Commune |
+| 51 | Lanternes jumelles | `lanternes-jumelles` | Commune |
+| 52 | Brume des deux rivages | `brume-des-deux-rivages` | Commune |
+| 53 | Mésange de la Couture | `mesange-de-la-couture` | Commune |
+| 54 | Boussole du Dedans | `boussole-du-dedans` | Commune |
+| 55 | Émissaire des Possibles | `emissaire-des-possibles` | Inhabituelle |
+| 56 | Tisserande de Quartz | `tisserande-de-quartz` | Inhabituelle |
+| 57 | Clef de l’Horizon | `clef-de-l-horizon` | Inhabituelle |
+| 58 | Rite des Voix accordées | `rite-des-voix-accordees` | Inhabituelle |
+
+La galerie des **dix premiers horizons** est consultable dans **Codex → Saison I → Au-delà du Verre**. Le composant `src/au-dela-gallery.js` récupère les noms, types, raretés et fragments d’histoire depuis `src/au-dela-du-verre-catalog.js` ; il n’invente ni nouvelle carte ni statistique.
+
+Les fichiers d'art sont nommés `assets/cards/<slug>.webp` et `assets/cards/<slug>-thumb.webp`. Le lien vers la grande illustration est accessible au clavier et sur mobile ; les miniatures chargent à la demande. L’interface s’adapte des téléphones aux grands écrans.
+
+**Protection avant sortie :** la collection reste `released:false` ; les cartes 49–72 ne sont disponibles ni dans le booster, ni dans la Forge, ni dans les sauvegardes. Les 48 cartes publiées gardent leurs images et leurs règles. L'intégration du lot est **visuelle uniquement**.
 
 ### Règles responsive (non négociables)
 
