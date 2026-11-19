@@ -77,5 +77,5 @@ assert.match(main,/const picker=el\('div','finish-picker'\)/,'Inspector has four
 assert.match(main,/enableHolographicInspection\(artwork\)/,'Holographic inspector supports pointer and optional gyro');
 assert.match(css,/grayscale\(1\) contrast\(1\.62\)/,'Calligraphic ink artwork is visibly monochrome');
 assert.match(css,/inspector-art-shell\.is-holographic::after/,'Holographic cards have interactive prism overlay');
-assert.match(html,/src\/finishes\.css\?v=finishes-1/,'New finishes stylesheet is loaded');
+assert.match(html,/src\/finishes\.css\?v=finishes-2/,'New finishes stylesheet is loaded');
 console.log('AETHERIUM 4 finishes: exact rolls, old saves, own counts, preview filters, portable backups and art CSS OK.');
