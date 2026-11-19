@@ -10,8 +10,8 @@ const {recordPersonalBest,sanitizedTrialRecords}=await load('src/trial-records.j
 const {sanitizeMilestoneClaims}=await load('src/collection-milestones.js');
 const {sanitizeAlchemyKnown}=await load('src/alchemy-rituals.js');
 const {CARDS}=await load('src/data.js');
-assert.equal(EXPEDITION_ROUTES.length,2);
-assert.deepEqual(EXPEDITION_ROUTES.map(r=>r.stages.map(s=>s.game)),[[0,3,4],[1,2,4]]);
+assert.equal(EXPEDITION_ROUTES.length,3);
+assert.deepEqual(EXPEDITION_ROUTES.map(r=>r.stages.map(s=>s.game)),[[0,3,4],[1,2,4],[1,0,2]]);
 assert.ok(EXPEDITION_ROUTES.every(r=>r.stages.length===3&&r.fragment&&r.ending&&r.prologue));
 assert.ok(EXPEDITION_ROUTES.flatMap(r=>r.stages).every(s=>s.title&&s.text&&s.after));
 assert.deepEqual(emptyExpedition(),{route:null,step:0,mode:null,armed:false,completedRoutes:[]});
@@ -57,7 +57,37 @@ for(const game of [1,2,4]){
 assert.equal(expeditionSummary(echoes).complete,true);
 assert.deepEqual(echoes.completedRoutes,['verriers','veilleurs']);
 assert.equal(expeditionSummary(echoes).discovered,2);
-assert.equal(expeditionSummary(echoes).total,2);
+assert.equal(expeditionSummary(echoes).total,3);
+assert.equal(expeditionSummary(echoes).discovered,2,'Earlier routes remain completed');
+// New Revers route uses exactly the existing Memory, Runes and Lock challenges.
+let revers=startExpedition(echoes,'traversee-reflets','maitrise');
+assert.deepEqual(revers.completedRoutes,['verriers','veilleurs'],'New route preserves earlier trophies');
+assert.equal(revers.step,0);
+assert.equal(expeditionStage(revers).game,1);
+for(const [index,game] of [1,0,2].entries()){
+  assert.equal(expeditionStage(revers).game,game);
+  assert.equal(expeditionVictory(revers,game,'maitrise').advanced,false,
+    'Completing a trial without first entering from the expedition cannot advance it');
+  const incorrect=expeditionVictory(armExpedition(revers),game,'aventure');
+  assert.equal(incorrect.advanced,false,'A different, easier mode cannot skip the stage');
+  const result=expeditionVictory(armExpedition(revers),game,'maitrise');
+  assert.equal(result.advanced,true);
+  assert.equal(result.finished,index===2);
+  assert.equal(result.state.step,index+1);
+  revers=result.state;
+}
+assert.deepEqual(revers.completedRoutes,['verriers','veilleurs','traversee-reflets']);
+assert.equal(expeditionSummary(revers).total,3);
+assert.equal(expeditionSummary(revers).discovered,3);
+assert.equal(expeditionSummary(revers).complete,true);
+assert.equal(expeditionVictory(revers,2,'maitrise').advanced,false,
+  'Replaying the last minigame cannot grant a second discovery');
+assert.deepEqual(sanitizeExpedition(JSON.parse(JSON.stringify(revers))),revers,
+  'New Revers route and discoveries round-trip without save format migration');
+const reversReplay=startExpedition(revers,'traversee-reflets','initiation');
+assert.equal(reversReplay.step,0);
+assert.deepEqual(reversReplay.completedRoutes,['verriers','veilleurs','traversee-reflets'],
+  'Replaying the new route cannot erase previously completed expeditions');
 assert.deepEqual(sanitizeExpedition(JSON.parse(JSON.stringify(echoes))),echoes,'All expedition progress round-trips locally');
 const bad=sanitizeExpedition({route:'hacker',mode:'maitrise',step:999,
  armed:true,completedRoutes:['veilleurs','veilleurs','fake','verriers']});
@@ -70,10 +100,12 @@ assert.equal(sanitizeExpedition({route:'verriers',mode:'hacker',step:1,
 assert.equal(sanitizeExpedition({route:'verriers',mode:'aventure',step:2,
  armed:true}).armed,true,'Checkpoint can resume after reload');
 assert.deepEqual(startExpedition(start,'wrong','maitrise'),start);
+assert.equal(sanitizeExpedition({route:'traversee-reflets',mode:'aventure',step:1,armed:true}).step,1,
+ 'New Revers expedition resumes on the old save schema');
 assert.deepEqual(armExpedition(emptyExpedition()),emptyExpedition());
 
 const main=read('src/main.js'),html=read('index.html'),css=read('src/expedition.css');
-assert.ok(main.includes("from './expeditions.js'"));
+assert.ok(main.includes("from './expeditions.js?v=revers-expedition-1'"));
 assert.ok(main.includes('expedition:{route:null,step:0,mode:null,armed:false,completedRoutes:[]}'));
 assert.ok(main.includes('if(raw.expedition)s.expedition=sanitizeExpedition(raw.expedition)'));
 assert.ok(main.includes('const expeditionResult=state.expedition?.route?'));
@@ -89,7 +121,7 @@ assert.ok(main.includes('renderExpedition();\nupdate();'));
 assert.ok(html.includes('id="expedition-panel"'));
 assert.ok(html.includes('id="expedition-content"'));
 assert.ok(html.includes('src/main.js?v='));
-assert.ok(html.includes('src/expedition.css?v=expedition-dediee-1.8.1'));
+assert.ok(html.includes('src/expedition.css?v=revers-expedition-1'));
 const playStart=html.indexOf('<section id="page-jouer"');
 const journeyStart=html.indexOf('<section id="page-expeditions"');
 const boosterStart=html.indexOf('<section id="page-boosters"');
@@ -114,6 +146,8 @@ assert.ok(!css.includes('#page-jouer .expedition-panel'),
   'The full chapter must no longer style the classic challenge screen');
 assert.ok(css.includes('@media(max-width:850px)'));
 assert.ok(css.includes('@media(max-width:520px)'));
+assert.ok(css.includes('.expedition-choice.is-reflets'),'The Revers route has its own accent without another interface');
+assert.ok(css.includes('@media(min-width:1100px)'));
 assert.ok(css.includes('prefers-reduced-motion'));
 const freshCode=main.slice(main.indexOf('const fresh='),main.indexOf('function load(){'));
 const loadCode=main.slice(main.indexOf('function load(){'),main.indexOf('let state=load();'));
@@ -245,10 +279,10 @@ const uiCode=main.slice(main.indexOf('function renderExpedition(){'),
 assert.ok(uiCode.startsWith('function renderExpedition(){'));
 const ui=runInNewContext(uiCode+'({renderExpedition})',choicesSandbox);
 ui.renderExpedition();
-assert.equal(chapterCounter.textContent,'0/2 fragments');
-assert.equal(portalText.textContent,'Deux chemins à découvrir');
+assert.equal(chapterCounter.textContent,'0/3 fragments');
+assert.equal(portalText.textContent,'3 chemins à découvrir');
 const choiceBlock=chapterContent.children.find(e=>e.classList.contains('expedition-choices'));
-assert.equal(choiceBlock.children.length,2);
+assert.equal(choiceBlock.children.length,3);
 choiceBlock.children[1].click();
 assert.equal(domState.expedition.route,'veilleurs');
 assert.equal(domState.expedition.mode,'maitrise');
@@ -268,4 +302,22 @@ const cancel=chapterContent.children.find(e=>e.classList.contains('expedition-ac
 cancel.click();
 assert.equal(domState.expedition.route,null);
 assert.equal(calls.saved,3);
-console.log('AETHERIUM 1.8 — 2 parcours, 6 étapes, sauvegardes, choix et victoires sans bonus dupliqué OK');
+// Real screen selection + stage launch for the Revers route, on the same controls.
+const afterExit=chapterContent.children.find(e=>e.classList.contains('expedition-choices'));
+assert.equal(afterExit.children.length,3);
+afterExit.children[2].click();
+assert.equal(domState.expedition.route,'traversee-reflets');
+assert.equal(domState.expedition.mode,'maitrise');
+assert.equal(calls.saved,4);
+assert.ok(chapterContent.children.some(e=>e.classList.contains('expedition-lead')));
+assert.ok(portalText.textContent.includes('La Traversée des Reflets'));
+const reversActions=chapterContent.children.find(e=>e.classList.contains('expedition-actions'));
+reversActions.children[0].click();
+assert.equal(domState.expedition.armed,true);
+assert.deepEqual(calls.started,[1,1],'Revers opens Memory in the original mini-game screen');
+assert.deepEqual(calls.selected,[1,1]);
+assert.equal(calls.saved,5);
+assert.deepEqual(calls.navigated,['jouer','jouer']);
+assert.deepEqual(calls.scrolled,[1,1]);
+assert.ok(html.includes('Les Itinéraires des Marches'),'The expedition header includes all three routes');
+console.log('AETHERIUM — 3 parcours, 9 étapes, Le Revers, anciennes sauvegardes, commandes et récompenses sans duplication OK');

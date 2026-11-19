@@ -13,7 +13,7 @@ import {DIFFICULTIES,validDifficulty,trialRules,trialObjective,trialScore,trialR
 import {TRIAL_RECORD_MODES,TRIAL_RECORD_METRICS,sanitizedTrialRecords,recordPersonalBest,recordMetricLabel} from './trial-records.js';
 import {trialChallengesFor} from './trial-challenges.js';
 import {TRIAL_TITLES,earnedTrialTitles,validEquippedTitle,toggleEquippedTitle} from './trial-titles.js';
-import {EXPEDITION_ROUTES,sanitizeExpedition,startExpedition,abandonExpedition,armExpedition,expeditionVictory,expeditionSummary} from './expeditions.js';
+import {EXPEDITION_ROUTES,sanitizeExpedition,startExpedition,abandonExpedition,armExpedition,expeditionVictory,expeditionSummary} from './expeditions.js?v=revers-expedition-1';
 import {nextRuneRitual,runeExpectedAt} from './rune-rituals.js';
 import {makeEtherPuzzle,etherRule,evaluateEtherAttempt,etherAttemptFeedback} from './ether-lock-puzzles.js';
 import {nextMemoryRitual,buildMemoryDeck} from './memory-rituals.js';
@@ -1296,16 +1296,19 @@ function renderExpedition(){
   const view=expeditionSummary(state.expedition);
   const portalText=$('#expedition-shortcut-progress');
   portalText.textContent=view.route&&!view.complete?
-    view.route.name+' · étape '+(view.current.step+1)+'/3':
+    view.route.name+' · étape '+(view.current.step+1)+'/'+view.route.stages.length:
     view.discovered?view.discovered+'/'+view.total+' fragments découverts':
-    'Deux chemins à découvrir';
+    EXPEDITION_ROUTES.length+' chemins à découvrir';
   $('#expedition-counter').textContent=view.discovered+'/'+view.total+' fragments';
   const host=$('#expedition-content');
   host.replaceChildren();
   const lead=el('div','expedition-lead');
   const leadText=el('div','expedition-lead-text');
-  leadText.append(el('span','expedition-kicker','CHAPITRE I · LE SEUIL DES VERRIERS'),
-    el('h3','expedition-title','Le Seuil des Verriers'));
+  const isRevers=view.route?.id==='traversee-reflets';
+  leadText.append(el('span','expedition-kicker',!view.route?'LES EXPÉDITIONS · MARCHES DE VERRE':
+    isRevers?'CHAPITRE II · LES REFLETS BRISÉS':'CHAPITRE I · LE SEUIL DES VERRIERS'),
+    el('h3','expedition-title',!view.route?'Les Chemins des Marches':
+      isRevers?'Le Passage du Revers':'Le Seuil des Verriers'));
   lead.append(leadText);
   host.append(lead);
   const startRoute=routeId=>{
@@ -1318,7 +1321,8 @@ function renderExpedition(){
     const choices=el('div','expedition-choices');
     EXPEDITION_ROUTES.forEach(route=>{
       const done=view.current.completedRoutes.includes(route.id);
-      const pick=button('',()=>startRoute(route.id),'expedition-choice'+(done?' is-discovered':''));
+      const pick=button('',()=>startRoute(route.id),'expedition-choice'+(done?' is-discovered':'')+
+        (route.id==='traversee-reflets'?' is-reflets':''));
       pick.append(el('span','expedition-choice-symbol',route.symbol));
       const copy=el('span','expedition-choice-copy');
       copy.append(el('strong','',route.name),el('small','',route.hint));
@@ -1329,19 +1333,19 @@ function renderExpedition(){
     host.append(choices);
   };
   if(!view.route){
-    chooser('Deux voies s’ouvrent dans les Marches de Verre. Choisis ton premier itinéraire.');
+    chooser('Trois itinéraires t’attendent dans les Marches de Verre, dont un passage vers le Revers. Choisis celui qui t’intrigue.');
     return;
   }
   if(view.complete){
     host.append(el('p','expedition-chapter',view.route.symbol+' '+view.route.name+' · parcours achevé'),
       el('h4','expedition-fragment','✦ '+view.route.fragment),
       el('p','expedition-description',view.route.ending));
-    chooser('Un autre chemin reste à explorer, ou repars sur celui-ci.');
+    chooser('Choisis un autre itinéraire, ou repars sur celui-ci.');
     return;
   }
   const stage=view.stage,mode=DIFFICULTIES.find(d=>d.id===view.current.mode).label;
   host.append(el('p','expedition-chapter',view.route.symbol+' '+view.route.name+
-    ' · '+mode+' · étape '+(view.current.step+1)+'/3'));
+    ' · '+mode+' · étape '+(view.current.step+1)+'/'+view.route.stages.length));
   const progress=el('div','expedition-progress');
   progress.setAttribute('role','list');
   view.route.stages.forEach((item,index)=>{
