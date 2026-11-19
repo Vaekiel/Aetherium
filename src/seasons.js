@@ -16,7 +16,7 @@ export const SEASONS=Object.freeze([
     'Une région de cristaux oubliés, de gardiens et de secrets enfouis.',[
       part('origines','I','Origines','Les premières légendes des Marches de Verre.',{released:true,first:1,last:24}),
       part('reflets-brises','II','Les Reflets brisés','Dans les Marches de Verre, les miroirs n’obéissent plus.',{released:true,first:25,last:48}),
-      part('au-dela-du-verre','III','Au-delà du Verre','L’ultime secret des Marches attend d’être découvert.',{signature:true})
+      part('au-dela-du-verre','III','Au-delà du Verre','Deux mémoires. Un seul horizon à construire.',{signature:true})
     ]),
   season('plateau-nebuleux',2,'Le Plateau Nébuleux',
     'Un autre horizon d’Aetherium, encore inexploré.',[
