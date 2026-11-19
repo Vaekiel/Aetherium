@@ -5,6 +5,8 @@ import {duplicateDustReward} from './duplicate-rewards.js';
 import {boosterMoment} from './booster-feedback.js?v=booster-polish-1';
 import {applyCardIllustration,hasApprovedArt,CARD_ART} from './card-art.js?v=au-dela-booster-1';
 import {codexProgress,filterCodex} from './codex.js';
+import {FINISHES,FINISH_KEYS,restoreFinishCounts,synchronizeFinishCounts,finishQuantity,finishUnique,finishTotal,preferredFinish} from './finishes.js';
+import {enableHolographicInspection} from './finish-interaction.js';
 import {sanitizeRecentFinds,recordRecentFind,buildLivingArchive} from './living-archives.js?v=au-dela-booster-1';
 import {createBackup,decodeBackup,installImportedSave,restorePreviousSave,PREVIOUS_SAVE_KEY,MAX_BACKUP_SIZE} from './save-backup.js';
 import {SEASONS,seasonById,collectionById,cardsForCollection,collectionForCard,seasonProgress} from './seasons.js?v=au-dela-booster-1';
@@ -106,12 +108,22 @@ const SAVE='aetherium-save-v1';
 const fresh=()=>({coins:300,dust:0,owned:{},shiny:{},wins:0,earned:0,opened:0,goalId:null,difficulty:'aventure',trialStats:[],collectionMilestones:{},recentFinds:[],alchemyKnown:[],trialRecords:[],titleId:null,expedition:{route:null,step:0,mode:null,armed:false,completedRoutes:[]}});
 function load(){try{const raw=JSON.parse(localStorage.getItem(SAVE));if(!raw||typeof raw!=='object')return fresh();const s=fresh();for(const field of ['coins','dust','wins','earned','opened'])if(Number.isSafeInteger(raw[field])&&raw[field]>=0&&raw[field]<1e9)s[field]=raw[field];for(const c of CARDS){const n=raw.owned?.[c.id];if(Number.isSafeInteger(n)&&n>0&&n<1e6)s.owned[c.id]=n;if(raw.shiny?.[c.id]===true&&s.owned[c.id])s.shiny[c.id]=true}if(Number.isSafeInteger(raw.goalId)&&CARDS.some(c=>c.id===raw.goalId&&c.signature!==true)&&!s.owned[raw.goalId])s.goalId=raw.goalId;if(['initiation','aventure','maitrise'].includes(raw.difficulty))s.difficulty=raw.difficulty;if(Array.isArray(raw.trialStats))s.trialStats=raw.trialStats;if(Array.isArray(raw.trialRecords))s.trialRecords=sanitizedTrialRecords(raw.trialRecords);s.collectionMilestones=sanitizeMilestoneClaims(raw.collectionMilestones);if(Array.isArray(raw.recentFinds))s.recentFinds=sanitizeRecentFinds(raw.recentFinds);if(Array.isArray(raw.alchemyKnown))s.alchemyKnown=sanitizeAlchemyKnown(raw.alchemyKnown);if(Number.isInteger(raw.titleId)&&raw.titleId>=0&&raw.titleId<5)s.titleId=raw.titleId;if(raw.expedition)s.expedition=sanitizeExpedition(raw.expedition);return s}catch{return fresh()}}
 let state=load();
+// Adopt legacy cards without altering the original key or owned quantities.
+// Existing 'shiny' booleans map to at least one Chromatique; new saves have
+// exact quantities per finish and are restored without guessing.
+try{
+  const old=JSON.parse(localStorage.getItem(SAVE)||'null');
+  state.finishCounts=restoreFinishCounts(state.owned,state.shiny,old?.finishCounts);
+}catch{
+  state.finishCounts=restoreFinishCounts(state.owned,state.shiny);
+}
+synchronizeFinishCounts(state);
 state.trialStats=sanitizedTrialStats(state.trialStats);
 state.trialRecords=sanitizedTrialRecords(state.trialRecords);
 state.titleId=validEquippedTitle(state.titleId,state.trialStats,state.trialRecords);
 state.expedition=sanitizeExpedition(state.expedition);
 let boosterBusy=false;
-function save(){try{localStorage.setItem(SAVE,JSON.stringify(state))}catch{notify('Sauvegarde indisponible dans ce navigateur.')}}
+function save(){synchronizeFinishCounts(state);try{localStorage.setItem(SAVE,JSON.stringify(state))}catch{notify('Sauvegarde indisponible dans ce navigateur.')}}
 let toastTimer;
 function notify(message){const el=$('#toast');el.textContent=message;el.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove('show'),3000)}
 function update(){if(state.goalId&&state.owned[state.goalId])state.goalId=null;save();$('#coins').textContent=state.coins.toLocaleString('fr-FR');$('#dust').textContent=state.dust.toLocaleString('fr-FR');$('#buy').disabled=state.coins<PACK_PRICE||boosterBusy;for(const control of $$('.booster-choice'))control.disabled=boosterBusy;$('#collection-progress').textContent=Object.keys(state.owned).length+' / '+CARDS.length;
@@ -120,6 +132,14 @@ $('#mobile-collection-progress').textContent=Object.keys(state.owned).length+' /
   $('#codex-card-count').textContent=Object.keys(state.owned).length+' / '+CARDS.length;
   $('#codex-chromatic-count').textContent=chromaticTotal+' / '+CARDS.length;
   $('#mobile-chromatic-count').textContent='✧ '+chromaticTotal+' / '+CARDS.length+' Chromatiques';
+  for(const finish of FINISH_KEYS){
+    const unique=finishUnique(state.finishCounts,finish,CARDS);
+    const copies=finishTotal(state.finishCounts,finish,CARDS);
+    const el=document.querySelector('#codex-'+finish+'-count');
+    if(el)el.textContent=unique+' / '+CARDS.length+' · '+copies+' ex.';
+    const mobile=document.querySelector('#mobile-'+finish+'-count');
+    if(mobile)mobile.textContent=FINISHES[finish].symbol+' '+unique+' / '+CARDS.length;
+  }
   renderAchievements();renderAtelier()}
 function grant(value){state.coins+=value;state.earned+=value;state.wins++;update();notify('+'+value+' Couronnes remportées !')}
 const MAIN_PAGES=['jouer','boosters','collection','atelier'];
