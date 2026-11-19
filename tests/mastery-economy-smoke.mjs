@@ -85,7 +85,7 @@ assert.equal(refreshes,1);
 assert.ok(game.status.textContent.includes('100/100 · +85 Couronnes'));
 
 const html=readFileSync('index.html','utf8');
-assert.ok(html.includes('main.js?v=mastery-balance-2'),'The browser loads fresh changes');
+assert.ok(html.includes('main.js?v=revers-expedition-1'),'The browser loads fresh changes');
 assert.ok(main.includes("from './trial-progress.js?v=mastery-balance-2'"));
 assert.ok(main.includes("complete(3,'Fouille accomplie ! '+safeTarget+' dalles sûres ont été explorées.',{hints:sondes})"),
   'The game sends real probe usage to scoring');
