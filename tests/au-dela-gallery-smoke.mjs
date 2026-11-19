@@ -30,11 +30,15 @@ const expected=Object.freeze([
  [65,'serment-des-passages'],
  [66,'armure-de-l-aube-intacte'],
  [67,'observatoire-des-horizons'],
- [68,'aelys-gardienne-des-liens']
+ [68,'aelys-gardienne-des-liens'],
+ [69,'convergence-des-souvenirs'],
+ [70,'arpenteur-des-premiers-jours'],
+ [71,'phenix-des-destins-reunis'],
+ [72,'coeur-des-marches']
 ]);
-assert.equal(AU_DELA_GALLERY_ART.length,20);
-assert.ok(html.includes('Les vingt premiers horizons'));
-assert.ok(html.includes('20 illustrations sur 24.'));
+assert.equal(AU_DELA_GALLERY_ART.length,24);
+assert.ok(html.includes('Les vingt-quatre horizons'));
+assert.ok(html.includes('24 illustrations sur 24.'));
 assert.ok(Object.isFrozen(AU_DELA_GALLERY_ART));
 assert.deepEqual(AU_DELA_GALLERY_ART.map(item=>[item.id,item.slug]),expected);
 assert.ok(AU_DELA_GALLERY_ART.every(item=>Object.isFrozen(item)));
@@ -61,7 +65,7 @@ for(const art of AU_DELA_GALLERY_ART){
   statSync('assets/cards/'+art.slug+'.webp').size,
   'La vignette doit être plus légère : '+art.slug);
 }
-// Le pilote n° 49 et les neuf nouvelles cartes se consultent dans la
+// Les 24 illustrations des trois lots se consultent dans la
 // galerie ; aucune image ne se retrouve dans un pool de cartes obtenables.
 assert.equal(PUBLISHED.length,48);
 assert.equal(ORIGINES.length,24);
@@ -77,8 +81,8 @@ assert.ok(main.includes("const SAVE='aetherium-save-v1'"));
 assert.ok(html.includes('id="au-dela-gallery" class="au-dela-gallery" hidden'));
 assert.ok(html.includes('id="au-dela-gallery-grid"'));
 assert.ok(html.includes('au-dela-gallery.css?v=au-dela-lot-1'));
-assert.ok(html.includes('main.js?v=au-dela-lot-2'));
-assert.ok(main.includes("from './au-dela-gallery.js?v=au-dela-lot-2'"));
+assert.ok(html.includes('main.js?v=au-dela-lot-3'));
+assert.ok(main.includes("from './au-dela-gallery.js?v=au-dela-lot-3'"));
 assert.ok(main.includes("$('#au-dela-gallery').hidden=!showAuDelaTeaser;"));
 assert.ok(main.includes("if(showAuDelaTeaser)mountAuDelaGallery($('#au-dela-gallery-grid'));"));
 assert.ok(main.includes("$('#collection-layout').hidden=isUpcoming"),'Aucun accès à la grille des cartes jouables');
@@ -101,13 +105,14 @@ globalThis.document={
 const container=node('div');
 mountAuDelaGallery(container);
 assert.equal(container.dataset.loaded,'true');
-assert.equal(container.children.length,1,'Les 20 vignettes sont montées dans un fragment unique');
+assert.equal(container.children.length,1,'Les 24 vignettes sont montées dans un fragment unique');
 const figures=container.children[0].children;
-assert.equal(figures.length,20);
+assert.equal(figures.length,24);
 for(let i=0;i<figures.length;i++){
  const fig=figures[i],card=AU_DELA_GALLERY_ART[i];
  assert.equal(fig.tagName,'figure');
  assert.equal(fig.dataset.rarity,card.rarity);
+ assert.equal(fig.dataset.signature,card.signature?'true':undefined);
  const [link,caption]=fig.children;
  assert.equal(link.href,card.hd);
  assert.equal(link.target,'_blank');
@@ -121,8 +126,9 @@ for(let i=0;i<figures.length;i++){
  assert.equal(img.width,350);
  assert.equal(img.height,525);
  assert.equal(caption.children[1].textContent,card.name);
+ assert.equal(caption.children[0].textContent.includes('Signature'),Boolean(card.signature));
  assert.ok(caption.children[2].textContent.includes(card.lore));
 }
 mountAuDelaGallery(container);
 assert.equal(container.children.length,1,'Pas de double montage sur le même écran');
-console.log('AETHERIUM — lots 1 et 2 : 20 illustrations bien reliées aux cartes 49–68, 38 WebP valides (pilote inclus), galerie responsive et collection non publiée.');
+console.log('AETHERIUM — 24 illustrations reliées aux cartes 49–72, 48 WebP valides, Signature identifiée et collection non publiée.');

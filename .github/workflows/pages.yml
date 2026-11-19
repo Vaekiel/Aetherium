@@ -93,6 +93,10 @@ jobs:
             test -s "assets/cards/${slug}.webp"
             test -s "assets/cards/${slug}-thumb.webp"
           done
+          for slug in convergence-des-souvenirs arpenteur-des-premiers-jours phenix-des-destins-reunis coeur-des-marches; do
+            test -s "assets/cards/${slug}.webp"
+            test -s "assets/cards/${slug}-thumb.webp"
+          done
           test -s src/reflets-preview.css
           test -s src/reflets-gallery.css
           test -s src/reflets-gallery.js

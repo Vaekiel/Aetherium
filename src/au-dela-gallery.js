@@ -1,4 +1,4 @@
-/* AETHERIUM — Au-delà du Verre, deux premiers lots : aperçu artistique des cartes 49–68.
+/* AETHERIUM — Au-delà du Verre, collection complète en aperçu artistique : cartes 49–72.
    Les 24 cartes de la partie III restent NON PUBLIÉES : pas de tirage, Forge,
    sauvegarde, attribution, ni achat via cette galerie. */
 import {AU_DELA_DU_VERRE_DRAFT} from './au-dela-du-verre-catalog.js';
@@ -23,7 +23,11 @@ const ILLUSTRATIONS=Object.freeze([
   [65,'serment-des-passages'],
   [66,'armure-de-l-aube-intacte'],
   [67,'observatoire-des-horizons'],
-  [68,'aelys-gardienne-des-liens']
+  [68,'aelys-gardienne-des-liens'],
+  [69,'convergence-des-souvenirs'],
+  [70,'arpenteur-des-premiers-jours'],
+  [71,'phenix-des-destins-reunis'],
+  [72,'coeur-des-marches']
 ]);
 
 const RARETE=Object.freeze({
@@ -38,7 +42,7 @@ export const AU_DELA_GALLERY_ART=Object.freeze(ILLUSTRATIONS.map(([id,slug])=>{
   const carte=AU_DELA_DU_VERRE_DRAFT.find(item=>item.id===id);
   if(!carte)throw new Error('Illustration sans carte dans Au-delà du Verre : '+id);
   return Object.freeze({
-    id,slug,name:carte.name,type:carte.type,rarity:carte.rarity,lore:carte.lore,
+    id,slug,name:carte.name,type:carte.type,rarity:carte.rarity,lore:carte.lore,signature:carte.signature,
     hd:'./assets/cards/'+slug+'.webp',
     thumb:'./assets/cards/'+slug+'-thumb.webp'
   });
@@ -52,6 +56,7 @@ export function mountAuDelaGallery(conteneur){
     const figure=document.createElement('figure');
     figure.className='au-dela-gallery-card';
     figure.dataset.rarity=carte.rarity;
+    if(carte.signature)figure.dataset.signature='true';
 
     const lien=document.createElement('a');
     lien.className='au-dela-gallery-card-art';
@@ -74,7 +79,7 @@ export function mountAuDelaGallery(conteneur){
     const legende=document.createElement('figcaption');
     const meta=document.createElement('span');
     meta.className='au-dela-gallery-meta';
-    meta.textContent='N° '+carte.id+' · '+RARETE[carte.rarity]+' · '+carte.type;
+    meta.textContent='N° '+carte.id+' · '+RARETE[carte.rarity]+' · '+carte.type+(carte.signature?' · Signature':'');
     const titre=document.createElement('strong');
     titre.textContent=carte.name;
     const lore=document.createElement('em');
