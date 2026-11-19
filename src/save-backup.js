@@ -12,7 +12,7 @@ const validInt=(n,upper=999999999)=>Number.isSafeInteger(n)&&n>=0&&n<=upper;
 const isValidCardKey=(key,validIds)=>/^[1-9]\d*$/.test(key)&&validIds.has(Number(key));
 const modes=new Set(['initiation','aventure','maitrise']);
 const saveKeys=new Set([
-  'coins','dust','wins','earned','opened','owned','shiny','goalId',
+  'coins','dust','wins','earned','opened','owned','shiny','finishCounts','goalId',
   'difficulty','trialStats','trialRecords','collectionMilestones',
   'recentFinds','alchemyKnown','titleId','expedition'
 ]);
@@ -36,6 +36,23 @@ export function validateSaveState(data,cardIds){
   for(const [id,flag] of Object.entries(data.shiny)){
     if(!isValidCardKey(id,validIds)||flag!==true||!data.owned[id])
       throw new Error('Variante Chromatique incohérente.');
+  }
+  if(data.finishCounts!==undefined){
+    const counts=data.finishCounts;
+    const finishNames=['normal','chromatic','holographic','calligraphic'];
+    if(!isRecord(counts)||Object.keys(counts).some(k=>!finishNames.includes(k))||
+      finishNames.some(k=>!isRecord(counts[k])))
+      throw new Error('Inventaire des finitions invalide.');
+    for(const finish of finishNames)for(const [id,amount] of Object.entries(counts[finish])){
+      if(!isValidCardKey(id,validIds)||!validInt(amount,999999)||amount===0||!data.owned[id])
+        throw new Error('Quantité de finition invalide : '+finish+'.');
+    }
+    for(const [id,total] of Object.entries(data.owned)){
+      const sum=finishNames.reduce((n,finish)=>n+(counts[finish][id]||0),0);
+      if(sum!==total)throw new Error('Quantité de finitions incohérente avec le total de cartes.');
+      if((counts.chromatic[id]||0)>0!==Boolean(data.shiny[id]))
+        throw new Error('Variante Chromatique incohérente avec les finitions.');
+    }
   }
   if(data.goalId!==undefined&&data.goalId!==null&&
     (!validIds.has(data.goalId)||!!data.owned[data.goalId]))
