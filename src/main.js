@@ -2099,7 +2099,7 @@ $$('.booster-choice').forEach(control=>control.addEventListener('click',
  * Loading the artwork eagerly is important: on Android WebView a lazy image
  * inside an initially hidden, flipping card can remain a blank rectangle. */
 function boosterCardArtwork(item){
-  const buttonCard=makeCard(item.card,item.shiny);
+  const buttonCard=makeCard(item.card,item.finish||(item.shiny?'chromatic':'normal'));
   const artwork=el('div',buttonCard.className);
   artwork.style.cssText=buttonCard.style.cssText;
   while(buttonCard.firstChild)artwork.append(buttonCard.firstChild);
@@ -2131,6 +2131,8 @@ function showBoosterCard(index,focus=true){
   tile.dataset.rarity=item.card.rarity;
   tile.style.setProperty('--pull-edge',RARITIES[item.card.rarity].color);
   tile.classList.toggle('is-chromatic',item.shiny);
+  tile.classList.toggle('is-holographic',item.finish==='holographic');
+  tile.classList.toggle('is-calligraphic',item.finish==='calligraphic');
   const frame=el('div','pull-frame');
   const back=el('button','pull-back');
   back.type='button';
@@ -2141,8 +2143,10 @@ function showBoosterCard(index,focus=true){
   front.inert=true;front.setAttribute('aria-hidden','true');
   front.append(boosterCardArtwork(item));
   frame.append(back,front);
+  const specialFinish=item.finish&&item.finish!=='normal'?item.finish:(item.shiny?'chromatic':null);
   const tag=el('div','pull-tag'+(item.shiny?' is-chromatic':item.isNew?' is-new':' is-duplicate'),
-    item.shiny?'✧ CARTE CHROMATIQUE':item.isNew?'✧ Nouvelle carte':'Doublon · +'+item.dustGain+' Éclats');
+    specialFinish?FINISHES[specialFinish].symbol+' CARTE '+FINISHES[specialFinish].label.toUpperCase():
+    item.isNew?'✧ Nouvelle carte':'Doublon · +'+item.dustGain+' Éclats');
   tile.append(frame,tag);
   boosterGrid.append(tile);
   boosterProgressFill.style.width=(index/currentDraw.length*100)+'%';
@@ -2166,7 +2170,9 @@ function revealBoosterCard(){
   boosterProgressFill.style.width=((currentIndex+1)/currentDraw.length*100)+'%';
   const item=currentDraw[currentIndex];
   $('#pack-title').textContent=item.card.name;
-  $('#pack-msg').textContent=RARITIES[item.card.rarity].label+(item.shiny?' · ✧ CHROMATIQUE !':'')+
+  $('#pack-msg').textContent=RARITIES[item.card.rarity].label+
+    ((item.finish&&item.finish!=='normal')?' · '+FINISHES[item.finish].symbol+' '+FINISHES[item.finish].label.toUpperCase()+' !':
+      item.shiny?' · ✧ CHROMATIQUE !':'')+
     (item.isNew?' · Nouvelle carte':' · Doublon (+'+item.dustGain+' Éclats)');
   nextPullButton.textContent=currentIndex===currentDraw.length-1?'Voir les cinq cartes':'Carte suivante ›';
   nextPullButton.hidden=false;
@@ -2183,7 +2189,7 @@ function completeBoosterReveal(){
   boosterActions.hidden=true;nextPullButton.hidden=true;boosterStep.hidden=true;
   boosterGrid.classList.remove('booster-pulls','booster-single');
   boosterGrid.classList.add('booster-gallery');
-  boosterGrid.replaceChildren(...currentDraw.map(item=>makeCard(item.card,item.shiny)));
+  boosterGrid.replaceChildren(...currentDraw.map(item=>makeCard(item.card,item.finish||(item.shiny?'chromatic':'normal'))));
   boosterSummary.hidden=false;
   // A single, late reveal highlight for exceptional finds. Never preview
   // hidden cards or alter the already-saved purchase and shard rewards.
@@ -2201,7 +2207,9 @@ function completeBoosterReveal(){
     ...(momentNote?[momentNote]:[]),
     el('span','',drawSummary.newCount+' nouvelle(s)'),
     el('span','',drawSummary.duplicates+' doublon(s) · +'+drawSummary.dustEarned+' Éclats'),
-    el('span',drawSummary.shinyCount?'booster-star':'',drawSummary.shinyCount+' Chromatique(s)')
+    el('span',drawSummary.shinyCount?'booster-star':'',drawSummary.shinyCount+' Chromatique(s)'),
+    el('span',drawSummary.holographicCount?'booster-star':'',drawSummary.holographicCount+' Holographique(s)'),
+    el('span',drawSummary.calligraphicCount?'booster-star':'',drawSummary.calligraphicCount+' Calligraphique(s)')
   );
   $('#pack-title').textContent='Archive ouverte · '+state.opened;
   $('#pack-msg').textContent='Voici tes cinq cartes. Touche une carte pour la retrouver dans le Codex.';
@@ -2237,21 +2245,28 @@ function openOriginesBooster(){
   state.coins-=PACK_PRICE;
   state.opened++;
   let newCount=0,duplicates=0,shinyCount=0,dustEarned=0;
+  let holographicCount=0,calligraphicCount=0;
   currentDraw=results.map(item=>{
     const card=CARDS[item.id-1];
     const isNew=!state.owned[card.id];
     const dustGain=isNew?0:duplicateDustReward(card);
     if(isNew)newCount++;else{duplicates++;state.dust+=dustGain;dustEarned+=dustGain}
     state.owned[card.id]=(state.owned[card.id]||0)+1;
+    const finish=item.finish||(item.shiny?'chromatic':'normal');
+    if(!state.finishCounts)state.finishCounts={normal:{},chromatic:{},holographic:{},calligraphic:{}};
+    const finishInventory=state.finishCounts[finish]||state.finishCounts.normal;
+    finishInventory[card.id]=(finishInventory[card.id]||0)+1;
     const firstChromatic=item.shiny&&!state.shiny[card.id];
     if(item.shiny){state.shiny[card.id]=true;shinyCount++}
+    if(finish==='holographic')holographicCount++;
+    if(finish==='calligraphic')calligraphicCount++;
     if(firstChromatic||isNew){
       state.recentFinds=recordRecentFind(state.recentFinds,card.id,
         firstChromatic?'chromatic':'new');
     }
-    return {...item,card,isNew,dustGain};
+    return {...item,finish,card,isNew,dustGain};
   });
-  drawSummary={newCount,duplicates,shinyCount,dustEarned};
+  drawSummary={newCount,duplicates,shinyCount,holographicCount,calligraphicCount,dustEarned};
   update(); // Persists the purchase before any animation or navigation.
   boosterSummary.hidden=true;
   boosterSummary.replaceChildren();
