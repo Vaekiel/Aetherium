@@ -101,8 +101,13 @@ const html=read('index.html'),css=read('src/reflets-booster.css');
 for(const id of ['booster-collection-kicker','booster-family-title','booster-family-description'])
  assert.ok(html.includes('id="'+id+'"'));
 assert.ok(html.includes('data-booster="origines"')&&html.includes('data-booster="reflets-brises"'));
-assert.ok(html.includes('reflets-booster.css?v=reflets-release-1'));
+assert.ok(html.includes('reflets-booster.css?v=mobile-pack-align-1'));
 assert.ok(css.includes('@media(max-width:850px)')&&css.includes('.pack.pack-reflets'));
+const mobileWrapperRule=css.match(/@media\(max-width:850px\)\{[\s\S]*?#page-boosters \.pack-side \.pack\.pack-origines\{([^}]+)\}/)?.[1];
+assert.ok(mobileWrapperRule,'All three mobile boosters share the same wrapper grid placement');
+assert.match(mobileWrapperRule,/grid-row:\s*2\/6/);
+assert.match(mobileWrapperRule,/align-self:\s*start/,'Booster image starts at a stable top edge, independent of wrapped text');
+assert.match(mobileWrapperRule,/justify-self:\s*center/,'Booster image remains horizontally centered in its column');
 
 /* Browser startup regression: the booster selector must use querySelectorAll.
    querySelector (single HTMLElement) has no forEach and is not iterable. */
