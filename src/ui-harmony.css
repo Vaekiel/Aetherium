@@ -21,7 +21,7 @@
   margin:0 0 19px;padding:0 0 13px;
   border-bottom:1px solid var(--archives-ui-rule);
 }
-#page-jouer>.heading h2,
+#page-jouer>.heading h1,
 #page-boosters>.heading h1,
 #page-atelier>.heading h1,
 #page-succes>.heading h1{
@@ -30,7 +30,7 @@
   font-family:Georgia,"Times New Roman",serif;
   font-variant:small-caps;letter-spacing:.012em;line-height:1.15;
 }
-#page-jouer>.heading h2{font-size:clamp(24px,2.1vw,27px)}
+#page-jouer>.heading h1{font-size:clamp(26px,2.4vw,33px)}
 #page-boosters>.heading h1,
 #page-atelier>.heading h1,
 #page-succes>.heading h1{font-size:clamp(26px,2.4vw,33px)}
@@ -47,16 +47,46 @@
 #page-boosters>.kicker,
 #page-atelier>.kicker,
 #page-succes>.kicker,
-#page-jouer .intro .kicker,
+#page-jouer>.kicker,
 #page-expeditions .expedition-hero .kicker,
 #page-collection .collection-header .kicker,
 #page-collection .mobile-collection-heading .kicker{
   color:var(--archives-ui-gold);
   font-size:11px;line-height:1.35;letter-spacing:.12em;
 }
+#page-jouer>.kicker,
 #page-boosters>.kicker,
 #page-atelier>.kicker,
 #page-succes>.kicker{margin:0 0 7px}
+
+/* Épreuves : même titre de page que Boosters/Atelier, petite scène
+   narrative en dessous. L’illustration approuvée reste dans shell.css,
+   sans téléchargement supplémentaire ni panneau décoratif ajouté. */
+#page-jouer .intro{
+  min-height:120px;margin:0 0 17px;padding:18px 24px;
+  background-size:auto,260px auto,auto;
+  background-position:center,right 43%,center;
+}
+#page-jouer .intro>div:first-child{max-width:min(76%,690px)}
+#page-jouer .intro h2{
+  margin:0 0 5px;color:var(--archives-ui-ink);
+  font:small-caps clamp(20px,2vw,27px)/1.16 Georgia,"Times New Roman",serif;
+  letter-spacing:.015em;
+}
+#page-jouer .intro p:not(.kicker){
+  max-width:600px;margin:0;color:var(--archives-ui-muted);
+  font:13px/1.45 Georgia,"Times New Roman",serif;
+}
+#page-jouer .game-picker{margin-bottom:16px}
+#page-jouer .difficulty-panel,
+#page-jouer .expedition-portal,
+#page-jouer .play-lore{
+  border-color:var(--archives-ui-border);
+  border-radius:var(--archives-ui-radius);
+}
+@media(min-width:851px){
+  #page-jouer .game-picker .game-choice{min-height:96px}
+}
 
 /* Le Codex a un véritable entête sur PC et un entête compact sur mobile. */
 #page-collection .collection-header{
@@ -139,7 +169,19 @@
     align-items:flex-start;gap:4px 10px;
     margin-bottom:14px;padding-bottom:11px;
   }
-  #page-jouer>.heading h2{font-size:24px}
+  #page-jouer>.heading h1{font-size:25px}
+  /* Bandeau secondaire compact : les mini-jeux apparaissent plus haut. */
+  #page-jouer .intro{
+    min-height:0;padding:14px 16px;margin:0 0 14px;
+    background-size:auto,145px auto,auto;
+    background-position:center,right center,center;
+  }
+  #page-jouer .intro>div:first-child{width:100%;max-width:100%}
+  #page-jouer .intro h2{font-size:clamp(19px,5.3vw,23px);margin-bottom:5px}
+  #page-jouer .intro p:not(.kicker){max-width:min(78%,375px);font-size:12px;line-height:1.38}
+  #page-jouer .game-picker{margin-bottom:11px}
+  #page-jouer .expedition-portal{margin-bottom:12px}
+
   #page-boosters>.heading h1,
   #page-atelier>.heading h1,
   #page-succes>.heading h1{font-size:25px}
@@ -149,6 +191,7 @@
   #page-succes>.heading>span{
     flex-basis:100%;font-size:11px;line-height:1.35;
   }
+  #page-jouer>.kicker,
   #page-boosters>.kicker,
   #page-atelier>.kicker,
   #page-succes>.kicker{font-size:10px;margin-bottom:6px}
@@ -173,6 +216,10 @@
   #page-collection .codex-discovery-tabs button{min-height:42px}
   /* Le tiroir de filtres conserve son ombre latérale native sur mobile. */
   #page-collection .filters{box-shadow:10px 0 32px #050811b0}
+}
+@media(max-width:420px){
+  #page-jouer .intro{background-size:auto,112px auto,auto}
+  #page-jouer .intro p:not(.kicker){max-width:84%}
 }
 @media(prefers-reduced-motion:reduce){
   .page button.primary,.page button.secondary{transition:none!important}
