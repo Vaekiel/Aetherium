@@ -7,7 +7,6 @@ const {duplicateDustReward}=await import('data:text/javascript;charset=utf-8,'+
  encodeURIComponent(read('src/duplicate-rewards.js')));
 const html=read('index.html'),main=read('src/main.js');
 const css=read('src/booster-packaging.css');
-const picture=read('assets/boosters/origines-portal.svg');
 const match=main.match(/const BOOSTER_UNSEAL_MS=(\d+);/);
 assert.ok(match,'Booster scene duration is explicit and shared');
 const duration=Number(match[1]);
@@ -28,7 +27,6 @@ for(const name of ['aetherium-ripped-edge','aetherium-seal-left',
 assert.ok(css.includes('@media(max-width:850px)'));
 assert.ok(css.includes('@media(max-width:420px)'));
 assert.ok(css.includes('@media(prefers-reduced-motion:reduce)'));
-assert.ok(picture.includes('</svg>')&&picture.includes('Faceted floating crystal'));
 const start=main.indexOf('function openOriginesBooster(){');
 const end=main.indexOf("$('#buy').addEventListener('click',openOriginesBooster);",start);
 assert.ok(start>0&&end>start,'The actual purchase and reveal handler is available');

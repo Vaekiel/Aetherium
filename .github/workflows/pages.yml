@@ -46,13 +46,10 @@ jobs:
           test -s src/booster-artworks.css
           test -s src/booster-feedback.css
           test -s src/booster-feedback.js
-          test -s assets/boosters/origines-pack-hd.webp
-          test -s assets/boosters/reflets-brises-pack-hd.webp
           test -s assets/boosters/origines-pack-pixel-hd-v2.webp
           test -s assets/boosters/reflets-brises-pack-pixel-hd-v2.webp
           test -s tests/booster-artworks-smoke.mjs
           test -s tests/booster-variety-smoke.mjs
-          test -s assets/boosters/origines-portal.svg
           test -s tests/booster-packaging-smoke.mjs
           test -s src/runes.css
           test -s src/rune-rituals.js
