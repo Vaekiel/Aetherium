@@ -15,9 +15,10 @@ assert.ok(html.includes('src/shell.css'),'Nouvelle interface chargée');
 const styleLinks=[...html.matchAll(/href="\.\/src\/([^" ]+\.css)(?:\?[^" ]+)?"/g)].map(x=>x[1]);
 assert.ok(styleLinks.indexOf('chromatic.css')<styleLinks.indexOf('codex.css'),
  'La finition Chromatique reste chargée avant le Codex');
-assert.equal(styleLinks.at(-3),'codex.css','Le Codex garde ses styles dédiés');
-assert.equal(styleLinks.at(-2),'living-archives.css','La vitrine des Archives Vivantes est chargée après le Codex');
-assert.equal(styleLinks.at(-1),'trial-progress.css','Les Épreuves chargent leurs styles de progression après le Codex');
+assert.equal(styleLinks.at(-4),'codex.css','Le Codex garde ses styles dédiés');
+assert.equal(styleLinks.at(-3),'living-archives.css','La vitrine des Archives Vivantes est chargée après le Codex');
+assert.equal(styleLinks.at(-2),'trial-progress.css','Les Épreuves chargent leurs styles de progression après le Codex');
+assert.equal(styleLinks.at(-1),'ui-harmony.css','Le style transversal harmonise tous les écrans en dernier');
 assert.ok(styleLinks.includes('crafting.css'),'La Forge existante est conservée');
 assert.ok(!html.includes('id="chromatic-showcase"'),'Le panneau de comparaison Chromatique a été retiré du Codex');
 assert.ok(styleLinks.includes('navigation.css'),'La navigation validée reste intégrée');
