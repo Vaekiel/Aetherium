@@ -89,7 +89,7 @@ function applyMix(){
   const t=now();
   master.gain.setTargetAtTime(active?prefs.volume/100*.42:0,t,.06);
   fxBus.gain.setTargetAtTime(active&&prefs.effects?1:0,t,.04);
-  ambientBus.gain.setTargetAtTime(active&&prefs.ambience&&!document.hidden?.14:0,t,.7);
+  ambientBus.gain.setTargetAtTime(active&&prefs.ambience&&!document.hidden ? 0.14 : 0,t,.7);
 }
 function roomTo(page){
   currentRoom=ROOMS[page]?page:'jouer';
