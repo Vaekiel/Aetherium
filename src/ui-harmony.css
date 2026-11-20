@@ -1,0 +1,179 @@
+/* AETHERIUM — Les Archives : harmonisation UI 1
+   Une finition commune, sans toucher aux illustrations, cartes, mini-jeux,
+   navigation, sauvegardes ou animations de boosters. Chargé en dernier. */
+:root{
+  --archives-ui-ink:#f3e4cf;
+  --archives-ui-muted:#cbbdcf;
+  --archives-ui-gold:#dfbd91;
+  --archives-ui-rule:#9e84916b;
+  --archives-ui-border:#9e87998f;
+  --archives-ui-radius:4px;
+  --archives-ui-shadow:0 8px 22px #070b1f78;
+}
+
+/* Hiérarchie identique pour les quatre écrans à titre simple.
+   La scène des Épreuves et la bannière des Expéditions restent distinctives. */
+#page-jouer>.heading,
+#page-boosters>.heading,
+#page-atelier>.heading,
+#page-succes>.heading{
+  align-items:baseline;column-gap:15px;row-gap:5px;
+  margin:0 0 19px;padding:0 0 13px;
+  border-bottom:1px solid var(--archives-ui-rule);
+}
+#page-jouer>.heading h2,
+#page-boosters>.heading h1,
+#page-atelier>.heading h1,
+#page-succes>.heading h1{
+  min-width:0;margin:0;
+  color:var(--archives-ui-ink);
+  font-family:Georgia,"Times New Roman",serif;
+  font-variant:small-caps;letter-spacing:.012em;line-height:1.15;
+}
+#page-jouer>.heading h2{font-size:clamp(24px,2.1vw,27px)}
+#page-boosters>.heading h1,
+#page-atelier>.heading h1,
+#page-succes>.heading h1{font-size:clamp(26px,2.4vw,33px)}
+#page-jouer>.heading>span,
+#page-boosters>.heading>span,
+#page-atelier>.heading>span,
+#page-succes>.heading>span{
+  min-width:0;max-width:100%;overflow-wrap:anywhere;
+  color:var(--archives-ui-muted);
+  font:12px/1.45 Georgia,"Times New Roman",serif;
+}
+
+/* Le même discret repère de chapitre sur chaque destination. */
+#page-boosters>.kicker,
+#page-atelier>.kicker,
+#page-succes>.kicker,
+#page-jouer .intro .kicker,
+#page-expeditions .expedition-hero .kicker,
+#page-collection .collection-header .kicker,
+#page-collection .mobile-collection-heading .kicker{
+  color:var(--archives-ui-gold);
+  font-size:11px;line-height:1.35;letter-spacing:.12em;
+}
+#page-boosters>.kicker,
+#page-atelier>.kicker,
+#page-succes>.kicker{margin:0 0 7px}
+
+/* Le Codex a un véritable entête sur PC et un entête compact sur mobile. */
+#page-collection .collection-header{
+  min-width:0;margin-bottom:19px;padding-bottom:14px;
+  border-bottom:1px solid var(--archives-ui-rule);
+}
+#page-collection .collection-header h1{
+  color:var(--archives-ui-ink);line-height:1.15;
+}
+#page-collection .mobile-collection-heading h1{
+  color:var(--archives-ui-ink);font-variant:small-caps;line-height:1.15;
+}
+#page-expeditions .expedition-hero h1{color:var(--archives-ui-ink)}
+#page-expeditions .expedition-hero .kicker{margin:0 0 6px}
+
+/* Les grands panneaux appartiennent à la même famille visuelle.
+   Ne pas cibler les cartes : leurs cadres restent liés à leur rareté. */
+#page-jouer .intro,
+#page-jouer .games .game,
+#page-boosters .pack-side,
+#page-boosters .opening,
+#page-collection .codex-progress-panel,
+#page-collection .codex-season-banner,
+#page-collection .filters,
+#page-atelier .atelier-forge,
+#page-atelier .atelier-resource-card,
+#page-atelier .atelier-progress-card,
+#page-atelier .atelier-catalogue,
+#page-atelier .atelier-card-details,
+#page-expeditions .expedition-hero,
+#page-expeditions .expedition-panel,
+#page-succes .honorifics,
+#page-succes .achievement{
+  border-radius:var(--archives-ui-radius);
+  border-color:var(--archives-ui-border);
+  box-shadow:var(--archives-ui-shadow);
+}
+/* Le visuel intérieur des scènes, la forge, les paquets et leurs ombres
+   de rareté conservent leurs styles spécifiques. */
+#page-jouer .intro,
+#page-expeditions .expedition-hero{box-shadow:0 9px 26px #070b1f78,inset 0 0 0 4px #eed2a80a}
+
+/* Actions cohérentes, sans changer leur hiérarchie ni leurs couleurs d'état. */
+.page button.primary,
+.page button.secondary{
+  min-height:44px;border-radius:var(--archives-ui-radius);
+}
+#page-jouer .game-picker .game-choice,
+#page-boosters .booster-choice,
+#page-collection .codex-chapter,
+#page-collection .codex-discovery-tabs button,
+#page-collection .collection-toolbar button,
+#page-atelier #atelier-filter,
+#page-expeditions .expedition-choice,
+#page-succes .honorific{
+  border-radius:var(--archives-ui-radius);
+}
+#page-jouer button.primary:focus-visible,
+#page-jouer button.secondary:focus-visible,
+#page-boosters button.primary:focus-visible,
+#page-boosters button.secondary:focus-visible,
+#page-atelier button.primary:focus-visible,
+#page-atelier button.secondary:focus-visible,
+#page-succes button.primary:focus-visible,
+#page-succes button.secondary:focus-visible{
+  outline:2px solid #e9d0a8;outline-offset:3px;
+}
+
+/* Un rythme commun, sans nouvelle carte ou nouveau bloc de contenu. */
+#page-atelier .atelier-catalogue{margin-top:19px}
+#page-succes .honorifics{margin-bottom:18px}
+#page-collection .codex-progress-panel{margin-bottom:17px}
+#page-collection .codex-chapters{margin-bottom:18px}
+
+@media(max-width:850px){
+  #page-jouer>.heading,
+  #page-boosters>.heading,
+  #page-atelier>.heading,
+  #page-succes>.heading{
+    align-items:flex-start;gap:4px 10px;
+    margin-bottom:14px;padding-bottom:11px;
+  }
+  #page-jouer>.heading h2{font-size:24px}
+  #page-boosters>.heading h1,
+  #page-atelier>.heading h1,
+  #page-succes>.heading h1{font-size:25px}
+  #page-jouer>.heading>span,
+  #page-boosters>.heading>span,
+  #page-atelier>.heading>span,
+  #page-succes>.heading>span{
+    flex-basis:100%;font-size:11px;line-height:1.35;
+  }
+  #page-boosters>.kicker,
+  #page-atelier>.kicker,
+  #page-succes>.kicker{font-size:10px;margin-bottom:6px}
+  #page-collection .mobile-collection-heading{
+    min-width:0;margin-bottom:13px;padding-bottom:11px;
+    border-bottom:1px solid var(--archives-ui-rule);gap:8px;
+  }
+  #page-collection .mobile-collection-heading h1{
+    font-size:clamp(22px,6vw,25px);
+  }
+  #page-collection .mobile-collection-heading .kicker{font-size:10px}
+  #page-jouer .games .game,
+  #page-boosters .pack-side,
+  #page-boosters .opening,
+  #page-atelier .atelier-forge,
+  #page-atelier .atelier-resource-card,
+  #page-atelier .atelier-progress-card,
+  #page-atelier .atelier-catalogue,
+  #page-expeditions .expedition-panel,
+  #page-succes .honorifics,
+  #page-succes .achievement{box-shadow:0 5px 15px #070b1f6b}
+  #page-collection .codex-discovery-tabs button{min-height:42px}
+  /* Le tiroir de filtres conserve son ombre latérale native sur mobile. */
+  #page-collection .filters{box-shadow:10px 0 32px #050811b0}
+}
+@media(prefers-reduced-motion:reduce){
+  .page button.primary,.page button.secondary{transition:none!important}
+}
