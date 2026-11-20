@@ -4,7 +4,6 @@ const read=path=>readFileSync(path,'utf8');
 const html=read('index.html');
 const css=read('src/booster-packaging.css');
 const legacyCss=read('src/booster.css');
-const image=read('assets/boosters/origines-portal.svg');
 const data=read('src/data.js');
 const main=read('src/main.js');
 const pack=html.match(/<div class="pack pack-origines pack-illustrated" id="booster-pack" aria-hidden="true">([\s\S]*?)<\/div>/)?.[1];
@@ -39,13 +38,6 @@ assert.ok(css.includes('@media(max-width:420px)'));
 assert.ok(css.includes('prefers-reduced-motion:reduce'));
 assert.ok(css.includes('aetherium-foil-unseal'),'Existing opening animation gains a short foil unseal');
 assert.ok(legacyCss.includes('.pack.is-opening'),'Unseal class remains driven by validated controller');
-assert.ok(image.startsWith('<svg'));
-assert.ok(image.includes('</svg>'));
-assert.ok(image.includes('viewBox="0 0 600 850"'));
-assert.ok(image.includes('Ancient segmented arch'));
-assert.ok(image.includes('Faceted floating crystal'));
-assert.ok(!image.includes('<script')&&!image.includes('<image ')&&!image.includes('href=')&&!image.includes('<foreignObject'),
- 'Original artwork is self-contained and cannot load other resources');
 for(const token of ['const boosterArt=','boosterArt.classList.add(\'is-opening\')',
   'state.coins-=PACK_PRICE','drawPack()','state.opened++','state.dust+=dustGain',
   'update(); // Persists the purchase','showBoosterCard(0,false)',

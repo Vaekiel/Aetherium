@@ -10,6 +10,9 @@ const reflets=read('src/reflets-booster.css');
 const auDela=read('src/au-dela-booster.css');
 const assets=['origines-pack-pixel-hd-v2.webp','reflets-brises-pack-pixel-hd-v2.webp','au-dela-du-verre-pack-pixel-hd.webp'];
 
+assert.ok(!html.includes('origines-pack-hd.webp')&&!html.includes('reflets-brises-pack-hd.webp'),
+ 'Only current pixel-art HD booster packages may be shown');
+
 for(const file of assets){
   const path='assets/boosters/'+file;
   const bytes=readFileSync(path);
