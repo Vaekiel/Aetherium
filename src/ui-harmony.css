@@ -224,3 +224,73 @@
 @media(prefers-reduced-motion:reduce){
   .page button.primary,.page button.secondary{transition:none!important}
 }
+
+/* Finition v2 : un langage commun pour les sélections, sans toucher
+   à la lumière des cartes, aux paquets ni aux effets de rareté. */
+:root{
+  --archives-ui-selected:#dfbd91;
+  --archives-ui-focus:#f1d7ad;
+}
+#page-jouer .game-picker .game-choice.active,
+#page-jouer .difficulty-options button.is-active,
+#page-boosters .booster-choice.is-selected,
+#page-collection .codex-season.is-active,
+#page-collection .codex-chapter.is-active,
+#page-collection .codex-discovery-tabs button.is-active,
+#page-atelier .atelier-craft-tile.is-selected,
+#page-succes .honorific.is-equipped{
+  border-color:var(--archives-ui-selected);
+}
+#page-jouer .game-picker .game-choice:focus-visible,
+#page-jouer .difficulty-options button:focus-visible,
+#page-boosters .booster-choice:focus-visible,
+#page-collection .codex-season:focus-visible,
+#page-collection .codex-chapter:focus-visible,
+#page-collection .codex-discovery-tabs button:focus-visible,
+#page-atelier .atelier-craft-tile:focus-visible,
+#page-succes .honorific:focus-visible{
+  outline:2px solid var(--archives-ui-focus);
+  outline-offset:2px;
+}
+/* Une hiérarchie secondaire stable, sans ajouter de nouvelles sections. */
+#page-collection .codex-chapters-head h2,
+#page-collection .codex-section-head h2,
+#page-atelier .atelier-catalogue-head h2,
+#page-succes .honorifics-header h2{
+  color:var(--archives-ui-ink);
+  letter-spacing:.012em;
+}
+#page-jouer .game-choice-hint,
+#page-jouer .difficulty-description small,
+#page-collection .codex-season-state,
+#page-boosters #booster-family-description,
+#page-succes .honorific-state{
+  color:var(--archives-ui-muted);
+}
+/* Interaction tactile prévisible, sans modifier le comportement JS. */
+#page-jouer .game-picker .game-choice,
+#page-jouer .difficulty-options button,
+#page-boosters .booster-choice,
+#page-collection .codex-season,
+#page-collection .codex-chapter,
+#page-collection .codex-discovery-tabs button,
+#page-atelier .atelier-craft-tile,
+#page-succes .honorific{
+  touch-action:manipulation;
+}
+@media(max-width:850px){
+  #page-boosters .booster-choice{
+    min-height:44px;
+    font-size:11px;
+    line-height:1.3;
+  }
+  #page-collection .codex-discovery-tabs button{min-height:44px}
+  #page-jouer .game-choice-hint{font-size:11px;line-height:1.3}
+  #page-collection .codex-progress-line span{font-size:12px}
+  #page-succes .honorific-state{font-size:12px}
+}
+@media(max-width:360px){
+  #page-boosters .booster-choice{font-size:11px;padding-inline:4px}
+  #page-jouer .trial-records-current{font-size:10px}
+  #page-jouer .trial-challenge-goal{font-size:10px}
+}
