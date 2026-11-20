@@ -8,7 +8,7 @@ const main=read('src/main.js');
 const sheets=[...html.matchAll(/href="\.\/src\/([^" ]+\.css)(?:\?[^" ]+)?"/g)].map(match=>match[1]);
 
 assert.equal(sheets.at(-1),'ui-harmony.css','L’harmonisation est appliquée après tous les écrans spécialisés');
-assert.ok(html.includes('ui-harmony.css?v=archives-harmony-2'),'Le cache CSS mobile est renouvelé');
+assert.ok(html.includes('ui-harmony.css?v=archives-harmony-3'),'Le cache CSS mobile est renouvelé');
 assert.ok(sheets.indexOf('booster.css')<sheets.indexOf('ui-harmony.css'));
 assert.ok(sheets.indexOf('codex.css')<sheets.indexOf('ui-harmony.css'));
 assert.ok(sheets.indexOf('trial-progress.css')<sheets.indexOf('ui-harmony.css'));
@@ -58,4 +58,31 @@ for(const token of [
 ]) assert.ok(html.includes(token),'Contrôle interactif préservé : '+token);
 assert.ok(main.includes("const SAVE='aetherium-save-v1'"),'Identifiant des sauvegardes inchangé');
 assert.ok(main.includes('function openOriginesBooster()'),'Ouverture des boosters conservée');
+
+// La finition v2 uniformise les états actifs sans modifier la logique de sélection.
+for(const selector of [
+  '#page-jouer .game-picker .game-choice.active',
+  '#page-jouer .difficulty-options button.is-active',
+  '#page-boosters .booster-choice.is-selected',
+  '#page-collection .codex-season.is-active',
+  '#page-collection .codex-chapter.is-active',
+  '#page-collection .codex-discovery-tabs button.is-active',
+  '#page-atelier .atelier-craft-tile.is-selected',
+  '#page-succes .honorific.is-equipped'
+]) assert.ok(css.includes(selector),'État de sélection harmonisé : '+selector);
+assert.ok(css.includes('--archives-ui-selected:#dfbd91'),
+  'La sélection conserve un accent or discret');
+assert.ok(css.includes('--archives-ui-focus:#f1d7ad'),
+  'Les parcours clavier gardent un focus clairement visible');
+assert.ok(css.includes('#page-boosters .booster-choice{\n    min-height:44px'),
+  'Le sélecteur de trois boosters utilise des cibles tactiles de 44px sur mobile');
+assert.ok(css.includes('#page-jouer .game-choice-hint{font-size:11px'),
+  'Les indices des Épreuves restent lisibles sur téléphone');
+assert.ok(css.includes('#page-jouer .trial-records-current{font-size:10px'),
+  'Le registre conserve une police lisible sur les très petits écrans');
+assert.ok(css.includes('touch-action:manipulation'),
+  'Les commandes de sélection répondent directement au toucher');
+assert.ok(!css.includes('!important')||css.includes('transition:none!important'),
+  'La finition ne force pas les couleurs ni les dimensions des éléments rares');
+
 console.log('AETHERIUM — UI harmonisée : six écrans, mobile et fonctionnalités préservés');
