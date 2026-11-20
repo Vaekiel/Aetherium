@@ -8,10 +8,28 @@ const main=read('src/main.js');
 const sheets=[...html.matchAll(/href="\.\/src\/([^" ]+\.css)(?:\?[^" ]+)?"/g)].map(match=>match[1]);
 
 assert.equal(sheets.at(-1),'ui-harmony.css','L’harmonisation est appliquée après tous les écrans spécialisés');
-assert.ok(html.includes('ui-harmony.css?v=archives-harmony-1'),'Le cache CSS mobile est renouvelé');
+assert.ok(html.includes('ui-harmony.css?v=archives-harmony-2'),'Le cache CSS mobile est renouvelé');
 assert.ok(sheets.indexOf('booster.css')<sheets.indexOf('ui-harmony.css'));
 assert.ok(sheets.indexOf('codex.css')<sheets.indexOf('ui-harmony.css'));
 assert.ok(sheets.indexOf('trial-progress.css')<sheets.indexOf('ui-harmony.css'));
+const trialStart=html.indexOf('<section id="page-jouer"');
+const trialEnd=html.indexOf('<section id="page-expeditions"',trialStart);
+const trialHtml=html.slice(trialStart,trialEnd);
+assert.ok(trialStart>=0&&trialEnd>trialStart,'Le contenu des Épreuves reste dans sa section');
+const eyebrow=trialHtml.indexOf('<p class="kicker">LES MARCHES DE VERRE');
+const pageTitle=trialHtml.indexOf('<div class="heading"><h1>Épreuves des Arcanes</h1>');
+const scene=trialHtml.indexOf('<div class="intro"><div><h2>Les ruines s\'éveillent.</h2>');
+const picker=trialHtml.indexOf('id="game-picker"');
+assert.ok(eyebrow>=0&&pageTitle>eyebrow&&scene>pageTitle&&picker>scene,
+  'Épreuves suivent la hiérarchie des autres écrans : chapitre, titre, scène compacte et sélection');
+assert.equal((trialHtml.match(/<h1>/g)||[]).length,1,'Un seul titre principal sur Épreuves');
+assert.ok(css.includes('#page-jouer .intro{')&&css.includes('min-height:120px'),
+  'L’ancienne grande bannière devient un bandeau réduit');
+assert.ok(css.includes('#page-jouer>.heading h1'),'Le nouveau titre reçoit les mêmes règles que les autres pages');
+assert.ok(css.includes('#page-jouer .intro h2'),'Le récit conserve un titre secondaire');
+assert.ok(css.includes('background-size:auto,145px auto,auto'),
+  'Illustration préservée en format mobile compact');
+
 
 for(const page of ['jouer','boosters','collection','atelier','expeditions','succes']){
   assert.ok(html.includes('id="page-'+page+'"'),'Écran conservé : '+page);
