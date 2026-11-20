@@ -171,6 +171,8 @@
   #page-succes .honorifics,
   #page-succes .achievement{box-shadow:0 5px 15px #070b1f6b}
   #page-collection .codex-discovery-tabs button{min-height:42px}
+  /* Le tiroir de filtres conserve son ombre latérale native sur mobile. */
+  #page-collection .filters{box-shadow:10px 0 32px #050811b0}
 }
 @media(prefers-reduced-motion:reduce){
   .page button.primary,.page button.secondary{transition:none!important}
