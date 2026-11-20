@@ -1,7 +1,5 @@
-/* AETHERIUM — soundscape prototype (original Web Audio synthesis).
-   Not AI-generated audio. Replace or layer these voices with licensed Stable
-   Audio assets once the final stems have been generated and approved.
-   No autoplay: audio starts only from an explicit user interaction. */
+/* AETHERIUM — optional soundscape (Stable Audio assets + Web Audio fallback).
+   Local assets are loaded lazily after an explicit user interaction. */
 const STORAGE_KEY='aetherium-audio-v1';
 const ROOMS=Object.freeze({
   jouer:[146.83,220.00,349.23,523.25],
@@ -10,6 +8,22 @@ const ROOMS=Object.freeze({
   atelier:[110.00,164.81,261.63,329.63],
   expeditions:[116.54,174.61,293.66,349.23],
   succes:[196.00,293.66,392.00,493.88]
+});
+const AMBIENT_ASSETS=Object.freeze({
+  jouer:'./assets/audio/ambient-epreuves.ogg',
+  boosters:'./assets/audio/ambient-boosters.ogg'
+});
+const EFFECT_ASSETS=Object.freeze({
+  tap:'./assets/audio/ui-tap.ogg',
+  select:'./assets/audio/ui-select.ogg',
+  page:'./assets/audio/ui-page.ogg',
+  forge:'./assets/audio/forge.ogg',
+  reward:'./assets/audio/reward.ogg',
+  unseal:'./assets/audio/booster-unseal.ogg',
+  'reveal-normal':'./assets/audio/reveal-normal.ogg',
+  'reveal-rare':'./assets/audio/reveal-rare.ogg',
+  'reveal-epic':'./assets/audio/reveal-epic.ogg',
+  'reveal-legendary':'./assets/audio/reveal-legendary.ogg'
 });
 const DEFAULTS={volume:30,ambience:true,effects:true};
 const readPrefs=()=>{
@@ -32,6 +46,8 @@ const volumeControl=document.querySelector('#audio-volume');
 const volumeValue=document.querySelector('#audio-volume-value');
 let active=false,ctx=null,master=null,ambientBus=null,fxBus=null,padGain=null;
 let padVoices=[],noiseBuffer=null,chimeTimer=null,lastReveal=0;
+let ambientPlayer=null,ambientPlayerSource=null,ambientPlayerFile='';
+const effectPlayers=new Map();
 let currentRoom=document.querySelector('.page.active')?.id.replace('page-','')||'jouer';
 const now=()=>ctx?.currentTime||0;
 const persist=()=>{try{localStorage.setItem(STORAGE_KEY,JSON.stringify(prefs))}catch{/* private browsing */}};
@@ -46,6 +62,63 @@ function refreshControls(){
   effectsControl.checked=prefs.effects;
   volumeControl.value=String(prefs.volume);
   volumeValue.textContent=prefs.volume+' %';
+}
+function makePlayer(file,bus,loop=false){
+  const AudioElement=window.Audio;
+  if(!AudioElement||!ctx||!bus)return null;
+  try{
+    const element=new AudioElement(file);
+    element.preload='none';
+    element.loop=loop;
+    const source=ctx.createMediaElementSource(element);
+    source.connect(bus);
+    return {element,source,file};
+  }catch{return null}
+}
+function syncAmbientPlayer(){
+  if(!ctx)return;
+  const file=AMBIENT_ASSETS[currentRoom]||'';
+  const shouldPlay=Boolean(file&&active&&prefs.ambience&&!document.hidden);
+  if(ambientPlayerFile!==file){
+    if(ambientPlayer){ambientPlayer.pause();ambientPlayer.currentTime=0}
+    ambientPlayer=null;ambientPlayerSource=null;ambientPlayerFile=file;
+    if(file){
+      const player=makePlayer(file,ambientBus,true);
+      if(player){ambientPlayer=player.element;ambientPlayerSource=player.source}
+    }
+  }
+  const t=now();
+  if(AMBIENT_ASSETS[currentRoom]&&!ambientPlayer){
+    padGain.gain.setTargetAtTime(shouldPlay ? .48 : .0001,t,.45);
+    return;
+  }
+  if(ambientPlayer){
+    padGain.gain.setTargetAtTime(.0001,t,.2);
+    if(shouldPlay&&ambientPlayer.paused){
+      ambientPlayer.play().catch(()=>{
+        ambientPlayer=null;ambientPlayerSource=null;
+        padGain.gain.setTargetAtTime(.48,now(),.45);
+      });
+    }else if(!shouldPlay&&!ambientPlayer.paused){
+      ambientPlayer.pause();
+    }
+  }else{
+    padGain.gain.setTargetAtTime(shouldPlay ? .48 : .0001,t,.45);
+  }
+}
+function playEffectAsset(file,kind,detail){
+  if(!file||!ctx)return false;
+  let player=effectPlayers.get(file);
+  if(!player){
+    player=makePlayer(file,fxBus);
+    if(!player)return false;
+    effectPlayers.set(file,player);
+  }
+  try{
+    player.element.currentTime=0;
+    player.element.play().catch(()=>synthSound(kind,detail));
+    return true;
+  }catch{return false}
 }
 function buildEngine(){
   const AudioContextClass=window.AudioContext||window.webkitAudioContext;
@@ -90,6 +163,7 @@ function applyMix(){
   master.gain.setTargetAtTime(active?prefs.volume/100*.42:0,t,.06);
   fxBus.gain.setTargetAtTime(active&&prefs.effects?1:0,t,.04);
   ambientBus.gain.setTargetAtTime(active&&prefs.ambience&&!document.hidden ? 0.14 : 0,t,.7);
+  syncAmbientPlayer();
 }
 function roomTo(page){
   currentRoom=ROOMS[page]?page:'jouer';
@@ -103,7 +177,8 @@ function roomTo(page){
     voice.frequency.cancelScheduledValues(t);
     voice.frequency.setValueAtTime(hz,t+.34);
   });
-  padGain.gain.setTargetAtTime(.48,t+.36,.48);
+  if(!AMBIENT_ASSETS[currentRoom])padGain.gain.setTargetAtTime(.48,t+.36,.48);
+  syncAmbientPlayer();
 }
 function oscillatorTone(frequency,duration,level=.12,type='sine',when=now()){
   if(!ctx||!active||!prefs.effects||document.hidden)return;
@@ -121,7 +196,7 @@ function bell(frequency,level=.13){
   oscillatorTone(frequency,.52,level,'sine',t);
   oscillatorTone(frequency*2.006,.29,level*.22,'sine',t+.012);
 }
-function sound(kind,detail){
+function synthSound(kind,detail){
   if(!active||!prefs.effects||!ctx||document.hidden)return;
   const t=now();
   if(kind==='tap')oscillatorTone(540,.085,.055,'sine',t);
@@ -161,8 +236,18 @@ function sound(kind,detail){
     oscillatorTone(196,.50,.075,'triangle',t);
   }
 }
+function sound(kind,detail){
+  if(!active||!prefs.effects||!ctx||document.hidden)return;
+  const rarity=String(detail||'normal').toLowerCase();
+  const file=kind==='reveal'
+    ? EFFECT_ASSETS['reveal-'+(rarity==='common'?'normal':rarity)]
+    : EFFECT_ASSETS[kind];
+  if(playEffectAsset(file,kind,detail))return;
+  synthSound(kind,detail);
+}
 function ambientAccent(){
   if(!active||!prefs.ambience||!ctx||document.hidden)return;
+  if(AMBIENT_ASSETS[currentRoom]&&ambientPlayer)return;
   const notes=ROOMS[currentRoom]||ROOMS.jouer;
   const n=notes[Math.floor(Math.random()*notes.length)];
   // Sparse musical atmosphere, not a looping tune.

@@ -1,0 +1,108 @@
+{
+  "provider": "Stable Audio",
+  "model": "Stable Audio 3",
+  "generated_on": "2026-11-20",
+  "plan": "Free",
+  "credits": {
+    "available_before": 50,
+    "used": 48,
+    "remaining_after": 2,
+    "cost_per_take": 4,
+    "takes": 12
+  },
+  "source_format": "WAV, PCM 16-bit, stereo, 44.1 kHz",
+  "delivery_format": "Ogg Vorbis; ambiences stereo 44.1 kHz; effects mono 24 kHz",
+  "licensing_note": "Stable Audio account marked all generated takes for commercial use; verify current terms before a new use.",
+  "license_sources": [
+    "https://kb.stability.ai/knowledge-base/stable-audio-commerical-and-usage-licensing",
+    "https://stableaudio.com/"
+  ],
+  "master_wavs_committed": false,
+  "master_note": "WAV masters were downloaded for processing and retained in the Stable Audio generation history. Their SHA-256 digests are recorded below; only optimized Ogg files are committed to keep the browser payload small.",
+  "assets": [
+    {
+      "file": "assets/audio/ambient-epreuves.ogg",
+      "prompt": "Seamless game ambience in moonlit magical ruins, soft crystal drones, distant stone wind, faint resonant bells, intimate mysterious dark fantasy, gentle evolving atmosphere, no voice, no percussion, no melody",
+      "source_download_id": "9a6761b0-c69a-4d09-8f2e-50f6871b81f3",
+      "source_sha256": "be9efa893a56948778753121860065bd5dae0ebedd8446236971d62821949f78",
+      "output_sha256": "763c1eeaa937f0e44713b42b2a672e6c0603ae259437e45c70e5a06e8dff0326"
+    },
+    {
+      "file": "assets/audio/ambient-boosters.ogg",
+      "prompt": "Seamless subtle fantasy card unsealing room ambience, warm arcane hum, shimmer of crystalline glass and whispered paper texture, quiet anticipation, delicate low drone, no speech, no drums",
+      "source_download_id": "5a125620-73f3-479a-9b69-878c78722289",
+      "source_sha256": "602eb890a1b651e205a65c04175d602c65c68eaaec752f6357b1cd839d022cbf",
+      "output_sha256": "770dc4657c2a3f04abf5b29801f883be22c8234129ed4a39424fd3df14aa18d1"
+    },
+    {
+      "file": "assets/audio/ui-tap.ogg",
+      "prompt": "Tiny soft magical stone interface tap, short dry glass tick, warm and elegant, isolated sound effect",
+      "source_download_id": "3982ca2b-df78-406a-96b2-169a472c54dc",
+      "source_sha256": "0fff0b2bf84826a3ea207b3f36d785a39827a188cc6fc161c0169249f4e95bea",
+      "output_sha256": "465bc1c79c4833a3c8c9332697683650384112697cd08083dd5e66772902bbae"
+    },
+    {
+      "file": "assets/audio/ui-select.ogg",
+      "prompt": "Short elegant arcane selection chime, two faint glass notes, silky attack, premium fantasy game UI",
+      "source_download_id": "7bb1d229-8a18-4f25-954f-c1feeb6846ef",
+      "source_sha256": "859d38ff81dc31a5c21b187b961c858974cfe2889c79449e786c00093c997cf4",
+      "output_sha256": "512b80a1ab9595051f1bd1e89772514747093bd1652bef36e20e21271467933c"
+    },
+    {
+      "file": "assets/audio/ui-page.ogg",
+      "prompt": "Soft single resonant archival bell as a fantasy menu page opens, quiet and precise",
+      "source_download_id": "c3ac5953-12c6-4bd7-8dc7-de4cf020dd89",
+      "source_sha256": "a2ed847b24f432b0b5747c33ebf48f0a6959b7a2f2a1419c0fadf81550469d78",
+      "output_sha256": "4f0b7ad0087b3dbe787998ab3d323327b7cfe5cc8c31d7824c72d4a76d47da54"
+    },
+    {
+      "file": "assets/audio/booster-unseal.ogg",
+      "prompt": "Magical paper and foil card pack unsealing, gentle rising shimmer, soft crystalline burst, short tactile fantasy sound effect",
+      "source_download_id": "4539c1e4-2a01-493e-8d38-8bf0a900f44b",
+      "source_sha256": "08032544444e706742ea0eb432d485badfb14f5e2e67ae5c0ebba52bcf16ea7b",
+      "output_sha256": "49b124b0060699cd5a99593ed46d134de6f3b7a4bef311a9b0a15691677bfe75"
+    },
+    {
+      "file": "assets/audio/reveal-normal.ogg",
+      "prompt": "Light transparent glass chime for revealing a collectible fantasy card, understated and short",
+      "source_download_id": "d118e276-2eec-47aa-8e30-92d16acc0dd1",
+      "source_sha256": "92da2062857543914f375b9cc5510ed588abbd59e77b0f4cf5e7ba9c39f55dd1",
+      "output_sha256": "b90a70780bf94114647d44000473d5e2c635508632e5d3b967512406277452ef"
+    },
+    {
+      "file": "assets/audio/reveal-rare.ogg",
+      "prompt": "Delicate crystalline double chime for a rare fantasy collectible discovery, tasteful shine, no fanfare",
+      "source_download_id": "bdb70897-0d87-4302-bca8-4057c799acef",
+      "source_sha256": "2e44897a0a8caa9de85bf28dd7b5bcf2046b082ab9a98714999db69a5b1d34ae",
+      "output_sha256": "5c766f14e2ec96c7a94f252c04c58020e7a4c9632212e42edb68b81efc0500bd"
+    },
+    {
+      "file": "assets/audio/reveal-epic.ogg",
+      "prompt": "Elegant magical high-rarity card reveal, three layered crystal harmonics, restrained deep shimmer",
+      "source_download_id": "9509378e-746e-4c01-bff9-4bdcea588b28",
+      "source_sha256": "2b7c36f5440d295d74ebb7e46fe24cebe248ce4a72cdb7bbb4702187c2f8afd4",
+      "output_sha256": "1b2c4858bf202bfd35b2de46ef8c5535de69f672cb1591f98211f7da0873d07c"
+    },
+    {
+      "file": "assets/audio/reveal-legendary.ogg",
+      "prompt": "Memorable but soft legendary fantasy card reveal, ascending crystal tones over warm low resonance, graceful and not loud",
+      "source_download_id": "fe199c0f-be70-45fe-a0f1-4e8fad500052",
+      "source_sha256": "08321945e6e5dac158aefa849fa0c3976eeba0ab0973b652f22b980ff36620c0",
+      "output_sha256": "a26d3e6e9701d88f8f2d60845681727cc35725b864d6ccffe2d253135a4d1add"
+    },
+    {
+      "file": "assets/audio/reward.ogg",
+      "prompt": "Gentle victorious three-note glass reward chime for ancient fantasy puzzle completion, warm and understated",
+      "source_download_id": "ed2d84ee-7f0a-4fae-b8e9-c4cb2b43726d",
+      "source_sha256": "410428b152956bf48825ec838347b4d7b476400afa0f368bf6e85762e2c8278c",
+      "output_sha256": "80fa86665a12b616cea906c9402c4a99c6a351824240c13a75ccc1777c2b5c75"
+    },
+    {
+      "file": "assets/audio/forge.ogg",
+      "prompt": "Tiny arcane forge sound, low enchanted metal resonance followed by a crystalline sparkle, gentle mysterious crafting",
+      "source_download_id": "f7943e74-5075-459d-80b8-2290bc232a56",
+      "source_sha256": "b96607e819ca76443345aa6748e85218175330a34c36153486b0016cf35b08bb",
+      "output_sha256": "3536b591a4e127164146cc68ee1eddfd365146668649bafaa438e357d048c434"
+    }
+  ]
+}
