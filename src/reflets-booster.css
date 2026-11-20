@@ -44,7 +44,8 @@
 }
 @media(max-width:850px){
   #page-boosters .pack-side .booster-selector{grid-column:1/-1;grid-row:1;margin:0 0 8px}
-  #page-boosters .pack-side .pack.pack-origines{grid-row:2/6}
+  /* Keep every wrapper aligned at the top, even when the title wraps differently. */
+ #page-boosters .pack-side .pack.pack-origines{grid-row:2/6;align-self:start;justify-self:center}
   #page-boosters .pack.pack-reflets .pack-title{font-size:10px;letter-spacing:0}
   #page-boosters .booster-choice{min-height:39px;font-size:11px}
 }
