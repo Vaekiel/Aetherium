@@ -1,4 +1,4 @@
-import {readFileSync} from 'node:fs';
+import {readFileSync,statSync} from 'node:fs';
 import assert from 'node:assert/strict';
 
 const html=readFileSync('index.html','utf8');
@@ -14,7 +14,7 @@ for(const id of [
   'audio-volume','audio-volume-value','audio-close'
 ]) assert.ok(html.includes('id="'+id+'"'), 'Contrôle audio présent : '+id);
 assert.ok(html.includes('aria-pressed="false"'),'Le son est éteint dans le HTML initial');
-assert.ok(html.includes('audio.js?v=soundscape-prototype-1'),
+assert.ok(html.includes('audio.js?v=stable-audio-assets-1'),
   'Le module sonore est chargé sans modifier le moteur principal');
 assert.ok(links.includes('audio.css'),'Le CSS sonore est disponible');
 assert.equal(links.at(-1),'ui-harmony.css','Les styles communs restent chargés en dernier');
@@ -35,9 +35,22 @@ assert.ok(audio.includes('touch-action:manipulation')===false,'Aucun changement 
 assert.ok(audio.includes('const ROOMS=Object.freeze({'),'Ambiance propre à chaque salle');
 for(const room of ['jouer','boosters','collection','atelier','expeditions','succes'])
   assert.ok(audio.includes('  '+room+':['),'Ambiance prévue : '+room);
+for(const asset of [
+  'ambient-epreuves.ogg','ambient-boosters.ogg','ui-tap.ogg','ui-select.ogg',
+  'ui-page.ogg','booster-unseal.ogg','reveal-normal.ogg','reveal-rare.ogg',
+  'reveal-epic.ogg','reveal-legendary.ogg','reward.ogg','forge.ogg'
+]){
+  assert.ok(audio.includes('./assets/audio/'+asset),'Fichier audio relié : '+asset);
+  assert.ok(statSync('assets/audio/'+asset).size>0,'Fichier audio livré : '+asset);
+}
+assert.ok(audio.includes("jouer:'./assets/audio/ambient-epreuves.ogg'"),'Les Épreuves utilisent leur boucle générée');
+assert.ok(audio.includes("boosters:'./assets/audio/ambient-boosters.ogg'"),'Les Boosters utilisent leur boucle générée');
+assert.ok(audio.includes('ctx.createMediaElementSource(element)'),'Les fichiers passent par les bus de mix');
+assert.ok(audio.includes("element.preload='none'"),'Chargement audio paresseux après activation');
+assert.ok(audio.includes('function synthSound(kind,detail)'),'La synthèse locale reste disponible en secours');
 for(const sound of ['tap','select','page','forge','reward','reveal','unseal'])
   assert.ok(audio.includes("kind==='"+sound+"'"),'Effet prévu : '+sound);
-assert.ok(!/fetch\(|XMLHttpRequest|new Audio\(/.test(audio),'Aucune ressource externe ni appel réseau');
+assert.ok(!/https?:\/\/|fetch\(|XMLHttpRequest/.test(audio),'Aucune ressource distante ni appel réseau');
 assert.ok(!/setActive\(true\)/.test(audio),'Aucun démarrage sonore automatique');
 assert.ok(main.includes("const SAVE='aetherium-save-v1'"),'La sauvegarde du jeu reste inchangée');
 assert.ok(harmony.includes('#page-jouer .intro'),'La DA existante reste inchangée');

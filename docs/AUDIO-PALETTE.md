@@ -1,10 +1,10 @@
 # AETHERIUM — Palette sonore des Archives
 
-**État : conception sonore et prototype jouable, fichiers IA non encore générés.**
-Le prototype en place utilise une **synthèse Web Audio originale, exécutée localement**.
-Il ne faut pas présenter les sons actuels comme générés par une IA.
-Les morceaux créés par Stable Audio pourront les remplacer après génération
-et vérification de la licence.
+**État : 12 créations Stable Audio générées et intégrées.** Les ambiances des
+Épreuves et des Boosters et les dix effets courts sont exportés en Ogg Vorbis.
+Le moteur conserve la synthèse Web Audio locale comme solution de secours.
+Le forfait gratuit couvrait 12 prises : les quatre autres ambiances de la
+palette (Codex, Atelier, Expéditions, Chroniques) restent à générer.
 
 ## Direction artistique
 
@@ -14,14 +14,14 @@ parchemin, ruines, magie légère. Sonorité feutrée et chaleureuse.
 Les effets fréquents sont subtils. Pas de références à un artiste,
 une chanson ou une bande originale existante.
 
-## Ambiances IA à générer (Stable Audio)
+## Ambiances IA (Stable Audio)
 
 Créer des boucles instrumentales sans couture, de 30 à 60 secondes,
 no vocals, no drums, restrained dynamics, dark fantasy.
 Normaliser et adoucir les transitions. Volume ambiant plus bas
 que celui des effets.
 
-| Nom du futur fichier | Écran | Prompt en anglais |
+| Nom du fichier | Écran | Prompt en anglais |
 | --- | --- | --- |
 | ambient-epreuves.ogg | Épreuves | Seamless game ambience in moonlit magical ruins, soft crystal drones, distant stone wind, faint resonant bells, intimate mysterious dark fantasy, gentle evolving atmosphere, no voice, no percussion, no melody |
 | ambient-boosters.ogg | Boosters | Seamless subtle fantasy card unsealing room ambience, warm arcane hum, shimmer of crystalline glass and whispered paper texture, quiet anticipation, delicate low drone, no speech, no drums |
@@ -30,9 +30,9 @@ que celui des effets.
 | ambient-expeditions.ogg | Expéditions | Seamless restrained fantasy exploration ambience, faint cavern draft, distant resonances of ancient glass and stone, muted mystical drone, slow quiet suspense, no vocals, no footsteps |
 | ambient-chroniques.ogg | Chroniques | Seamless quiet fantasy archive hall ambience, warm sustained harp-like resonance, delicate crystalline overtones, ancient remembrance and quiet achievement, no rhythmic melody, no voice |
 
-## Effets courts IA à générer
+## Effets courts IA
 
-| Nom du futur fichier | Déclencheur | Durée visée | Prompt en anglais |
+| Nom du fichier | Déclencheur | Durée visée | Prompt en anglais |
 | --- | --- | --- | --- |
 | ui-tap.ogg | Action discrète | 0,1–0,2 s | Tiny soft magical stone interface tap, short dry glass tick, warm and elegant, isolated sound effect |
 | ui-select.ogg | Épreuve, difficulté, filtre, booster | 0,2–0,35 s | Short elegant arcane selection chime, two faint glass notes, silky attack, premium fantasy game UI |
@@ -47,31 +47,34 @@ que celui des effets.
 
 ## Intégration des fichiers IA
 
-Placer les fichiers approuvés dans le dossier assets/audio. Prévoir des
-versions audio légères, avec coupe sans clic et boucle vérifiée sur mobile.
+Les fichiers Ogg Vorbis légers sont placés dans assets/audio. Les effets courts
+sont coupés à leur durée cible avec une atténuation finale douce. Les boucles
+des Épreuves et des Boosters durent chacune 60 secondes.
 
-Le prototype intégré dans src/audio.js permet déjà :
+Le moteur de src/audio.js assure :
 - activation et coupure globale (muet au lancement, sans lecture automatique),
 - choix indépendants ambiance / effets et volume,
 - mémorisation locale des préférences audio dans aetherium-audio-v1,
-- six caractères d'ambiance selon la page,
+- une ambiance IA dédiée aux Épreuves et aux Boosters; les autres pages
+  conservent leurs nappes synthétiques discrètes,
 - bruitages de navigation, sélection, décèlement, révélation et récompense,
-- coupure automatique de l'ambiance dans un onglet masqué.
+- coupure automatique de l'ambiance dans un onglet masqué,
+- chargement différé des fichiers, muets au lancement.
 
-La prochaine étape de production IA reste : connecter un générateur,
-générer les sons, sélectionner les versions, importer les vrais fichiers.
-**Ne pas marquer les sons du prototype comme « IA »**.
+Les prompts, empreintes des WAV sources, réglages d'export et informations de
+licence sont consignés dans docs/AUDIO-GENERATION.json.
 
 ## Licence et documentation
 
-Suno Free (fin 2026) ne permet pas l'exploitation commerciale des créations.
-Stable Audio inclut l'utilisation de morceaux et sons intégrés aux jeux sur
-son offre gratuite, sous réserve des conditions applicables.
+Stable Audio indique que les créations de son offre gratuite peuvent être
+intégrées à des jeux, sous réserve des conditions de licence applicables.
 
 Sources officielles :
 - https://help.suno.com/en/articles/9601601
 - https://kb.stability.ai/knowledge-base/stable-audio-commerical-and-usage-licensing
 - https://stableaudio.com/
 
-Conserver pour chaque génération : fournisseur, modèle, prompt, date,
-plan utilisé, fichier source, preuve de licence et droits d'intégration.
+Pour cette production, Stable Audio 3 a été utilisé avec le forfait gratuit,
+sans achat ni abonnement. Les conditions de licence applicables sont liées
+dans le relevé de génération; elles doivent être revérifiées si une nouvelle
+production ou une redistribution différente est envisagée.
