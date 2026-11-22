@@ -1,0 +1,216 @@
+/* AETHERIUM · Le Bandeau des Archives — original HD pixel-art atlas.
+   Frame + silhouette form one family; backgrounds are quiet so counters stay legible.
+   This file is imported after specialized styles and does not alter game state. */
+#app > header.top{
+  background:
+    radial-gradient(ellipse 40% 160% at 50% 110%,#49305c29,transparent 90%),
+    linear-gradient(180deg,#121327f9 0%,#16172cee 90%);
+  border-bottom:1px solid #b9997b87;
+  box-shadow:0 9px 24px #060a1c80,inset 0 -1px 0 #d5b18a26;
+}
+#app > header.top::before{
+  content:"";position:absolute;bottom:0;left:0;right:0;height:1px;
+  pointer-events:none;
+  background:linear-gradient(90deg,transparent,#e3bb7a55 30%,#d5b0b059 70%,transparent);
+}
+#app > header.top .brand{
+  color:#f4e3c9;
+  text-shadow:0 2px 1px #080b1f,0 0 18px #ad8ac03b;
+}
+#app > header.top .brand small{
+  color:#bfaeca;letter-spacing:.055em;font-style:italic;font-variant:normal;
+}
+#app > header.top .brand::after{
+  width:70%;height:4px;
+  background:linear-gradient(90deg,transparent,#96717d 12%,#d9ac75 45%,#f3ddae 50%,#d9ac75 55%,#96717d 88%,transparent);
+  opacity:.78;
+}
+/* One optimized transparent sprite atlas: 2 columns × 2 rows.
+   Crown (0,0), shard (1,0), honors (0,1), fullscreen (1,1). */
+#app > header.top .relic-icon{
+  display:block;position:relative;flex:0 0 auto;
+  width:32px;height:32px;min-width:32px;
+  background-image:url("../assets/ui/header-relics.png");
+  background-size:200% 200%;
+  background-repeat:no-repeat;
+  image-rendering:pixelated;
+  pointer-events:none;
+  filter:drop-shadow(0 2px 3px #06081bb0);
+}
+#app > header.top .relic-icon--crown{background-position:0% 0%}
+#app > header.top .relic-icon--shard{background-position:100% 0%}
+#app > header.top .relic-icon--honors{background-position:0% 100%}
+#app > header.top .relic-icon--expand{background-position:100% 100%}
+/* Shared artifact shell, including equal heights, restrained metallic edges,
+   highlights and identical keyboard behavior for the 4 toolbar modules. */
+#app > header.top .wallet .wallet-link,
+#app > header.top .chronicles-link,
+#app > header.top #immersive-toggle:not([hidden]){
+  position:relative;
+  display:inline-flex;align-items:center;justify-content:center;
+  box-sizing:border-box;flex-shrink:0;
+  min-height:48px;border:1px solid #8f7792;
+  border-radius:8px;
+  background:linear-gradient(153deg,#29233f 0%,#171b30 60%,#1e1a35 100%);
+  box-shadow:inset 0 1px 0 #f5e1c92a,inset 0 -1px 0 #05081780,0 3px 9px #05091975;
+  color:#f5e5cb;
+  touch-action:manipulation;
+  transition:background .16s ease,border-color .16s ease,
+    box-shadow .16s ease,transform .16s ease;
+}
+#app > header.top .wallet .wallet-link::after,
+#app > header.top .chronicles-link::after,
+#app > header.top #immersive-toggle:not([hidden])::after{
+  content:"";position:absolute;pointer-events:none;inset:3px;
+  border:1px solid #e1c49d1a;border-radius:4px;
+}
+#app > header.top .wallet .wallet-link{
+  min-width:92px;gap:6px;padding:6px 11px;
+  font:15px/1.15 Georgia,serif;
+  border-color:#ab8a7d;
+}
+#app > header.top .wallet .wallet-link:last-child{
+  color:#f4e2d8;border-color:#86799e;
+}
+#app > header.top .wallet .wallet-link b{
+  margin:0;color:#f1dfc8;font-size:15px;font-weight:600;
+  font-variant-numeric:tabular-nums;min-width:1ch;text-align:right;
+  text-shadow:0 1px 2px #090c20;
+}
+#app > header.top .wallet{
+  gap:8px;align-items:center;flex:0 0 auto;
+}
+#app > header.top .chronicles-link{
+  gap:7px;padding:7px 10px;
+  border-color:#ab8a7d;
+  font:13px/1.25 Georgia,serif;
+}
+#app > header.top .chronicles-icon.relic-icon{
+  width:32px;height:32px;flex:0 0 32px;
+}
+#app > header.top .chronicles-label{
+  color:#eaddce;
+}
+#app > header.top #immersive-toggle:not([hidden]){
+  width:48px;min-width:48px;padding:6px;
+  border-color:#ab8a7d;
+}
+#app > header.top .wallet .wallet-link:hover,
+#app > header.top .chronicles-link:hover,
+#app > header.top #immersive-toggle:not([hidden]):hover{
+  border-color:#dfbb88;
+  background:linear-gradient(155deg,#41314d,#22223c 66%,#2e2543);
+  box-shadow:inset 0 1px #fff0d94d,0 3px 13px #08081cb5,0 0 11px #a286aa2c;
+  transform:translateY(-1px);
+}
+#app > header.top .wallet .wallet-link:active,
+#app > header.top .chronicles-link:active,
+#app > header.top #immersive-toggle:not([hidden]):active{
+  transform:translateY(1px);box-shadow:inset 0 2px 7px #06091fa8;
+}
+#app > header.top .wallet .wallet-link:focus-visible,
+#app > header.top .chronicles-link:focus-visible,
+#app > header.top #immersive-toggle:focus-visible{
+  outline:2px solid #f7d59d;outline-offset:3px;
+}
+#app > header.top .chronicles-link.active{
+  border-color:#e3bd88;
+  background:linear-gradient(155deg,#49334e,#25233d);
+  box-shadow:inset 0 0 0 1px #ffd3b945,0 0 14px #a48abe38;
+}
+#app > header.top #immersive-toggle.is-exiting .relic-icon--expand{
+  transform:scale(.83);filter:drop-shadow(0 0 3px #85e0f5);
+}
+#app > header.top .wallet .wallet-link.is-gaining .relic-icon{
+  animation:relic-acquire .42s ease-out;
+}
+@keyframes relic-acquire{
+  0%{filter:drop-shadow(0 0 0 transparent);transform:scale(.95)}
+  46%{filter:drop-shadow(0 0 6px #f6e0af);transform:scale(1.12)}
+  100%{filter:drop-shadow(0 2px 3px #06081bb0);transform:scale(1)}
+}
+@media(min-width:851px) and (max-width:1300px){
+  #app > header.top{gap:10px}
+  #app > header.top .wallet{gap:6px}
+  #app > header.top .wallet .wallet-link{
+    min-width:78px;padding:6px 8px;gap:4px;
+  }
+  #app > header.top .relic-icon,
+  #app > header.top .chronicles-icon.relic-icon{
+    width:29px;height:29px;min-width:29px;flex-basis:29px;
+  }
+  #app > header.top .chronicles-link{padding:6px}
+}
+/* Keep the already validated bottom navigation untouched on mobile.
+   Do not override padding-top: the fullscreen safe-area code owns the notch. */
+@media(max-width:850px){
+  #app > header.top{
+    gap:clamp(3px,1vw,6px);
+    padding-left:max(9px,env(safe-area-inset-left,0px));
+    padding-right:max(9px,env(safe-area-inset-right,0px));
+  }
+  #app > header.top .brand{
+    flex:1 1 auto;min-width:0;white-space:nowrap;
+    font-size:clamp(16px,3.7vw,23px);
+    letter-spacing:.015em;
+  }
+  #app > header.top .brand small{font-size:8px;letter-spacing:.005em}
+  #app > header.top .brand::after{margin-top:3px;height:3px}
+  #app > header.top .wallet{flex:0 0 auto;gap:4px;margin-left:auto}
+  #app > header.top .wallet .wallet-link{
+    min-width:0;min-height:42px;padding:4px 6px;gap:3px;
+    border-radius:8px;
+  }
+  #app > header.top .wallet .wallet-link b{font-size:clamp(11px,2.9vw,13px)}
+  #app > header.top .relic-icon,
+  #app > header.top .chronicles-icon.relic-icon{
+    width:29px;height:29px;min-width:29px;flex-basis:29px;
+  }
+  #app > header.top .chronicles-link{
+    width:42px;min-width:42px;min-height:42px;padding:5px;
+    border-radius:8px;margin-left:0;
+  }
+  #app > header.top .chronicles-label{display:none}
+  #app > header.top #immersive-toggle:not([hidden]){
+    display:inline-flex;width:42px;min-width:42px;min-height:42px;
+    flex:0 0 42px;padding:5px;border-radius:8px;
+  }
+}
+@media(max-width:420px){
+  #app > header.top .brand{font-size:clamp(14px,3.7vw,17px)}
+  #app > header.top .brand small{font-size:7px}
+  #app > header.top .wallet .wallet-link{min-height:39px;padding:3px 4px;gap:2px}
+  #app > header.top .relic-icon,
+  #app > header.top .chronicles-icon.relic-icon{
+    width:26px;height:26px;min-width:26px;flex-basis:26px;
+  }
+  #app > header.top .chronicles-link{
+    width:40px;min-width:40px;min-height:40px;
+  }
+  #app > header.top #immersive-toggle:not([hidden]){
+    width:40px;min-width:40px;min-height:40px;flex-basis:40px;
+  }
+}
+@media(max-width:360px){
+  #app > header.top{gap:3px}
+  #app > header.top .brand{font-size:13px;letter-spacing:0}
+  #app > header.top .brand small{font-size:7px;letter-spacing:-.02em}
+  #app > header.top .wallet{gap:3px}
+  #app > header.top .wallet .wallet-link{padding:3px;gap:1px}
+  #app > header.top .wallet .wallet-link b{font-size:11px}
+  #app > header.top .relic-icon,
+  #app > header.top .chronicles-icon.relic-icon{
+    width:23px;height:23px;min-width:23px;flex-basis:23px;
+  }
+  #app > header.top .chronicles-link{width:35px;min-width:35px;min-height:38px}
+  #app > header.top #immersive-toggle:not([hidden]){
+    width:35px;min-width:35px;min-height:38px;flex-basis:35px;
+  }
+}
+/* The original full-screen notch / lateral cutout margins are retained. */
+@media(prefers-reduced-motion:reduce){
+  #app > header.top .wallet .wallet-link,
+  #app > header.top .chronicles-link,
+  #app > header.top #immersive-toggle:not([hidden]){transition:none}
+  #app > header.top .wallet .wallet-link.is-gaining .relic-icon{animation:none}
+}

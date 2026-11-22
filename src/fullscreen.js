@@ -18,7 +18,7 @@ function syncImmersiveButton(){
   immersiveButton.setAttribute('aria-pressed',String(active));
   immersiveButton.setAttribute('aria-label',active?'Quitter le plein écran':'Passer en plein écran');
   immersiveButton.setAttribute('title',active?'Quitter le plein écran':'Passer en plein écran');
-  immersiveButton.querySelector('.immersive-icon').textContent=active?'⤡':'⛶';
+  immersiveButton.classList.toggle('is-exiting',active);
 }
 immersiveButton.addEventListener('click',()=>{
   // Call the browser API immediately while the click's activation is live.
