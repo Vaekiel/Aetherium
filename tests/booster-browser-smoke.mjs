@@ -34,7 +34,13 @@ const pending=new Map(),jsErrors=[];
 ws.addEventListener('message',event=>{
  const message=JSON.parse(String(event.data));
  if(message.method==='Runtime.exceptionThrown'){
-  jsErrors.push(message.params?.exceptionDetails?.text||'Uncaught error');
+  const detail=message.params?.exceptionDetails;
+  jsErrors.push({
+    text:detail?.text,
+    location:detail?.url+':'+detail?.lineNumber+':'+detail?.columnNumber,
+    description:detail?.exception?.description,
+    stack:detail?.stackTrace?.callFrames?.slice(0,7).map(f=>f.functionName+'@'+f.url+':'+f.lineNumber)
+  });
  }
  if(message.id&&pending.has(message.id)){
   const {resolve,reject}=pending.get(message.id);pending.delete(message.id);
