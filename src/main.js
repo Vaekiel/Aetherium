@@ -2092,13 +2092,13 @@ function selectBooster(edition){
    Ajouter une collection consiste à ajouter sa tuile, son visuel HD et son
    moteur de tirage; aucune grille ou navigation par saison n'est à recoder. */
 const boosterDialog=$('#booster-dialog');
-const boosterChoices=$('.booster-choice');
+const boosterChoices=$$('.booster-choice');
 const boosterSeasonTabs=$('#booster-season-tabs');
 function selectBoosterSeason(season){
   for(const control of boosterChoices){
     control.hidden=control.dataset.season!==season;
   }
-  for(const control of $('.booster-season-choice')){
+  for(const control of $$('.booster-season-choice')){
     const active=control.dataset.season===season;
     control.classList.toggle('is-active',active);
     control.setAttribute('aria-pressed',String(active));
@@ -2134,7 +2134,7 @@ function openBoosterDialog(control){
   if(!boosterDialog.open)boosterDialog.showModal();
   $('#buy').focus({preventScroll:true});
 }
-$('.booster-choice').forEach(control=>control.addEventListener('click',
+$$('.booster-choice').forEach(control=>control.addEventListener('click',
   ()=>openBoosterDialog(control)));
 $('#booster-close').addEventListener('click',closeBoosterDialog);
 boosterDialog.addEventListener('cancel',event=>{
