@@ -141,6 +141,15 @@ const before=await evaluate(`(()=>{
 assert.equal(before.canBuy,true,'Fresh player has enough Couronnes for the first pack');
 await evaluate("document.querySelector('#buy').click()");
 await until(()=>evaluate("document.querySelector('#booster-dialog').classList.contains('has-results')"),'reveal stage opened');
+await sleep(1500);
+console.log('Reveal debug',JSON.stringify(await evaluate(`(()=>{
+ const s=JSON.parse(localStorage.getItem('aetherium-save-v1'));
+ const root=document.querySelector('#booster-dialog');
+ const grid=document.querySelector('#pulls');
+ return {opened:s.opened,coins:s.coins,modalOpen:root.open,modalClass:root.className,
+   gridClass:grid.className,gridNodes:grid.children.length,gridHtml:grid.innerHTML.slice(0,300),
+   status:document.querySelector('#pack-msg').textContent,step:document.querySelector('#booster-step').textContent}
+})()`)), 'exceptions:',JSON.stringify(jsErrors));
 await until(()=>evaluate("document.querySelector('#pulls .pull-flip')!==null"),'first sealed card appeared');
 await evaluate("document.querySelector('#reveal-all').click()");
 const after=await evaluate(`(()=>{
