@@ -72,14 +72,14 @@ const context={
  update:()=>{updated++},
  boosterBusy:false,selectedBooster:'origines'
 };
-runInNewContext(block,context);
+runInNewContext(block+'\nthis.__openBoosterDialog=openBoosterDialog;',context);
 assert.equal(tabs.children.length,2,'Future seasons get their own tab, without fixed limits');
 assert.equal(choices.filter(x=>x.hidden).length,1,'Current season shows only its boosters');
 tabs.children[1].click();
 assert.equal(choices.filter(x=>!x.hidden).length,1,'One future season only shows its own pack');
 assert.equal(choices[2].hidden,false);
 assert.equal(tabs.children[1].attributes['aria-pressed'],'true');
-choices[2].click();
+context.__openBoosterDialog(choices[2]);
 assert.equal(selected,'second-pack');
 assert.equal(dialog.open,true);
 assert.equal(kicker.textContent,'Saison II');
