@@ -131,6 +131,48 @@ await command('Emulation.setSafeAreaInsetsOverride',{
  insets:{top:0,left:0,right:0,bottom:0}
 });
 
+// Stress the pixel-art header in the smallest portrait widths before opening
+// anything; no icon, number or title should end up behind another control.
+for(const width of [320,360,390,760,1280]){
+ await command('Emulation.setDeviceMetricsOverride',{
+  width,height:800,deviceScaleFactor:1,mobile:width<=850
+ });
+ await sleep(140);
+ const strip=await evaluate(`(()=>{
+  const root=document.querySelector('#app > header.top');
+  const brand=root.querySelector('.brand');
+  const btns=[
+   ...root.querySelectorAll('.wallet-link'),
+   root.querySelector('#chroniques-link'),
+   root.querySelector('#immersive-toggle')
+  ].filter(x=>getComputedStyle(x).display!=='none'&&!x.hidden);
+  const rect=e=>{const r=e.getBoundingClientRect();return {
+   left:r.left,right:r.right,top:r.top,bottom:r.bottom,width:r.width,height:r.height
+  }};
+  return {
+   viewport:innerWidth,brand:rect(brand),
+   brandFits:brand.scrollWidth<=brand.clientWidth+2,
+   controls:btns.map(x=>({id:x.id||x.getAttribute('data-go'),
+     ...rect(x),icon:x.querySelector('.relic-icon')?.className,
+     image:x.querySelector('.relic-icon')
+       ?getComputedStyle(x.querySelector('.relic-icon')).backgroundImage:''})),
+   previousNav:root.querySelector('nav [data-page="boosters"]')!==null,
+   saveControls:document.querySelector('#backup-open')!==null
+  };
+ })()`);
+ console.log('Relic header '+width+'px:',JSON.stringify(strip));
+ assert.ok(strip.controls.length>=3,'Currency and Chroniques controls always exist');
+ assert.ok(strip.controls.every(c=>c.width>=34&&c.height>=34),'Every module is touchable');
+ assert.ok(strip.controls.every(c=>c.image.includes('header-relics.png')),'All controls use HD pixel-art relic sprites');
+ assert.ok(strip.controls.at(-1).right<=width+2,'No header module overflows the viewport');
+ assert.ok(strip.controls.every((c,i)=>i===0||c.left>=strip.controls[i-1].right-1),
+  'Header controls do not overlap at '+width+'px');
+ assert.ok(strip.brand.right<=strip.controls[0].left+2,
+  'Logo is clear of the wallet at '+width+'px');
+ assert.ok(strip.brandFits,'Brand is not visually cropped at '+width+'px');
+ assert.ok(strip.previousNav&&strip.saveControls,'Main navigation and backups unchanged');
+}
+
 for(const [width,columns] of [[390,2],[760,3],[1280,3]]){
  await command('Emulation.setDeviceMetricsOverride',{
   width,height:900,deviceScaleFactor:1,mobile:width<760
@@ -282,6 +324,17 @@ assert.equal(after.dialogOpen,true);
 await evaluate("document.querySelector('#booster-close').click()");
 assert.equal(await evaluate("document.querySelector('#booster-dialog').open"),false);
 
+// A real Couronne reward only triggers a purely decorative short pulse.
+const rewardCheck=await evaluate(`(()=>{
+ const coins=document.querySelector('#coins');
+ const button=coins.closest('.wallet-link');
+ coins.textContent=String(Number(coins.textContent)+1);
+ return {button:button.className,icon:button.querySelector('.relic-icon--crown')!==null};
+})()`);
+await sleep(50);
+assert.equal(await evaluate("document.querySelector('#coins').closest('.wallet-link').classList.contains('is-gaining')"),true,
+ 'Earning resources should trigger visual feedback only');
+assert.equal(rewardCheck.icon,true);
 assert.deepEqual(jsErrors,[],'No unexpected browser JavaScript errors');
 ws.close();
 console.log('AETHERIUM : vrai navigateur, galerie/fiche PC tablette mobile et 3 boosters OK');
