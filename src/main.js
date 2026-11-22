@@ -2332,6 +2332,7 @@ function closeBoosterDialog(){
 }
 function openBoosterDialog(control){
   if(boosterBusy)return;
+  if(selectedBooster!==control.dataset.booster)selectBooster(control.dataset.booster);
   $('#booster-dialog-kicker').textContent=control.dataset.seasonTitle||'LES ARCHIVES';
   boosterDialog.classList.remove('has-results');
   if(!boosterDialog.open)boosterDialog.showModal();
