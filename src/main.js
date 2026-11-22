@@ -140,7 +140,8 @@ $('#mobile-collection-progress').textContent=Object.keys(state.owned).length+' /
     const mobile=document.querySelector('#mobile-'+finish+'-count');
     if(mobile)mobile.textContent=FINISHES[finish].symbol+' '+unique+' / '+CARDS.length;
   }
-  renderAchievements();renderAtelier()}
+  if($('#page-succes').classList.contains('active'))renderAchievements();
+  if($('#page-atelier').classList.contains('active'))renderAtelier()}
 function grant(value){state.coins+=value;state.earned+=value;state.wins++;update();notify('+'+value+' Couronnes remportées !')}
 const MAIN_PAGES=['jouer','boosters','collection','atelier'];
 const APP_PAGES=[...MAIN_PAGES,'succes','expeditions'];
@@ -1373,7 +1374,7 @@ function renderExpedition(){
         const have=FINALE_PREREQUISITES.filter(id=>view.current.completedRoutes.includes(id)).length;
         hint=locked?'Scellé · '+have+'/3 expéditions achevées':
           done&&!state.shiny?.[72]?'✧ Rejouer en Maîtrise pour la Chromatique':
-          done?'La Signature est acquise · chapitre rejouable':'Le Cœur des Marches t’attend';
+          done?'La Signature est acquise · chapitre rejouable':'Le dernier chemin est prêt à être exploré.';
       }
       copy.append(el('strong','',route.name),el('small','',hint));
       pick.append(copy,el('span','expedition-choice-status',locked?'🔒':done?'✓':'›'));
@@ -1490,7 +1491,7 @@ function makeCard(c,isShiny=false,locked=false){
   const chromatic=finish==='chromatic'&&!locked;
   const holographic=finish==='holographic'&&!locked;
   const calligraphic=finish==='calligraphic'&&!locked;
-  const preview=locked&&(c.id===1||(previewArt&&hasApprovedArt(c.id)));
+  const preview=locked&&previewArt&&hasApprovedArt(c.id);
   const reallyLocked=locked&&!preview;
   const b=el('button','card'+(reallyLocked?' is-sealed':'')+(chromatic?' is-chromatic':'')+
     (holographic?' is-holographic':'')+(calligraphic?' is-calligraphic':''));
@@ -1498,7 +1499,7 @@ function makeCard(c,isShiny=false,locked=false){
   b.dataset.cardId=String(c.id);
   // Show rarity only on revealed art; sealed archives keep their neutral frame.
   if(!reallyLocked)b.dataset.rarity=c.rarity;
-  b.style.setProperty('--edge',RARITIES[c.rarity].color);
+  b.style.setProperty('--edge',reallyLocked?'#8790a2':RARITIES[c.rarity].color);
   if(reallyLocked){
     const art=el('span','codex-sealed-art');
     art.setAttribute('aria-hidden','true');
@@ -1517,8 +1518,8 @@ function makeCard(c,isShiny=false,locked=false){
     }else b.append(img);
   }
   const meta=el('div','info');
-  meta.append(el('div','name',reallyLocked?(c.signature?'Signature scellée':'Archive scellée'):c.name),
-    el('div','meta',reallyLocked?'À découvrir · '+RARITIES[c.rarity].label:RARITIES[c.rarity].label+' · '+c.type));
+  meta.append(el('div','name',reallyLocked?'Archive scellée':c.name),
+    el('div','meta',reallyLocked?'À découvrir':RARITIES[c.rarity].label+' · '+c.type));
   b.append(meta);
   if(!locked&&finishQuantity(state.finishCounts,finish,c.id))
     b.append(el('span','amount','×'+finishQuantity(state.finishCounts,finish,c.id)));
@@ -1558,7 +1559,7 @@ function markCodexSelected(id){
 }
 function codexBrowseTo(card){
   if(!card)return;
-  const locked=!state.owned[card.id]&&card.id!==1&&!(previewArt&&hasApprovedArt(card.id));
+  const locked=!state.owned[card.id]&&!(previewArt&&hasApprovedArt(card.id));
   if(locked)inspectSealed(card,false);
   else{
     const finish=FINISHES[filterFinish]?filterFinish:preferredFinish(state.finishCounts,card.id);
@@ -1595,11 +1596,11 @@ function inspectSealed(c,scroll=true){
   const collectionLabel=location?'Saison '+location.season.number+' · '+location.collection.title:'Les Archives';
   const copy=el('div','inspector-copy');
   copy.append(
-    el('p','kicker','ARCHIVE '+String(c.id).padStart(3,'0')+' · '+RARITIES[c.rarity].label),
+    el('p','kicker','ARCHIVE '+String(c.id).padStart(3,'0')),
     el('h2','','Archive non découverte'),
     el('p','codex-inspector-chapter',collectionLabel),
     el('p','muted',c.signature
-      ?'Le Cœur des Marches est une Signature unique. Elle ne peut être obtenue ni dans les boosters ni à la Forge ; son déblocage sera lié à l’aventure finale.'
+      ?'Cette archive renferme un secret. Poursuis ton aventure pour le découvrir.'
       :'Cette page est encore scellée. Découvre cette carte dans les boosters ou façonne-la dans l’Atelier.'),
     ...(c.signature
       ?[button('Voir les expéditions',()=>navigate('expeditions'),'secondary')]
@@ -1969,7 +1970,7 @@ function renderCollection(){
   filterCount.textContent=String(appliedFilters);
   const next=cards.find(c=>c.id===selectedCard?.id)||cards[0];
   if(next){
-    const revealed=!!state.owned[next.id]||next.id===1||(previewArt&&hasApprovedArt(next.id));
+    const revealed=!!state.owned[next.id]||(previewArt&&hasApprovedArt(next.id));
     if(!revealed)inspectSealed(next,false);
     else{
       const finish=FINISHES[filterFinish]?filterFinish:
@@ -1990,13 +1991,13 @@ function renderCollection(){
 $('#search').addEventListener('input',renderCollection);
 const previewToggle=$('#preview-art');
 function syncPreviewToggle(){
-  previewToggle.textContent=previewArt?'Masquer les aperçus':'Voir les '+Object.keys(CARD_ART).length+' illustrations';
+  previewToggle.textContent=previewArt?'Masquer les aperçus':'Aperçu des cartes scellées';
   previewToggle.setAttribute('aria-pressed',String(previewArt));
   previewToggle.classList.toggle('active',previewArt);
 }
 previewToggle.addEventListener('click',()=>{
   previewArt=!previewArt;
-  if(!previewArt&&selectedCard&&!state.owned[selectedCard.id]&&selectedCard.id!==1)selectedCard={id:1,shiny:false};
+  if(!previewArt&&selectedCard&&!state.owned[selectedCard.id])selectedCard=null;
   syncPreviewToggle();renderCollection();
 });
 syncPreviewToggle();
@@ -2073,17 +2074,17 @@ function selectBooster(edition){
   $('#booster-collection-kicker').textContent='SAISON I · LES MARCHES DE VERRE · PARTIE '+(isAuDela?'III':isReflets?'II':'I');
   $('#booster-family-title').textContent='Booster '+(isAuDela?'Au-delà du Verre':isReflets?'des Reflets brisés':'des Origines');
   $('#booster-family-description').textContent=isAuDela
-    ?'Partie III des Marches de Verre. Cinq cartes parmi 23 découvertes, dont au moins une Inhabituelle ou mieux. La 24e, le Cœur des Marches, est une Signature à mériter dans l’aventure finale : elle ne peut jamais sortir du paquet.'
+    ?'Cinq cartes venues d’au-delà du Verre, dont au moins une Inhabituelle. Le reste attend d’être découvert.'
     :isReflets
-      ?'Partie II des Marches de Verre. Cinq cartes du Revers, dont une Inhabituelle au minimum. Les 24 nouvelles légendes t’attendent.'
-      :'Partie I des Marches de Verre. Cinq cartes, dont au moins une Inhabituelle ou mieux. Une chance de découvrir une version Chromatique.';
+      ?'Cinq cartes issues du Revers, dont au moins une Inhabituelle.'
+      :'Cinq cartes à révéler, dont au moins une Inhabituelle.';
   for(const control of $$('.booster-choice')){
     const active=control.dataset.booster===edition;
     control.classList.toggle('is-selected',active);
     control.setAttribute('aria-pressed',String(active));
   }
   $('#pack-title').textContent=isAuDela?'Deux rives, un même horizon.':isReflets?'Les miroirs du Revers t’attendent.':'Les archives attendent leur voyageur.';
-  $('#pack-msg').textContent='Choisis ton booster puis dépense 100 Couronnes pour révéler cinq cartes.';
+  $('#pack-msg').textContent='Un rituel, cinq révélations. À toi de jouer.';
   update();
 }
 $$('.booster-choice').forEach(control=>control.addEventListener('click',
@@ -2315,11 +2316,10 @@ function renderHonorifics(){
     },'honorific'+(title.earned?' is-unlocked':' is-locked')+(selected?' is-equipped':''));
     tile.disabled=!title.earned;
     tile.setAttribute('aria-pressed',String(selected));
-    tile.setAttribute('aria-label',title.name+' · '+(selected?'équipé, retirer le titre':
-      title.earned?'obtenu, équiper le titre':'verrouillé, médaille d’Or requise'));
+    tile.setAttribute('aria-label',title.earned?title.name+' · '+(selected?'équipé, retirer le titre':'obtenu, équiper le titre'):'Titre scellé · médaille d’Or requise');
     tile.append(
       el('span','honorific-symbol',title.earned?title.symbol:'◇'),
-      el('span','honorific-name',title.name),
+      el('span','honorific-name',title.earned?title.name:'Titre scellé'),
       el('span','honorific-state',selected?'Équipé':title.earned?'Choisir':'À débloquer')
     );
     list.append(tile);
@@ -2328,10 +2328,11 @@ function renderHonorifics(){
 function renderAchievements(){
   const root=$('#achievements');
   root.replaceChildren();
-  for(const [title,description,test] of success){
+  for(const [index,[title,description,test]] of success.entries()){
     const done=test();
     const box=el('article','achievement'+(done?'':' locked'));
-    box.append(el('h3','',done?'✦ '+title:'◇ '+title),el('p','',description),
+    box.append(el('h3','',done?'✦ '+title:'◇ Succès '+String(index+1).padStart(2,'0')+' · scellé'),
+      el('p','',done?description:'Poursuis tes découvertes pour le révéler.'),
       el('small','muted',done?'Accompli':'À découvrir'));
     root.append(box);
   }

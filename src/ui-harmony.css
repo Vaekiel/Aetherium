@@ -294,3 +294,62 @@
   #page-jouer .trial-records-current{font-size:10px}
   #page-jouer .trial-challenge-goal{font-size:10px}
 }
+
+/* Polish: discoveries stay mysterious; details remain available on demand. */
+#page-boosters .booster-rates,#page-collection .codex-finish-details,.game-footer .footer-tools{min-width:0}
+#page-boosters .booster-rates{margin:9px 0 0;text-align:left;border-top:1px solid #ad96a145;padding-top:8px}
+#page-boosters .booster-rates summary,
+#page-collection .codex-finish-details summary,
+.game-footer .footer-tools summary{cursor:pointer;list-style-position:inside;color:#dfc7a8;font:12px/1.5 Georgia,serif;touch-action:manipulation}
+#page-boosters .booster-rates summary{padding:8px 2px;min-height:38px}
+#page-boosters .booster-rates p{color:#cdbfd1;font:12px/1.6 Georgia,serif;margin:5px 0 4px;overflow-wrap:anywhere}
+#page-boosters #booster-family-description{font:clamp(12px,1.2vw,14px)/1.5 Georgia,serif;text-wrap:pretty;overflow-wrap:anywhere}
+#page-boosters .pack-side h2{line-height:1.17;overflow-wrap:anywhere;text-wrap:balance}
+#page-boosters .booster-choice{white-space:normal;overflow-wrap:anywhere;text-wrap:balance}
+#page-collection .codex-progress-panel{grid-template-columns:minmax(0,1fr);gap:10px;padding:14px 16px}
+#page-collection .codex-finish-details{min-width:0;border-top:1px solid #9c84905c;padding-top:3px}
+#page-collection .codex-finish-details>summary{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:43px;padding:7px 2px}
+#page-collection .codex-finish-details>summary small{color:#b6abbf;font:11px/1.3 system-ui,sans-serif}
+#page-collection .codex-finish-details[open]>summary{color:#f4dfbc}
+#page-collection .codex-finish-details .finish-inventory-stats{margin:4px 0 12px;gap:7px;white-space:normal}
+#page-collection .codex-finish-details .finish-inventory-stats span{white-space:normal;overflow-wrap:anywhere}
+#page-collection .codex-finish-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px 18px;padding:0 0 8px}
+#page-collection .codex-finish-grid .codex-progress-item{min-width:0}
+#page-collection .collection-toolbar{align-items:stretch}
+#page-collection .collection-toolbar .search-wrap{min-width:0}
+#page-collection .codex-discovery-tabs{margin-bottom:12px}
+#page-jouer .difficulty-panel{gap:10px}
+#page-jouer .play-lore p:not(.kicker){line-height:1.55}
+#page-atelier .atelier-forge-copy p{max-width:440px;margin-inline:auto}
+#page-succes .achievement.locked{border-color:#78708475}
+#page-succes .achievement.locked h3{color:#d2c5d7}
+.game-footer{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:7px 17px}
+.game-footer .footer-tools summary{padding:7px 9px;min-height:36px}
+.game-footer .footer-tools-actions{display:flex;align-items:center;justify-content:center;gap:5px 13px;flex-wrap:wrap;margin-top:7px}
+#page-boosters .booster-rates summary:focus-visible,
+#page-collection .codex-finish-details summary:focus-visible,
+.game-footer .footer-tools summary:focus-visible{outline:2px solid var(--archives-ui-focus);outline-offset:3px}
+@media(max-width:850px){
+ #page-boosters .pack-side .booster-rates{grid-column:1/-1;grid-row:auto;width:100%;margin-top:5px}
+ #page-boosters .pack-side .booster-rates p{font-size:12px;line-height:1.5;text-align:left}
+ #page-boosters #booster-family-description{font-size:13px;line-height:1.42}
+ #page-boosters .booster-choice{font-size:clamp(11px,2.85vw,13px);line-height:1.3;min-height:46px}
+ #page-collection .codex-progress-panel{padding:11px 13px;gap:7px}
+ #page-collection .codex-finish-details>summary{min-height:44px;font-size:12px}
+ #page-collection .codex-finish-grid{gap:11px}
+ #page-collection .collection-toolbar{gap:7px}
+ #page-collection .collection-toolbar button{min-height:44px}
+ #page-atelier .atelier-forge-scene{min-height:160px;margin:10px 0}
+ #page-atelier .atelier-recipe-preview{margin:11px 0}
+ .game-footer{flex-direction:column;gap:2px}
+}
+@media(max-width:420px){
+ #page-collection .codex-finish-grid{grid-template-columns:1fr}
+ #page-boosters .pack-side .booster-rates{padding-top:4px}
+ #page-boosters .pack-side h2{font-size:clamp(16px,4.4vw,19px)}
+}
+@media(prefers-reduced-motion:reduce){
+ #page-boosters .booster-rates summary,
+ #page-collection .codex-finish-details summary,
+ .game-footer .footer-tools summary{scroll-behavior:auto}
+}
