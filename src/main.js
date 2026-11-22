@@ -2353,12 +2353,12 @@ function openOriginesBooster(){
     afterBooster(BOOSTER_UNSEAL_MS,startReveal);
   }
 }
-// Switch to the reveal stage only for a valid purchase, before the original
-// one-time drawing/saving handler runs. Keyboard and touch clicks share the flow.
-$('#buy').addEventListener('click',()=>{
-  if(!boosterBusy&&state.coins>=PACK_PRICE)boosterDialog.classList.add('has-results');
-});
 $('#buy').addEventListener('click',openOriginesBooster);
+// The original handler has already saved the purchase: presentation can expand
+// after it, without entering the isolated gameplay handler tested by old suites.
+$('#buy').addEventListener('click',()=>{
+  if(boosterBusy)boosterDialog.classList.add('has-results');
+});
 revealAllButton.addEventListener('click',revealBoosterAll);
 nextPullButton.addEventListener('click',advanceBoosterCard);
 
