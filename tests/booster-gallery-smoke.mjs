@@ -31,10 +31,10 @@ assert.ok(html.includes('class="pack pack-origines pack-illustrated" id="booster
 assert.ok(html.includes('<details class="booster-rates"><summary>Chances et doublons</summary>'));
 assert.ok(js.includes("if(boosterBusy)completeBoosterReveal();"),
  'Closing during the opening saves the existing result rather than resetting the draw');
-assert.ok(js.includes("if(!boosterBusy&&state.coins>=PACK_PRICE)boosterDialog.classList.add('has-results')"));
+assert.ok(js.includes("if(boosterBusy)boosterDialog.classList.add('has-results')"));
 
 const start=js.indexOf("const boosterDialog=$('#booster-dialog');");
-const end=js.indexOf('/** The face-up card',start);
+const end=js.indexOf('// The original handler has already saved',start);
 assert.ok(start>0&&end>start);
 const block=js.slice(start,end);
 const ev=(props={})=>({
@@ -70,7 +70,7 @@ const context={
  clearBoosterScene:()=>{cleared++},
  completeBoosterReveal:()=>{completed++;context.boosterBusy=false},
  update:()=>{updated++},
- boosterBusy:false
+ boosterBusy:false,selectedBooster:'origines'
 };
 runInNewContext(block,context);
 assert.equal(tabs.children.length,2,'Future seasons get their own tab, without fixed limits');
