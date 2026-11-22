@@ -317,7 +317,8 @@ $('#atelier-confirm').addEventListener('close',()=>{pendingCraftId=null});
 function navigate(page){
   if(!APP_PAGES.includes(page))return;
   closeSheets(false);
-  $$('.page').forEach(el=>el.classList.toggle('active',el.id==='page-'+page));
+  if(typeof boosterDialog!=='undefined'&&boosterDialog.open)closeBoosterDialog();
+  $('.page').forEach(el=>el.classList.toggle('active',el.id==='page-'+page));
   $$('nav [data-page]').forEach(el=>{
     const active=el.dataset.page===page;
     el.classList.toggle('active',active);
@@ -2087,8 +2088,70 @@ function selectBooster(edition){
   $('#pack-msg').textContent='Un rituel, cinq révélations. À toi de jouer.';
   update();
 }
-$$('.booster-choice').forEach(control=>control.addEventListener('click',
-  ()=>selectBooster(control.dataset.booster)));
+/* Galerie extensible: chaque paquet publié porte son identifiant et sa saison.
+   Ajouter une collection consiste à ajouter sa tuile, son visuel HD et son
+   moteur de tirage; aucune grille ou navigation par saison n'est à recoder. */
+const boosterDialog=$('#booster-dialog');
+const boosterChoices=$('.booster-choice');
+const boosterSeasonTabs=$('#booster-season-tabs');
+function selectBoosterSeason(season){
+  for(const control of boosterChoices){
+    control.hidden=control.dataset.season!==season;
+  }
+  for(const control of $('.booster-season-choice')){
+    const active=control.dataset.season===season;
+    control.classList.toggle('is-active',active);
+    control.setAttribute('aria-pressed',String(active));
+  }
+}
+function renderBoosterSeasons(){
+  const seasons=new Map();
+  for(const control of boosterChoices){
+    const season=control.dataset.season;
+    if(season&&!seasons.has(season)){
+      seasons.set(season,control.dataset.seasonTitle||season);
+    }
+  }
+  boosterSeasonTabs.replaceChildren();
+  for(const [season,title] of seasons){
+    const tab=button('✧ '+title,()=>selectBoosterSeason(season),'booster-season-choice');
+    tab.dataset.season=season;
+    tab.setAttribute('aria-pressed','false');
+    boosterSeasonTabs.append(tab);
+  }
+  const first=seasons.keys().next().value;
+  if(first)selectBoosterSeason(first);
+}
+function closeBoosterDialog(){
+  if(boosterBusy)completeBoosterReveal();
+  if(boosterDialog.open)boosterDialog.close();
+}
+function openBoosterDialog(control){
+  if(boosterBusy)return;
+  selectBooster(control.dataset.booster);
+  $('#booster-dialog-kicker').textContent=control.dataset.seasonTitle||'LES ARCHIVES';
+  boosterDialog.classList.remove('has-results');
+  if(!boosterDialog.open)boosterDialog.showModal();
+  $('#buy').focus({preventScroll:true});
+}
+$('.booster-choice').forEach(control=>control.addEventListener('click',
+  ()=>openBoosterDialog(control)));
+$('#booster-close').addEventListener('click',closeBoosterDialog);
+boosterDialog.addEventListener('cancel',event=>{
+  event.preventDefault();
+  closeBoosterDialog();
+});
+boosterDialog.addEventListener('click',event=>{
+  if(event.target===boosterDialog)closeBoosterDialog();
+});
+boosterDialog.addEventListener('close',()=>{
+  // A purchase has already been saved; closing only resets the presentation.
+  if(boosterBusy)completeBoosterReveal();
+  clearBoosterScene();
+  boosterDialog.classList.remove('has-results');
+  update();
+});
+renderBoosterSeasons();
 
 /** The face-up card is decorative: tapping it should not leave the reveal sequence.
  * Loading the artwork eagerly is important: on Android WebView a lazy image
@@ -2290,6 +2353,11 @@ function openOriginesBooster(){
     afterBooster(BOOSTER_UNSEAL_MS,startReveal);
   }
 }
+// Switch to the reveal stage only for a valid purchase, before the original
+// one-time drawing/saving handler runs. Keyboard and touch clicks share the flow.
+$('#buy').addEventListener('click',()=>{
+  if(!boosterBusy&&state.coins>=PACK_PRICE)boosterDialog.classList.add('has-results');
+});
 $('#buy').addEventListener('click',openOriginesBooster);
 revealAllButton.addEventListener('click',revealBoosterAll);
 nextPullButton.addEventListener('click',advanceBoosterCard);
