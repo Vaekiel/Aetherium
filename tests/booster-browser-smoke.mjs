@@ -85,6 +85,52 @@ const installedManifest=await evaluate("fetch('./manifest.webmanifest').then(r=>
 assert.equal(installedManifest.display_override[0],'fullscreen');
 assert.equal(installedManifest.icons.length,2);
 
+// Simulate camera notches using the browser's actual safe-area CSS env values.
+// This catches selector precedence regressions that source-only tests miss.
+await command('Emulation.setDeviceMetricsOverride',{
+ width:390,height:844,deviceScaleFactor:1,mobile:true
+});
+await command('Emulation.setSafeAreaInsetsOverride',{
+ insets:{top:48,left:0,right:0,bottom:16}
+});
+await sleep(120);
+const portraitCutout=await evaluate(`(()=>{
+ const header=document.querySelector('#app > header.top');
+ const wallet=document.querySelector('.top .wallet');
+ const cs=getComputedStyle(header);
+ return {paddingTop:parseFloat(cs.paddingTop),paddingLeft:parseFloat(cs.paddingLeft),
+  walletTop:wallet.getBoundingClientRect().top,viewport:innerWidth}
+})()`);
+console.log('Notch portrait:',JSON.stringify(portraitCutout));
+assert.ok(portraitCutout.paddingTop>=56,'Top safe area should reserve the 48px camera cutout');
+assert.ok(portraitCutout.walletTop>=48,'Currencies are below the selfie camera');
+
+await command('Emulation.setDeviceMetricsOverride',{
+ width:831,height:377,deviceScaleFactor:1,mobile:true,
+ screenOrientation:{type:'landscapePrimary',angle:90}
+});
+await command('Emulation.setSafeAreaInsetsOverride',{
+ insets:{top:0,left:52,right:18,bottom:0}
+});
+await sleep(120);
+const landscapeCutout=await evaluate(`(()=>{
+ const header=document.querySelector('#app > header.top');
+ const wallet=document.querySelector('.top .wallet');
+ const cs=getComputedStyle(header);
+ const w=wallet.getBoundingClientRect();
+ return {paddingTop:parseFloat(cs.paddingTop),
+  paddingLeft:parseFloat(cs.paddingLeft),paddingRight:parseFloat(cs.paddingRight),
+  walletLeft:w.left,walletRight:w.right,viewport:innerWidth}
+})()`);
+console.log('Notch landscape:',JSON.stringify(landscapeCutout));
+assert.ok(landscapeCutout.paddingTop<=8,'Landscape keeps the compact header');
+assert.ok(landscapeCutout.paddingLeft>=52,'Left cutout safe area is respected');
+assert.ok(landscapeCutout.paddingRight>=18,'Right cutout safe area is respected');
+assert.ok(landscapeCutout.walletRight<=831-18+1,'Currency remains clear of right cutout');
+await command('Emulation.setSafeAreaInsetsOverride',{
+ insets:{top:0,left:0,right:0,bottom:0}
+});
+
 for(const [width,columns] of [[390,2],[760,3],[1280,3]]){
  await command('Emulation.setDeviceMetricsOverride',{
   width,height:900,deviceScaleFactor:1,mobile:width<760
