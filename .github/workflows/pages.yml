@@ -34,11 +34,11 @@ jobs:
           node --version
           test -f index.html
           test -f src/main.js
-          test -s src/audio.js
-          test -s docs/AUDIO-GENERATION.json
-          for audio_file in ambient-epreuves ambient-boosters ui-tap ui-select ui-page booster-unseal reveal-normal reveal-rare reveal-epic reveal-legendary reward forge; do
-            test -s "assets/audio/$audio_file.ogg"
-          done
+          # The player is intentionally silent: no sound engine or assets.
+          test ! -e src/audio.js
+          test ! -e src/audio.css
+          test ! -d assets/audio
+          node tests/soundscape-smoke.mjs
           test -f src/style.css
           test -f src/data.js
           test -f src/art.js
