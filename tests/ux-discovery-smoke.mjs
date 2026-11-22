@@ -27,6 +27,7 @@ assert.ok(main.includes("const revealed=!!state.owned[next.id]||(previewArt&&has
 assert.ok(main.includes("el('p','kicker','ARCHIVE '+String(c.id).padStart(3,'0'))"));
 assert.ok(!main.includes('La 24e, le Cœur des Marches'));
 assert.ok(!main.includes('Le Cœur des Marches est une Signature unique'));
+assert.ok(!main.includes('Le Cœur des Marches t’attend'));
 assert.ok(main.includes("done?description:'Poursuis tes découvertes pour le révéler.'"));
 assert.ok(main.includes("title.earned?title.name:'Titre scellé'"));
 // Avoid rebuilding pages that are not currently visible on every search/reward.
