@@ -143,6 +143,28 @@ for(const [width,columns] of [[390,2],[760,3],[1280,3]]){
    display:getComputedStyle(b).display,left:r.left,right:r.right,
    width:r.width,pressed:b.getAttribute('aria-pressed')}
  })()`);
+ const scenery=await evaluate(`(()=>{
+    const layer=document.querySelector('#app > .ambient-landscape');
+    const app=document.querySelector('#app');
+    const before=getComputedStyle(layer,'::before');
+    const after=getComputedStyle(layer,'::after');
+    const appBefore=getComputedStyle(app,'::before');
+    const appAfter=getComputedStyle(app,'::after');
+    return {
+      background:getComputedStyle(layer).backgroundImage,
+      beforeDisplay:before.display,beforeContent:before.content,
+      afterDisplay:after.display,afterContent:after.content,
+      appBeforeDisplay:appBefore.display,appAfterDisplay:appAfter.display
+    };
+  })()`);
+ console.log('Mobile scenery '+width+'px:',JSON.stringify(scenery));
+ if(width<=850){
+  assert.equal(scenery.beforeDisplay,'none','No stretched left background artwork on mobile');
+  assert.equal(scenery.afterDisplay,'none','No legacy overlay on mobile');
+  assert.equal(scenery.appBeforeDisplay,'none','No pseudo landscape on mobile');
+  assert.equal(scenery.appAfterDisplay,'none','No decorative footer artifact on mobile');
+  assert.ok(!scenery.background.includes('url('),'A gentle gradient replaces mobile background art');
+ }
  console.log('Immersive '+width+'px',JSON.stringify(immersive));
  if(width<=850&&immersive.enabled){
   assert.equal(immersive.hidden,false,'Supported mobile browsers have a fullscreen action');
