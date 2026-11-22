@@ -30,3 +30,18 @@ jobs:
             node "$test_file" || failed=1
           done
           exit "$failed"
+      - name: Exercise the booster gallery in real Chromium
+        shell: bash
+        run: |
+          set -euo pipefail
+          command -v google-chrome
+          python3 -m http.server 8765 --bind 127.0.0.1 >/tmp/aetherium-server.log 2>&1 &
+          SERVER_PID=$!
+          sleep 1
+          google-chrome --headless=new --no-sandbox --disable-dev-shm-usage \
+            --disable-gpu --remote-allow-origins='*' \
+            --remote-debugging-port=9222 --user-data-dir=/tmp/aetherium-gallery-browser \
+            'http://127.0.0.1:8765/#boosters' >/tmp/aetherium-chrome.log 2>&1 &
+          CHROME_PID=$!
+          trap 'kill "$SERVER_PID" "$CHROME_PID" 2>/dev/null || true' EXIT
+          AETHERIUM_BROWSER_TEST=1 node tests/booster-browser-smoke.mjs

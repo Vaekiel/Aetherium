@@ -318,7 +318,7 @@ function navigate(page){
   if(!APP_PAGES.includes(page))return;
   closeSheets(false);
   if(typeof boosterDialog!=='undefined'&&boosterDialog.open)closeBoosterDialog();
-  $('.page').forEach(el=>el.classList.toggle('active',el.id==='page-'+page));
+  $$('.page').forEach(el=>el.classList.toggle('active',el.id==='page-'+page));
   $$('nav [data-page]').forEach(el=>{
     const active=el.dataset.page===page;
     el.classList.toggle('active',active);
@@ -2348,6 +2348,9 @@ boosterDialog.addEventListener('click',event=>{
   if(event.target===boosterDialog)closeBoosterDialog();
 });
 boosterDialog.addEventListener('close',()=>{
+  // Native 'close' is queued; a quick new selection can reopen the same
+  // dialog before the old close event arrives. Never clear a live draw.
+  if(boosterDialog.open)return;
   // A purchase has already been saved; closing only resets the presentation.
   if(boosterBusy)completeBoosterReveal();
   clearBoosterScene();
