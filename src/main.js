@@ -318,7 +318,7 @@ function navigate(page){
   if(!APP_PAGES.includes(page))return;
   closeSheets(false);
   if(typeof boosterDialog!=='undefined'&&boosterDialog.open)closeBoosterDialog();
-  $('.page').forEach(el=>el.classList.toggle('active',el.id==='page-'+page));
+  $$('.page').forEach(el=>el.classList.toggle('active',el.id==='page-'+page));
   $$('nav [data-page]').forEach(el=>{
     const active=el.dataset.page===page;
     el.classList.toggle('active',active);
