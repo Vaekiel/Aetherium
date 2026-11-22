@@ -1374,7 +1374,7 @@ function renderExpedition(){
         const have=FINALE_PREREQUISITES.filter(id=>view.current.completedRoutes.includes(id)).length;
         hint=locked?'Scellé · '+have+'/3 expéditions achevées':
           done&&!state.shiny?.[72]?'✧ Rejouer en Maîtrise pour la Chromatique':
-          done?'La Signature est acquise · chapitre rejouable':'Le Cœur des Marches t’attend';
+          done?'La Signature est acquise · chapitre rejouable':'Le dernier chemin est prêt à être exploré.';
       }
       copy.append(el('strong','',route.name),el('small','',hint));
       pick.append(copy,el('span','expedition-choice-status',locked?'🔒':done?'✓':'›'));
