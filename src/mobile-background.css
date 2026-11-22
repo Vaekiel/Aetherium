@@ -1,0 +1,17 @@
+/* Mobile scenery cleanup: the legacy reference-left.webp artwork was stretched
+   over the entire app and appears as a dark vertical stain below the cards.
+   Desktop already suppresses these layers. Preserve a subtle uniform
+   night-sky gradient, without touching any actual game UI or cards. */
+@media (max-width:850px){
+  #app > .ambient-landscape{
+    background:linear-gradient(180deg,#14172c 0%,#101629 52%,#0b1121 100%) !important;
+  }
+  #app > .ambient-landscape::before,
+  #app > .ambient-landscape::after,
+  #app::before,
+  #app::after{
+    content:none !important;
+    display:none !important;
+    background:none !important;
+  }
+}
