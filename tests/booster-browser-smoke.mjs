@@ -2,6 +2,11 @@
 // Run with a local HTTP server and Chrome --remote-debugging-port=9222.
 import assert from 'node:assert/strict';
 
+if(process.env.AETHERIUM_BROWSER_TEST!=='1'){
+ console.log('AETHERIUM : test Chrome réservé à la phase navigateur');
+ process.exit(0);
+}
+
 const sleep=ms=>new Promise(resolve=>setTimeout(resolve,ms));
 async function readJson(url){
  const response=await fetch(url);
