@@ -22,4 +22,23 @@
  cursor:pointer;padding:8px 2px;min-height:36px;color:#ead0ae;
 }
 .game-footer .app-mode-help p{margin:5px 0 7px;color:#cfc3d0}
+/* Protect the EXISTING header (brand, currencies and controls) from camera
+   holes / Dynamic Island in edge-to-edge fullscreen, without moving elements
+   relative to each other or changing the design. env() is 0 in normal tabs.
+   This stronger selector also overrides legacy mobile and shell CSS. */
+@media(max-width:850px){
+ #app > header.top{
+  padding-top:calc(9px + env(safe-area-inset-top,0px));
+  padding-right:max(11px,env(safe-area-inset-right,0px));
+  padding-left:max(11px,env(safe-area-inset-left,0px));
+ }
+}
+/* Preserve the existing compact landscape header, with insets added only
+   when a camera cutout actually intrudes into the displayed viewport. */
+@media(max-width:850px) and (orientation:landscape) and (max-height:450px){
+ #app > header.top{
+  padding-top:calc(4px + env(safe-area-inset-top,0px));
+ }
+}
+
 @media(prefers-reduced-motion:reduce){#immersive-toggle{transition:none}}
