@@ -63,6 +63,17 @@ async function until(check,label){
 }
 await command('Runtime.enable');
 await command('Page.enable');
+// Reload after Runtime.enable to capture early module errors instead of missing them.
+await command('Page.navigate',{url:'http://127.0.0.1:8765/?booster-e2e=1#boosters'});
+await sleep(1800);
+console.log('Initial page',JSON.stringify(await evaluate(`({
+ url:location.href,ready:document.readyState,hash:location.hash,
+ active:[...document.querySelectorAll('.page.active')].map(p=>p.id),
+ choices:document.querySelectorAll('.booster-choice').length,
+ seasons:document.querySelectorAll('#booster-season-tabs button').length,
+ scripts:[...document.scripts].map(s=>s.src).slice(-3)
+})`)));
+console.log('Initial JS exceptions',JSON.stringify(jsErrors));
 await until(()=>evaluate("Boolean(document.querySelector('#page-boosters.active') && document.querySelector('#booster-season-tabs button'))"),'game booted on #boosters');
 
 for(const [width,columns] of [[390,2],[760,3],[1280,3]]){
