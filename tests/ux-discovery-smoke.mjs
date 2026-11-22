@@ -12,9 +12,10 @@ assert.match(html, /<details class="footer-tools"><summary>Réglages et sauvegar
 for(const id of ['buy','booster-family-description','codex-progress-discovered',
   'codex-progress-normal','codex-progress-chromatic','codex-progress-holographic',
   'codex-progress-calligraphic','codex-normal-count','codex-holographic-count',
-  'codex-calligraphic-count','audio-options','backup-open','reset']){
+  'codex-calligraphic-count','backup-open','reset']){
   assert.ok(html.includes('id="'+id+'"'),'Interactive or progress target preserved: '+id);
 }
+assert.ok(!html.includes('id="audio-options"'),'Réglages audio supprimés');
 assert.ok(css.includes('#page-boosters .pack-side .booster-rates'),'Mobile probabilities are readable');
 assert.ok(css.includes('#page-collection .codex-finish-grid'),'Folded variants remain accessible');
 assert.ok(css.includes('@media(max-width:420px)'),'Small phones are supported');
