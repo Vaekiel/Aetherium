@@ -2328,10 +2328,10 @@ function renderHonorifics(){
 function renderAchievements(){
   const root=$('#achievements');
   root.replaceChildren();
-  for(const [title,description,test] of success){
+  for(const [index,[title,description,test]] of success.entries()){
     const done=test();
     const box=el('article','achievement'+(done?'':' locked'));
-    box.append(el('h3','',done?'✦ '+title:'◇ Succès scellé'),
+    box.append(el('h3','',done?'✦ '+title:'◇ Succès '+String(index+1).padStart(2,'0')+' · scellé'),
       el('p','',done?description:'Poursuis tes découvertes pour le révéler.'),
       el('small','muted',done?'Accompli':'À découvrir'));
     root.append(box);
