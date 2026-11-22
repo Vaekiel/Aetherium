@@ -1,0 +1,291 @@
+/* AETHERIUM · Galerie des Sceaux.
+   A shared packet frame. Only the HD pixel-art scenery and booster name change.
+   Breakpoints deliberately cover narrow phones, tablets and wide desktops. */
+#page-boosters .booster-archive-bar{
+  margin:16px 0 18px;padding:0;border:0;background:transparent;
+}
+#page-boosters .booster-season-tabs{
+  display:flex;align-items:center;gap:9px;flex-wrap:wrap;
+}
+#page-boosters .booster-season-choice{
+  min-height:46px;padding:11px 17px;text-align:left;
+  border:1px solid #8a7298;border-radius:7px;
+  background:linear-gradient(115deg,#30253f,#211e34);color:#e8d5be;
+  font:clamp(12px,1.2vw,14px)/1.35 Georgia,serif;cursor:pointer;
+}
+#page-boosters .booster-season-choice.is-active,
+#page-boosters .booster-season-choice[aria-pressed="true"]{
+  color:#f8e5c6;border-color:#d2ad83;
+  box-shadow:inset 0 0 0 1px #9c77933b,0 3px 14px #0909174d;
+}
+#page-boosters .booster-gallery{
+  display:grid;grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:clamp(11px,1.8vw,21px);max-width:970px;margin:0 auto 20px;
+}
+#page-boosters .booster-gallery .booster-choice{
+  position:relative;min-width:0;min-height:0;padding:clamp(12px,2vw,20px) 10px 13px;
+  display:flex;flex-direction:column;align-items:center;justify-content:flex-start;
+  gap:12px;border-radius:9px;
+  border:1px solid #65516e;background:
+    radial-gradient(ellipse at 50% 16%,#4a3a6255,transparent 73%),
+    linear-gradient(160deg,#262139,#161a2e);
+  color:#f0debf;box-shadow:inset 0 1px #e7d9ea13,0 6px 18px #080b1b55;
+  cursor:pointer;touch-action:manipulation;
+  transition:border-color .17s ease,transform .17s ease,box-shadow .17s ease;
+}
+#page-boosters .booster-gallery .booster-choice[hidden]{display:none!important}
+#page-boosters .booster-gallery .booster-choice:hover{
+  transform:translateY(-2px);border-color:#c5a47f;
+  box-shadow:inset 0 1px #f5d6ce27,0 9px 23px #06071773;
+}
+#page-boosters .booster-gallery .booster-choice.is-selected{
+  border-color:#9c8695;box-shadow:inset 0 0 0 1px #d4b88d20,0 6px 18px #080b1b55;
+}
+#page-boosters .booster-choice:focus-visible,
+#page-boosters .booster-season-choice:focus-visible,
+#page-boosters .booster-close:focus-visible{
+  outline:2px solid #ffe4ab;outline-offset:3px;
+}
+#page-boosters .booster-tile-caption{
+  display:flex;flex-direction:column;align-items:center;gap:5px;
+  width:100%;min-width:0;overflow-wrap:anywhere;text-align:center;
+}
+#page-boosters .booster-tile-chapter{
+  color:#b4a5c3;font:10px/1.2 system-ui,sans-serif;letter-spacing:.1em;
+}
+#page-boosters .booster-tile-caption strong{
+  display:block;min-height:2.4em;align-content:center;
+  font:clamp(15px,1.8vw,20px)/1.2 Georgia,serif;font-variant:small-caps;
+  text-wrap:balance;color:#f6e7d0;
+}
+#page-boosters .booster-tile-price{
+  min-width:72px;padding:7px 12px;border-top:1px solid #a48a915c;
+  color:#eccb91;font:15px/1.3 Georgia,serif;font-weight:bold;
+}
+/* Unified physical packet, from catalog tile to the enlarged modal preview. */
+#page-boosters .booster-tile-pack,
+#page-boosters #booster-pack{
+  position:relative;isolation:isolate;display:block;flex:none;
+  width:min(100%,160px);height:auto;aspect-ratio:188/270;
+  margin:0 auto;border:2px solid #e1bc80;outline:1px solid #67516c;
+  border-radius:5px;overflow:hidden;transform-origin:50% 62%;
+  background:linear-gradient(160deg,#171831,#251c3d 45%,#101a30);
+  box-shadow:inset 0 0 0 4px #100f2bd9,inset 0 0 0 6px #dfb67d58,
+    0 9px 17px #090817b5,0 0 15px #d7b5801c;
+  text-align:center;
+}
+#page-boosters .booster-tile-pack::before,
+#page-boosters #booster-pack::before{
+  content:"";position:absolute;z-index:11;top:0;left:0;right:0;
+  height:5.2%;border-bottom:1px solid #f9d49e;
+  background:repeating-linear-gradient(90deg,#e1bd83 0 4px,#a47a7f 4px 6px,#3d3156 6px 10px,#d4a678 10px 12px);
+  box-shadow:0 2px 4px #0a081a6e;
+}
+#page-boosters .booster-tile-pack::after,
+#page-boosters #booster-pack::after{
+  content:"";position:absolute;z-index:11;bottom:0;left:0;right:0;
+  height:4.7%;border-top:1px solid #f9d49e;
+  background:repeating-linear-gradient(90deg,#e1bd83 0 4px,#a47a7f 4px 6px,#3d3156 6px 10px,#d4a678 10px 12px);
+}
+#page-boosters .booster-tile-pack .pack-scene,
+#page-boosters #booster-pack .pack-scene{
+  position:absolute;z-index:1;display:block;
+  inset:30% 8.5% 18%;overflow:hidden;
+  border:2px solid #d6ad6e;
+  box-shadow:0 0 0 3px #0f142a,0 0 0 4px #ad865b,
+    inset 0 0 15px #0a0c2080;
+  background:#141c39;
+}
+#page-boosters .booster-tile-pack .pack-scene img,
+#page-boosters #booster-pack .pack-scene .pack-artwork{
+  position:absolute;inset:0;width:100%;height:100%;
+  object-fit:cover;object-position:50% 82%;
+  transform:scale(1.28);
+  image-rendering:auto;filter:none;opacity:1;pointer-events:none;
+}
+/* The source is approved HD pixel art. Cropping removes the old packet branding;
+   lettering and foil folds now come exclusively from the shared shell. */
+#page-boosters .booster-tile-pack .pack-wordmark,
+#page-boosters #booster-pack .pack-wordmark{
+  display:block;position:absolute;z-index:8;top:11%;left:3%;right:3%;
+  width:auto;padding:0;margin:0;
+  color:#f7e5bb;font:small-caps bold clamp(12px,1.75vw,21px)/1.1 Georgia,serif;
+  letter-spacing:.015em;text-shadow:0 2px 3px #050817,0 0 9px #cba57b6e;
+}
+#page-boosters .booster-tile-pack .pack-collection,
+#page-boosters #booster-pack .pack-collection{
+  display:block;position:absolute;z-index:8;top:23%;left:4%;right:4%;
+  width:auto;padding:0;margin:0;
+  color:#c6b4cb;font:clamp(7px,.7vw,10px)/1.15 system-ui,sans-serif;
+  letter-spacing:.03em;text-transform:uppercase;
+}
+#page-boosters .booster-tile-pack .pack-title,
+#page-boosters #booster-pack .pack-title{
+  display:block;position:absolute;z-index:8;bottom:9.7%;top:auto;left:5%;right:5%;
+  width:auto;max-width:none;padding:3px 1px;margin:0;
+  color:#ffe9bd;font:bold clamp(10px,1.25vw,16px)/1.06 Georgia,serif;
+  font-variant:small-caps;letter-spacing:.015em;white-space:normal;
+  overflow-wrap:anywhere;text-shadow:0 2px 3px #030818;
+  background:linear-gradient(90deg,transparent,#15152f 12%,#15152f 88%,transparent);
+  border-top:1px solid #e9c39180;border-bottom:1px solid #e9c39180;
+}
+#page-boosters .booster-tile-pack .pack-edition,
+#page-boosters #booster-pack .pack-edition{
+  display:block;position:absolute;z-index:8;bottom:5.5%;top:auto;left:4%;right:4%;
+  width:auto;padding:0;margin:0;
+  color:#dbc6bd;font:clamp(7px,.7vw,9px)/1.1 system-ui,sans-serif;
+  letter-spacing:.055em;
+}
+#page-boosters .booster-tile-pack .pack-crest,
+#page-boosters #booster-pack .pack-crest{
+  display:block;position:absolute;z-index:8;top:26.2%;left:0;right:0;
+  color:#d8b27f;font:12px/1 Georgia,serif;text-shadow:0 0 5px #f6e3b5;
+}
+#page-boosters #booster-pack .pack-sidefold,
+#page-boosters #booster-pack .pack-crimp-bottom{display:none}
+#page-boosters #booster-pack .pack-foil{
+  position:absolute;z-index:9;inset:0;clip-path:none;border:0;
+  background:linear-gradient(114deg,transparent 14%,#e9f0ff0a 44%,#ffffff16 50%,transparent 65%);
+  opacity:.33;mix-blend-mode:screen;pointer-events:none;
+}
+#page-boosters #booster-pack .pack-crimp-top,
+#page-boosters #booster-pack .pack-seal{opacity:0}
+#page-boosters #booster-pack.is-opening .pack-crimp-top,
+#page-boosters #booster-pack.is-opening .pack-seal{opacity:1}
+/* Overlay/placement: native dialog keeps focus contained on every device. */
+#page-boosters .booster-dialog{
+  width:min(95vw,950px);max-width:950px;max-height:90vh;max-height:90dvh;
+  padding:0;margin:auto;color:#eedfcf;
+  background:radial-gradient(ellipse at 50% 0,#302440,#191b30 75%);
+  border:1px solid #9b819d;border-radius:11px;
+  box-shadow:0 18px 68px #020413e0,0 0 0 1px #d1ab7555;
+  overflow:auto;overscroll-behavior:contain;
+}
+#page-boosters .booster-dialog:not([open]){display:none}
+#page-boosters .booster-dialog::backdrop{background:#090b1fda}
+#page-boosters .booster-dialog-content{padding:0 clamp(13px,2.6vw,26px) 23px}
+#page-boosters .booster-dialog-head{
+  position:sticky;z-index:30;top:0;display:flex;align-items:center;
+  justify-content:space-between;gap:10px;min-height:58px;margin:0 -1px 14px;
+  background:#242036f0;border-bottom:1px solid #65526a;
+  padding:9px 0;color:#cebac6;
+}
+#page-boosters #booster-dialog-kicker{
+  font:11px/1.3 system-ui,sans-serif;letter-spacing:.11em;
+  text-transform:uppercase;
+}
+#page-boosters .booster-close{
+  flex:none;display:inline-flex;align-items:center;gap:7px;min-height:42px;
+  padding:9px 12px;border:1px solid #89748a;border-radius:5px;
+  color:#e8d4c6;background:#302a42;cursor:pointer;
+  font:12px/1 system-ui,sans-serif;
+}
+#page-boosters .booster-dialog .booster-dialog-layout{
+  display:block;width:100%;margin:0 auto;
+}
+#page-boosters .booster-dialog .pack-side{
+  display:flex;flex-direction:column;align-items:center;
+  text-align:center;gap:10px;max-width:410px;margin:0 auto;
+  padding:4px 8px 12px;min-width:0;border:none;background:transparent;
+}
+#page-boosters .booster-dialog #booster-pack{
+  width:185px;height:auto;margin:0 auto 7px;grid-row:auto;grid-column:auto;
+  align-self:center;justify-self:center;
+}
+#page-boosters .booster-dialog .booster-buy-info{
+  width:100%;min-width:0;display:flex;flex-direction:column;align-items:center;gap:8px;
+}
+#page-boosters .booster-dialog .pack-side h2{
+  margin:0;color:#f6e7d2;font:small-caps normal clamp(20px,2.5vw,26px)/1.2 Georgia,serif;
+}
+#page-boosters .booster-dialog #booster-family-description{
+  margin:0 0 4px;max-width:290px;
+  font:13px/1.55 Georgia,serif;color:#c8bed1;text-align:center;
+}
+#page-boosters .booster-dialog #buy{
+  display:block;width:min(100%,280px);min-height:49px;
+  margin:3px auto;padding:10px 13px;font-size:15px;
+}
+#page-boosters .booster-dialog .booster-rates{
+  width:min(100%,300px);margin-top:3px;padding-top:6px;
+}
+#page-boosters .booster-dialog:not(.has-results) #booster-opening{display:none}
+#page-boosters .booster-dialog.has-results .booster-dialog-layout{
+  display:grid;grid-template-columns:minmax(185px,245px) minmax(0,1fr);
+  gap:clamp(15px,2.6vw,30px);align-items:start;
+}
+#page-boosters .booster-dialog.has-results .pack-side{
+  width:100%;padding:4px 0 10px;
+}
+#page-boosters .booster-dialog.has-results #booster-pack{width:143px}
+#page-boosters .booster-dialog.has-results #booster-opening{
+  min-width:0;min-height:180px;display:block;
+  border:1px solid #705b7b;border-radius:7px;
+  padding:clamp(12px,2vw,20px);
+  background:linear-gradient(160deg,#242037,#1a1c30);
+}
+#page-boosters .booster-dialog.has-results #booster-opening h2{
+  margin:0 0 7px;color:#f4e1c8;font-size:clamp(18px,2vw,23px);
+}
+#page-boosters .booster-dialog.has-results .cards.booster-gallery{
+  display:grid;grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:10px;
+}
+#page-boosters .booster-dialog.has-results .booster-summary{
+  justify-content:center;gap:6px;padding:9px;
+}
+@media(min-width:1220px){
+  #page-boosters .booster-gallery{max-width:1040px}
+}
+@media(min-width:570px) and (max-width:850px){
+  #page-boosters .booster-gallery{grid-template-columns:repeat(3,minmax(0,1fr))}
+  #page-boosters .booster-tile-pack{width:min(100%,145px)}
+}
+@media(max-width:700px){
+  #page-boosters .booster-gallery{grid-template-columns:repeat(2,minmax(0,1fr))}
+  #page-boosters .booster-gallery .booster-choice{padding:12px 8px;gap:8px}
+  #page-boosters .booster-tile-pack{width:min(100%,145px)}
+  #page-boosters .booster-tile-caption strong{font-size:clamp(15px,3.25vw,19px)}
+  #page-boosters .booster-dialog{width:calc(100vw - 16px);max-height:94dvh}
+  #page-boosters .booster-dialog-content{padding:0 12px 17px}
+  #page-boosters .booster-dialog-head{margin-bottom:9px;min-height:48px}
+  #page-boosters .booster-dialog.has-results .booster-dialog-layout{
+    grid-template-columns:minmax(0,1fr);gap:12px;
+  }
+  #page-boosters .booster-dialog.has-results .pack-side{
+    display:grid;grid-template-columns:98px minmax(0,1fr);gap:10px;
+    text-align:left;align-items:center;width:100%;max-width:100%;
+  }
+  #page-boosters .booster-dialog.has-results #booster-pack{
+    width:95px;margin:0;grid-column:1;grid-row:1;
+  }
+  #page-boosters .booster-dialog.has-results .booster-buy-info{
+    grid-column:2;grid-row:1;align-items:stretch;text-align:left;gap:5px;
+  }
+  #page-boosters .booster-dialog.has-results .pack-side h2{font-size:17px}
+  #page-boosters .booster-dialog.has-results #booster-family-description{font-size:12px;text-align:left}
+  #page-boosters .booster-dialog.has-results .booster-rates{width:100%;margin:0}
+  #page-boosters .booster-dialog.has-results #buy{margin:0;width:100%;min-height:44px}
+  #page-boosters .booster-dialog.has-results .cards.booster-gallery{
+    grid-template-columns:repeat(2,minmax(0,1fr));
+  }
+}
+@media(max-width:420px){
+  #page-boosters .booster-season-tabs{display:block}
+  #page-boosters .booster-season-choice{width:100%;font-size:12px}
+  #page-boosters .booster-gallery{gap:9px}
+  #page-boosters .booster-gallery .booster-choice{padding:10px 5px}
+  #page-boosters .booster-tile-pack{width:min(100%,125px)}
+  #page-boosters .booster-tile-chapter{font-size:9px}
+  #page-boosters .booster-tile-caption strong{min-height:2.2em;font-size:15px}
+  #page-boosters .booster-tile-price{font-size:14px}
+  #page-boosters .booster-close span{display:none}
+  #page-boosters #booster-dialog-kicker{font-size:9px;letter-spacing:.05em}
+  #page-boosters .booster-dialog:not(.has-results) #booster-pack{width:164px}
+  #page-boosters .booster-dialog.has-results #booster-pack{width:90px}
+  #page-boosters .booster-dialog.has-results .pack-side{grid-template-columns:90px minmax(0,1fr)}
+}
+@media(prefers-reduced-motion:reduce){
+  #page-boosters .booster-gallery .booster-choice{transition:none}
+  #page-boosters .booster-gallery .booster-choice:hover{transform:none}
+}
