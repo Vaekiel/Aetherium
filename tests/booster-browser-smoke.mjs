@@ -171,6 +171,18 @@ for(const [width,columns] of [[390,2],[760,3],[1280,3]]){
  assert.equal(overview.pageVisible,'block');
  assert.ok(overview.cards.every(c=>c.width>90&&c.height>150),'All booster tiles must have real dimensions');
  assert.ok(overview.cards.every(c=>c.right<=width+2),'No horizontal overflow on '+width);
+ const names=await evaluate(`[...document.querySelectorAll('#booster-gallery .booster-choice')].map(card=>{
+  const wrapper=card.querySelector('.booster-tile-pack');
+  const title=wrapper.querySelector('.pack-title');
+  const caption=card.querySelector('.booster-tile-caption strong');
+  const t=title.getBoundingClientRect(),p=wrapper.getBoundingClientRect();
+  return {name:title.textContent,centering:getComputedStyle(title).justifyContent,
+   align:getComputedStyle(title).textAlign,caption:getComputedStyle(caption).justifyContent,
+   midpoint:Math.abs((t.left+t.right-p.left-p.right)/2)}
+ })`);
+ console.log('Booster title alignment '+width+'px:',JSON.stringify(names));
+ assert.ok(names.every(n=>n.centering==='center'&&n.align==='center'&&n.caption==='center'&&n.midpoint<2),
+  'All three catalog titles must be centered on every screen');
  for(const edition of ['origines','reflets-brises','au-dela-du-verre']){
   await evaluate(`document.querySelector('.booster-choice[data-booster="${edition}"]').click()`);
   const detail=await evaluate(`(()=>{
@@ -188,6 +200,20 @@ for(const [width,columns] of [[390,2],[760,3],[1280,3]]){
   assert.ok(detail.width>230&&detail.height>200);
   assert.ok(detail.left>=-3&&detail.right<=width+3);
   assert.ok(detail.packWidth>90,'Booster artwork must be visible');
+  const alignment=await evaluate(`(()=>{
+   const pack=document.querySelector('#booster-pack');
+   const title=pack.querySelector('.pack-title');
+   const h=document.querySelector('#booster-family-title');
+   const p=pack.getBoundingClientRect(),t=title.getBoundingClientRect();
+   const styles=getComputedStyle(title);
+   return {centering:styles.justifyContent,textAlign:styles.textAlign,
+    titleMidpointError:Math.abs((t.left+t.right-p.left-p.right)/2),
+    headingCentered:getComputedStyle(h).textAlign}
+  })()`);
+  assert.equal(alignment.centering,'center','Physical packet title is horizontally centered');
+  assert.equal(alignment.textAlign,'center');
+  assert.ok(alignment.titleMidpointError<2);
+  assert.equal(alignment.headingCentered,'center','Dialog heading is centered');
   await evaluate("document.querySelector('#booster-close').click()");
   const after=await evaluate("document.querySelector('#booster-dialog').open");
   assert.equal(after,false,'Close button must work');

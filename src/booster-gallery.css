@@ -129,6 +129,31 @@
   background:linear-gradient(90deg,transparent,#15152f 12%,#15152f 88%,transparent);
   border-top:1px solid #e9c39180;border-bottom:1px solid #e9c39180;
 }
+/* Names are laid out against the actual packet width, not the lettering's
+   intrinsic width. The exact same alignment applies to all three editions. */
+#page-boosters .booster-tile-pack .pack-title,
+#page-boosters #booster-pack .pack-title{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  box-sizing:border-box;
+  text-align:center;
+  text-wrap:balance;
+}
+/* Keep the label beneath each pack and the enlarged detail heading centered
+   regardless of the edition name or the number of lines it occupies. */
+#page-boosters .booster-tile-caption strong{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  width:100%;
+  text-align:center;
+}
+#page-boosters .booster-dialog:not(.has-results) .booster-buy-info h2{
+  width:100%;
+  text-align:center;
+}
+
 #page-boosters .booster-tile-pack .pack-edition,
 #page-boosters #booster-pack .pack-edition{
   display:block;position:absolute;z-index:8;bottom:5.5%;top:auto;left:4%;right:4%;
