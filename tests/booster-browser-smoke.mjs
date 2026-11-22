@@ -130,6 +130,38 @@ for(const [width,columns] of [[390,2],[760,3],[1280,3]]){
   assert.equal(after,false,'Close button must work');
  }
 }
+// Exercise an actual draw in the ephemeral CI browser, never a real save.
+await evaluate("document.querySelector('.booster-choice[data-booster=\"origines\"]').click()");
+const before=await evaluate(`(()=>{
+ const save=JSON.parse(localStorage.getItem('aetherium-save-v1'));
+ return {coins:save.coins,opened:save.opened,
+  total:Object.values(save.owned||{}).reduce((a,b)=>a+b,0),
+  canBuy:!document.querySelector('#buy').disabled}
+})()`);
+assert.equal(before.canBuy,true,'Fresh player has enough Couronnes for the first pack');
+await evaluate("document.querySelector('#buy').click()");
+await until(()=>evaluate("document.querySelector('#booster-dialog').classList.contains('has-results')"),'reveal stage opened');
+await until(()=>evaluate("document.querySelector('#pulls .pull-flip')!==null"),'first sealed card appeared');
+await evaluate("document.querySelector('#reveal-all').click()");
+const after=await evaluate(`(()=>{
+ const save=JSON.parse(localStorage.getItem('aetherium-save-v1'));
+ const dialog=document.querySelector('#booster-dialog');
+ return {coins:save.coins,opened:save.opened,
+  total:Object.values(save.owned||{}).reduce((a,b)=>a+b,0),
+  cards:document.querySelectorAll('#pulls .card').length,
+  summary:!document.querySelector('#booster-summary').hidden,
+  dialogOpen:dialog.open}
+})()`);
+console.log('Actual purchase and reveal:',JSON.stringify({before,after}));
+assert.equal(after.coins,before.coins-100);
+assert.equal(after.opened,before.opened+1);
+assert.equal(after.total,before.total+5);
+assert.equal(after.cards,5,'The final five cards are visible');
+assert.equal(after.summary,true);
+assert.equal(after.dialogOpen,true);
+await evaluate("document.querySelector('#booster-close').click()");
+assert.equal(await evaluate("document.querySelector('#booster-dialog').open"),false);
+
 assert.deepEqual(jsErrors,[],'No unexpected browser JavaScript errors');
 ws.close();
 console.log('AETHERIUM : vrai navigateur, galerie/fiche PC tablette mobile et 3 boosters OK');
