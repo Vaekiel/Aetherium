@@ -185,10 +185,10 @@
     width:26px;height:26px;min-width:26px;flex-basis:26px;
   }
   #app > header.top .chronicles-link{
-    width:38px;min-width:38px;min-height:39px;
+    width:40px;min-width:40px;min-height:40px;
   }
   #app > header.top #immersive-toggle:not([hidden]){
-    width:38px;min-width:38px;min-height:39px;flex-basis:38px;
+    width:40px;min-width:40px;min-height:40px;flex-basis:40px;
   }
 }
 @media(max-width:360px){
