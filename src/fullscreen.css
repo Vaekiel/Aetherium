@@ -1,0 +1,25 @@
+/* AETHERIUM — optional mobile fullscreen control.
+   It never obscures navigation, modals or the existing bottom navigation. */
+#immersive-toggle{display:none}
+#immersive-toggle[hidden]{display:none!important}
+@media(max-width:850px){
+ #immersive-toggle:not([hidden]){
+  display:inline-flex;align-items:center;justify-content:center;
+  flex:0 0 42px;width:42px;min-height:42px;padding:7px;
+  border:1px solid #947a8a;border-radius:7px;
+  background:linear-gradient(150deg,#26233b,#181c31);
+  color:#eed9b9;font:22px/1 system-ui,sans-serif;
+  touch-action:manipulation;
+ }
+ #immersive-toggle:focus-visible{outline:2px solid #ffdfb0;outline-offset:3px}
+}
+.game-footer .app-mode-help{
+ width:min(100%,440px);margin:7px auto 3px;text-align:left;
+ border-top:1px solid #806a845c;padding:8px 3px 2px;
+ color:#cfc3d0;font:12px/1.55 system-ui,sans-serif;
+}
+.game-footer .app-mode-help summary{
+ cursor:pointer;padding:8px 2px;min-height:36px;color:#ead0ae;
+}
+.game-footer .app-mode-help p{margin:5px 0 7px;color:#cfc3d0}
+@media(prefers-reduced-motion:reduce){#immersive-toggle{transition:none}}

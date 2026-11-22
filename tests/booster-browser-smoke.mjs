@@ -81,12 +81,29 @@ console.log('Initial page',JSON.stringify(await evaluate(`({
 })`)));
 console.log('Initial JS exceptions',JSON.stringify(jsErrors));
 await until(()=>evaluate("Boolean(document.querySelector('#page-boosters.active') && document.querySelector('#booster-season-tabs button'))"),'game booted on #boosters');
+const installedManifest=await evaluate("fetch('./manifest.webmanifest').then(r=>r.json())");
+assert.equal(installedManifest.display_override[0],'fullscreen');
+assert.equal(installedManifest.icons.length,2);
 
 for(const [width,columns] of [[390,2],[760,3],[1280,3]]){
  await command('Emulation.setDeviceMetricsOverride',{
   width,height:900,deviceScaleFactor:1,mobile:width<760
  });
  await sleep(120);
+ const immersive=await evaluate(`(()=>{
+  const b=document.querySelector('#immersive-toggle');
+  const r=b.getBoundingClientRect();
+  return {enabled:document.fullscreenEnabled,hidden:b.hidden,
+   display:getComputedStyle(b).display,left:r.left,right:r.right,
+   width:r.width,pressed:b.getAttribute('aria-pressed')}
+ })()`);
+ console.log('Immersive '+width+'px',JSON.stringify(immersive));
+ if(width<=850&&immersive.enabled){
+  assert.equal(immersive.hidden,false,'Supported mobile browsers have a fullscreen action');
+  assert.ok(immersive.width>=40&&immersive.right<=width+2,'Fullscreen button fits mobile header');
+ }else{
+  assert.equal(immersive.display,'none','No useless fullscreen action on desktop');
+ }
  const overview=await evaluate(`(()=>{
   const page=document.querySelector('#page-boosters');
   const gallery=document.querySelector('#booster-gallery');
