@@ -12,7 +12,7 @@ assert.ok(html.includes('<dialog id="booster-dialog"'));
 assert.ok(html.includes('id="booster-close"'));
 assert.equal((html.match(/id="booster-pack"/g)||[]).length,1);
 assert.equal((html.match(/class="booster-choice/g)||[]).length,3);
-assert.ok(ui.startsWith('@import "./booster-gallery.css?v=gallery-1";'));
+assert.ok(ui.startsWith('@import "./booster-gallery.css?v=gallery-2";'));
 for(const name of ['origines','reflets-brises','au-dela-du-verre']){
  assert.ok(html.includes('data-booster="'+name+'"'));
 }
