@@ -27,7 +27,8 @@ assert.ok(styleLinks.includes('shell.css'),'Le thème crépusculaire est préser
 for(const sheet of ['runes.css','memory.css','lock.css','mines.css','alchemy.css','booster.css']){
  assert.ok(styleLinks.includes(sheet),`CSS des mini-jeux inchangé : ${sheet}`);
 }
-assert.ok(html.includes('class="play-stage"')&&html.includes('class="play-lore"'),'Nouvelle scène de jeu');
+assert.ok(html.includes('class="play-stage"')&&html.includes('class="trial-setup"'),'Scène de jeu et choix compacts');
+assert.ok(!html.includes('class="play-lore"')&&!html.includes('class="intro"'),'Les panneaux narratifs redondants ne retardent plus les mini-jeux');
 assert.ok(html.includes('class="collection-header"'),'Codex avec en-tête');
 const mobileCSS=read('src/mobile.css');
 const codexOpen=html.indexOf('<section id="page-collection" class="page">');

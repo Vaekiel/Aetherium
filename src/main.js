@@ -374,8 +374,16 @@ definitions.forEach((d,i)=>{
   recordsEl.append(recordsHeader,recordsTable,challengePanel);
   const status=el('div','status');status.setAttribute('aria-live','polite');
   const board=el('div','board'),actions=el('div','small-actions');
-  card.append(el('h3','',String(i+1).padStart(2,'0')+' · '+d.name),
-    descriptionEl,rewardEl,masteryEl,recordsEl,board,status,actions);
+  card.id='trial-panel-'+i;
+  const trialTitle=el('h3','trial-title',String(i+1).padStart(2,'0')+' · '+d.name);
+  trialTitle.id='trial-title-'+i;
+  card.setAttribute('aria-labelledby',trialTitle.id);
+  const trialMeta=el('div','trial-meta');
+  trialMeta.append(rewardEl,masteryEl);
+  const trialHeading=el('div','trial-card-heading');
+  trialHeading.append(trialTitle,trialMeta);
+  // Game first, optional personal records after the actions.
+  card.append(trialHeading,descriptionEl,board,status,actions,recordsEl);
   $('#games').append(card);
   mini.push({card,board,status,actions,reward:d.reward,rewardEl,masteryEl,recordsEl,descriptionEl,mode:state.difficulty,ended:false});
 });
@@ -1293,6 +1301,7 @@ definitions.forEach((entry,index)=>{
   control.append(el('span','game-choice-name',(index+1)+' · '+entry.name),
     el('span','game-choice-hint',trialSubtitles[index]));
   control.setAttribute('aria-label','Choisir '+entry.name);
+  control.setAttribute('aria-controls','trial-panel-'+index);
   control.setAttribute('aria-pressed',String(index===0));
   picker.append(control);
 });

@@ -188,3 +188,211 @@
  #page-jouer .trial-challenge-name{font-size:11px}
  #page-jouer .trial-challenge-goal{font-size:9px}
 }
+
+
+/* Épreuves — polish responsive v1.
+   The game is the focal point. Atlas-backed selectors and rewards stay unchanged.
+   Scoped to #page-jouer to protect the Boosters, Codex and Atelier. */
+#page-jouer .trial-setup{min-width:0;display:grid;gap:10px;margin-bottom:15px}
+#page-jouer .trial-setup-title{
+  margin:0;color:#ead8bb;font:small-caps 17px/1.3 Georgia,serif;
+  letter-spacing:.035em;
+}
+#page-jouer .trial-setup .game-picker{
+  display:grid;grid-template-columns:repeat(5,minmax(0,1fr));
+  gap:9px;margin:0;padding:3px 2px 6px;
+  min-width:0;scrollbar-width:thin;scrollbar-color:#716081 transparent;
+}
+#page-jouer .trial-setup .game-picker .game-choice{
+  min-width:0;min-height:94px;padding:10px 11px 10px 68px;gap:5px;
+  border-color:#796b879c;background:linear-gradient(125deg,#1c2038,#242139);
+}
+#page-jouer .trial-setup .game-picker .game-choice::before{
+  width:57px;left:7px;top:50%;
+  image-rendering:pixelated;
+}
+#page-jouer .trial-setup .game-picker .game-choice.active{
+  border-color:#e0bd8f;
+  background:linear-gradient(125deg,#392b50,#29263e);
+  box-shadow:inset 0 0 0 1px #e7c89b39,0 0 13px #9d7cc03b;
+}
+#page-jouer .trial-setup .game-picker .game-choice.active::after{
+  left:auto;right:9px;bottom:8px;width:6px;height:6px;
+}
+#page-jouer .trial-setup .game-choice-name{
+  font-size:clamp(12px,1.16vw,15px);line-height:1.2;
+  overflow-wrap:anywhere;text-wrap:balance;
+}
+#page-jouer .trial-setup .game-choice-hint{
+  color:#c7bcd0;font:11px/1.3 Georgia,serif;letter-spacing:0;
+}
+#page-jouer .trial-setup .difficulty-panel{
+  display:flex;align-items:center;justify-content:space-between;
+  min-width:0;gap:16px;margin:0;padding:10px 12px;
+  border-color:#806f8f88;
+  background:linear-gradient(115deg,#222039d6,#191d31e0);
+}
+#page-jouer .trial-setup .difficulty-description strong{
+  font-size:15px;line-height:1.2;
+}
+#page-jouer .trial-setup .difficulty-description small{
+  font-size:12px;line-height:1.4;
+}
+#page-jouer .trial-setup .difficulty-options{
+  margin:0;gap:7px;
+}
+#page-jouer .trial-setup .difficulty-options button{
+  min-width:91px;min-height:44px;padding:9px 12px;
+  font-size:13px;touch-action:manipulation;
+}
+#page-jouer .play-stage{
+  display:block;max-width:980px;margin:0 auto;min-width:0;
+}
+#page-jouer .play-stage .games{min-width:0}
+#page-jouer .play-stage .games .game{
+  min-width:0;padding:clamp(16px,2vw,24px);
+  border-color:#a88c93aa;
+  box-shadow:0 8px 22px #070b1f78,inset 0 0 0 3px #dfc2a808;
+}
+#page-jouer .trial-card-heading{
+  display:flex;align-items:flex-start;justify-content:space-between;
+  flex-wrap:wrap;gap:8px 22px;min-width:0;
+  padding:0 0 12px;border-bottom:1px solid #a088905b;
+}
+#page-jouer .trial-card-heading .trial-title{
+  flex:1 1 235px;min-width:0;margin:0;
+  color:#f3e3cb;font:small-caps clamp(22px,2vw,28px)/1.2 Georgia,serif;
+  overflow-wrap:anywhere;
+}
+#page-jouer .trial-meta{
+  display:flex;justify-content:flex-end;align-items:center;
+  flex:0 1 auto;flex-wrap:wrap;gap:6px;min-width:0;
+}
+#page-jouer .trial-meta .reward,
+#page-jouer .trial-meta .trial-mastery{
+  display:inline-flex;align-items:center;min-width:0;
+  margin:0;padding:6px 10px;min-height:32px;
+  border:1px solid #84768b83;border-radius:3px;
+  color:#dcd1dc;background:#191d32bd;
+  font:12px/1.35 Georgia,serif;overflow-wrap:anywhere;
+}
+#page-jouer .trial-meta .reward{
+  color:#efd6a3;border-color:#af926881;
+  background:linear-gradient(115deg,#3a303cba,#232138c7);
+}
+#page-jouer .game .trial-objective{
+  margin:12px 0 18px;padding:9px 12px;
+  max-width:70ch;font-size:13px;line-height:1.5;
+  color:#e4d6c7;background:#1b1e34a3;
+}
+#page-jouer .play-stage .game .board{max-width:100%;min-width:0}
+#page-jouer .play-stage .game .status{
+  min-height:0;margin:11px 0 0;line-height:1.5;
+}
+#page-jouer .play-stage .game .status:empty{display:none}
+#page-jouer .play-stage .game .small-actions{
+  margin:12px 0 0;gap:8px;
+}
+#page-jouer .play-stage .game .small-actions button{
+  min-height:44px;touch-action:manipulation;
+}
+#page-jouer .play-stage .game .trial-records{
+  margin:18px 0 0;border-color:#71677e8a;
+  background:linear-gradient(120deg,#1e2035d1,#171c2fce);
+}
+#page-jouer .play-stage .game .trial-records-summary{
+  min-height:46px;padding:10px 12px;
+}
+#page-jouer .play-stage .game .trial-records-heading{font-size:14px}
+#page-jouer .play-stage .game .trial-records-table{
+  display:table;max-width:calc(100% - 16px);
+  width:calc(100% - 16px);margin:0 8px 9px;
+}
+#page-jouer .play-stage .game .trial-records-table th,
+#page-jouer .play-stage .game .trial-records-table td{
+  overflow-wrap:anywhere;
+}
+#page-jouer > .expedition-portal{
+  max-width:980px;margin:17px auto 0;
+  border-color:#8c7d9280;background:linear-gradient(115deg,#242039c9,#171d32db);
+  box-shadow:0 5px 14px #080d2460;
+}
+@media (min-width:851px) and (max-width:1180px){
+  #page-jouer .trial-setup .game-picker{
+    grid-template-columns:repeat(5,minmax(178px,1fr));
+    overflow-x:auto;scroll-snap-type:x proximity;
+  }
+  #page-jouer .trial-setup .game-picker .game-choice{scroll-snap-align:start}
+}
+@media (max-width:850px){
+  #page-jouer .trial-setup{gap:7px;margin-bottom:11px}
+  #page-jouer .trial-setup-title{font-size:15px}
+  #page-jouer .trial-setup .game-picker{
+    display:flex;gap:8px;overflow-x:auto;scroll-snap-type:x proximity;
+    margin:0 -2px;padding:3px 2px 8px;
+  }
+  #page-jouer .trial-setup .game-picker .game-choice{
+    flex:0 0 min(72vw,224px);min-width:0;min-height:78px;
+    padding:10px 10px 9px 65px;gap:3px;scroll-snap-align:start;
+  }
+  #page-jouer .trial-setup .game-picker .game-choice::before{width:51px;left:7px}
+  #page-jouer .trial-setup .game-choice-name{font-size:14px;line-height:1.15}
+  #page-jouer .trial-setup .game-choice-hint{font-size:11px;line-height:1.25}
+  #page-jouer .trial-setup .difficulty-panel{
+    display:flex;flex-direction:column;align-items:stretch;
+    gap:8px;padding:10px;margin:0;
+  }
+  #page-jouer .trial-setup .difficulty-description{gap:3px}
+  #page-jouer .trial-setup .difficulty-description strong{font-size:14px}
+  #page-jouer .trial-setup .difficulty-description small{font-size:11px}
+  #page-jouer .trial-setup .difficulty-options{
+    display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin:0;
+  }
+  #page-jouer .trial-setup .difficulty-options button{
+    min-width:0;min-height:44px;padding:8px 5px;font-size:12px;white-space:normal;
+  }
+  #page-jouer .play-stage .games .game{padding:15px 13px 17px}
+  #page-jouer .trial-card-heading{display:block;padding-bottom:10px}
+  #page-jouer .trial-card-heading .trial-title{
+    margin:0 0 9px;font-size:clamp(20px,5vw,25px);
+  }
+  #page-jouer .trial-meta{justify-content:flex-start;gap:6px}
+  #page-jouer .trial-meta .reward,
+  #page-jouer .trial-meta .trial-mastery{
+    padding:6px 8px;font-size:11px;min-height:30px;
+  }
+  #page-jouer .game .trial-objective{
+    margin:11px 0 15px;padding:8px 10px;
+    font-size:12px;line-height:1.45;
+  }
+  #page-jouer .play-stage .game .small-actions{gap:7px}
+  #page-jouer .play-stage .game .trial-records{margin-top:15px}
+  #page-jouer > .expedition-portal{margin:13px auto 0}
+}
+@media (min-width:600px) and (max-width:850px){
+  #page-jouer .trial-setup .game-picker .game-choice{
+    flex-basis:clamp(195px,29vw,240px);
+  }
+  #page-jouer .trial-setup .difficulty-panel{
+    flex-direction:row;align-items:center;gap:15px;
+  }
+  #page-jouer .trial-setup .difficulty-options{flex:0 0 auto}
+  #page-jouer .trial-setup .difficulty-options button{min-width:89px}
+}
+@media (max-width:390px){
+  #page-jouer .trial-setup .game-picker .game-choice{
+    flex-basis:76vw;min-height:76px;padding-left:57px;
+  }
+  #page-jouer .trial-setup .game-picker .game-choice::before{width:45px}
+  #page-jouer .trial-setup .game-choice-name{font-size:13px}
+  #page-jouer .trial-meta .reward,
+  #page-jouer .trial-meta .trial-mastery{font-size:10px}
+  #page-jouer .play-stage .game .trial-records-table{
+    font-size:10px;table-layout:fixed;
+  }
+  #page-jouer .play-stage .game .trial-records-table th,
+  #page-jouer .play-stage .game .trial-records-table td{padding:7px 3px}
+}
+@media (prefers-reduced-motion:reduce){
+  #page-jouer .trial-setup .game-picker .game-choice{transition:none}
+}
