@@ -3,7 +3,7 @@ import {CARDS,drawRefletsPack,drawAuDelaPack} from './collection-data.js?v=au-de
 import {CRAFT_COSTS,getCraftCost,craftCard} from './crafting.js';
 import {duplicateDustReward} from './duplicate-rewards.js';
 import {boosterMoment} from './booster-feedback.js?v=booster-polish-1';
-import {applyCardIllustration,hasApprovedArt,CARD_ART} from './card-art.js?v=au-dela-booster-1';
+import {applyCardIllustration,hasApprovedArt,CARD_ART} from './card-art.js?v=au-dela-booster-1&chromatic=audit-1';
 import {codexProgress,filterCodex} from './codex.js';
 import {FINISHES,FINISH_KEYS,restoreFinishCounts,synchronizeFinishCounts,finishQuantity,finishUnique,finishTotal,preferredFinish} from './finishes.js';
 import {enableHolographicInspection} from './finish-interaction.js';
