@@ -11,7 +11,7 @@ assert.ok(start>0&&end>start,'The actual single-card helper is available');
 const helper=main.slice(start,end);
 function node(tag='',className=''){
  return {
-  tagName:tag,className,children:[],
+  tagName:tag,className,children:[],dataset:{},
   style:{cssText:'--edge: #ffebac'},
   get firstChild(){return this.children[0]||null},
   append(child){if(child.parent){child.parent.children=child.parent.children.filter(c=>c!==child)}
@@ -28,6 +28,7 @@ function node(tag='',className=''){
 for(const shiny of [false,true]){
  const image=node('img');
  const card=node('button',shiny?'card is-chromatic':'card');
+ card.dataset.rarity='common';card.dataset.cardId='4';
  const parent=shiny?node('span','chromatic-art-window'):card;
  parent.append(image);if(shiny)card.append(parent);
  card.append(node('div','info'));
@@ -50,6 +51,8 @@ for(const shiny of [false,true]){
   'boosterCardArtwork({card:{id:4,name:"Floraison Cendrée"},shiny:'+shiny+'})',runtime);
  assert.equal(result.tagName,'div','Preview must not be an interactive Codex button');
  assert.equal(result.className,card.className);
+ assert.equal(result.dataset.rarity,'common','Rarity frame survives the booster button-to-div conversion');
+ assert.equal(result.dataset.cardId,'4','Card identity survives the conversion');
  assert.equal(result.querySelector('img'),image,'Image remains inside rendered artwork');
  assert.equal(image.loading,'eager','Mobile face-up images must never be lazy');
  assert.equal(image.decoding,'sync','Android face-up illustration must decode synchronously');
