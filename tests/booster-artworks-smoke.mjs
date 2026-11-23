@@ -50,4 +50,22 @@ assert.ok(html.includes('data-booster="au-dela-du-verre"'));
 assert.ok(html.includes('au-dela-booster.css?v=au-dela-booster-1'));
 assert.ok(js.includes("boosterArt.classList.toggle('pack-au-dela',isAuDela);"));
 assert.ok(!js.includes('origines-pack-pixel-hd-v2.webp'),'Artwork switching does not couple gameplay to image paths');
+const refletsFullPack=read('src/reflets-reliquaire.css');
+const harmony=read('src/ui-harmony.css');
+assert.ok(html.includes('class="booster-tile-pack reliquaire-reflets"'),
+  'Reflets gallery displays the approved entire packet, not the old inset art window');
+assert.ok(js.includes("boosterArt.classList.toggle('reliquaire-reflets',isReflets);"),
+  'Reflets dialog switches to its full-packet layout only for the Reflets edition');
+assert.ok(harmony.includes('@import "./reflets-reliquaire.css?v=1";'),
+  'New full-packet styles are loaded after the shared gallery and Origines styles');
+assert.ok(html.includes('reflets=fullpack-1'),
+  'Clients refresh the CSS bundle when the Reflets packaging is updated');
+assert.ok(refletsFullPack.includes('.booster-tile-pack.reliquaire-reflets .pack-scene') &&
+  refletsFullPack.includes('#booster-pack.reliquaire-reflets .pack-scene .pack-artwork-reflets') &&
+  refletsFullPack.includes('inset:0') && refletsFullPack.includes('object-fit:contain') &&
+  refletsFullPack.includes('transform:none'),
+  'Reflets pixels are rendered edge-to-edge at their natural proportions without cropping');
+assert.ok(refletsFullPack.includes('content:none') && refletsFullPack.includes('.pack-wordmark'),
+  'Old crimping and duplicate text no longer obscure the full approved artwork');
+
 console.log('AETHERIUM — Two optimized HD booster wrappers, responsive art switch, no duplicates, seal animation intact');

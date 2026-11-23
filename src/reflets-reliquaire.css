@@ -1,0 +1,77 @@
+/* AETHERIUM — Reflets brisés : paquet premium intégral dans la galerie et
+   la fenêtre d'ouverture. Le visuel approuvé comprend déjà le sertissage,
+   les titres et le décor : aucun ancien cadre ne doit le recouvrir.
+   Limité à Reflets pour ne pas changer Origines ni Au-delà du Verre. */
+#page-boosters .booster-tile-pack.reliquaire-reflets,
+#page-boosters #booster-pack.reliquaire-reflets {
+  border:0;
+  outline:0;
+  border-radius:3px;
+  overflow:hidden;
+  background:#100d25;
+  box-shadow:0 12px 23px #050616b8, 0 0 18px #8fa7da34;
+}
+/* Supprime la fenêtre centrale ancienne : l'image est le paquet complet. */
+#page-boosters .booster-tile-pack.reliquaire-reflets .pack-scene,
+#page-boosters #booster-pack.reliquaire-reflets .pack-scene {
+  position:absolute;
+  z-index:1;
+  inset:0;
+  width:100%;
+  height:100%;
+  border:0;
+  box-shadow:none;
+  overflow:hidden;
+  background:#100d25;
+}
+#page-boosters .booster-tile-pack.reliquaire-reflets .pack-scene img,
+#page-boosters #booster-pack.reliquaire-reflets .pack-scene .pack-artwork-reflets {
+  position:absolute;
+  inset:0;
+  display:block;
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  object-position:center center;
+  transform:none;
+  filter:none;
+  opacity:1;
+  image-rendering:auto;
+  pointer-events:none;
+}
+/* Les noms, liserés et bords métalliques sont déjà dessinés sur la pochette. */
+#page-boosters .booster-tile-pack.reliquaire-reflets::before,
+#page-boosters .booster-tile-pack.reliquaire-reflets::after,
+#page-boosters #booster-pack.reliquaire-reflets::before,
+#page-boosters #booster-pack.reliquaire-reflets::after {
+  content:none;
+  display:none;
+}
+#page-boosters .booster-tile-pack.reliquaire-reflets .pack-wordmark,
+#page-boosters .booster-tile-pack.reliquaire-reflets .pack-collection,
+#page-boosters .booster-tile-pack.reliquaire-reflets .pack-crest,
+#page-boosters .booster-tile-pack.reliquaire-reflets .pack-title,
+#page-boosters .booster-tile-pack.reliquaire-reflets .pack-edition,
+#page-boosters #booster-pack.reliquaire-reflets .pack-wordmark,
+#page-boosters #booster-pack.reliquaire-reflets .pack-collection,
+#page-boosters #booster-pack.reliquaire-reflets .pack-crest,
+#page-boosters #booster-pack.reliquaire-reflets .pack-title,
+#page-boosters #booster-pack.reliquaire-reflets .pack-edition {
+  opacity:0;
+  pointer-events:none;
+}
+/* Le reflet statique est dans l'image. Les éléments d'ouverture ne sont
+   pas touchés et restent disponibles pendant l'animation d'ouverture. */
+#page-boosters #booster-pack.reliquaire-reflets:not(.is-opening) .pack-foil {
+  opacity:0;
+}
+#page-boosters .booster-gallery .booster-choice:hover
+  .booster-tile-pack.reliquaire-reflets {
+  box-shadow:0 14px 26px #050616c5, 0 0 20px #a8c7ed58;
+}
+@media(prefers-reduced-motion:reduce) {
+  #page-boosters .booster-gallery .booster-choice:hover
+    .booster-tile-pack.reliquaire-reflets {
+    box-shadow:0 12px 23px #050616b8, 0 0 18px #8fa7da34;
+  }
+}
