@@ -69,9 +69,9 @@
 /* Permanent, edition-independent back. Rarity is only revealed on the front. */
 #page-boosters .pull-back{
   z-index:2;width:100%;height:100%;padding:0;display:block;
-  border:0;border-radius:4px;
-  background:#17172b url('../assets/cards/aetherium-back-v2.webp') center / 100% 100% no-repeat;
-  box-shadow:0 7px 13px #080a2088;
+  border:0;border-radius:0;
+  background:transparent url('../assets/cards/aetherium-back-original-v3.webp') center / 100% 100% no-repeat;
+  box-shadow:none;
   cursor:pointer;touch-action:manipulation;
 }
 #page-boosters .pull-front{display:flex;flex-direction:column;transform:rotateY(-180deg);pointer-events:none;opacity:0}
@@ -129,12 +129,12 @@
 }
 #page-boosters .booster-single::before,#page-boosters .booster-single::after{
   content:"";position:absolute;left:50%;top:27px;width:220px;height:331px;
-  transform:translateX(-50%) rotate(-5deg);z-index:0;border:2px solid #af967a;
-  border-radius:4px;box-shadow:0 8px 17px #06081dbb,inset 0 0 0 7px #19172e;
-  background:linear-gradient(160deg,#3b2e54,#1e203b);
+  transform:translateX(-50%) rotate(-5deg);z-index:0;border:0;
+  border-radius:0;box-shadow:0 8px 17px #06081d77;
+  background:transparent url('../assets/cards/aetherium-back-original-v3.webp') center / 100% 100% no-repeat;
 }
 #page-boosters .booster-single::after{
-  transform:translateX(-50%) rotate(5deg);background:linear-gradient(170deg,#342a50,#111c32);z-index:1;
+  transform:translateX(-50%) rotate(5deg);z-index:1;
 }
 #page-boosters .booster-single .pull-flip{
   position:relative;z-index:2;flex:none;width:min(100%,230px);
@@ -142,7 +142,7 @@
 }
 #page-boosters .booster-single .pull-flip.is-leaving{transform:translate(-40px,-22px) rotate(-7deg);opacity:0}
 #page-boosters .booster-single .pull-frame{aspect-ratio:112/168}
-#page-boosters .booster-single .pull-back{box-shadow:0 10px 21px #090b23bd}
+#page-boosters .booster-single .pull-back{box-shadow:none}
 #page-boosters .booster-single .pull-front .card .name{
   font-size:14px;min-height:0;line-height:1.2
 }
