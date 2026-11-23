@@ -409,12 +409,12 @@ assert.equal(originalCerf.title,'Cerf des Lueurs');
 assert.ok(originalCerf.src.includes('cerf-des-lueurs.webp'),'The original artwork is used');
 assert.ok(originalCerf.loaded,'Original HD image loads');
 assert.ok(originalCerf.width>60&&originalCerf.height>100,'Original artwork is visible');
-// The decor changes *only* the existing inspector's text, not the image.
+// The shared Codex styling only changes text and stat components, never the original art.
 const polish=await evaluate(`(()=>{
  const panel=document.querySelector('#inspector');
  const img=panel.querySelector('.inspector-art-shell img');
  const copy=panel.querySelector('.inspector-copy');
- return {active:panel.classList.contains('is-card-polish-cerf'),
+ return {active:panel.classList.contains('is-card-polished'),
   imageSource:img.currentSrc||img.src,imageLoaded:img.complete&&img.naturalWidth>300,
   imageSize:[img.getBoundingClientRect().width,img.getBoundingClientRect().height],
   title:copy.querySelector('h2')?.textContent,
@@ -424,7 +424,7 @@ const polish=await evaluate(`(()=>{
   statsDisplay:getComputedStyle(copy.querySelector('.stats')).display};
 })()`);
 console.log('Polished Cerf on Chromium:',JSON.stringify(polish));
-assert.equal(polish.active,true,'Polish is active only on Cerf');
+assert.equal(polish.active,true,'Approved shared Codex style active on Cerf');
 assert.ok(polish.imageSource.includes('cerf-des-lueurs.webp'));
 assert.ok(polish.imageLoaded&&polish.imageSize[0]>60&&polish.imageSize[1]>100);
 assert.equal(polish.title,'Cerf des Lueurs');
@@ -453,18 +453,30 @@ assert.ok(cerfStats.stats.every(s=>/^\.\/assets\/icons\/stat-(eclat|garde|flux)-
 assert.match(cerfStats.inventory,/Possédées : ×/);
 
 await evaluate("document.querySelector('#card-grid [data-card-id=\"7\"]').click()");
+await until(()=>evaluate("(()=>{const img=document.querySelector('#inspector .inspector-art-shell img');return img?.complete && img?.naturalWidth>300})()"),'Archiviste HD artwork fully loaded');
 const other=await evaluate(`(()=>{
  const panel=document.querySelector('#inspector');
- return {active:panel.classList.contains('is-card-polish-cerf'),
+ const img=panel.querySelector('.inspector-art-shell img');
+ const stats=[...panel.querySelectorAll('.stats > .stat-stat')];
+ return {active:panel.classList.contains('is-card-polished'),
    title:panel.querySelector('.inspector-copy h2')?.textContent,
-   art:panel.querySelector('.inspector-art-shell img')?.src,
-   statsDisplay:getComputedStyle(panel.querySelector('.stats')).display};
+   art:img?.currentSrc||img?.src,artLoaded:img?.complete&&img?.naturalWidth>300,
+   statsDisplay:getComputedStyle(panel.querySelector('.stats')).display,
+   names:stats.map(s=>s.querySelector('.stat-name')?.textContent),
+   iconsLoaded:stats.every(s=>s.querySelector('img')?.complete && s.querySelector('img')?.naturalWidth===144),
+   values:stats.map(s=>Number(s.querySelector('.stat-value')?.textContent)),
+   inventory:panel.querySelector('.stat-inventory-total')?.textContent};
 })()`);
-assert.equal(other.active,false,'The pilot style cannot leak to another card');
+console.log('Second card uses HD stats:',JSON.stringify(other));
+assert.equal(other.active,true,'The common style applies to every revealed card');
 assert.equal(other.title,'Archiviste Nocturne');
-assert.equal(other.statsDisplay,'flex','Other cards keep the original flex stats layout');
-assert.equal(await evaluate("document.querySelector('#inspector .stat-stat')===null"),true,
- 'Other cards never receive Cerf stat glyphs');
+assert.ok(other.art.includes('archiviste-nocturne.webp') && other.artLoaded,
+ 'Each card keeps its own approved HD artwork');
+assert.equal(other.statsDisplay,'grid','Three HD stat cells on every card');
+assert.deepEqual(other.names,['Éclat','Garde','Flux']);
+assert.ok(other.iconsLoaded,'Approved HD glyphs render on a second card');
+assert.ok(other.values.every(Number.isFinite),'Stats use the corresponding card values');
+assert.match(other.inventory,/Possédées : ×/);
 assert.deepEqual(jsErrors,[],'No unexpected browser JavaScript errors');
 ws.close();
 console.log('AETHERIUM : vrai navigateur, galerie/fiche PC tablette mobile et 3 boosters OK');
