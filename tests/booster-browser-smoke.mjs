@@ -304,8 +304,8 @@ for(const [width,columns] of [[390,2],[760,3],[1280,3]]){
   })()`);
   if(edition==='origines'){
    assert.equal(wrap.premium,true,'The first booster uses the premium sachet');
-   assert.ok(wrap.imageSrc.endsWith('origines-reliquaire-v1.webp'));
-   assert.ok(wrap.catalogSrc.endsWith('origines-reliquaire-v1.webp'));
+   assert.ok(wrap.imageSrc.endsWith('origines-reliquaire-normalized-v2.webp'));
+   assert.ok(wrap.catalogSrc.endsWith('origines-reliquaire-normalized-v2.webp'));
    assert.ok(wrap.imageLoaded&&wrap.catalogLoaded,'Approved HD sachet must load in both views');
    assert.equal(wrap.imageDisplay,'block');
    assert.equal(wrap.artFit,'cover','Entire sachet fills the gallery and dialog');

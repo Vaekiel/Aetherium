@@ -1,0 +1,85 @@
+/* AETHERIUM – Premium foil sachets: exact same size and transparent outer
+   margins for Origines and Reflets brisés. The complete art already contains
+   foil, crimping, words and ornament. Third booster is unaffected. */
+
+/* Never stretch the picture: the two sources have identical 640x1040 pixels. */
+#page-boosters .booster-tile-pack.reliquaire-origines,
+#page-boosters .booster-tile-pack.reliquaire-reflets,
+#page-boosters #booster-pack.reliquaire-origines,
+#page-boosters #booster-pack.reliquaire-reflets {
+  box-sizing:border-box;
+  aspect-ratio:8/13;
+  height:auto!important;
+  border:0!important;
+  outline:0!important;
+  border-radius:0;
+  overflow:visible;
+  background:transparent!important;
+  box-shadow:none!important;
+  filter:drop-shadow(0 7px 10px #08041953);
+}
+
+/* No inherited dark rectangle or narrow center-only illustration crop. */
+#page-boosters .booster-tile-pack.reliquaire-origines .pack-scene,
+#page-boosters .booster-tile-pack.reliquaire-reflets .pack-scene,
+#page-boosters #booster-pack.reliquaire-origines .pack-scene,
+#page-boosters #booster-pack.reliquaire-reflets .pack-scene {
+  position:absolute;
+  inset:0!important;
+  width:100%;
+  height:100%;
+  overflow:visible;
+  border:0!important;
+  outline:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+}
+#page-boosters .booster-tile-pack.reliquaire-origines .pack-scene img,
+#page-boosters .booster-tile-pack.reliquaire-reflets .pack-scene img,
+#page-boosters #booster-pack.reliquaire-origines .pack-scene .pack-artwork:not(.pack-artwork-reflets):not(.pack-artwork-au-dela),
+#page-boosters #booster-pack.reliquaire-reflets .pack-scene .pack-artwork-reflets {
+  position:absolute;
+  display:block;
+  inset:0;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  object-position:center;
+  transform:none!important;
+  opacity:1;
+  filter:none;
+  pointer-events:none;
+}
+/* Only one appropriate source may paint the dialog wrapper. */
+#page-boosters #booster-pack.reliquaire-origines .pack-scene .pack-artwork-reflets,
+#page-boosters #booster-pack.reliquaire-origines .pack-scene .pack-artwork-au-dela,
+#page-boosters #booster-pack.reliquaire-reflets .pack-scene .pack-artwork:not(.pack-artwork-reflets) {
+  display:none!important;
+}
+/* Disable the old graphic bands painted over both finished sachets. */
+#page-boosters .booster-tile-pack:is(.reliquaire-origines,.reliquaire-reflets)::before,
+#page-boosters .booster-tile-pack:is(.reliquaire-origines,.reliquaire-reflets)::after,
+#page-boosters #booster-pack:is(.reliquaire-origines,.reliquaire-reflets)::before,
+#page-boosters #booster-pack:is(.reliquaire-origines,.reliquaire-reflets)::after {
+  content:none!important;
+  display:none!important;
+}
+/* Keep hidden labels in the DOM with their boxes for focus and alignment. */
+#page-boosters .booster-tile-pack:is(.reliquaire-origines,.reliquaire-reflets)
+  :is(.pack-wordmark,.pack-collection,.pack-crest,.pack-title,.pack-edition),
+#page-boosters #booster-pack:is(.reliquaire-origines,.reliquaire-reflets)
+  :is(.pack-wordmark,.pack-collection,.pack-crest,.pack-title,.pack-edition) {
+  opacity:0!important;
+  pointer-events:none;
+}
+/* Legacy foil/rip animation remains available only during paid opening.
+   In all idle views, absolutely no old packet or dark rectangle over the art. */
+#page-boosters #booster-pack:is(.reliquaire-origines,.reliquaire-reflets):not(.is-opening)
+  :is(.pack-foil,.pack-sidefold,.pack-crimp,.pack-seal,.pack-rip) {
+  display:none!important;
+}
+@media(prefers-reduced-motion:reduce){
+  #page-boosters .booster-tile-pack:is(.reliquaire-origines,.reliquaire-reflets){
+    filter:drop-shadow(0 6px 8px #08041940);
+  }
+}

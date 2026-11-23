@@ -8,7 +8,7 @@ const js=read('src/main.js');
 const packaging=read('src/booster-packaging.css');
 const reflets=read('src/reflets-booster.css');
 const auDela=read('src/au-dela-booster.css');
-const assets=['origines-reliquaire-v1.webp','reflets-brises-pack-pixel-hd-v2.webp','au-dela-du-verre-pack-pixel-hd.webp'];
+const assets=['origines-reliquaire-normalized-v2.webp','reflets-brises-reliquaire-normalized-v2.webp','au-dela-du-verre-pack-pixel-hd.webp'];
 
 assert.ok(!html.includes('origines-pack-hd.webp')&&!html.includes('reflets-brises-pack-hd.webp'),
  'Only current pixel-art HD booster packages may be shown');
@@ -19,7 +19,7 @@ for(const file of assets){
   assert.ok(bytes.length>50000 && bytes.length<700000,'Actual optimized HD WebP: '+file);
   assert.equal(bytes.toString('ascii',0,4),'RIFF');
   assert.equal(bytes.toString('ascii',8,12),'WEBP');
-  const url=path+(file==='reflets-brises-pack-pixel-hd-v2.webp'?'?v=reflets-valide-3':'');
+  const url=path;
   assert.ok(html.includes('src="./'+url+'"'),'Every current wrapper is loaded by HTML');
 }
 assert.ok(html.includes('class="pack pack-origines pack-illustrated reliquaire-origines" id="booster-pack"'),
@@ -58,7 +58,7 @@ assert.ok(js.includes("boosterArt.classList.toggle('reliquaire-reflets',isReflet
   'Reflets dialog switches to its full-packet layout only for the Reflets edition');
 assert.ok(harmony.includes('@import "./reflets-reliquaire.css?v=1";'),
   'New full-packet styles are loaded after the shared gallery and Origines styles');
-assert.ok(html.includes('reflets=fullpack-1'),
+assert.ok(html.includes('reflets=normalized-2'),
   'Clients refresh the CSS bundle when the Reflets packaging is updated');
 assert.ok(refletsFullPack.includes('.booster-tile-pack.reliquaire-reflets .pack-scene') &&
   refletsFullPack.includes('#booster-pack.reliquaire-reflets .pack-scene .pack-artwork-reflets') &&
@@ -67,5 +67,17 @@ assert.ok(refletsFullPack.includes('.booster-tile-pack.reliquaire-reflets .pack-
   'Reflets pixels are rendered edge-to-edge at their natural proportions without cropping');
 assert.ok(refletsFullPack.includes('content:none') && refletsFullPack.includes('.pack-wordmark'),
   'Old crimping and duplicate text no longer obscure the full approved artwork');
+
+const cleanPack=read('src/premium-booster-unified.css');
+assert.ok(harmony.includes('@import "./premium-booster-unified.css?v=2";'),
+ 'A unified correction must override both legacy premium packet layers');
+assert.ok(cleanPack.includes('aspect-ratio:8/13')&&cleanPack.includes('height:auto!important')&&
+  cleanPack.includes('background:transparent!important')&&cleanPack.includes('filter:drop-shadow('),
+ 'Premium packs share identical proportions with no opaque rectangular backgrounds');
+assert.ok(cleanPack.includes('content:none!important')&&cleanPack.includes('.pack-foil,.pack-sidefold,.pack-crimp,.pack-seal,.pack-rip'),
+ 'No old decorated wrapper overlays the new HD packaging');
+assert.ok(cleanPack.includes(':not(.is-opening)'),'The original tear animation remains available');
+assert.equal((html.match(/src="\\.\\/assets\\/boosters\\/origines-reliquaire-normalized-v2\\.webp"/g)||[]).length,2);
+assert.equal((html.match(/src="\\.\\/assets\\/boosters\\/reflets-brises-reliquaire-normalized-v2\\.webp"/g)||[]).length,2);
 
 console.log('AETHERIUM — Two optimized HD booster wrappers, responsive art switch, no duplicates, seal animation intact');
