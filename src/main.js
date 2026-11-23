@@ -3,7 +3,7 @@ import {CARDS,drawRefletsPack,drawAuDelaPack} from './collection-data.js?v=au-de
 import {CRAFT_COSTS,getCraftCost,craftCard} from './crafting.js';
 import {duplicateDustReward} from './duplicate-rewards.js';
 import {boosterMoment} from './booster-feedback.js?v=booster-polish-1';
-import {applyCardIllustration,hasApprovedArt,CARD_ART} from './card-art.js?v=au-dela-booster-1';
+import {applyCardIllustration,hasApprovedArt,CARD_ART} from './card-art.js?v=au-dela-booster-1&chromatic=audit-1';
 import {codexProgress,filterCodex} from './codex.js';
 import {FINISHES,FINISH_KEYS,restoreFinishCounts,synchronizeFinishCounts,finishQuantity,finishUnique,finishTotal,preferredFinish} from './finishes.js';
 import {enableHolographicInspection} from './finish-interaction.js';
@@ -2164,6 +2164,9 @@ function boosterCardArtwork(item){
   const buttonCard=makeCard(item.card,item.finish??item.shiny);
   const artwork=el('div',buttonCard.className);
   artwork.style.cssText=buttonCard.style.cssText;
+  // Preserve the displayed card's metadata when replacing its interactive
+  // Codex button with a decorative booster face. Rarity frames rely on it.
+  Object.assign(artwork.dataset,buttonCard.dataset);
   while(buttonCard.firstChild)artwork.append(buttonCard.firstChild);
   // Use the full-size art, not the Codex thumbnail, and request it before
   // the player turns the face up. Keep applyCardIllustration's error fallback.

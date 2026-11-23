@@ -77,12 +77,22 @@ export function applyCardIllustration(img,card,{shiny=false,size='thumbnail'}={}
     }
     img.src=(size==='full'?approved.full:approved.thumbnail)+version;
     img.onerror=()=>{
-      img.onerror=null;
+      // A broken high-density candidate must not replace an approved HD
+      // illustration with an unrelated procedural background. First try
+      // the other authored size without the browser's stale srcset.
+      const failedSource=img.currentSrc||img.src||'';
+      const failedFull=failedSource.includes(approved.full.replace(/^\./,''));
+      const alternate=(failedFull?approved.thumbnail:approved.full)+version;
       img.removeAttribute('srcset');
       img.removeAttribute('sizes');
-      img.style.filter='none';
-      img.style.imageRendering='pixelated';
-      img.src=artFor(card,shiny);
+      img.onerror=()=>{
+        img.onerror=null;
+        img.style.filter='none';
+        img.style.imageRendering='pixelated';
+        // Fallback art is neutral: a Chromatique changes only the CSS finish.
+        img.src=artFor(card,false);
+      };
+      img.src=alternate;
     };
     return;
   }
