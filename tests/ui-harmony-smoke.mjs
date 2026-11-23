@@ -16,20 +16,23 @@ const trialStart=html.indexOf('<section id="page-jouer"');
 const trialEnd=html.indexOf('<section id="page-expeditions"',trialStart);
 const trialHtml=html.slice(trialStart,trialEnd);
 assert.ok(trialStart>=0&&trialEnd>trialStart,'Le contenu des Épreuves reste dans sa section');
-const eyebrow=trialHtml.indexOf('<p class="kicker">LES MARCHES DE VERRE');
+const eyebrow=trialHtml.indexOf('<p class="kicker">SAISON I · LES MARCHES DE VERRE');
 const pageTitle=trialHtml.indexOf('<div class="heading"><h1>Épreuves des Arcanes</h1>');
-const scene=trialHtml.indexOf('<div class="intro"><div><h2>Les ruines s\'éveillent.</h2>');
 const picker=trialHtml.indexOf('id="game-picker"');
-assert.ok(eyebrow>=0&&pageTitle>eyebrow&&scene>pageTitle&&picker>scene,
-  'Épreuves suivent la hiérarchie des autres écrans : chapitre, titre, scène compacte et sélection');
+const difficulty=trialHtml.indexOf('id="difficulty-options"');
+const stage=trialHtml.indexOf('class="play-stage"');
+const portal=trialHtml.indexOf('class="expedition-portal"');
+assert.ok(eyebrow>=0&&pageTitle>eyebrow&&picker>pageTitle&&difficulty>picker&&stage>difficulty&&portal>stage,
+  'Épreuves : titre, choix, difficulté, plateau puis raccourci Expéditions');
 assert.equal((trialHtml.match(/<h1>/g)||[]).length,1,'Un seul titre principal sur Épreuves');
-assert.ok(css.includes('#page-jouer .intro{')&&css.includes('min-height:120px'),
-  'L’ancienne grande bannière devient un bandeau réduit');
-assert.ok(css.includes('#page-jouer>.heading h1'),'Le nouveau titre reçoit les mêmes règles que les autres pages');
-assert.ok(css.includes('#page-jouer .intro h2'),'Le récit conserve un titre secondaire');
-assert.ok(css.includes('background-size:auto,145px auto,auto'),
-  'Illustration préservée en format mobile compact');
-
+assert.ok(!trialHtml.includes('class="intro"')&&!trialHtml.includes('class="play-lore"'),
+  'Les deux grands panneaux narratifs redondants ont été retirés');
+assert.ok(css.includes('#page-jouer>.heading h1'),'Le titre conserve les règles communes');
+const trialCss=read('src/trial-progress.css');
+assert.ok(trialCss.includes('#page-jouer .trial-setup'),'Sélection revue sans modifier les autres pages');
+assert.ok(trialCss.includes('#page-jouer .trial-card-heading'),'Titres et récompenses harmonisés');
+assert.ok(trialCss.includes('@media (max-width:850px)')&&trialCss.includes('@media (min-width:600px) and (max-width:850px)'),
+  'Les adaptations téléphone et tablette sont présentes');
 
 for(const page of ['jouer','boosters','collection','atelier','expeditions','succes']){
   assert.ok(html.includes('id="page-'+page+'"'),'Écran conservé : '+page);
