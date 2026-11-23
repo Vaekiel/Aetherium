@@ -28,7 +28,7 @@ for(const edition of ['reflets-brises','au-dela-du-verre']){
  assert.ok(html.includes('data-booster="'+edition+'"'),'Other boosters remain available');
 }
 assert.ok(html.includes('reflets-brises-reliquaire-normalized-v2.webp'));
-assert.ok(html.includes('au-dela-du-verre-pack-pixel-hd.webp'));
+assert.ok(html.includes('au-dela-du-verre-reliquaire-v3.webp'));
 assert.ok(html.includes('id="buy"')&&html.includes('id="reveal-all"'));
 assert.ok(main.includes("const SAVE='aetherium-save-v1'"));
 console.log('AETHERIUM — sachet Reliquaire Origines optimisé, galerie + fenêtre, autres éditions et sauvegardes intactes');

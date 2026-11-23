@@ -1,12 +1,14 @@
-/* AETHERIUM – Premium foil sachets: exact same size and transparent outer
-   margins for Origines and Reflets brisés. The complete art already contains
-   foil, crimping, words and ornament. Third booster is unaffected. */
+/* AETHERIUM – Three premium foil sachets: same 640×1040 canvas and transparent
+   outer margins for Origines, Reflets brisés and Au-delà du Verre.
+   Printed foil, labels and ornaments belong exclusively to the artwork. */
 
-/* Never stretch the picture: the two sources have identical 640x1040 pixels. */
+/* Never stretch the art: all three sources have identical 640×1040 pixels. */
 #page-boosters .booster-tile-pack.reliquaire-origines,
 #page-boosters .booster-tile-pack.reliquaire-reflets,
+#page-boosters .booster-tile-pack.reliquaire-au-dela,
 #page-boosters #booster-pack.reliquaire-origines,
-#page-boosters #booster-pack.reliquaire-reflets {
+#page-boosters #booster-pack.reliquaire-reflets,
+#page-boosters #booster-pack.reliquaire-au-dela {
   box-sizing:border-box;
   aspect-ratio:8/13;
   height:auto!important;
@@ -22,8 +24,10 @@
 /* No inherited dark rectangle or narrow center-only illustration crop. */
 #page-boosters .booster-tile-pack.reliquaire-origines .pack-scene,
 #page-boosters .booster-tile-pack.reliquaire-reflets .pack-scene,
+#page-boosters .booster-tile-pack.reliquaire-au-dela .pack-scene,
 #page-boosters #booster-pack.reliquaire-origines .pack-scene,
-#page-boosters #booster-pack.reliquaire-reflets .pack-scene {
+#page-boosters #booster-pack.reliquaire-reflets .pack-scene,
+#page-boosters #booster-pack.reliquaire-au-dela .pack-scene {
   position:absolute;
   inset:0!important;
   width:100%;
@@ -36,8 +40,10 @@
 }
 #page-boosters .booster-tile-pack.reliquaire-origines .pack-scene img,
 #page-boosters .booster-tile-pack.reliquaire-reflets .pack-scene img,
+#page-boosters .booster-tile-pack.reliquaire-au-dela .pack-scene img,
 #page-boosters #booster-pack.reliquaire-origines .pack-scene .pack-artwork:not(.pack-artwork-reflets):not(.pack-artwork-au-dela),
-#page-boosters #booster-pack.reliquaire-reflets .pack-scene .pack-artwork-reflets {
+#page-boosters #booster-pack.reliquaire-reflets .pack-scene .pack-artwork-reflets,
+#page-boosters #booster-pack.reliquaire-au-dela .pack-scene .pack-artwork-au-dela {
   position:absolute;
   display:block;
   inset:0;
@@ -53,33 +59,34 @@
 /* Only one appropriate source may paint the dialog wrapper. */
 #page-boosters #booster-pack.reliquaire-origines .pack-scene .pack-artwork-reflets,
 #page-boosters #booster-pack.reliquaire-origines .pack-scene .pack-artwork-au-dela,
-#page-boosters #booster-pack.reliquaire-reflets .pack-scene .pack-artwork:not(.pack-artwork-reflets) {
+#page-boosters #booster-pack.reliquaire-reflets .pack-scene .pack-artwork:not(.pack-artwork-reflets),
+#page-boosters #booster-pack.reliquaire-au-dela .pack-scene .pack-artwork:not(.pack-artwork-au-dela) {
   display:none!important;
 }
 /* Disable the old graphic bands painted over both finished sachets. */
-#page-boosters .booster-tile-pack:is(.reliquaire-origines,.reliquaire-reflets)::before,
-#page-boosters .booster-tile-pack:is(.reliquaire-origines,.reliquaire-reflets)::after,
-#page-boosters #booster-pack:is(.reliquaire-origines,.reliquaire-reflets)::before,
-#page-boosters #booster-pack:is(.reliquaire-origines,.reliquaire-reflets)::after {
+#page-boosters .booster-tile-pack:is(.reliquaire-origines,.reliquaire-reflets,.reliquaire-au-dela)::before,
+#page-boosters .booster-tile-pack:is(.reliquaire-origines,.reliquaire-reflets,.reliquaire-au-dela)::after,
+#page-boosters #booster-pack:is(.reliquaire-origines,.reliquaire-reflets,.reliquaire-au-dela)::before,
+#page-boosters #booster-pack:is(.reliquaire-origines,.reliquaire-reflets,.reliquaire-au-dela)::after {
   content:none!important;
   display:none!important;
 }
 /* Keep hidden labels in the DOM with their boxes for focus and alignment. */
-#page-boosters .booster-tile-pack:is(.reliquaire-origines,.reliquaire-reflets)
+#page-boosters .booster-tile-pack:is(.reliquaire-origines,.reliquaire-reflets,.reliquaire-au-dela)
   :is(.pack-wordmark,.pack-collection,.pack-crest,.pack-title,.pack-edition),
-#page-boosters #booster-pack:is(.reliquaire-origines,.reliquaire-reflets)
+#page-boosters #booster-pack:is(.reliquaire-origines,.reliquaire-reflets,.reliquaire-au-dela)
   :is(.pack-wordmark,.pack-collection,.pack-crest,.pack-title,.pack-edition) {
   opacity:0!important;
   pointer-events:none;
 }
 /* Legacy foil/rip animation remains available only during paid opening.
    In all idle views, absolutely no old packet or dark rectangle over the art. */
-#page-boosters #booster-pack:is(.reliquaire-origines,.reliquaire-reflets):not(.is-opening)
+#page-boosters #booster-pack:is(.reliquaire-origines,.reliquaire-reflets,.reliquaire-au-dela):not(.is-opening)
   :is(.pack-foil,.pack-sidefold,.pack-crimp,.pack-seal,.pack-rip) {
   display:none!important;
 }
 @media(prefers-reduced-motion:reduce){
-  #page-boosters .booster-tile-pack:is(.reliquaire-origines,.reliquaire-reflets){
+  #page-boosters .booster-tile-pack:is(.reliquaire-origines,.reliquaire-reflets,.reliquaire-au-dela){
     filter:drop-shadow(0 6px 8px #08041940);
   }
 }
