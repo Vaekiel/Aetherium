@@ -1656,9 +1656,9 @@ function inspect(c,shiny=false,scroll=true,chromaticPreview=false,finishOverride
     // Visual pilot only: real attack and health; Flux is derived and never saved.
     const flux=Math.max(1,Math.round((c.attack+c.health)/4));
     const visualStats=[
-      ['eclat','Éclat',c.attack,'./assets/icons/stat-eclat.svg'],
-      ['garde','Garde',c.health,'./assets/icons/stat-garde.svg'],
-      ['flux','Flux',flux,'./assets/icons/stat-flux.svg']
+      ['eclat','Éclat',c.attack,'./assets/icons/stat-eclat-hd.webp'],
+      ['garde','Garde',c.health,'./assets/icons/stat-garde-hd.webp'],
+      ['flux','Flux',flux,'./assets/icons/stat-flux-hd.webp']
     ];
     for(const [kind,label,value,src] of visualStats){
       const cell=el('span','stat-stat '+kind);

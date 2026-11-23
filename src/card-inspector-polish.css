@@ -72,12 +72,12 @@
   #page-collection .inspector.is-card-polish-cerf .inspector-copy > .stats > span{padding:7px 2px;font-size:12px}
 }
 
-/* Cerf des Lueurs — stat glyphs from the approved actual Codex mockup.
+/* Cerf des Lueurs — approved 144px transparent pixel-art HD glyphs.
    One-card visual pilot; do not alter the original HD artwork or finishes. */
 #page-collection .inspector.is-card-polish-cerf .inspector-copy > .stats > span.stat-stat{
   --stat-line:#bc91ee;--stat-light:#8750b14a;
   display:flex;flex-flow:column nowrap;align-items:center;justify-content:center;
-  gap:3px;min-width:0;min-height:100px;padding:8px 4px 7px;
+  gap:3px;min-width:0;min-height:116px;padding:8px 4px 7px;
   border:1px solid #8e78955e;border-bottom:2px solid var(--stat-line);
   border-radius:6px;
   background:radial-gradient(ellipse at 50% 0%,var(--stat-light),transparent 77%),
@@ -92,13 +92,13 @@
   --stat-line:#e1b988;--stat-light:#9c6e6244;
 }
 #page-collection .inspector.is-card-polish-cerf .inspector-copy > .stats .stat-glyph{
-  display:block!important;width:34px!important;height:34px!important;
-  min-width:34px!important;max-width:34px!important;max-height:34px!important;
+  display:block!important;width:48px!important;height:48px!important;
+  min-width:48px!important;max-width:48px!important;max-height:48px!important;
   aspect-ratio:1!important;object-fit:contain!important;
   margin:0 auto 3px!important;padding:0!important;
   border:0!important;outline:0!important;border-radius:0!important;
   box-shadow:none!important;background:transparent!important;
-  filter:drop-shadow(0 0 5px var(--stat-line,#ba9acc))!important;
+  filter:drop-shadow(0 0 2px var(--stat-line,#ba9acc))!important;
   image-rendering:pixelated!important;
 }
 #page-collection .inspector.is-card-polish-cerf .inspector-copy > .stats .stat-name{
@@ -121,17 +121,17 @@
 }
 @media(max-width:360px){
   #page-collection .inspector.is-card-polish-cerf .inspector-copy > .stats .stat-glyph{
-    width:30px!important;height:30px!important;min-width:30px!important;
-    max-width:30px!important;max-height:30px!important;
+    width:42px!important;height:42px!important;min-width:42px!important;
+    max-width:42px!important;max-height:42px!important;
   }
 }
 @media(max-width:850px) and (orientation:landscape) and (max-height:550px){
   #page-collection .inspector.is-card-polish-cerf .inspector-copy > .stats > span.stat-stat{
-    min-height:86px;padding:6px 2px;
+    min-height:108px;padding:6px 2px;
   }
   #page-collection .inspector.is-card-polish-cerf .inspector-copy > .stats .stat-glyph{
-    width:28px!important;height:28px!important;min-width:28px!important;
-    max-width:28px!important;max-height:28px!important;
+    width:40px!important;height:40px!important;min-width:40px!important;
+    max-width:40px!important;max-height:40px!important;
   }
   #page-collection .inspector.is-card-polish-cerf .inspector-copy > .stats .stat-value{font-size:22px}
 }
