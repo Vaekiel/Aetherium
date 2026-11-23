@@ -127,6 +127,37 @@ assert.ok(selected.label.includes('Fouilles interdites'));
 assert.equal(selected.pressed,'true');
 assert.equal(selected.visible,'trial-panel-3');
 assert.equal(selected.difficulty,'true');
+
+const navigation=await evaluate(`(()=>{
+  const current=document.querySelector('#trial-panel-3');
+  const buttons=current.querySelectorAll('.trial-switch-button');
+  const count=current.querySelector('.trial-switch-count').textContent;
+  buttons[1].click();
+  const next=document.querySelector('#page-jouer .game.mobile-active');
+  const selectedTile=document.querySelector('#game-picker .game-choice[aria-pressed="true"]');
+  return {
+    count,hasTwoButtons:buttons.length===2,
+    nextId:next.id,selectedTile: selectedTile.getAttribute('aria-controls'),
+    nextCount:next.querySelector('.trial-switch-count').textContent,
+    difficulty:document.querySelector('#difficulty-options [data-difficulty="maitrise"]').getAttribute('aria-pressed')
+  };
+})()`);
+assert.equal(navigation.count,'04 / 05','Le compteur indique le rang de l’épreuve');
+assert.equal(navigation.hasTwoButtons,true,'Deux commandes seulement, sans surcharge');
+assert.equal(navigation.nextId,'trial-panel-4','Suivante ouvre la dernière épreuve');
+assert.equal(navigation.selectedTile,'trial-panel-4','Le carrousel reste synchronisé');
+assert.equal(navigation.nextCount,'05 / 05','Le compteur suit le changement');
+assert.equal(navigation.difficulty,'true','La difficulté choisie est conservée');
+const boundaries=await evaluate(`(()=>{
+  const first=document.querySelector('#trial-panel-0 .trial-switch-button');
+  const last=document.querySelector('#trial-panel-4 .trial-switch-button:last-child');
+  return {firstDisabled:first.disabled,lastDisabled:last.disabled,
+    lastLabel:last.getAttribute('aria-label'),
+    focusTarget:document.querySelector('#trial-title-4').getAttribute('tabindex')};
+})()`);
+assert.ok(boundaries.firstDisabled&&boundaries.lastDisabled,'Les flèches aux extrémités sont désactivées');
+assert.ok(boundaries.lastLabel.includes('Dernière épreuve'),'Boutons correctement annoncés au lecteur d’écran');
+assert.equal(boundaries.focusTarget,'-1','Le titre est ciblable au changement d’épreuve');
 assert.deepEqual(exceptions,[],'Aucune erreur JavaScript pendant la navigation des Épreuves');
 ws.close();
 console.log('Épreuves responsive : 360 / 390 / 768 / 1440 px, sélection et difficulté OK');
