@@ -106,7 +106,7 @@ const pickerButtons=Array.from({length:5},()=>makeButton(null));
 const mockGame=()=>({mode:'aventure',card:{classList:{toggle(){}}}});
 const mockHint={textContent:''};
 const browser={state:{difficulty:'aventure'},mini:Array.from({length:5},mockGame),
- selectedGame:0,DIFFICULTIES,validDifficulty,picker:{scrollWidth:0,clientWidth:1},starts:[0,0,0,0,0],
+ selectedGame:0,DIFFICULTIES,validDifficulty,picker:{scrollWidth:0,clientWidth:1,children:pickerButtons},starts:[0,0,0,0,0],
  goals:Array(5).fill(''),messages:[],saves:0,
  $:selector=>selector==='#difficulty-hint'?mockHint:null,
  $$:selector=>selector==='#difficulty-options [data-difficulty]'?modeButtons:
