@@ -46,3 +46,4 @@ jobs:
           trap 'kill "$SERVER_PID" "$CHROME_PID" 2>/dev/null || true' EXIT
           AETHERIUM_BROWSER_TEST=1 node tests/booster-browser-smoke.mjs
           AETHERIUM_BROWSER_TEST=1 node tests/trial-responsive-browser-smoke.mjs
+          AETHERIUM_BROWSER_TEST=1 node tests/chromatic-browser-smoke.mjs
