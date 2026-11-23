@@ -141,6 +141,11 @@ for(const width of [320,360,390,760,1280]){
  const strip=await evaluate(`(()=>{
   const root=document.querySelector('#app > header.top');
   const brand=root.querySelector('.brand');
+  const word=brand.querySelector('.brand-wordmark');
+  const letters=document.createRange();
+  letters.selectNodeContents(word);
+  const glyphs=letters.getBoundingClientRect();
+  const rule=getComputedStyle(word,'::after');
   const btns=[
    ...root.querySelectorAll('.wallet-link'),
    root.querySelector('#chroniques-link'),
@@ -152,6 +157,10 @@ for(const width of [320,360,390,760,1280]){
   return {
    viewport:innerWidth,brand:rect(brand),
    brandFits:brand.scrollWidth<=brand.clientWidth+2,
+   wordmark:{...rect(word),textLeft:glyphs.left,textRight:glyphs.right,
+     ruleWidth:parseFloat(rule.width),ruleMarginLeft:parseFloat(rule.marginLeft),
+     ruleDisplay:rule.display,oldRuleDisplay:getComputedStyle(brand,'::after').display},
+   subtitlePresent:brand.querySelector('small')!==null,
    controls:btns.map(x=>({id:x.id||x.getAttribute('data-go'),
      ...rect(x),icon:x.querySelector('.relic-icon')?.className,
      image:x.querySelector('.relic-icon')
@@ -170,6 +179,16 @@ for(const width of [320,360,390,760,1280]){
  assert.ok(strip.brand.right<=strip.controls[0].left+2,
   'Logo is clear of the wallet at '+width+'px');
  assert.ok(strip.brandFits,'Brand is not visually cropped at '+width+'px');
+ assert.equal(strip.subtitlePresent,false,'No subtitle in the top header');
+ assert.equal(strip.wordmark.oldRuleDisplay,'none','Old misaligned underline stays hidden');
+ assert.equal(strip.wordmark.ruleDisplay,'block','Underline is rendered below the actual title');
+ assert.ok(strip.wordmark.ruleWidth>strip.wordmark.width*.84&&
+  strip.wordmark.ruleWidth<strip.wordmark.width*.92,
+  'Underline width follows the word, not the expanding brand container');
+ const lineCenter=strip.wordmark.left+strip.wordmark.ruleMarginLeft+strip.wordmark.ruleWidth/2;
+ const labelCenter=(strip.wordmark.textLeft+strip.wordmark.textRight)/2;
+ assert.ok(Math.abs(lineCenter-labelCenter)<2,
+  'Underline is truly centered under AETHERIUM at '+width+'px');
  assert.ok(strip.previousNav&&strip.saveControls,'Main navigation and backups unchanged');
 }
 
