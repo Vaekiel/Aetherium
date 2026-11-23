@@ -1,0 +1,15 @@
+import assert from 'node:assert/strict';
+import {readFileSync,existsSync} from 'node:fs';
+const read=p=>readFileSync(new URL(p,import.meta.url),'utf8');
+const js=read('../src/main.js'),html=read('../index.html'),css=read('../src/codex.css');
+assert.doesNotMatch(js,/pilot-card-front|makePilotCardFront|aetherium-front-pilot-frame/);
+assert.match(js,/const artwork=el\('div','inspector-art-shell'/);
+assert.match(js,/if\(activeFinish==='holographic'\)enableHolographicInspection\(artwork\)/);
+assert.match(js,/panel\.append\(artwork,copy\)/);
+assert.match(js,/applyCardIllustration\(img,c,\{shiny:chromatic,size:'full'\}\)/);
+assert.doesNotMatch(css,/card-front-pilot\.css/);
+assert.match(html,/front=original-restored-1/);
+assert.match(html,/recto=original-restored-1/);
+assert.equal(existsSync(new URL('../assets/cards/cerf-des-lueurs.webp',import.meta.url)),true);
+assert.equal(existsSync(new URL('../assets/cards/aetherium-front-pilot-frame.webp',import.meta.url)),false);
+console.log('Cerf des Lueurs: original inspector, original art, finishes, cache and removed prototype OK');
