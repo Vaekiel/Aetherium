@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import {readFileSync,existsSync} from 'node:fs';
 const read=p=>readFileSync(new URL(p,import.meta.url),'utf8');
-const js=read('../src/main.js'),css=read('../src/card-inspector-polish.css'),html=read('../index.html');
+const js=read('../src/main.js'),css=read('../src/card-inspector-polish.css'),codex=read('../src/codex.css'),html=read('../index.html');
 assert.match(js,/panel\.classList\.toggle\('is-card-polish-cerf',c\.id===8\)/);
 assert.match(js,/panel\.classList\.remove\('is-card-polish-cerf'\)/);
 assert.match(js,/applyCardIllustration\(img,c,\{shiny:chromatic,size:'full'\}\)/);
@@ -12,7 +12,8 @@ assert.match(css,/\.inspector-copy > h2/);
 assert.match(css,/\.inspector-copy > \.stats/);
 assert.match(css,/\.inspector-copy > \.stats > span/);
 assert.doesNotMatch(css,/inspector-art-shell|\.inspector img|url\(/);
-assert.match(html,/src\/card-inspector-polish\.css\?v=cerf-style-1/);
+assert.match(codex,/@import url\('\.\/card-inspector-polish\.css\?v=cerf-style-1'\)/);
 assert.match(html,/inspector=cerf-style-1/);
+assert.match(html,/polish=cerf-style-1/);
 assert.equal(existsSync(new URL('../assets/cards/cerf-des-lueurs.webp',import.meta.url)),true);
 console.log('Cerf polished Codex info panel: scoped, art untouched, old front intact, no save edits');
