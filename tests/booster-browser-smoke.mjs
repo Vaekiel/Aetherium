@@ -453,6 +453,7 @@ assert.ok(cerfStats.stats.every(s=>/^\.\/assets\/icons\/stat-(eclat|garde|flux)-
 assert.match(cerfStats.inventory,/Possédées : ×/);
 
 await evaluate("document.querySelector('#card-grid [data-card-id=\"7\"]').click()");
+await until(()=>evaluate("(()=>{const img=document.querySelector('#inspector .inspector-art-shell img');return img?.complete && img?.naturalWidth>300})()"),'Archiviste HD artwork fully loaded');
 const other=await evaluate(`(()=>{
  const panel=document.querySelector('#inspector');
  const img=panel.querySelector('.inspector-art-shell img');
