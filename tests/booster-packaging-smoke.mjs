@@ -17,9 +17,9 @@ for(const name of [
 assert.ok(pack.includes('AETHERIUM'));
 assert.ok(pack.includes('LES MARCHES DE VERRE'));
 assert.ok(pack.includes('ORIGINES'));
-assert.ok(pack.includes('SAISON I · 5 CARTES'));
-assert.ok(pack.includes('src="./assets/boosters/origines-reliquaire-normalized-v2.webp"'));
-assert.ok(pack.includes('src="./assets/boosters/reflets-brises-reliquaire-normalized-v2.webp"'));
+assert.ok(pack.includes('SAISON 1 · 5 CARTES'));
+assert.ok(pack.includes('src="./assets/boosters/origines-reliquaire-unified-v4.webp"'));
+assert.ok(pack.includes('src="./assets/boosters/reflets-brises-reliquaire-unified-v4.webp"'));
 assert.ok(!pack.includes('derniere-etoile')&&!pack.includes('dragon-de-cristal'),
  'The wrapper never spoils a collectible by showing its art');
 assert.ok(!pack.includes('<button'),'Decorative artwork cannot accidentally trigger purchases');

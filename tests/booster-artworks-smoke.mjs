@@ -8,7 +8,7 @@ const js=read('src/main.js');
 const packaging=read('src/booster-packaging.css');
 const reflets=read('src/reflets-booster.css');
 const auDela=read('src/au-dela-booster.css');
-const assets=['origines-reliquaire-normalized-v2.webp','reflets-brises-reliquaire-normalized-v2.webp','au-dela-du-verre-reliquaire-v3.webp'];
+const assets=['origines-reliquaire-unified-v4.webp','reflets-brises-reliquaire-unified-v4.webp','au-dela-du-verre-reliquaire-v3.webp'];
 
 assert.ok(!html.includes('origines-pack-hd.webp')&&!html.includes('reflets-brises-pack-hd.webp'),
  'Only current pixel-art HD booster packages may be shown');
@@ -82,7 +82,7 @@ assert.ok(html.includes('class="booster-tile-pack reliquaire-au-dela"'),'Third g
 assert.ok(js.includes("boosterArt.classList.toggle('reliquaire-au-dela',isAuDela);"),
  'The third booster dialog selects the correct image without old wrappers');
 assert.equal((html.match(/src="\.\/assets\/boosters\/au-dela-du-verre-reliquaire-v3\.webp"/g)||[]).length,2);
-assert.equal((html.match(/src="\.\/assets\/boosters\/origines-reliquaire-normalized-v2\.webp"/g)||[]).length,2);
-assert.equal((html.match(/src="\.\/assets\/boosters\/reflets-brises-reliquaire-normalized-v2\.webp"/g)||[]).length,2);
+assert.equal((html.match(/src="\.\/assets\/boosters\/origines-reliquaire-unified-v4\.webp"/g)||[]).length,2);
+assert.equal((html.match(/src="\.\/assets\/boosters\/reflets-brises-reliquaire-unified-v4\.webp"/g)||[]).length,2);
 
 console.log('AETHERIUM — Two optimized HD booster wrappers, responsive art switch, no duplicates, seal animation intact');
