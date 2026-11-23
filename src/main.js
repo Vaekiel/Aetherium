@@ -2136,7 +2136,7 @@ function showBoosterCard(index,focus=true){
   const back=el('button','pull-back');
   back.type='button';
   back.setAttribute('aria-label','Retourner la carte '+(index+1)+' sur '+currentDraw.length);
-  back.append(el('span','back-glyph','✧'),el('span','back-caption','TOUCHER POUR RÉVÉLER'));
+  // Le dos commun est dessiné par CSS ; son libellé accessible est conservé.
   back.addEventListener('click',()=>revealBoosterCard());
   const front=el('div','pull-front');
   front.inert=true;front.setAttribute('aria-hidden','true');
