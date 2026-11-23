@@ -2070,6 +2070,7 @@ function selectBooster(edition){
   clearBoosterScene();
   boosterArt.classList.toggle('pack-reflets',isReflets);
   boosterArt.classList.toggle('pack-au-dela',isAuDela);
+  boosterArt.classList.toggle('reliquaire-origines',!isReflets&&!isAuDela);
   $('#booster-pack .pack-title').textContent=isAuDela?'AU-DELÀ DU VERRE':isReflets?'REFLETS BRISÉS':'ORIGINES';
   $('#booster-pack .pack-edition').textContent='SAISON I · 5 CARTES';
   $('#booster-collection-kicker').textContent='SAISON I · LES MARCHES DE VERRE · PARTIE '+(isAuDela?'III':isReflets?'II':'I');
