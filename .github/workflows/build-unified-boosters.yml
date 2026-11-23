@@ -1,0 +1,35 @@
+name: One-shot build unified Aetherium booster sleeves
+on:
+  push:
+    branches: [main]
+    paths:
+      - scripts/build-unified-boosters.py
+      - .github/workflows/build-unified-boosters.yml
+permissions:
+  contents: write
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Image libraries
+        run: python -m pip install --disable-pip-version-check pillow opencv-python-headless
+      - name: Rebuild all three packs from one exact master
+        run: python scripts/build-unified-boosters.py
+      - name: Save generated art and retire one-shot workflow
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add assets/boosters/origines-unified-v5.webp assets/boosters/reflets-brises-unified-v5.webp assets/boosters/au-dela-du-verre-unified-v5.webp
+          git rm .github/workflows/build-unified-boosters.yml
+          git commit -m "assets: trois boosters construits sur un seul gabarit"
+          git push origin HEAD:main
