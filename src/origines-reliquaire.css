@@ -1,0 +1,81 @@
+/* AETHERIUM — Pochette Reliquaire d'Origines.
+   The illustration is the complete, premium foil wrapper approved for Origines.
+   Keep it intact: never crop the image into the old inset window or draw a
+   second synthetic name, seal or crimp over artwork. Only this edition changes.
+   The same source is used in catalog, detail, and the existing reveal flow. */
+
+/* The approved physical wrapper already carries its own metallic rim. */
+#page-boosters .booster-tile-pack.reliquaire-origines,
+#page-boosters #booster-pack.reliquaire-origines{
+  border:0;
+  outline:0;
+  background:#100d25;
+  border-radius:3px;
+  box-shadow:0 12px 23px #050616b8,0 0 16px #af91d934;
+  overflow:hidden;
+}
+/* Let the complete illustration fill the sealed packet, not just its window. */
+#page-boosters .booster-tile-pack.reliquaire-origines .pack-scene,
+#page-boosters #booster-pack.reliquaire-origines .pack-scene{
+  position:absolute;
+  z-index:1;
+  inset:0;
+  width:100%;
+  height:100%;
+  border:0;
+  box-shadow:none;
+  background:#120e28;
+  overflow:hidden;
+}
+#page-boosters .booster-tile-pack.reliquaire-origines .pack-scene img,
+#page-boosters #booster-pack.reliquaire-origines .pack-scene .pack-artwork:not(.pack-artwork-reflets):not(.pack-artwork-au-dela){
+  position:absolute;
+  inset:0;
+  display:block;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  object-position:center center;
+  transform:none;
+  filter:none;
+  opacity:1;
+  image-rendering:auto;
+}
+/* Hide the previous CSS foil bands: they would double the real crimps. */
+#page-boosters .booster-tile-pack.reliquaire-origines::before,
+#page-boosters .booster-tile-pack.reliquaire-origines::after,
+#page-boosters #booster-pack.reliquaire-origines::before,
+#page-boosters #booster-pack.reliquaire-origines::after{
+  content:none;
+  display:none;
+}
+/* Keep semantic title elements for code/tests but remove their duplicate paint:
+   the high-quality design has these labels embossed into the packet already. */
+#page-boosters .booster-tile-pack.reliquaire-origines .pack-wordmark,
+#page-boosters .booster-tile-pack.reliquaire-origines .pack-collection,
+#page-boosters .booster-tile-pack.reliquaire-origines .pack-crest,
+#page-boosters .booster-tile-pack.reliquaire-origines .pack-title,
+#page-boosters .booster-tile-pack.reliquaire-origines .pack-edition,
+#page-boosters #booster-pack.reliquaire-origines .pack-wordmark,
+#page-boosters #booster-pack.reliquaire-origines .pack-collection,
+#page-boosters #booster-pack.reliquaire-origines .pack-crest,
+#page-boosters #booster-pack.reliquaire-origines .pack-title,
+#page-boosters #booster-pack.reliquaire-origines .pack-edition{
+  opacity:0;
+  pointer-events:none;
+}
+/* Old idle overlay is unnecessary; opening animation remains untouched.
+   The foil and rip pieces are reused only during the actual opening. */
+#page-boosters #booster-pack.reliquaire-origines:not(.is-opening) .pack-foil{
+  opacity:0;
+}
+#page-boosters .booster-gallery .booster-choice:hover
+  .booster-tile-pack.reliquaire-origines{
+  box-shadow:0 14px 26px #050616c5,0 0 19px #c5a5e159;
+}
+@media(prefers-reduced-motion:reduce){
+  #page-boosters .booster-gallery .booster-choice:hover
+    .booster-tile-pack.reliquaire-origines{
+    box-shadow:0 12px 23px #050616b8,0 0 16px #af91d934;
+  }
+}
