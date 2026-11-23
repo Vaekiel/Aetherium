@@ -19,7 +19,8 @@ for(const file of assets){
   assert.ok(bytes.length>50000 && bytes.length<700000,'Actual optimized HD WebP: '+file);
   assert.equal(bytes.toString('ascii',0,4),'RIFF');
   assert.equal(bytes.toString('ascii',8,12),'WEBP');
-  assert.ok(html.includes('src="./'+path+'"'),'Every current wrapper is loaded by HTML');
+  const url=path+(file==='reflets-brises-pack-pixel-hd-v2.webp'?'?v=reflets-valide-3':'');
+  assert.ok(html.includes('src="./'+url+'"'),'Every current wrapper is loaded by HTML');
 }
 assert.ok(html.includes('class="pack pack-origines pack-illustrated reliquaire-origines" id="booster-pack"'),
   'The original animated wrapper is retained and marked as illustrated');
