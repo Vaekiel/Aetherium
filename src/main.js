@@ -1588,6 +1588,8 @@ function inspectSealed(c,scroll=true){
   selectedCard={id:c.id,shiny:false,sealed:true};
   const panel=$('#inspector');
   panel.replaceChildren();
+  // Do not let the styling of the Cerf test leak into sealed or other cards.
+  panel.classList.remove('is-card-polish-cerf');
   delete panel.dataset.rarity;
   panel.classList.remove('is-chromatic','is-holographic','is-calligraphic');
   const seal=el('div','codex-sealed-inspector');
@@ -1628,6 +1630,8 @@ function inspect(c,shiny=false,scroll=true,chromaticPreview=false,finishOverride
   selectedCard={id:c.id,shiny:chromatic,preview:false,finish:activeFinish};
   const panel=$('#inspector');
   panel.replaceChildren();
+  // Style only Cerf des Lueurs, preserving the existing image, layout and DOM.
+  panel.classList.toggle('is-card-polish-cerf',c.id===8);
   panel.dataset.rarity=c.rarity;
   panel.classList.toggle('is-chromatic',activeFinish==='chromatic');
   panel.classList.toggle('is-holographic',activeFinish==='holographic');
