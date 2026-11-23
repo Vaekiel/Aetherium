@@ -12,13 +12,21 @@ assert.equal(png.subarray(1,4).toString('ascii'),'PNG');
 assert.equal(png.readUInt32BE(16),128);
 assert.equal(png.readUInt32BE(20),128);
 assert.ok(statSync(icon).size>2000,'The icon atlas has real pixel illustrations');
-assert.ok(ui.includes('@import "./header-relics.css?v=relics-1";'));
-assert.ok(h.includes('relics=1'));
+assert.ok(ui.includes('@import "./header-relics.css?v=relics-2";'));
+assert.ok(h.includes('relics=2'));
 assert.ok(h.includes('src/header-relics.js?v=relics-1'));
 for(const name of ['crown','shard','honors','expand']){
  assert.ok(h.includes('relic-icon--'+name),'The '+name+' sprite is in the header');
  assert.ok(css.includes('.relic-icon--'+name),'The '+name+' sprite has a position');
 }
+assert.ok(h.includes('<span class="brand-wordmark">AETHERIUM</span>'),
+ 'AETHERIUM stays visible as the unique header wordmark');
+assert.ok(!h.includes('<small>Chroniques des Arcanes</small>'),
+ 'The redundant subtitle is gone from the header');
+assert.ok(css.includes('.brand .brand-wordmark::after'),
+ 'Decorative gold line attaches to the text instead of flex width');
+assert.ok(css.includes('.brand::after{\n  content:none;\n  display:none;'),
+ 'The old misaligned underline is no longer drawn');
 assert.ok(css.includes('image-rendering:pixelated'));
 assert.ok(css.includes('background-size:200% 200%'));
 assert.ok(css.includes('safe-area-inset-left')&&css.includes('safe-area-inset-right'));

@@ -20,10 +20,30 @@
 #app > header.top .brand small{
   color:#bfaeca;letter-spacing:.055em;font-style:italic;font-variant:normal;
 }
+/* The decorative rule belongs to the measured word, not the flex item.
+   In the mobile header the brand takes all remaining horizontal space, which
+   previously displaced its 70%-wide ::after line far beyond the lettering. */
 #app > header.top .brand::after{
-  width:70%;height:4px;
-  background:linear-gradient(90deg,transparent,#96717d 12%,#d9ac75 45%,#f3ddae 50%,#d9ac75 55%,#96717d 88%,transparent);
-  opacity:.78;
+  content:none;
+  display:none;
+}
+#app > header.top .brand .brand-wordmark{
+  display:block;
+  align-self:flex-start;
+  width:max-content;
+  max-width:100%;
+  position:relative;
+  white-space:nowrap;
+}
+#app > header.top .brand .brand-wordmark::after{
+  content:"";
+  display:block;
+  height:3px;
+  width:88%;
+  margin:5px auto 0;
+  background:linear-gradient(90deg,transparent 0%,#a9848b 14%,#d8ad79 36%,#f0d3a8 50%,#d8ad79 64%,#a9848b 86%,transparent 100%);
+  clip-path:none;
+  opacity:.82;
 }
 /* One optimized transparent sprite atlas: 2 columns × 2 rows.
    Crown (0,0), shard (1,0), honors (0,1), fullscreen (1,1). */
@@ -155,7 +175,7 @@
     letter-spacing:.015em;
   }
   #app > header.top .brand small{font-size:8px;letter-spacing:.005em}
-  #app > header.top .brand::after{margin-top:3px;height:3px}
+  #app > header.top .brand .brand-wordmark::after{margin-top:4px;height:2px}
   #app > header.top .wallet{flex:0 0 auto;gap:4px;margin-left:auto}
   #app > header.top .wallet .wallet-link{
     min-width:0;min-height:42px;padding:4px 6px;gap:3px;
