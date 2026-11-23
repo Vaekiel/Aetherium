@@ -442,7 +442,7 @@ const other=await evaluate(`(()=>{
 })()`);
 assert.equal(other.active,false,'The pilot style cannot leak to another card');
 assert.equal(other.title,'Archiviste Nocturne');
-assert.equal(other.statsDisplay,'block','Other cards keep original stats layout');
+assert.equal(other.statsDisplay,'flex','Other cards keep the original flex stats layout');
 assert.deepEqual(jsErrors,[],'No unexpected browser JavaScript errors');
 ws.close();
 console.log('AETHERIUM : vrai navigateur, galerie/fiche PC tablette mobile et 3 boosters OK');
