@@ -1,0 +1,73 @@
+/* AETHERIUM — restrained Codex polish, one-card pilot (Cerf des Lueurs).
+ * No new card image, no overlay, no changes to the rarety/finish artwork layers.
+ * This stylesheet deliberately targets only the existing inspector's copy.
+ */
+#page-collection .inspector.is-card-polish-cerf > .inspector-copy{
+  position:relative;min-width:0;
+  --polish-ivory:#f7e9d3;--polish-gold:#d8b88c;
+}
+#page-collection .inspector.is-card-polish-cerf .inspector-copy > .kicker{
+  display:flex;align-items:center;justify-content:center;gap:9px;
+  margin:13px 0 9px;
+  font:600 10px/1.4 Georgia,serif;letter-spacing:.13em;text-transform:uppercase;
+  color:var(--rarity-line,var(--edge,#e4c5a0));text-shadow:0 0 10px #0f1425cc;
+}
+#page-collection .inspector.is-card-polish-cerf .inspector-copy > .kicker::before,
+#page-collection .inspector.is-card-polish-cerf .inspector-copy > .kicker::after{
+  content:"";display:block;flex:0 1 24px;height:1px;
+  background:linear-gradient(90deg,transparent,#d8b88c88);
+}
+#page-collection .inspector.is-card-polish-cerf .inspector-copy > .kicker::after{
+  transform:rotate(180deg);
+}
+#page-collection .inspector.is-card-polish-cerf .inspector-copy > h2{
+  box-sizing:border-box;max-width:100%;overflow-wrap:anywhere;text-wrap:balance;
+  margin:0 auto 4px;padding:0 0 4px;
+  font:small-caps 500 clamp(22px,4.9vw,28px)/1.18 Georgia,serif;
+  color:var(--polish-ivory);text-shadow:0 1px 8px #080c22b8;
+}
+#page-collection .inspector.is-card-polish-cerf .inspector-copy > h2::after{
+  content:"";display:block;width:min(50%,116px);height:1px;margin:9px auto 0;
+  background:linear-gradient(90deg,transparent,#d8b88cbb,transparent);
+}
+#page-collection .inspector.is-card-polish-cerf .inspector-copy > .codex-inspector-chapter{
+  margin:6px 0 3px!important;letter-spacing:.045em;color:#cdbadc!important;
+}
+#page-collection .inspector.is-card-polish-cerf .inspector-copy > p.muted{
+  margin:5px 0 12px;color:#dfcee2;font:12px/1.48 Georgia,serif;
+  overflow-wrap:anywhere;
+}
+#page-collection .inspector.is-card-polish-cerf .inspector-copy > p:not(.kicker):not(.muted):not(.codex-inspector-chapter){
+  position:relative;box-sizing:border-box;width:100%;max-width:100%;
+  margin:12px auto 12px;padding:11px 13px;
+  border-left:2px solid var(--rarity-line,var(--edge,#d8b88c));
+  background:linear-gradient(90deg,#9b719522,transparent 96%);
+  color:#f1e3ef;font:italic 13px/1.5 Georgia,serif;overflow-wrap:anywhere;
+  text-align:left;
+}
+#page-collection .inspector.is-card-polish-cerf .inspector-copy > .stats{
+  display:grid;grid-template-columns:repeat(3,minmax(0,1fr));align-items:stretch;
+  gap:7px;min-width:0;margin:14px 0 8px;padding:0;border:0;background:none;
+}
+#page-collection .inspector.is-card-polish-cerf .inspector-copy > .stats > span{
+  display:flex;justify-content:center;align-items:center;min-width:0;
+  padding:10px 4px;border-radius:5px;border:1px solid #b59b9b4f;
+  border-bottom-color:var(--rarity-line,var(--edge,#d8b88c));
+  background:radial-gradient(ellipse at 50% 0%,#79609334,transparent 85%),
+             linear-gradient(150deg,#30284291,#1b203555);
+  box-shadow:inset 0 1px 0 #f4e1d315;
+  color:#f7e9d7;font:600 clamp(12px,1.3vw,16px)/1.3 Georgia,serif;
+  font-variant-numeric:tabular-nums;white-space:nowrap;
+}
+#page-collection .inspector.is-card-polish-cerf .inspector-copy > .variant-ledger{
+  margin-top:10px;
+}
+@media(max-width:850px) and (orientation:landscape) and (max-height:550px){
+  #page-collection .inspector.is-card-polish-cerf .inspector-copy > .kicker{margin:5px 0;letter-spacing:.08em}
+  #page-collection .inspector.is-card-polish-cerf .inspector-copy > h2{font-size:clamp(18px,3.5vh,25px)}
+  #page-collection .inspector.is-card-polish-cerf .inspector-copy > p:not(.kicker):not(.muted):not(.codex-inspector-chapter){
+    margin:7px 0;padding:8px 10px;font-size:12px;
+  }
+  #page-collection .inspector.is-card-polish-cerf .inspector-copy > .stats{margin:8px 0;gap:5px}
+  #page-collection .inspector.is-card-polish-cerf .inspector-copy > .stats > span{padding:7px 2px;font-size:12px}
+}

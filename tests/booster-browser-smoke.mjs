@@ -409,6 +409,40 @@ assert.equal(originalCerf.title,'Cerf des Lueurs');
 assert.ok(originalCerf.src.includes('cerf-des-lueurs.webp'),'The original artwork is used');
 assert.ok(originalCerf.loaded,'Original HD image loads');
 assert.ok(originalCerf.width>60&&originalCerf.height>100,'Original artwork is visible');
+// The decor changes *only* the existing inspector's text, not the image.
+const polish=await evaluate(`(()=>{
+ const panel=document.querySelector('#inspector');
+ const img=panel.querySelector('.inspector-art-shell img');
+ const copy=panel.querySelector('.inspector-copy');
+ return {active:panel.classList.contains('is-card-polish-cerf'),
+  imageSource:img.currentSrc||img.src,imageLoaded:img.complete&&img.naturalWidth>300,
+  imageSize:[img.getBoundingClientRect().width,img.getBoundingClientRect().height],
+  title:copy.querySelector('h2')?.textContent,
+  rarity:copy.querySelector('.kicker')?.textContent,
+  lore:copy.querySelector('p:not(.kicker):not(.muted):not(.codex-inspector-chapter)')?.textContent,
+  stats:copy.querySelectorAll('.stats > span').length,
+  statsDisplay:getComputedStyle(copy.querySelector('.stats')).display};
+})()`);
+console.log('Polished Cerf on Chromium:',JSON.stringify(polish));
+assert.equal(polish.active,true,'Polish is active only on Cerf');
+assert.ok(polish.imageSource.includes('cerf-des-lueurs.webp'));
+assert.ok(polish.imageLoaded&&polish.imageSize[0]>60&&polish.imageSize[1]>100);
+assert.equal(polish.title,'Cerf des Lueurs');
+assert.ok(polish.rarity.includes('Inhabituelle'),'Original rarity is still shown');
+assert.ok(polish.lore.includes('souvenirs'),'Original lore is still shown');
+assert.equal(polish.stats,3,'Stats keep their existing three values');
+assert.equal(polish.statsDisplay,'grid','Three compact stat cells are visible');
+await evaluate("document.querySelector('#card-grid [data-card-id=\"7\"]').click()");
+const other=await evaluate(`(()=>{
+ const panel=document.querySelector('#inspector');
+ return {active:panel.classList.contains('is-card-polish-cerf'),
+   title:panel.querySelector('.inspector-copy h2')?.textContent,
+   art:panel.querySelector('.inspector-art-shell img')?.src,
+   statsDisplay:getComputedStyle(panel.querySelector('.stats')).display};
+})()`);
+assert.equal(other.active,false,'The pilot style cannot leak to another card');
+assert.equal(other.title,'Archiviste Nocturne');
+assert.equal(other.statsDisplay,'block','Other cards keep original stats layout');
 assert.deepEqual(jsErrors,[],'No unexpected browser JavaScript errors');
 ws.close();
 console.log('AETHERIUM : vrai navigateur, galerie/fiche PC tablette mobile et 3 boosters OK');
