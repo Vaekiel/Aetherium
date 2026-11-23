@@ -432,6 +432,25 @@ assert.ok(polish.rarity.includes('Inhabituelle'),'Original rarity is still shown
 assert.ok(polish.lore.includes('souvenirs'),'Original lore is still shown');
 assert.equal(polish.stats,3,'Stats keep their existing three values');
 assert.equal(polish.statsDisplay,'grid','Three compact stat cells are visible');
+const cerfStats=await evaluate(`(()=>{
+ const panel=document.querySelector('#inspector');
+ const stats=[...panel.querySelectorAll('.stats > .stat-stat')].map(s=>{
+  const glyph=s.querySelector('.stat-glyph');
+  const rect=glyph?.getBoundingClientRect();
+  return {name:s.querySelector('.stat-name')?.textContent,
+   value:Number(s.querySelector('.stat-value')?.textContent),
+   icon:glyph?.getAttribute('src'),visible:!!rect && rect.width>=27 && rect.height>=27,
+   loaded:glyph?.complete && glyph?.naturalWidth===32};
+ });
+ return {stats,inventory:panel.querySelector('.stat-inventory-total')?.textContent};
+})()`);
+console.log('Cerf real pixel-art glyphs:',JSON.stringify(cerfStats));
+assert.deepEqual(cerfStats.stats.map(s=>s.name),['Éclat','Garde','Flux']);
+assert.deepEqual(cerfStats.stats.map(s=>s.value),[12,13,6]);
+assert.ok(cerfStats.stats.every(s=>s.visible && s.loaded),'Three pixel-art icons must load');
+assert.ok(cerfStats.stats.every(s=>s.icon.startsWith('./assets/icons/stat-')));
+assert.match(cerfStats.inventory,/Possédées : ×/);
+
 await evaluate("document.querySelector('#card-grid [data-card-id=\"7\"]').click()");
 const other=await evaluate(`(()=>{
  const panel=document.querySelector('#inspector');
@@ -443,6 +462,8 @@ const other=await evaluate(`(()=>{
 assert.equal(other.active,false,'The pilot style cannot leak to another card');
 assert.equal(other.title,'Archiviste Nocturne');
 assert.equal(other.statsDisplay,'flex','Other cards keep the original flex stats layout');
+assert.equal(await evaluate("document.querySelector('#inspector .stat-stat')===null"),true,
+ 'Other cards never receive Cerf stat glyphs');
 assert.deepEqual(jsErrors,[],'No unexpected browser JavaScript errors');
 ws.close();
 console.log('AETHERIUM : vrai navigateur, galerie/fiche PC tablette mobile et 3 boosters OK');
