@@ -1614,6 +1614,54 @@ function inspectSealed(c,scroll=true){
     else if(matchMedia('(max-width:1050px)').matches)panel.scrollIntoView({behavior:'smooth',block:'nearest'});
   }
 }
+
+/* Première carte pilote du nouveau recto. Le cadre est une couche décorative :
+ * noms, rareté, finition, texte et valeurs restent des éléments HTML dynamiques.
+ * Les caractéristiques ne modifient pas encore les règles du jeu.
+ */
+function makePilotCardFront(c,finish){
+  const face=el('div','pilot-card-front'+(finish==='chromatic'?' is-chromatic':'')+
+    (finish==='holographic'?' is-holographic':'')+(finish==='calligraphic'?' is-calligraphic':''));
+  face.dataset.rarity=c.rarity;
+  face.dataset.finish=finish;
+  face.style.setProperty('--pilot-rarity',RARITIES[c.rarity].color);
+  face.setAttribute('role','group');
+  face.setAttribute('aria-label','Carte '+c.name+' · '+RARITIES[c.rarity].label+
+    ' · version '+FINISHES[finish].label);
+  const art=el('div','pilot-card-art');
+  const img=el('img','pilot-card-illustration');
+  applyCardIllustration(img,c,{shiny:finish==='chromatic',size:'full'});
+  img.alt='Illustration de '+c.name;
+  img.loading='eager';
+  img.decoding='sync';
+  art.append(img);
+  const frame=el('img','pilot-card-frame');
+  frame.src='./assets/cards/aetherium-front-pilot-frame.webp';
+  frame.alt='';
+  frame.loading='eager';
+  frame.setAttribute('aria-hidden','true');
+  const title=el('strong','pilot-card-title'+(c.name.length>25?' is-long':''),c.name);
+  const rarity=el('span','pilot-card-rarity',RARITIES[c.rarity].label);
+  const rarityMark=el('span','pilot-card-rarity-mark','◆');
+  rarityMark.setAttribute('aria-hidden','true');
+  const variant=el('span','pilot-card-variant',FINISHES[finish].label);
+  variant.title='Variété : '+FINISHES[finish].label;
+  const lore=el('p','pilot-card-lore',c.lore);
+  const values=[
+    ['pilot-card-power',c.attack,'Puissance'],
+    ['pilot-card-guard',c.health,'Garde'],
+    ['pilot-card-flux',Math.max(1,Math.round((c.attack+c.health)/4)),'Flux (indicateur provisoire)']
+  ];
+  face.append(art,frame,title,rarity,rarityMark,variant,lore);
+  for(const [className,value,label] of values){
+    const stat=el('span','pilot-card-stat '+className,String(value));
+    stat.setAttribute('aria-label',label+' : '+value);
+    stat.title=label+' : '+value;
+    face.append(stat);
+  }
+  return face;
+}
+
 function inspect(c,shiny=false,scroll=true,chromaticPreview=false,finishOverride=null){
   // Finishes never render before being found. The old preview argument is
   // kept only for compatibility with callers, but intentionally ignored.
@@ -1626,6 +1674,7 @@ function inspect(c,shiny=false,scroll=true,chromaticPreview=false,finishOverride
     (state.owned[c.id]?fallback:'normal');
   const chromatic=activeFinish==='chromatic';
   selectedCard={id:c.id,shiny:chromatic,preview:false,finish:activeFinish};
+  const pilotFront=c.id===8?makePilotCardFront(c,activeFinish):null;
   const panel=$('#inspector');
   panel.replaceChildren();
   panel.dataset.rarity=c.rarity;
@@ -1641,7 +1690,8 @@ function inspect(c,shiny=false,scroll=true,chromaticPreview=false,finishOverride
     (activeFinish==='calligraphic'?' is-calligraphic':''));
   artwork.append(img);
   if(chromatic)artwork.append(el('span','inspector-chromatic-seal','✧ CHROMATIQUE'));
-  if(activeFinish==='holographic')enableHolographicInspection(artwork);
+  if(pilotFront&&activeFinish==='holographic')enableHolographicInspection(pilotFront);
+  else if(activeFinish==='holographic')enableHolographicInspection(artwork);
   const kicker=el('p','kicker','ARCHIVE '+String(c.id).padStart(3,'0')+' · '+RARITIES[c.rarity].label);
   const title=el('h2','',c.name);
   const location=collectionForCard(c);
@@ -1679,7 +1729,12 @@ function inspect(c,shiny=false,scroll=true,chromaticPreview=false,finishOverride
   }
   copy.append(picker);
   addCodexNavigation(copy,c);
-  panel.append(artwork,copy);
+  if(pilotFront){
+    copy.classList.add('pilot-inspector-copy');
+    kicker.remove();title.remove();desc.remove();stats.remove();
+  }
+  if(pilotFront)panel.append(pilotFront,copy);
+  else panel.append(artwork,copy);
   markCodexSelected(c.id);
   if(scroll){
     if(mobileView.matches)openSheet('inspector');
