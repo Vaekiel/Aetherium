@@ -1,43 +1,43 @@
-/* AETHERIUM — restrained Codex polish, one-card pilot (Cerf des Lueurs).
+/* AETHERIUM — approved shared Codex polish for all revealed cards.
  * No new card image, no overlay, no changes to the rarety/finish artwork layers.
- * This stylesheet deliberately targets only the existing inspector's copy.
+ * This stylesheet targets only revealed Codex inspectors, never the artwork.
  */
-#page-collection .inspector.is-card-polish-cerf > .inspector-copy{
+#page-collection .inspector.is-card-polished > .inspector-copy{
   position:relative;min-width:0;
   --polish-ivory:#f7e9d3;--polish-gold:#d8b88c;
 }
-#page-collection .inspector.is-card-polish-cerf .inspector-copy > .kicker{
+#page-collection .inspector.is-card-polished .inspector-copy > .kicker{
   display:flex;align-items:center;justify-content:center;gap:9px;
   margin:13px 0 9px;
   font:600 10px/1.4 Georgia,serif;letter-spacing:.13em;text-transform:uppercase;
   color:var(--rarity-line,var(--edge,#e4c5a0));text-shadow:0 0 10px #0f1425cc;
 }
-#page-collection .inspector.is-card-polish-cerf .inspector-copy > .kicker::before,
-#page-collection .inspector.is-card-polish-cerf .inspector-copy > .kicker::after{
+#page-collection .inspector.is-card-polished .inspector-copy > .kicker::before,
+#page-collection .inspector.is-card-polished .inspector-copy > .kicker::after{
   content:"";display:block;flex:0 1 24px;height:1px;
   background:linear-gradient(90deg,transparent,#d8b88c88);
 }
-#page-collection .inspector.is-card-polish-cerf .inspector-copy > .kicker::after{
+#page-collection .inspector.is-card-polished .inspector-copy > .kicker::after{
   transform:rotate(180deg);
 }
-#page-collection .inspector.is-card-polish-cerf .inspector-copy > h2{
+#page-collection .inspector.is-card-polished .inspector-copy > h2{
   box-sizing:border-box;max-width:100%;overflow-wrap:anywhere;text-wrap:balance;
   margin:0 auto 4px;padding:0 0 4px;
   font:small-caps 500 clamp(22px,4.9vw,28px)/1.18 Georgia,serif;
   color:var(--polish-ivory);text-shadow:0 1px 8px #080c22b8;
 }
-#page-collection .inspector.is-card-polish-cerf .inspector-copy > h2::after{
+#page-collection .inspector.is-card-polished .inspector-copy > h2::after{
   content:"";display:block;width:min(50%,116px);height:1px;margin:9px auto 0;
   background:linear-gradient(90deg,transparent,#d8b88cbb,transparent);
 }
-#page-collection .inspector.is-card-polish-cerf .inspector-copy > .codex-inspector-chapter{
+#page-collection .inspector.is-card-polished .inspector-copy > .codex-inspector-chapter{
   margin:6px 0 3px!important;letter-spacing:.045em;color:#cdbadc!important;
 }
-#page-collection .inspector.is-card-polish-cerf .inspector-copy > p.muted{
+#page-collection .inspector.is-card-polished .inspector-copy > p.muted{
   margin:5px 0 12px;color:#dfcee2;font:12px/1.48 Georgia,serif;
   overflow-wrap:anywhere;
 }
-#page-collection .inspector.is-card-polish-cerf .inspector-copy > p:not(.kicker):not(.muted):not(.codex-inspector-chapter):not(.stat-inventory-total){
+#page-collection .inspector.is-card-polished .inspector-copy > p:not(.kicker):not(.muted):not(.codex-inspector-chapter):not(.stat-inventory-total){
   position:relative;box-sizing:border-box;width:100%;max-width:100%;
   margin:12px auto 12px;padding:11px 13px;
   border-left:2px solid var(--rarity-line,var(--edge,#d8b88c));
@@ -45,11 +45,11 @@
   color:#f1e3ef;font:italic 13px/1.5 Georgia,serif;overflow-wrap:anywhere;
   text-align:left;
 }
-#page-collection .inspector.is-card-polish-cerf .inspector-copy > .stats{
+#page-collection .inspector.is-card-polished .inspector-copy > .stats{
   display:grid;grid-template-columns:repeat(3,minmax(0,1fr));align-items:stretch;
   gap:7px;min-width:0;margin:14px 0 8px;padding:0;border:0;background:none;
 }
-#page-collection .inspector.is-card-polish-cerf .inspector-copy > .stats > span{
+#page-collection .inspector.is-card-polished .inspector-copy > .stats > span{
   display:flex;justify-content:center;align-items:center;min-width:0;
   padding:10px 4px;border-radius:5px;border:1px solid #b59b9b4f;
   border-bottom-color:var(--rarity-line,var(--edge,#d8b88c));
@@ -59,22 +59,22 @@
   color:#f7e9d7;font:600 clamp(12px,1.3vw,16px)/1.3 Georgia,serif;
   font-variant-numeric:tabular-nums;white-space:nowrap;
 }
-#page-collection .inspector.is-card-polish-cerf .inspector-copy > .variant-ledger{
+#page-collection .inspector.is-card-polished .inspector-copy > .variant-ledger{
   margin-top:10px;
 }
 @media(max-width:850px) and (orientation:landscape) and (max-height:550px){
-  #page-collection .inspector.is-card-polish-cerf .inspector-copy > .kicker{margin:5px 0;letter-spacing:.08em}
-  #page-collection .inspector.is-card-polish-cerf .inspector-copy > h2{font-size:clamp(18px,3.5vh,25px)}
-  #page-collection .inspector.is-card-polish-cerf .inspector-copy > p:not(.kicker):not(.muted):not(.codex-inspector-chapter){
+  #page-collection .inspector.is-card-polished .inspector-copy > .kicker{margin:5px 0;letter-spacing:.08em}
+  #page-collection .inspector.is-card-polished .inspector-copy > h2{font-size:clamp(18px,3.5vh,25px)}
+  #page-collection .inspector.is-card-polished .inspector-copy > p:not(.kicker):not(.muted):not(.codex-inspector-chapter):not(.stat-inventory-total){
     margin:7px 0;padding:8px 10px;font-size:12px;
   }
-  #page-collection .inspector.is-card-polish-cerf .inspector-copy > .stats{margin:8px 0;gap:5px}
-  #page-collection .inspector.is-card-polish-cerf .inspector-copy > .stats > span{padding:7px 2px;font-size:12px}
+  #page-collection .inspector.is-card-polished .inspector-copy > .stats{margin:8px 0;gap:5px}
+  #page-collection .inspector.is-card-polished .inspector-copy > .stats > span{padding:7px 2px;font-size:12px}
 }
 
-/* Cerf des Lueurs — approved 144px transparent pixel-art HD glyphs.
-   One-card visual pilot; do not alter the original HD artwork or finishes. */
-#page-collection .inspector.is-card-polish-cerf .inspector-copy > .stats > span.stat-stat{
+/* AETHERIUM — approved 144px transparent pixel-art HD stat glyphs.
+   Shared visual style; preserve each card's original HD artwork and finishes. */
+#page-collection .inspector.is-card-polished .inspector-copy > .stats > span.stat-stat{
   --stat-line:#bc91ee;--stat-light:#8750b14a;
   display:flex;flex-flow:column nowrap;align-items:center;justify-content:center;
   gap:3px;min-width:0;min-height:116px;padding:8px 4px 7px;
@@ -85,13 +85,13 @@
   box-shadow:inset 0 1px 0 #f6e4da13,0 5px 15px #0c0d1e40;
   color:#f7e9d7;white-space:normal;
 }
-#page-collection .inspector.is-card-polish-cerf .inspector-copy > .stats > span.garde{
+#page-collection .inspector.is-card-polished .inspector-copy > .stats > span.garde{
   --stat-line:#87bddb;--stat-light:#356e9a4b;
 }
-#page-collection .inspector.is-card-polish-cerf .inspector-copy > .stats > span.flux{
+#page-collection .inspector.is-card-polished .inspector-copy > .stats > span.flux{
   --stat-line:#e1b988;--stat-light:#9c6e6244;
 }
-#page-collection .inspector.is-card-polish-cerf .inspector-copy > .stats .stat-glyph{
+#page-collection .inspector.is-card-polished .inspector-copy > .stats .stat-glyph{
   display:block!important;width:48px!important;height:48px!important;
   min-width:48px!important;max-width:48px!important;max-height:48px!important;
   aspect-ratio:1!important;object-fit:contain!important;
@@ -101,37 +101,37 @@
   filter:drop-shadow(0 0 2px var(--stat-line,#ba9acc))!important;
   image-rendering:pixelated!important;
 }
-#page-collection .inspector.is-card-polish-cerf .inspector-copy > .stats .stat-name{
+#page-collection .inspector.is-card-polished .inspector-copy > .stats .stat-name{
   display:block;font:600 10px/1.15 Georgia,serif;letter-spacing:.055em;
   color:#dacee5;font-variant:small-caps;text-transform:uppercase;
 }
-#page-collection .inspector.is-card-polish-cerf .inspector-copy > .stats .stat-value{
+#page-collection .inspector.is-card-polished .inspector-copy > .stats .stat-value{
   display:block;font:500 27px/1.05 Georgia,serif;color:#fff3d7;
   text-shadow:0 0 10px #c1aee668;font-variant-numeric:tabular-nums;
 }
-#page-collection .inspector.is-card-polish-cerf .inspector-copy > p.stat-inventory-total{
+#page-collection .inspector.is-card-polished .inspector-copy > p.stat-inventory-total{
   display:flex;justify-content:center;align-items:center;gap:12px;
   margin:13px 0 11px;padding:8px 6px;
   border-top:1px solid #86718d54;border-bottom:1px solid #86718d54;
   background:none;border-left:0;color:#d6c6d9;
   font:12px/1.4 Georgia,serif;text-align:center;
 }
-#page-collection .inspector.is-card-polish-cerf .inspector-copy .stat-inventory-total strong{
+#page-collection .inspector.is-card-polished .inspector-copy .stat-inventory-total strong{
   font:500 13px/1.4 Georgia,serif;color:#ffe8bd;
 }
 @media(max-width:360px){
-  #page-collection .inspector.is-card-polish-cerf .inspector-copy > .stats .stat-glyph{
+  #page-collection .inspector.is-card-polished .inspector-copy > .stats .stat-glyph{
     width:42px!important;height:42px!important;min-width:42px!important;
     max-width:42px!important;max-height:42px!important;
   }
 }
 @media(max-width:850px) and (orientation:landscape) and (max-height:550px){
-  #page-collection .inspector.is-card-polish-cerf .inspector-copy > .stats > span.stat-stat{
+  #page-collection .inspector.is-card-polished .inspector-copy > .stats > span.stat-stat{
     min-height:108px;padding:6px 2px;
   }
-  #page-collection .inspector.is-card-polish-cerf .inspector-copy > .stats .stat-glyph{
+  #page-collection .inspector.is-card-polished .inspector-copy > .stats .stat-glyph{
     width:40px!important;height:40px!important;min-width:40px!important;
     max-width:40px!important;max-height:40px!important;
   }
-  #page-collection .inspector.is-card-polish-cerf .inspector-copy > .stats .stat-value{font-size:22px}
+  #page-collection .inspector.is-card-polished .inspector-copy > .stats .stat-value{font-size:22px}
 }
