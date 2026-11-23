@@ -12,8 +12,21 @@ assert.match(css,/\.inspector-copy > h2/);
 assert.match(css,/\.inspector-copy > \.stats/);
 assert.match(css,/\.inspector-copy > \.stats > span/);
 assert.doesNotMatch(css,/inspector-art-shell|\.inspector img|url\(/);
-assert.match(codex,/@import url\('\.\/card-inspector-polish\.css\?v=cerf-style-1'\)/);
-assert.match(html,/inspector=cerf-style-1/);
-assert.match(html,/polish=cerf-style-1/);
+assert.match(codex,/@import url\('\.\/card-inspector-polish\.css\?v=cerf-stats-1'\)/);
+assert.match(html,/inspector=cerf-stats-1/);
+assert.match(html,/polish=cerf-stats-1/);
+assert.match(js,/visualStats=\[/);
+assert.match(js,/c\.attack\+c\.health/);
+assert.match(js,/stat-inventory-total/);
+assert.match(css,/stat-name/);
+assert.match(css,/stat-glyph/);
+assert.match(css,/stat-value/);
+assert.match(css,/:not\(\.stat-inventory-total\)/);
 assert.equal(existsSync(new URL('../assets/cards/cerf-des-lueurs.webp',import.meta.url)),true);
-console.log('Cerf polished Codex info panel: scoped, art untouched, old front intact, no save edits');
+for(const kind of ['eclat','garde','flux']){
+  const svg=read('../assets/icons/stat-'+kind+'.svg');
+  assert.match(svg,/<svg/);
+  assert.match(svg,/shape-rendering="crispEdges"/);
+  assert.match(js,new RegExp('assets/icons/stat-'+kind+'\\.svg'));
+}
+console.log('Cerf Codex: 3 pixel-art icons, original HD art, inventory separate, isolated pilot OK');

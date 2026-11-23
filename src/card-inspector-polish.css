@@ -37,7 +37,7 @@
   margin:5px 0 12px;color:#dfcee2;font:12px/1.48 Georgia,serif;
   overflow-wrap:anywhere;
 }
-#page-collection .inspector.is-card-polish-cerf .inspector-copy > p:not(.kicker):not(.muted):not(.codex-inspector-chapter){
+#page-collection .inspector.is-card-polish-cerf .inspector-copy > p:not(.kicker):not(.muted):not(.codex-inspector-chapter):not(.stat-inventory-total){
   position:relative;box-sizing:border-box;width:100%;max-width:100%;
   margin:12px auto 12px;padding:11px 13px;
   border-left:2px solid var(--rarity-line,var(--edge,#d8b88c));
@@ -70,4 +70,68 @@
   }
   #page-collection .inspector.is-card-polish-cerf .inspector-copy > .stats{margin:8px 0;gap:5px}
   #page-collection .inspector.is-card-polish-cerf .inspector-copy > .stats > span{padding:7px 2px;font-size:12px}
+}
+
+/* Cerf des Lueurs — stat glyphs from the approved actual Codex mockup.
+   One-card visual pilot; do not alter the original HD artwork or finishes. */
+#page-collection .inspector.is-card-polish-cerf .inspector-copy > .stats > span.stat-stat{
+  --stat-line:#bc91ee;--stat-light:#8750b14a;
+  display:flex;flex-flow:column nowrap;align-items:center;justify-content:center;
+  gap:3px;min-width:0;min-height:100px;padding:8px 4px 7px;
+  border:1px solid #8e78955e;border-bottom:2px solid var(--stat-line);
+  border-radius:6px;
+  background:radial-gradient(ellipse at 50% 0%,var(--stat-light),transparent 77%),
+             linear-gradient(150deg,#28243ce8,#191e33e3);
+  box-shadow:inset 0 1px 0 #f6e4da13,0 5px 15px #0c0d1e40;
+  color:#f7e9d7;white-space:normal;
+}
+#page-collection .inspector.is-card-polish-cerf .inspector-copy > .stats > span.garde{
+  --stat-line:#87bddb;--stat-light:#356e9a4b;
+}
+#page-collection .inspector.is-card-polish-cerf .inspector-copy > .stats > span.flux{
+  --stat-line:#e1b988;--stat-light:#9c6e6244;
+}
+#page-collection .inspector.is-card-polish-cerf .inspector-copy > .stats .stat-glyph{
+  display:block!important;width:34px!important;height:34px!important;
+  min-width:34px!important;max-width:34px!important;max-height:34px!important;
+  aspect-ratio:1!important;object-fit:contain!important;
+  margin:0 auto 3px!important;padding:0!important;
+  border:0!important;outline:0!important;border-radius:0!important;
+  box-shadow:none!important;background:transparent!important;
+  filter:drop-shadow(0 0 5px var(--stat-line,#ba9acc))!important;
+  image-rendering:pixelated!important;
+}
+#page-collection .inspector.is-card-polish-cerf .inspector-copy > .stats .stat-name{
+  display:block;font:600 10px/1.15 Georgia,serif;letter-spacing:.055em;
+  color:#dacee5;font-variant:small-caps;text-transform:uppercase;
+}
+#page-collection .inspector.is-card-polish-cerf .inspector-copy > .stats .stat-value{
+  display:block;font:500 27px/1.05 Georgia,serif;color:#fff3d7;
+  text-shadow:0 0 10px #c1aee668;font-variant-numeric:tabular-nums;
+}
+#page-collection .inspector.is-card-polish-cerf .inspector-copy > p.stat-inventory-total{
+  display:flex;justify-content:center;align-items:center;gap:12px;
+  margin:13px 0 11px;padding:8px 6px;
+  border-top:1px solid #86718d54;border-bottom:1px solid #86718d54;
+  background:none;border-left:0;color:#d6c6d9;
+  font:12px/1.4 Georgia,serif;text-align:center;
+}
+#page-collection .inspector.is-card-polish-cerf .inspector-copy .stat-inventory-total strong{
+  font:500 13px/1.4 Georgia,serif;color:#ffe8bd;
+}
+@media(max-width:360px){
+  #page-collection .inspector.is-card-polish-cerf .inspector-copy > .stats .stat-glyph{
+    width:30px!important;height:30px!important;min-width:30px!important;
+    max-width:30px!important;max-height:30px!important;
+  }
+}
+@media(max-width:850px) and (orientation:landscape) and (max-height:550px){
+  #page-collection .inspector.is-card-polish-cerf .inspector-copy > .stats > span.stat-stat{
+    min-height:86px;padding:6px 2px;
+  }
+  #page-collection .inspector.is-card-polish-cerf .inspector-copy > .stats .stat-glyph{
+    width:28px!important;height:28px!important;min-width:28px!important;
+    max-width:28px!important;max-height:28px!important;
+  }
+  #page-collection .inspector.is-card-polish-cerf .inspector-copy > .stats .stat-value{font-size:22px}
 }

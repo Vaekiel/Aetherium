@@ -1652,10 +1652,36 @@ function inspect(c,shiny=false,scroll=true,chromaticPreview=false,finishOverride
   const chapterLabel=el('p','codex-inspector-chapter',location?'Saison '+location.season.number+' · '+location.collection.title:'Les Archives');
   const desc=el('p','','« '+c.lore+' »');
   const stats=el('div','stats');
-  stats.append(el('span','','⚔ '+c.attack),el('span','','♥ '+c.health),el('span','','×'+(state.owned[c.id]||0)));
+  if(c.id===8){
+    // Visual pilot only: real attack and health; Flux is derived and never saved.
+    const flux=Math.max(1,Math.round((c.attack+c.health)/4));
+    const visualStats=[
+      ['eclat','Éclat',c.attack,'./assets/icons/stat-eclat.svg'],
+      ['garde','Garde',c.health,'./assets/icons/stat-garde.svg'],
+      ['flux','Flux',flux,'./assets/icons/stat-flux.svg']
+    ];
+    for(const [kind,label,value,src] of visualStats){
+      const cell=el('span','stat-stat '+kind);
+      cell.setAttribute('aria-label',label+' : '+value+
+        (kind==='flux'?' (indicateur visuel provisoire)':''));
+      const glyph=el('img','stat-glyph');
+      glyph.src=src;glyph.alt='';glyph.setAttribute('aria-hidden','true');
+      glyph.loading='eager';
+      cell.append(glyph,el('span','stat-name',label),el('strong','stat-value',String(value)));
+      stats.append(cell);
+    }
+  }else{
+    stats.append(el('span','','⚔ '+c.attack),el('span','','♥ '+c.health),el('span','','×'+(state.owned[c.id]||0)));
+  }
   const copy=el('div','inspector-copy');
   copy.append(kicker,title,chapterLabel,el('p','muted',c.type+
     ' · '+FINISHES[activeFinish].symbol+' Version '+FINISHES[activeFinish].label),desc,stats);
+  if(c.id===8){
+    const owned=el('p','stat-inventory-total');
+    owned.append(el('span','stat-inventory-heading','Collection'),
+      el('strong','','Possédées : ×'+(state.owned[c.id]||0)));
+    copy.append(owned);
+  }
   const ledger=el('div','variant-ledger');
   ledger.setAttribute('aria-label','Quantités possédées par finition');
   for(const finish of FINISH_KEYS){
