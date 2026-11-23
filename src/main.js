@@ -1335,12 +1335,12 @@ function selectGame(index,{jumpToStage=false,focusTrial=false}={}){
   if(picker.scrollWidth>picker.clientWidth+3){
     const delta=selected.getBoundingClientRect().left-picker.getBoundingClientRect().left;
     const left=picker.scrollLeft+delta-(picker.clientWidth-selected.clientWidth)/2;
-    picker.scrollTo({left,behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'});
+    picker.scrollTo({left,behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});
   }
   if(jumpToStage){
     const card=mini[index].card;
     if(focusTrial)$('#trial-title-'+index).focus({preventScroll:true});
-    card.scrollIntoView({block:'start',behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'});
+    card.scrollIntoView({block:'start',behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});
   }
 }
 selectGame(0);
