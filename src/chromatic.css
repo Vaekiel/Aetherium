@@ -50,14 +50,9 @@
  text-shadow:0 0 7px #9ef2e7,0 0 13px #dca5ed!important;
  z-index:5!important;
 }
-.card.is-chromatic:after{
- content:"";position:absolute;z-index:3;inset:5px;
- pointer-events:none;border:1px solid #c8d6ed65;border-radius:1px;
- background:linear-gradient(115deg,transparent 30%,#a7f6eb10 40%,#e8b9f02c 48%,#fff7d41b 52%,transparent 65%);
- background-size:225% 100%;background-position:100% 0;
- mix-blend-mode:screen;opacity:.62;
- animation:chromatic-foil-drift 9s ease-in-out infinite alternate;
-}
+/* Keep the illustration as the only foil surface. A card-wide overlay used to
+   wash out names, lore labels and the outer rarity ring on some backgrounds. */
+.card.is-chromatic::after{content:none!important}
 .card.is-chromatic .info{
  background:linear-gradient(120deg,#262441,#172139,#29203b)!important;
  border-top:1px solid #b9cce266!important;
@@ -243,7 +238,7 @@
 #page-collection .inspector .inspector-art-shell.is-chromatic::before{
   content:"";
   position:absolute;
-  inset:-95%;
+  inset:-60%;
   z-index:0;
   pointer-events:none;
   background:conic-gradient(
@@ -296,7 +291,7 @@
   box-shadow:inset 0 0 0 1px #e9b5ff,0 0 14px #8edffdba;
 }
 #page-boosters .booster-single .pull-front .card.is-chromatic .chromatic-art-window::before{
-  inset:-90%;
+  inset:-60%;
   background:conic-gradient(
     from 0deg,
     #fffbe4 0deg 13deg,
@@ -311,25 +306,29 @@
   );
   animation:chromatic-rim-orbit 2.6s linear infinite;
 }
+/* Keep the pulsing light independent from the 1138px illustration.
+   Animating drop-shadow(filter) on the entire face caused repeated GPU
+   rasterisation and potential blank cards on mobile/WebView. */
 #page-boosters .booster-single .pull-flip.is-chromatic.is-revealed .pull-front .card.is-chromatic{
+  filter:none;
+}
+#page-boosters .booster-single .pull-flip.is-chromatic.is-revealed .pull-front::after{
+  content:"";position:absolute;z-index:-1;inset:-15px;
+  pointer-events:none;
+  background:radial-gradient(ellipse at center,#76e6ef65 10%,#ab91eb57 45%,transparent 73%);
+  opacity:.44;
   animation:chromatic-booster-halo 2.6s ease-in-out infinite;
 }
 @keyframes chromatic-booster-halo{
-  0%,100%{
-    filter:drop-shadow(0 0 4px #65dff1a8)
-           drop-shadow(0 0 7px #b594f080);
-  }
-  50%{
-    filter:drop-shadow(0 0 10px #8afff3d4)
-           drop-shadow(0 0 16px #c795f7b5);
-  }
+  0%,100%{opacity:.44}
+  50%{opacity:.85}
 }
 @media(prefers-reduced-motion:reduce){
   #page-boosters .booster-single .pull-front .card.is-chromatic .chromatic-art-window::before,
-  #page-boosters .booster-single .pull-flip.is-chromatic.is-revealed .pull-front .card.is-chromatic{
+  #page-boosters .booster-single .pull-flip.is-chromatic.is-revealed .pull-front::after{
     animation:none!important;
   }
-  #page-boosters .booster-single .pull-flip.is-chromatic.is-revealed .pull-front .card.is-chromatic{
-    filter:drop-shadow(0 0 6px #8fdcef9e);
+  #page-boosters .booster-single .pull-flip.is-chromatic.is-revealed .pull-front::after{
+    opacity:.52;
   }
 }
