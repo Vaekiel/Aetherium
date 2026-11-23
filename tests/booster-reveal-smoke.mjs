@@ -80,6 +80,6 @@ for(const text of [
 }
 assert.ok(html.includes('src/main.js?v='),
   'New JavaScript is not served from the cached broken version');
-assert.ok(html.includes('src/booster.css?v=card-back-v2'),
+assert.ok(html.includes('src/booster.css?v=card-back-original-v3'),
   'Universal card back and 2D reveal are not masked by old cached CSS');
 console.log('AETHERIUM 1.8.2.1 — mobile reveal: full HD art, eager sync, shiny and normal, 2D face, economy OK');
