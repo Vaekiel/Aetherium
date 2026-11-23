@@ -8,7 +8,7 @@ const js=read('src/main.js');
 const packaging=read('src/booster-packaging.css');
 const reflets=read('src/reflets-booster.css');
 const auDela=read('src/au-dela-booster.css');
-const assets=['origines-pack-pixel-hd-v2.webp','reflets-brises-pack-pixel-hd-v2.webp','au-dela-du-verre-pack-pixel-hd.webp'];
+const assets=['origines-reliquaire-v1.webp','reflets-brises-pack-pixel-hd-v2.webp','au-dela-du-verre-pack-pixel-hd.webp'];
 
 assert.ok(!html.includes('origines-pack-hd.webp')&&!html.includes('reflets-brises-pack-hd.webp'),
  'Only current pixel-art HD booster packages may be shown');
@@ -19,9 +19,9 @@ for(const file of assets){
   assert.ok(bytes.length>50000 && bytes.length<700000,'Actual optimized HD WebP: '+file);
   assert.equal(bytes.toString('ascii',0,4),'RIFF');
   assert.equal(bytes.toString('ascii',8,12),'WEBP');
-  assert.ok(html.includes('src="./'+path+'"'),'Both wrappers are loaded by HTML');
+  assert.ok(html.includes('src="./'+path+'"'),'Every current wrapper is loaded by HTML');
 }
-assert.ok(html.includes('class="pack pack-origines pack-illustrated" id="booster-pack"'),
+assert.ok(html.includes('class="pack pack-origines pack-illustrated reliquaire-origines" id="booster-pack"'),
   'The original animated wrapper is retained and marked as illustrated');
 assert.equal((html.match(/id="booster-pack"/g)||[]).length,1,'Exactly one active pack');
 assert.ok(html.includes('booster-artworks.css?v=pixel-packs-2'),'HD artwork stylesheet is cache busted');
