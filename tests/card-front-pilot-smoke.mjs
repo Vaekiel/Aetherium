@@ -20,8 +20,12 @@ assert.match(js,/enableHolographicInspection\(pilotFront\)/);
 assert.match(js,/enableHolographicInspection\(artwork\)/);
 assert.match(js,/panel\.append\(pilotFront,copy\)/);
 assert.match(js,/panel\.append\(artwork,copy\)/);
-assert.match(read('../src/codex.css'),/card-front-pilot\.css\?v=cerf-prototype-1/);
-assert.match(html,/codex\.css\?v=au-dela-pilot-49&amp;front=cerf-1/);
+assert.match(read('../src/codex.css'),/card-front-pilot\.css\?v=cerf-prototype-2/);
+assert.match(html,/codex\.css\?v=au-dela-pilot-49&amp;front=cerf-2/);
 assert.match(css,/pilot-card-illustration/);
 assert.match(css,/aspect-ratio:2\/3/);
+// The previous frame had an opaque dark centre which covered the illustration.
+assert.match(css,/\.pilot-card-art\{[\s\S]*?z-index:4;/);
+assert.match(css,/\.pilot-card-front \.pilot-card-frame\{\s*z-index:3;/);
+assert.match(css,/\.pilot-card-stat\{[\s\S]*?z-index:5;/);
 console.log('New Aetherium pilot front: dynamic art, rarity, finishes, lore, stats and limited scope OK');

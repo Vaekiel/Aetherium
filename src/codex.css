@@ -1,5 +1,5 @@
 /* Carte pilote, sans modifier l'ordre historique des styles. */
-@import url('./card-front-pilot.css?v=cerf-prototype-1');
+@import url('./card-front-pilot.css?v=cerf-prototype-2');
 /* AETHERIUM 1.5 — Codex vivant, responsive and restrained midnight-gold styling. */
 /* The two progress rails supersede duplicate counters in the old heading. */
 #page-collection .chromatic-collection-stats{display:none}
