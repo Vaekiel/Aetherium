@@ -1325,7 +1325,7 @@ function selectGame(index,{jumpToStage=false,focusTrial=false}={}){
   if(mini[index].mode!==state.difficulty){trialStarters[index]();renderTrialMastery();}
   selectedGame=index;
   mini.forEach((item,i)=>item.card.classList.toggle('mobile-active',i===index));
-  const choices=$('.game-choice',picker);
+  const choices=Array.from(picker.children);
   choices.forEach((b,i)=>{
     b.classList.toggle('active',i===index);
     b.setAttribute('aria-pressed',String(i===index));
