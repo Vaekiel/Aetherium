@@ -36,7 +36,7 @@ for(const card of AU_DELA_CARDS){
   assert.equal(bytes.toString('ascii',8,12),'WEBP');
  }
 }
-const wrapper=readFileSync('assets/boosters/au-dela-du-verre-reliquaire-v3.webp');
+const wrapper=readFileSync('assets/boosters/au-dela-du-verre-unified-v5.webp');
 assert.ok(wrapper.length>50000&&wrapper.length<700000);
 assert.equal(wrapper.toString('ascii',0,4),'RIFF');
 assert.equal(wrapper.toString('ascii',8,12),'WEBP');
@@ -57,7 +57,7 @@ assert.equal(validateSaveState(save,CARDS.map(c=>c.id)).cards,4,
  'Saves retain old cards and accept the third collection without a key migration');
 const source=read('src/main.js'),html=read('index.html'),css=read('src/au-dela-booster.css');
 assert.ok(html.includes('data-booster="au-dela-du-verre"'));
-assert.ok(html.includes('src="./assets/boosters/au-dela-du-verre-reliquaire-v3.webp"'));
+assert.ok(html.includes('src="./assets/boosters/au-dela-du-verre-unified-v5.webp"'));
 assert.ok(html.includes('au-dela-booster.css?v=au-dela-booster-1'));
 assert.ok(css.includes('grid-template-columns:repeat(3,minmax(0,1fr))'));
 assert.ok(css.includes('@media(max-width:850px)'));
