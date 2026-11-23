@@ -77,7 +77,7 @@ assert.ok(cleanPack.includes('aspect-ratio:8/13')&&cleanPack.includes('height:au
 assert.ok(cleanPack.includes('content:none!important')&&cleanPack.includes('.pack-foil,.pack-sidefold,.pack-crimp,.pack-seal,.pack-rip'),
  'No old decorated wrapper overlays the new HD packaging');
 assert.ok(cleanPack.includes(':not(.is-opening)'),'The original tear animation remains available');
-assert.equal((html.match(/src="\\.\\/assets\\/boosters\\/origines-reliquaire-normalized-v2\\.webp"/g)||[]).length,2);
-assert.equal((html.match(/src="\\.\\/assets\\/boosters\\/reflets-brises-reliquaire-normalized-v2\\.webp"/g)||[]).length,2);
+assert.equal((html.match(/src="\.\/assets\/boosters\/origines-reliquaire-normalized-v2\.webp"/g)||[]).length,2);
+assert.equal((html.match(/src="\.\/assets\/boosters\/reflets-brises-reliquaire-normalized-v2\.webp"/g)||[]).length,2);
 
 console.log('AETHERIUM — Two optimized HD booster wrappers, responsive art switch, no duplicates, seal animation intact');
