@@ -387,6 +387,34 @@ await sleep(50);
 assert.equal(await evaluate("document.querySelector('#coins').closest('.wallet-link').classList.contains('is-gaining')"),true,
  'Earning resources should trigger visual feedback only');
 assert.equal(rewardCheck.icon,true);
+// Visual regression for the real Codex inspector in Chromium, including mobile-sized viewports.
+await evaluate("document.querySelector('button[data-page=\"collection\"]').click()");
+await until(()=>evaluate("Boolean(document.querySelector('#page-collection.active #preview-art'))"),'Codex ready');
+await evaluate("document.querySelector('#preview-art').click()");
+await until(()=>evaluate("Boolean(document.querySelector('#card-grid [data-card-id=\"8\"]'))"),'Cerf found');
+await evaluate("document.querySelector('#card-grid [data-card-id=\"8\"]').click()");
+await until(()=>evaluate("Boolean(document.querySelector('#inspector .pilot-card-art img'))"),'Pilot inspector rendered');
+await until(()=>evaluate("document.querySelector('#inspector .pilot-card-art img').complete"),'Pilot illustration decoded');
+const pilot=await evaluate(`(()=>{
+ const front=document.querySelector('#inspector .pilot-card-front');
+ const art=front.querySelector('.pilot-card-art');
+ const img=art.querySelector('img');
+ const imgBox=img.getBoundingClientRect(),artBox=art.getBoundingClientRect();
+ return {source:img.currentSrc||img.src,loaded:img.complete && img.naturalWidth>300,
+  imageSize:[imgBox.width,imgBox.height],artSize:[artBox.width,artBox.height],
+  visibility:getComputedStyle(img).visibility,opacity:getComputedStyle(img).opacity,
+  bg:getComputedStyle(art).backgroundImage,transform:getComputedStyle(front).transform,
+  artZ:getComputedStyle(art).zIndex,frameZ:getComputedStyle(front.querySelector('.pilot-card-frame')).zIndex};
+})()`);
+console.log('Pilot Cerf in real browser:',JSON.stringify(pilot));
+assert.ok(pilot.loaded,'Real HD image must load inside pilot card');
+assert.ok(pilot.imageSize[0]>60&&pilot.imageSize[1]>100,'Illustration is actually laid out');
+assert.ok(pilot.artSize[0]>60&&pilot.artSize[1]>100,'Artwork viewport is visible');
+assert.ok(pilot.bg.includes('cerf-des-lueurs.webp'),'Paint fallback uses the real artwork');
+assert.equal(pilot.transform,'none','Normal cards must avoid 3D compositing');
+assert.equal(pilot.opacity,'1');
+assert.equal(pilot.visibility,'visible');
+assert.ok(Number(pilot.artZ)>Number(pilot.frameZ),'Art appears above frame masking');
 assert.deepEqual(jsErrors,[],'No unexpected browser JavaScript errors');
 ws.close();
 console.log('AETHERIUM : vrai navigateur, galerie/fiche PC tablette mobile et 3 boosters OK');
