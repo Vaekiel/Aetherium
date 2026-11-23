@@ -439,8 +439,8 @@ const cerfStats=await evaluate(`(()=>{
   const rect=glyph?.getBoundingClientRect();
   return {name:s.querySelector('.stat-name')?.textContent,
    value:Number(s.querySelector('.stat-value')?.textContent),
-   icon:glyph?.getAttribute('src'),visible:!!rect && rect.width>=27 && rect.height>=27,
-   loaded:glyph?.complete && glyph?.naturalWidth===32};
+   icon:glyph?.getAttribute('src'),visible:!!rect && rect.width>=39 && rect.height>=39,
+   loaded:glyph?.complete && glyph?.naturalWidth===144 && glyph?.naturalHeight===144};
  });
  return {stats,inventory:panel.querySelector('.stat-inventory-total')?.textContent};
 })()`);
@@ -448,7 +448,8 @@ console.log('Cerf real pixel-art glyphs:',JSON.stringify(cerfStats));
 assert.deepEqual(cerfStats.stats.map(s=>s.name),['Éclat','Garde','Flux']);
 assert.deepEqual(cerfStats.stats.map(s=>s.value),[12,13,6]);
 assert.ok(cerfStats.stats.every(s=>s.visible && s.loaded),'Three pixel-art icons must load');
-assert.ok(cerfStats.stats.every(s=>s.icon.startsWith('./assets/icons/stat-')));
+assert.ok(cerfStats.stats.every(s=>/^\.\/assets\/icons\/stat-(eclat|garde|flux)-hd\.webp$/.test(s.icon)),
+ 'Only approved HD pixel-art images are rendered');
 assert.match(cerfStats.inventory,/Possédées : ×/);
 
 await evaluate("document.querySelector('#card-grid [data-card-id=\"7\"]').click()");
