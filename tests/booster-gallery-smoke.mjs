@@ -17,7 +17,7 @@ for(const name of ['origines','reflets-brises','au-dela-du-verre']){
  assert.ok(html.includes('data-booster="'+name+'"'));
 }
 assert.ok(!html.includes('data-season="season-2"'),'Non-published seasons are not teased');
-assert.ok(html.includes('pack-scene'),'The released HD pixels are clipped inside a common scenery window');
+assert.ok(html.includes('pack-scene'),'Each packet uses the shared pack scene element');
 assert.ok(css.includes('#page-boosters .booster-tile-pack')&&css.includes('#page-boosters #booster-pack'));
 assert.ok(css.includes('object-fit:cover')&&css.includes('transform:scale(1.28)'));
 assert.ok(css.includes('image-rendering:auto')&&css.includes('filter:none'));
@@ -26,7 +26,7 @@ assert.ok(css.includes('grid-template-columns:repeat(2,minmax(0,1fr))'));
 assert.ok(css.includes('@media(max-width:700px)')&&css.includes('@media(max-width:420px)'));
 assert.ok(css.includes('prefers-reduced-motion:reduce'));
 assert.ok(!css.includes('backdrop-filter'),'No expensive backdrop blur on mobile');
-assert.ok(html.includes('class="pack pack-origines pack-illustrated" id="booster-pack"'),
+assert.ok(html.includes('class="pack pack-origines pack-illustrated reliquaire-origines" id="booster-pack"'),
  'Existing reveal animation wrapper is preserved');
 assert.ok(html.includes('<details class="booster-rates"><summary>Chances et doublons</summary>'));
 assert.ok(js.includes("if(boosterBusy)completeBoosterReveal();"),

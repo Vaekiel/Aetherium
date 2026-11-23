@@ -283,6 +283,39 @@ for(const [width,columns] of [[390,2],[760,3],[1280,3]]){
   assert.ok(detail.width>230&&detail.height>200);
   assert.ok(detail.left>=-3&&detail.right<=width+3);
   assert.ok(detail.packWidth>90,'Booster artwork must be visible');
+  const wrap=await evaluate(`(()=>{
+   const pack=document.querySelector('#booster-pack');
+   const scene=pack.querySelector('.pack-scene');
+   const image=pack.querySelector('.pack-artwork');
+   const rect=e=>{const r=e.getBoundingClientRect();return {
+     width:r.width,height:r.height,left:r.left,top:r.top
+   }};
+   const one=document.querySelector('#booster-gallery [data-booster="origines"] .booster-tile-pack');
+   const first=one.querySelector('.pack-scene img');
+   const fp=first.getBoundingClientRect(),wp=one.getBoundingClientRect();
+   return {premium:pack.classList.contains('reliquaire-origines'),
+    imageSrc:image.getAttribute('src'),imageLoaded:image.complete&&image.naturalWidth>0,
+    imageDisplay:getComputedStyle(image).display,
+    scene:rect(scene),frame:rect(pack),
+    artFit:getComputedStyle(image).objectFit,
+    textOpacity:getComputedStyle(pack.querySelector('.pack-title')).opacity,
+    catalogSrc:first.getAttribute('src'),catalogLoaded:first.complete&&first.naturalWidth>0,
+    catalogInset:Math.abs(fp.width-wp.width)+Math.abs(fp.height-wp.height)}
+  })()`);
+  if(edition==='origines'){
+   assert.equal(wrap.premium,true,'The first booster uses the premium sachet');
+   assert.ok(wrap.imageSrc.endsWith('origines-reliquaire-v1.webp'));
+   assert.ok(wrap.catalogSrc.endsWith('origines-reliquaire-v1.webp'));
+   assert.ok(wrap.imageLoaded&&wrap.catalogLoaded,'Approved HD sachet must load in both views');
+   assert.equal(wrap.imageDisplay,'block');
+   assert.equal(wrap.artFit,'cover','Entire sachet fills the gallery and dialog');
+   assert.equal(wrap.textOpacity,'0','Do not print a second title atop the real packet');
+   assert.ok(Math.abs(wrap.scene.width-wrap.frame.width)<2&&
+    Math.abs(wrap.scene.height-wrap.frame.height)<2,'No old central illustration crop');
+   assert.ok(wrap.catalogInset<3,'Catalog displays the full premium packet');
+  }else{
+   assert.equal(wrap.premium,false,'Other editions preserve their existing artwork');
+  }
   const alignment=await evaluate(`(()=>{
    const pack=document.querySelector('#booster-pack');
    const title=pack.querySelector('.pack-title');
