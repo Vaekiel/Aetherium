@@ -1690,7 +1690,8 @@ function inspect(c,shiny=false,scroll=true,chromaticPreview=false,finishOverride
     (activeFinish==='calligraphic'?' is-calligraphic':''));
   artwork.append(img);
   if(chromatic)artwork.append(el('span','inspector-chromatic-seal','✧ CHROMATIQUE'));
-  if(activeFinish==='holographic')enableHolographicInspection(pilotFront||artwork);
+  if(pilotFront&&activeFinish==='holographic')enableHolographicInspection(pilotFront);
+  else if(activeFinish==='holographic')enableHolographicInspection(artwork);
   const kicker=el('p','kicker','ARCHIVE '+String(c.id).padStart(3,'0')+' · '+RARITIES[c.rarity].label);
   const title=el('h2','',c.name);
   const location=collectionForCard(c);
@@ -1732,7 +1733,8 @@ function inspect(c,shiny=false,scroll=true,chromaticPreview=false,finishOverride
     copy.classList.add('pilot-inspector-copy');
     kicker.remove();title.remove();desc.remove();stats.remove();
   }
-  panel.append(pilotFront||artwork,copy);
+  if(pilotFront)panel.append(pilotFront,copy);
+  else panel.append(artwork,copy);
   markCodexSelected(c.id);
   if(scroll){
     if(mobileView.matches)openSheet('inspector');
