@@ -1634,6 +1634,13 @@ function makePilotCardFront(c,finish){
   img.alt='Illustration de '+c.name;
   img.loading='eager';
   img.decoding='sync';
+  // Paint the same original illustration in CSS as a WebView-safe fallback.
+  // Keep the <img> for alternative text, decoding and error fallback.
+  const paintIllustration=()=>{
+    if(img.src)art.style.backgroundImage='url("'+img.src.replace(/"/g,'%22')+'")';
+  };
+  img.addEventListener('load',paintIllustration);
+  paintIllustration();
   art.append(img);
   const frame=el('img','pilot-card-frame');
   frame.src='./assets/cards/aetherium-front-pilot-frame.webp';
