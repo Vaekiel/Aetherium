@@ -374,16 +374,31 @@ definitions.forEach((d,i)=>{
   recordsEl.append(recordsHeader,recordsTable,challengePanel);
   const status=el('div','status');status.setAttribute('aria-live','polite');
   const board=el('div','board'),actions=el('div','small-actions');
+  const switcher=el('div','trial-switcher');
+  switcher.setAttribute('role','group');
+  switcher.setAttribute('aria-label','Navigation entre les épreuves');
+  const previous=button('‹',()=>selectGame(i-1,{jumpToStage:true,focusTrial:true}),'trial-switch-button');
+  previous.disabled=i===0;
+  previous.setAttribute('aria-label',i===0?'Première épreuve':('Épreuve précédente : '+definitions[i-1].name));
+  previous.title=i===0?'Première épreuve':'Épreuve précédente';
+  const counter=el('span','trial-switch-count',String(i+1).padStart(2,'0')+' / '+String(definitions.length).padStart(2,'0'));
+  counter.setAttribute('aria-label','Épreuve '+(i+1)+' sur '+definitions.length);
+  const following=button('›',()=>selectGame(i+1,{jumpToStage:true,focusTrial:true}),'trial-switch-button');
+  following.disabled=i===definitions.length-1;
+  following.setAttribute('aria-label',i===definitions.length-1?'Dernière épreuve':('Épreuve suivante : '+definitions[i+1].name));
+  following.title=i===definitions.length-1?'Dernière épreuve':'Épreuve suivante';
+  switcher.append(previous,counter,following);
   card.id='trial-panel-'+i;
   const trialTitle=el('h3','trial-title',String(i+1).padStart(2,'0')+' · '+d.name);
   trialTitle.id='trial-title-'+i;
+  trialTitle.tabIndex=-1;
   card.setAttribute('aria-labelledby',trialTitle.id);
   const trialMeta=el('div','trial-meta');
   trialMeta.append(rewardEl,masteryEl);
   const trialHeading=el('div','trial-card-heading');
   trialHeading.append(trialTitle,trialMeta);
   // Game first, optional personal records after the actions.
-  card.append(trialHeading,descriptionEl,board,status,actions,recordsEl);
+  card.append(trialHeading,descriptionEl,board,status,actions,switcher,recordsEl);
   $('#games').append(card);
   mini.push({card,board,status,actions,reward:d.reward,rewardEl,masteryEl,recordsEl,descriptionEl,mode:state.difficulty,ended:false});
 });
@@ -1297,7 +1312,7 @@ const picker=$('#game-picker');
 let selectedGame=0;
 const trialSubtitles=['Ordre & observation','Mémoire & association','Logique des cristaux','Exploration & prudence','Recettes & alchimie'];
 definitions.forEach((entry,index)=>{
-  const control=button('',()=>selectGame(index),'game-choice');
+  const control=button('',()=>selectGame(index,{jumpToStage:mobileView.matches}),'game-choice');
   control.append(el('span','game-choice-name',(index+1)+' · '+entry.name),
     el('span','game-choice-hint',trialSubtitles[index]));
   control.setAttribute('aria-label','Choisir '+entry.name);
@@ -1305,14 +1320,28 @@ definitions.forEach((entry,index)=>{
   control.setAttribute('aria-pressed',String(index===0));
   picker.append(control);
 });
-function selectGame(index){
+function selectGame(index,{jumpToStage=false,focusTrial=false}={}){
+  if(index<0||index>=mini.length)return;
   if(mini[index].mode!==state.difficulty){trialStarters[index]();renderTrialMastery();}
   selectedGame=index;
   mini.forEach((item,i)=>item.card.classList.toggle('mobile-active',i===index));
-  $$('.game-choice',picker).forEach((b,i)=>{
+  const choices=Array.from(picker.children);
+  choices.forEach((b,i)=>{
     b.classList.toggle('active',i===index);
     b.setAttribute('aria-pressed',String(i===index));
   });
+  // Keep the selected tile visible horizontally without scrolling the page back up.
+  const selected=choices[index];
+  if(picker.scrollWidth>picker.clientWidth+3){
+    const delta=selected.getBoundingClientRect().left-picker.getBoundingClientRect().left;
+    const left=picker.scrollLeft+delta-(picker.clientWidth-selected.clientWidth)/2;
+    picker.scrollTo({left,behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});
+  }
+  if(jumpToStage){
+    const card=mini[index].card;
+    if(focusTrial)$('#trial-title-'+index).focus({preventScroll:true});
+    card.scrollIntoView({block:'start',behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});
+  }
 }
 selectGame(0);
 const difficultyButtons=$$('#difficulty-options [data-difficulty]');

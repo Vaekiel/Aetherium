@@ -396,3 +396,53 @@
 @media (prefers-reduced-motion:reduce){
   #page-jouer .trial-setup .game-picker .game-choice{transition:none}
 }
+
+
+/* Épreuves — ergonomie v2 : changer de défi sans remonter le carrousel. */
+#page-jouer .trial-setup-title{
+  display:flex;align-items:baseline;justify-content:space-between;
+  flex-wrap:wrap;gap:3px 12px;
+}
+#page-jouer .trial-picker-hint{display:none;color:#bcb3c9;font:11px/1.35 Georgia,serif;letter-spacing:0}
+#page-jouer .trial-switcher{
+  display:flex;align-items:center;justify-content:flex-end;
+  gap:8px;margin:14px 0 0;padding:12px 1px 0;
+  border-top:1px solid #9e85915a;
+}
+#page-jouer .trial-switcher::before{
+  content:"Autre épreuve";margin-right:auto;
+  color:#c6b9cc;font:12px/1.3 Georgia,serif;
+}
+#page-jouer .trial-switcher .trial-switch-button{
+  display:grid;place-items:center;flex:none;
+  width:44px;height:44px;min-height:44px;padding:0;
+  border:1px solid #927e98a6;border-radius:4px;
+  background:linear-gradient(155deg,#2c2946,#1c2339);
+  box-shadow:inset 0 1px #efdfb614;
+  color:#f3dfc3;font:27px/1 Georgia,serif;
+  touch-action:manipulation;
+}
+#page-jouer .trial-switcher .trial-switch-button:hover:not(:disabled){
+  border-color:#dfbd91;background:linear-gradient(150deg,#483554,#2a2940);
+}
+#page-jouer .trial-switcher .trial-switch-button:focus-visible{
+  outline:2px solid #f1d7ad;outline-offset:2px;
+}
+#page-jouer .trial-switcher .trial-switch-button:disabled{opacity:.33;cursor:default}
+#page-jouer .trial-switch-count{
+  min-width:54px;color:#e8d2ae;text-align:center;
+  font:small-caps 15px/1.2 Georgia,serif;white-space:nowrap;
+  font-variant-numeric:tabular-nums;
+}
+@media (max-width:1180px){
+  #page-jouer .trial-picker-hint{display:inline}
+}
+@media (max-width:850px){
+  #page-jouer .play-stage .game{scroll-margin-top:76px}
+  #page-jouer .trial-switcher{margin-top:12px;padding-top:10px;gap:7px}
+  #page-jouer .trial-switcher::before{font-size:11px}
+  #page-jouer .trial-switch-count{min-width:45px;font-size:14px}
+}
+@media (prefers-reduced-motion:reduce){
+  #page-jouer .trial-switcher .trial-switch-button{transition:none}
+}
