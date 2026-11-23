@@ -20,7 +20,10 @@
 }
 #page-collection .inspector .pilot-card-art{
   position:absolute;left:5.5%;top:11.9%;width:89%;height:49.4%;overflow:hidden;
-  z-index:1;isolation:isolate;background:#171728;
+  /* The decorative WebP has an opaque centre. Keep the artwork ABOVE the
+     illustration placeholder, otherwise it displays as a dark rectangle. */
+  z-index:4;isolation:isolate;background:#171728;border-radius:3px;
+  box-shadow:inset 0 0 0 1px #e7c29180;
 }
 #page-collection .inspector .pilot-card-art .pilot-card-illustration{
   inset:0;object-fit:cover;object-position:center 42%;filter:saturate(1.13);
@@ -34,7 +37,7 @@
 #page-collection .inspector .pilot-card-variant,
 #page-collection .inspector .pilot-card-lore,
 #page-collection .inspector .pilot-card-stat{
-  display:flex;position:absolute;z-index:4;justify-content:center;align-items:center;
+  display:flex;position:absolute;z-index:5;justify-content:center;align-items:center;
   box-sizing:border-box;margin:0;min-width:0;text-shadow:0 1px 4px #100b23;
   font-family:Georgia,serif;line-height:1.12;
 }
