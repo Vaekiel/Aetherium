@@ -506,12 +506,16 @@ assert.equal(await evaluate("document.querySelector('#inspector .inspector-art-s
  'Original inspector remains visible when comparing');
 await evaluate("document.querySelectorAll('.recto-lab-open')[1].click()");
 await until(()=>evaluate("document.querySelector('#inspector .recto-lab-name')?.textContent.includes('Astra')"),'Long name example opened');
+await evaluate("document.querySelectorAll('.recto-lab-switch-button')[1].click()");
+await until(()=>evaluate("document.querySelector('#inspector .recto-lab-name')?.getBoundingClientRect().width>100"),'Astra name is visible in actual new front');
 const longTitle=await evaluate(`(()=>{
  const n=document.querySelector('#inspector .recto-lab-name');
  return {name:n.textContent,width:n.scrollWidth,boxWidth:n.parentElement.clientWidth,
   height:n.scrollHeight,boxHeight:n.parentElement.clientHeight};
 })()`);
 console.log('Long title fit:',JSON.stringify(longTitle));
+assert.ok(longTitle.boxWidth>100&&longTitle.boxHeight>20,
+ 'Long-name cartouche must be visible, not a hidden zero-size measurement');
 assert.ok(longTitle.width<=longTitle.boxWidth+3&&longTitle.height<=longTitle.boxHeight+3,
  'Longer card names must fit their cartouche');
 
