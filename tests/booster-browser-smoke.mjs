@@ -500,6 +500,18 @@ assert.ok(recto.art.includes('cerf-des-lueurs.webp'));
 assert.ok(recto.frame>300,'Transparent frame asset loaded');
 assert.ok(recto.titleWidth<=recto.maxWidth+3&&recto.titleHeight<=recto.maxHeight+3,
  'Title fits inside a single ornament');
+const titleLayer=await evaluate(`(()=>{
+ const card=document.querySelector('#inspector .recto-lab-card');
+ const title=card.querySelector('.recto-lab-title-zone');
+ const frame=card.querySelector('.recto-lab-frame');
+ return {titleZ:Number(getComputedStyle(title).zIndex),
+  frameZ:Number(getComputedStyle(frame).zIndex),
+  contrast:getComputedStyle(title,'::before').backgroundImage,
+  fullFrame:frame.currentSrc.includes('frame-complet-v3.png?v=4')};
+})()`);
+assert.ok(titleLayer.titleZ>titleLayer.frameZ,'Title text must sit above decorative frame');
+assert.ok(titleLayer.contrast.includes('linear-gradient'),'Title is readable over illustration');
+assert.equal(titleLayer.fullFrame,true,'Frame uses new cache version');
 assert.deepEqual(recto.stats,[12,13,6]);
 await evaluate("document.querySelector('.recto-lab-switch-button').click()");
 assert.equal(await evaluate("document.querySelector('#inspector .inspector-art-shell')?.getBoundingClientRect().height>40"),true,
