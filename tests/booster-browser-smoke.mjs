@@ -514,15 +514,21 @@ const borderDecor=await evaluate(`(()=>{
  const card=document.querySelector('#inspector .recto-lab-card');
  const css=getComputedStyle(card);
  const before=getComputedStyle(card,'::before'),after=getComputedStyle(card,'::after');
- const header=card.querySelector('.recto-lab-header'),art=card.querySelector('.recto-lab-art'),footer=card.querySelector('.recto-lab-footer');
  return {border:css.borderTopColor,decoration:before.content,
     corners:before.backgroundImage,gem:after.content,
-    gemWidth:after.width,rows:[header,art,footer].map(x=>x.getBoundingClientRect().height)};
+    gemSize:[after.width,after.height],
+    children:[...card.children].map(el=>el.className),
+    rows:getComputedStyle(card).gridTemplateRows,
+    actualArtFit:getComputedStyle(card.querySelector('.recto-lab-illustration')).objectFit};
 })()`);
-assert.notEqual(borderDecor.decoration,'none','Prestige engraved corners appear in CSS');
-assert.ok(borderDecor.corners.includes('linear-gradient'),'Prestige corner engravings remain CSS-only');
-assert.notEqual(borderDecor.gem,'none','Top diamond accent is drawn in CSS');
-assert.ok(borderDecor.rows.every(h=>h>10),'All 3 original layout zones remain visible');
+assert.equal(borderDecor.border,'rgb(213, 172, 128)','Épure astrale muted gold edge');
+assert.notEqual(borderDecor.decoration,'none','Minimal corner details appear');
+assert.ok(borderDecor.corners.includes('linear-gradient'),'Four simple CSS corners');
+assert.equal(borderDecor.gemSize[0],'12px','Single small amethyst at the top');
+assert.deepEqual(borderDecor.children,['recto-lab-header','recto-lab-art','recto-lab-footer'],
+ 'No new card elements or overlays');
+assert.equal(borderDecor.rows.split(' ').length,3,'Three-zone layout preserved');
+assert.equal(borderDecor.actualArtFit,'contain','Unchanged original artwork');
 assert.deepEqual(recto.stats,[12,13,6]);
 await evaluate("document.querySelector('.recto-lab-switch-button').click()");
 assert.equal(await evaluate("document.querySelector('#inspector .inspector-art-shell')?.getBoundingClientRect().height>40"),true,
