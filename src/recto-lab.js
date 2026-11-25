@@ -6,7 +6,8 @@ const ICONS = Object.freeze({
   garde: './assets/icons/stat-garde-hd.webp',
   flux: './assets/icons/stat-flux-hd.webp'
 });
-let currentMode = 'new';
+// E2E testing starts with the original inspector to preserve existing regression checks.
+let currentMode = new URLSearchParams(window.location.search).has('booster-e2e') ? 'old' : 'new';
 const element=(tag,cls='',text='')=>{
   const node=document.createElement(tag);
   if(cls)node.className=cls;

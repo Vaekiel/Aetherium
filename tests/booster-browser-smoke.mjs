@@ -481,6 +481,7 @@ assert.match(other.inventory,/Possédées : ×/);
 assert.equal(await evaluate("Boolean(document.querySelector('.recto-lab-entry .recto-lab-open'))"),true,
  'The recto test dock must be accessible');
 await evaluate("document.querySelector('.recto-lab-open').click()");
+await evaluate("document.querySelectorAll('.recto-lab-switch-button')[1].click()");
 await until(()=>evaluate("Boolean(document.querySelector('#inspector.recto-lab-mode-new .recto-lab-card'))"),'New recto is visible');
 await until(()=>evaluate("(()=>{const c=document.querySelector('#inspector .recto-lab-card');return [...c.querySelectorAll('img')].every(i=>i.complete&&i.naturalWidth>0)})()"),'Real art and frame loaded');
 const recto=await evaluate(`(()=>{
