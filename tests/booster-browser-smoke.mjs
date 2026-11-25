@@ -488,7 +488,7 @@ const recto=await evaluate(`(()=>{
  const panel=document.querySelector('#inspector'),card=panel.querySelector('.recto-lab-card');
  const title=card.querySelector('.recto-lab-name'),art=card.querySelector('.recto-lab-illustration');
  return {name:title.textContent,objectFit:getComputedStyle(art).objectFit,art:art.currentSrc,
-  frame:card.querySelector('.recto-lab-frame').naturalWidth,
+  frame:card.querySelectorAll('.recto-lab-frame').length,
   titleWidth:title.scrollWidth,maxWidth:title.parentElement.clientWidth,
   titleHeight:title.scrollHeight,maxHeight:title.parentElement.clientHeight,
   stats:[...card.querySelectorAll('.recto-lab-stat-copy strong')].map(s=>Number(s.textContent))};
@@ -497,25 +497,19 @@ console.log('New recto preview in Chromium:',JSON.stringify(recto));
 assert.equal(recto.name,'Cerf des Lueurs');
 assert.equal(recto.objectFit,'contain','Original art must not be cropped or zoomed');
 assert.ok(recto.art.includes('cerf-des-lueurs.webp'));
-assert.ok(recto.frame>300,'Transparent frame asset loaded');
+assert.equal(recto.frame,0,'No decorative frame image in real HTML template');
 assert.ok(recto.titleWidth<=recto.maxWidth+3&&recto.titleHeight<=recto.maxHeight+3,
  'Title fits inside a single ornament');
-const titleLayer=await evaluate(`(()=>{
+const layout=await evaluate(`(()=>{
  const card=document.querySelector('#inspector .recto-lab-card');
- const title=card.querySelector('.recto-lab-title-zone');
- const frame=card.querySelector('.recto-lab-frame');
- return {titleZ:Number(getComputedStyle(title).zIndex),
-  frameZ:Number(getComputedStyle(frame).zIndex),
-  plaqueZ:Number(getComputedStyle(card.querySelector('.recto-lab-title-plaque')).zIndex),
-  plaqueBackground:getComputedStyle(card.querySelector('.recto-lab-title-plaque')).backgroundImage,
-  titleFont:parseFloat(getComputedStyle(card.querySelector('.recto-lab-name')).fontSize),
-  fullFrame:frame.currentSrc.includes('frame-integral-v5.png?v=5')};
+ return {display:getComputedStyle(card).display,
+   zones:[...card.children].map(x=>x.className),
+   rows:getComputedStyle(card).gridTemplateRows};
 })()`);
-assert.ok(titleLayer.titleZ>titleLayer.frameZ,'Title text must sit above decorative frame');
-assert.ok(titleLayer.plaqueZ<titleLayer.frameZ,'The gold ornament remains in front of its violet fill');
-assert.ok(titleLayer.plaqueBackground.includes('linear-gradient'),'Title cartouche has readable violet fill');
-assert.ok(titleLayer.titleFont<=22,'Title size is restrained');
-assert.equal(titleLayer.fullFrame,true,'Frame uses new cache version');
+assert.equal(layout.display,'grid','Real CSS Grid');
+assert.deepEqual(layout.zones,['recto-lab-header','recto-lab-art','recto-lab-footer'],
+ 'Three HTML zones, no invented border or overlays');
+assert.equal(layout.rows.split(' ').length,3,'Title, artwork and footer each occupy a grid row');
 assert.deepEqual(recto.stats,[12,13,6]);
 await evaluate("document.querySelector('.recto-lab-switch-button').click()");
 assert.equal(await evaluate("document.querySelector('#inspector .inspector-art-shell')?.getBoundingClientRect().height>40"),true,
