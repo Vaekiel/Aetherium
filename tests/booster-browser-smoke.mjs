@@ -507,10 +507,10 @@ const titleLayer=await evaluate(`(()=>{
  return {titleZ:Number(getComputedStyle(title).zIndex),
   frameZ:Number(getComputedStyle(frame).zIndex),
   contrast:getComputedStyle(title,'::before').backgroundImage,
-  fullFrame:frame.currentSrc.includes('frame-complet-v3.png?v=4')};
+  fullFrame:frame.currentSrc.includes('frame-integral-v5.png?v=5')};
 })()`);
 assert.ok(titleLayer.titleZ>titleLayer.frameZ,'Title text must sit above decorative frame');
-assert.ok(titleLayer.contrast.includes('linear-gradient'),'Title is readable over illustration');
+assert.ok(titleLayer.contrast.includes('radial-gradient'),'Title is readable over illustration');
 assert.equal(titleLayer.fullFrame,true,'Frame uses new cache version');
 assert.deepEqual(recto.stats,[12,13,6]);
 await evaluate("document.querySelector('.recto-lab-switch-button').click()");

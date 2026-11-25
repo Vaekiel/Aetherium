@@ -19,7 +19,7 @@ function fitTitle(title){
   if(!parent?.isConnected)return;
   const card=parent.closest('.recto-lab-card');
   const width=card?.getBoundingClientRect().width||320;
-  const max=width>360?28:width>290?24:20;
+  const max=width>360?25:width>290?22:19;
   const min=width>290?13:11;
   title.style.fontSize=max+'px';
   let size=max;
@@ -66,7 +66,7 @@ function appendCard({card,finish,artwork}){
   footer.append(season,rarity,lore,stats);
   front.append(footer);
   const frame=element('img','recto-lab-frame');
-  frame.src='./assets/preview/recto-option-1-frame-complet-v3.png?v=4';frame.alt='';frame.setAttribute('aria-hidden','true');
+  frame.src='./assets/preview/recto-option-1-frame-integral-v5.png?v=5';frame.alt='';frame.setAttribute('aria-hidden','true');
   front.append(frame);
   requestAnimationFrame(()=>fitTitle(title));
   return front;
