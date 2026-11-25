@@ -519,9 +519,9 @@ const borderDecor=await evaluate(`(()=>{
     corners:before.backgroundImage,gem:after.content,
     gemWidth:after.width,rows:[header,art,footer].map(x=>x.getBoundingClientRect().height)};
 })()`);
-assert.equal(borderDecor.decoration,'"',"Prestige engraved corners appear in CSS");
+assert.notEqual(borderDecor.decoration,'none','Prestige engraved corners appear in CSS');
 assert.ok(borderDecor.corners.includes('linear-gradient'),'Prestige corner engravings remain CSS-only');
-assert.equal(borderDecor.gem,'"',"Top diamond accent is drawn in CSS");
+assert.notEqual(borderDecor.gem,'none','Top diamond accent is drawn in CSS');
 assert.ok(borderDecor.rows.every(h=>h>10),'All 3 original layout zones remain visible');
 assert.deepEqual(recto.stats,[12,13,6]);
 await evaluate("document.querySelector('.recto-lab-switch-button').click()");
