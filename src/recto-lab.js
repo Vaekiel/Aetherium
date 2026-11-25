@@ -15,18 +15,16 @@ const element=(tag,cls='',text='')=>{
   return node;
 };
 function fitTitle(title){
-  const parent=title.parentElement;
-  if(!parent?.isConnected)return;
-  const card=parent.closest('.recto-lab-card');
-  const width=card?.getBoundingClientRect().width||320;
-  const max=width>360?22:width>290?19:16;
-  const min=width>290?12:10;
-  title.style.fontSize=max+'px';
-  let size=max;
-  // Allows a second line for very long actual card names rather than clipping.
-  while(size>min && (title.scrollWidth>parent.clientWidth-9 || title.scrollHeight>parent.clientHeight-3)){
-    size-=.5;title.style.fontSize=size+'px';
-  }
+ const zone=title.parentElement;
+ if(!zone?.isConnected||!zone.clientWidth)return;
+ const width=zone.closest('.recto-lab-card')?.clientWidth||320;
+ const max=width>360?21:width>290?19:16;
+ const min=width>290?10:9;
+ title.style.fontSize=max+'px';
+ while(parseFloat(title.style.fontSize)>min &&
+  (title.scrollWidth>zone.clientWidth-4||title.scrollHeight>zone.clientHeight-3)){
+   title.style.fontSize=(parseFloat(title.style.fontSize)-.5)+'px';
+ }
 }
 function cardLabel(card){
   // Rarity comes directly from the actual card's metadata, not an illustration.
@@ -37,21 +35,15 @@ function appendCard({card,finish,artwork}){
   const front=element('div','recto-lab-card recto-lab-'+finish);
   front.setAttribute('role','img');
   front.setAttribute('aria-label',card.name+', '+cardLabel(card)+', Éclat '+card.attack+', Garde '+card.health);
+  const header=element('header','recto-lab-header');
+  const title=element('strong','recto-lab-name',card.name);
+  header.append(title);front.append(header);
   const art=element('div','recto-lab-art');
   const source=artwork.querySelector('img');
-  const backdrop=element('img','recto-lab-backdrop');
   const image=element('img','recto-lab-illustration');
-  // Reuse the exact full-quality image source already resolved by Aetherium.
-  for(const img of [backdrop,image]){img.src=source.currentSrc||source.src;img.alt='';img.decoding='async';}
-  art.append(backdrop,image);
-  front.append(art,element('div','recto-lab-gradient'));
-  const titlePlaque=element('div','recto-lab-title-plaque');
-  titlePlaque.setAttribute('aria-hidden','true');
-  front.append(titlePlaque);
-  const titleZone=element('div','recto-lab-title-zone');
-  const title=element('strong','recto-lab-name',card.name);
-  titleZone.append(title);
-  front.append(titleZone);
+  image.src=source.currentSrc||source.src;
+  image.alt='';image.decoding='async';
+  art.append(image);front.append(art);
   const footer=element('div','recto-lab-footer');
   const season=element('div','recto-lab-chapter','ARCHIVE '+String(card.id).padStart(3,'0')+'  ·  SAISON '+(card.series==='Origines'?'1':'')+'  ·  '+card.series);
   const rarity=element('div','recto-lab-rarity');
@@ -68,9 +60,6 @@ function appendCard({card,finish,artwork}){
   }
   footer.append(season,rarity,lore,stats);
   front.append(footer);
-  const frame=element('img','recto-lab-frame');
-  frame.src='./assets/preview/recto-option-1-frame-integral-v5.png?v=5';frame.alt='';frame.setAttribute('aria-hidden','true');
-  front.append(frame);
   requestAnimationFrame(()=>fitTitle(title));
   return front;
 }
