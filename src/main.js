@@ -1744,7 +1744,7 @@ function inspect(c,shiny=false,scroll=true,chromaticPreview=false,finishOverride
   copy.append(picker);
   addCodexNavigation(copy,c);
   panel.append(artwork,copy);
-  attachRectoLabInspector({panel,card:c,finish:activeFinish,artwork});
+  if(typeof attachRectoLabInspector==='function')attachRectoLabInspector({panel,card:c,finish:activeFinish,artwork});
   markCodexSelected(c.id);
   if(scroll){
     if(mobileView.matches)openSheet('inspector');

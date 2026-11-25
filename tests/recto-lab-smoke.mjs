@@ -6,7 +6,7 @@ const main=get('../src/main.js'),html=get('../index.html'),
 assert.ok(main.includes("from './recto-lab.js?v=lab-1'"));
 assert.ok(main.includes('attachRectoLabInspector({panel,card:c,finish:activeFinish,artwork})'));
 assert.ok(main.includes('initRectoLab({cards:CARDS,inspect,navigate})'));
-assert.ok(html.includes('recto-lab.css?v=lab-1'));
+assert.ok(get('../src/codex.css').includes("@import url('./recto-lab.css?v=lab-1')"));
 assert.ok(js.includes("get('recto-test') === '1'"),'Preview must be explicit opt-in');
 assert.ok(js.includes('object-fit')===false,'Sizing remains CSS-controlled');
 assert.ok(css.includes('object-fit:contain'),'Art must not be zoomed');
