@@ -19,8 +19,8 @@ function fitTitle(title){
   if(!parent?.isConnected)return;
   const card=parent.closest('.recto-lab-card');
   const width=card?.getBoundingClientRect().width||320;
-  const max=width>360?25:width>290?22:19;
-  const min=width>290?13:11;
+  const max=width>360?22:width>290?19:16;
+  const min=width>290?12:10;
   title.style.fontSize=max+'px';
   let size=max;
   // Allows a second line for very long actual card names rather than clipping.
@@ -45,6 +45,9 @@ function appendCard({card,finish,artwork}){
   for(const img of [backdrop,image]){img.src=source.currentSrc||source.src;img.alt='';img.decoding='async';}
   art.append(backdrop,image);
   front.append(art,element('div','recto-lab-gradient'));
+  const titlePlaque=element('div','recto-lab-title-plaque');
+  titlePlaque.setAttribute('aria-hidden','true');
+  front.append(titlePlaque);
   const titleZone=element('div','recto-lab-title-zone');
   const title=element('strong','recto-lab-name',card.name);
   titleZone.append(title);

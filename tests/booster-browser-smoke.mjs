@@ -506,11 +506,15 @@ const titleLayer=await evaluate(`(()=>{
  const frame=card.querySelector('.recto-lab-frame');
  return {titleZ:Number(getComputedStyle(title).zIndex),
   frameZ:Number(getComputedStyle(frame).zIndex),
-  contrast:getComputedStyle(title,'::before').backgroundImage,
+  plaqueZ:Number(getComputedStyle(card.querySelector('.recto-lab-title-plaque')).zIndex),
+  plaqueBackground:getComputedStyle(card.querySelector('.recto-lab-title-plaque')).backgroundImage,
+  titleFont:parseFloat(getComputedStyle(card.querySelector('.recto-lab-name')).fontSize),
   fullFrame:frame.currentSrc.includes('frame-integral-v5.png?v=5')};
 })()`);
 assert.ok(titleLayer.titleZ>titleLayer.frameZ,'Title text must sit above decorative frame');
-assert.ok(titleLayer.contrast.includes('radial-gradient'),'Title is readable over illustration');
+assert.ok(titleLayer.plaqueZ<titleLayer.frameZ,'The gold ornament remains in front of its violet fill');
+assert.ok(titleLayer.plaqueBackground.includes('linear-gradient'),'Title cartouche has readable violet fill');
+assert.ok(titleLayer.titleFont<=22,'Title size is restrained');
 assert.equal(titleLayer.fullFrame,true,'Frame uses new cache version');
 assert.deepEqual(recto.stats,[12,13,6]);
 await evaluate("document.querySelector('.recto-lab-switch-button').click()");
