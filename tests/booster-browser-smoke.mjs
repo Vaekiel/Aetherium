@@ -510,6 +510,19 @@ assert.equal(layout.display,'grid','Real CSS Grid');
 assert.deepEqual(layout.zones,['recto-lab-header','recto-lab-art','recto-lab-footer'],
  'Three HTML zones, no invented border or overlays');
 assert.equal(layout.rows.split(' ').length,3,'Title, artwork and footer each occupy a grid row');
+const borderDecor=await evaluate(`(()=>{
+ const card=document.querySelector('#inspector .recto-lab-card');
+ const css=getComputedStyle(card);
+ const before=getComputedStyle(card,'::before'),after=getComputedStyle(card,'::after');
+ const header=card.querySelector('.recto-lab-header'),art=card.querySelector('.recto-lab-art'),footer=card.querySelector('.recto-lab-footer');
+ return {border:css.borderTopColor,decoration:before.content,
+    corners:before.backgroundImage,gem:after.content,
+    gemWidth:after.width,rows:[header,art,footer].map(x=>x.getBoundingClientRect().height)};
+})()`);
+assert.equal(borderDecor.decoration,'"',"Prestige engraved corners appear in CSS");
+assert.ok(borderDecor.corners.includes('linear-gradient'),'Prestige corner engravings remain CSS-only');
+assert.equal(borderDecor.gem,'"',"Top diamond accent is drawn in CSS");
+assert.ok(borderDecor.rows.every(h=>h>10),'All 3 original layout zones remain visible');
 assert.deepEqual(recto.stats,[12,13,6]);
 await evaluate("document.querySelector('.recto-lab-switch-button').click()");
 assert.equal(await evaluate("document.querySelector('#inspector .inspector-art-shell')?.getBoundingClientRect().height>40"),true,
