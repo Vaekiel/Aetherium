@@ -1,4 +1,4 @@
-import {initRectoLab,attachRectoLabInspector} from './recto-lab.js?v=lab-6';
+import {initRectoLab,attachRectoLabInspector} from './recto-lab.js?v=lab-7';
 import {RARITIES,PACK_PRICE,drawPack} from './data.js?v=booster-variety-1';
 import {CARDS,drawRefletsPack,drawAuDelaPack} from './collection-data.js?v=au-dela-booster-1';
 import {CRAFT_COSTS,getCraftCost,craftCard} from './crafting.js';
