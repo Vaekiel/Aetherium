@@ -28,75 +28,85 @@
 #page-collection .inspector.recto-lab-mode-new>.inspector-copy>.stats{display:none!important}
 #page-collection .inspector.recto-lab-mode-new>.inspector-copy{padding-top:0!important;max-width:420px;margin-inline:auto}
 #page-collection .inspector.recto-lab-mode-new>.inspector-copy>.stat-inventory-total{margin-block:6px!important}
-#page-collection .inspector .recto-lab-card{position:relative;isolation:isolate;box-sizing:border-box;
-  container-type:inline-size;overflow:visible;flex:none;
-  width:min(100%,388px);max-width:100%;aspect-ratio:388/562;margin:0 auto;
-  border:0;outline:0;background:#0e0b22;box-shadow:0 8px 24px #080617a8;
-  color:#ffecd4;font-family:Georgia,'Times New Roman',serif;text-align:center;transform:none!important}
-#page-collection .inspector .recto-lab-card img{display:block;max-width:none!important;max-height:none!important;
-  margin:0!important;padding:0!important;outline:none!important;border:none!important;
-  box-shadow:none!important;background:transparent!important;border-radius:0!important;aspect-ratio:auto!important;}
-#page-collection .recto-lab-card .recto-lab-art{position:absolute;inset:4.8% 6% 22.8%;overflow:hidden;border-radius:10px 10px 0 0;z-index:0;
-  background:#17132e}
-#page-collection .recto-lab-art .recto-lab-backdrop{position:absolute;inset:-12%;width:124%!important;height:124%!important;
-  object-fit:cover;filter:blur(9px) brightness(.38) saturate(1.1);opacity:.8}
-#page-collection .recto-lab-art .recto-lab-illustration{position:absolute;inset:0;width:100%!important;height:100%!important;
-  object-fit:contain;object-position:center center;filter:saturate(1.05);}
-#page-collection .recto-lab-card.rector-lab-calligraphic .recto-lab-illustration,
-#page-collection .recto-lab-card.recto-lab-calligraphic .recto-lab-illustration{filter:grayscale(1) contrast(1.2)}
-#page-collection .recto-lab-card.recto-lab-chromatic .recto-lab-illustration{filter:saturate(1.35) hue-rotate(-9deg)}
-#page-collection .recto-lab-card.recto-lab-holographic:after{content:'';position:absolute;inset:3% 4%;z-index:4;pointer-events:none;
-  background:linear-gradient(118deg,transparent 35%,#8de4ff23 51%,#fa92f923 63%,transparent 83%);mix-blend-mode:screen}
-#page-collection .recto-lab-card .recto-lab-gradient{position:absolute;inset:44% 6% 6.2%;z-index:1;pointer-events:none;
-  background:linear-gradient(to bottom,transparent 0%,#120e281f 19%,#15102d9c 48%,#100c24eb 71%,#100c24 100%)}
-/* One dark-violet fill BEHIND the existing gold title ornament (not a second plaque). */
-#page-collection .recto-lab-card .recto-lab-title-plaque{
-  position:absolute;top:7.6%;left:19%;width:62%;height:8.3%;
-  z-index:2;pointer-events:none;
-  background:linear-gradient(90deg,#120a2cdd 0%,#110a2af7 18%,#110a2af7 82%,#120a2cdd 100%);
-  clip-path:polygon(7% 0,93% 0,100% 50%,93% 100%,7% 100%,0 50%);
+
+/* RECTO LAB V7 — actual HTML/CSS layout, zero decorative frame files. */
+#page-collection .inspector .recto-lab-card{
+  display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:11% minmax(0,1fr) 27%;
+  width:min(100%,388px);max-width:100%;aspect-ratio:388/562;margin:0 auto;padding:7px;
+  position:relative;isolation:isolate;box-sizing:border-box;overflow:hidden;flex:none;
+  border:2px solid #d7ad79;border-radius:11px;
+  background:#110e28;box-shadow:inset 0 0 0 1px #ffe0a76e,0 9px 24px #0505159c;
+  color:#fff0d8;text-align:center;font-family:Georgia,serif;
 }
-#page-collection .recto-lab-card .recto-lab-title-zone{
-  position:absolute;top:8.35%;left:21.5%;width:57%;height:6.4%;
-  display:flex;align-items:center;justify-content:center;z-index:7;
-  overflow:visible;padding:0 6px;
+#page-collection .recto-lab-card *{box-sizing:border-box;min-width:0}
+#page-collection .recto-lab-card img{
+  display:block;max-width:none!important;max-height:none!important;
+  margin:0!important;padding:0!important;border:0!important;
+  box-shadow:none!important;background:transparent!important;
+}
+#page-collection .recto-lab-card .recto-lab-header{
+  grid-row:1;display:flex;align-items:center;justify-content:center;min-height:0;
+  padding:2px 10px;border-bottom:1px solid #e5b67d94;
+  background:linear-gradient(90deg,#2d1a43,#100c26 45%,#2d1a43);
 }
 #page-collection .recto-lab-card .recto-lab-name{
-  display:block;width:100%;max-height:100%;margin:0;overflow-wrap:anywhere;
-  font:650 clamp(13px,4.8cqw,22px)/1.14 Georgia,'Times New Roman',serif;
-  color:#fff3de;text-align:center;white-space:normal;word-break:normal;text-wrap:balance;
-  text-shadow:0 1px 0 #1a0f32,0 2px 4px #000e,0 0 9px #000d;
+  display:block;width:100%;max-height:100%;margin:0;
+  font:650 19px/1.12 Georgia,serif;color:#fff0d5;
+  text-shadow:0 1px 3px #070316;overflow-wrap:anywhere;text-wrap:balance;
 }
-#page-collection .recto-lab-card .recto-lab-footer{position:absolute;top:73.8%;bottom:9.5%;left:10%;right:10%;z-index:3;
-  display:flex;flex-direction:column;align-items:stretch;justify-content:space-between;gap:2.2%;}
-#page-collection .recto-lab-card .recto-lab-chapter{color:#d5bce1;font:600 clamp(7px,2.1cqw,10px)/1.18 system-ui,sans-serif;
-  letter-spacing:.045em;text-shadow:0 1px 4px #090419;white-space:nowrap}
-#page-collection .recto-lab-card .recto-lab-rarity{display:flex;justify-content:center;align-items:center;gap:2.3%;min-width:0;
-  color:#f6e4cf;font:600 clamp(8px,2.6cqw,12px)/1.25 Georgia,serif;font-variant:small-caps;white-space:nowrap}
-#page-collection .recto-lab-rarity-label{color:var(--rarity-line,#dfb58a)}
-#page-collection .recto-lab-divider{font-size:.85em;color:#e4b26f}
-#page-collection .recto-lab-card .recto-lab-lore{display:flex;align-items:center;justify-content:center;flex:1 1 auto;
-  margin:0!important;padding:0!important;min-height:0;color:#f8e7ef;
-  font:italic clamp(8.5px,2.9cqw,13px)/1.2 Georgia,serif;
-  text-shadow:0 1px 4px #070319;overflow-wrap:anywhere;text-wrap:balance}
-#page-collection .recto-lab-card .recto-lab-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1%;
-  align-items:center;min-height:30%;padding-top:2%;border-top:1px solid #d7a5719c}
-#page-collection .recto-lab-card .recto-lab-stat{display:flex;align-items:center;justify-content:center;min-width:0;gap:4%;}
-#page-collection .recto-lab-card .recto-lab-stat-icon{width:32%!important;height:auto!important;max-width:34px!important;
-  aspect-ratio:1!important;object-fit:contain!important;filter:drop-shadow(0 0 2px #bb87ed7d)!important;
-  image-rendering:pixelated}
-#page-collection .recto-lab-stat-copy{display:flex;flex-direction:column;align-items:flex-start;gap:1px}
-#page-collection .recto-lab-stat-copy small{font:600 clamp(7px,2.2cqw,10px)/1.1 system-ui,sans-serif;color:#dfcde9;text-transform:uppercase}
-#page-collection .recto-lab-stat-copy strong{font:500 clamp(13px,5cqw,25px)/1 Georgia,serif;color:#fff1d9}
-#page-collection .recto-lab-card .recto-lab-frame{position:absolute;inset:0;width:100%!important;height:100%!important;
-  object-fit:fill;z-index:5;pointer-events:none}
+#page-collection .recto-lab-card .recto-lab-art{
+  grid-row:2;display:grid;place-items:center;overflow:hidden;min-height:0;
+  background:#101127;
+}
+#page-collection .recto-lab-card .recto-lab-illustration{
+  width:100%!important;height:100%!important;
+  object-fit:contain!important;object-position:center center;filter:saturate(1.05);
+}
+#page-collection .recto-lab-card.recto-lab-calligraphic .recto-lab-illustration{filter:grayscale(1) contrast(1.2)}
+#page-collection .recto-lab-card.recto-lab-chromatic .recto-lab-illustration{filter:saturate(1.33) hue-rotate(-7deg)}
+#page-collection .recto-lab-card .recto-lab-footer{
+  grid-row:3;min-height:0;display:grid;grid-template-rows:auto auto minmax(0,1fr) auto;
+  padding:5px 7px 6px;gap:3px;align-items:center;
+  border-top:1px solid #e5b67d94;background:linear-gradient(#19122c,#100c25);
+}
+#page-collection .recto-lab-card .recto-lab-chapter{
+  color:#d0badb;font:600 clamp(7px,2.15cqw,10px)/1.2 system-ui,sans-serif;letter-spacing:.025em;
+}
+#page-collection .recto-lab-card .recto-lab-rarity{
+  display:flex;align-items:center;justify-content:center;gap:5px;white-space:nowrap;
+  color:#f4e1d3;font:600 clamp(8px,2.5cqw,11px)/1.2 Georgia,serif;font-variant:small-caps;
+}
+#page-collection .recto-lab-card .recto-lab-rarity-label{color:var(--rarity-line,#f0ca98)}
+#page-collection .recto-lab-card .recto-lab-divider{color:#d9ab72}
+#page-collection .recto-lab-card .recto-lab-lore{
+  display:flex;align-items:center;justify-content:center;min-height:0;
+  margin:0!important;padding:2px 0!important;
+  color:#f5e4ee;font:italic clamp(8px,2.65cqw,12px)/1.3 Georgia,serif;
+  overflow-wrap:anywhere;text-wrap:balance;
+}
+#page-collection .recto-lab-card .recto-lab-stats{
+  display:grid;grid-template-columns:repeat(3,minmax(0,1fr));
+  align-items:center;gap:2px;min-height:0;padding:4px 0 0;
+  border-top:1px solid #cda16e66;
+}
+#page-collection .recto-lab-card .recto-lab-stat{
+  display:flex;align-items:center;justify-content:center;gap:4px;min-width:0;
+}
+#page-collection .recto-lab-card .recto-lab-stat-icon{
+  width:clamp(20px,7cqw,30px)!important;height:clamp(20px,7cqw,30px)!important;
+  flex:none;object-fit:contain!important;image-rendering:pixelated;
+}
+#page-collection .recto-lab-card .recto-lab-stat-copy{
+  display:flex;flex-direction:column;align-items:flex-start;gap:1px;
+}
+#page-collection .recto-lab-card .recto-lab-stat-copy small{
+  font:600 clamp(7px,1.95cqw,9px)/1 system-ui,sans-serif;
+  color:#d9c8e2;text-transform:uppercase;
+}
+#page-collection .recto-lab-card .recto-lab-stat-copy strong{
+  font:600 clamp(13px,4.1cqw,20px)/1 Georgia,serif;color:#fff1dc;
+}
 @media(max-width:420px){
-#page-collection .recto-lab-entry{padding:10px;gap:7px}
-#page-collection .inspector .recto-lab-card{width:min(100%,350px)}
-#page-collection .recto-lab-card .recto-lab-footer{top:73.5%;bottom:9.5%;left:10%;right:10%;}
+ #page-collection .recto-lab-entry{padding:10px;gap:7px}
+ #page-collection .inspector .recto-lab-card{width:min(100%,350px);padding:6px}
 }
-@media(prefers-reduced-motion:reduce){#page-collection .recto-lab-card *{animation:none!important;transition:none!important}}
-
-/* The reconstructed border contains all ornaments inside its transparent canvas.
-   Keep frame visible while illustration remains clipped only within art window. */
-#page-collection .inspector .recto-lab-card{overflow:visible!important;}
