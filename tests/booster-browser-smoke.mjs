@@ -70,7 +70,7 @@ async function until(check,label){
 await command('Runtime.enable');
 await command('Page.enable');
 // Reload after Runtime.enable to capture early module errors instead of missing them.
-await command('Page.navigate',{url:'http://127.0.0.1:8765/?booster-e2e=1#boosters'});
+await command('Page.navigate',{url:'http://127.0.0.1:8765/?booster-e2e=1&recto-test=1#boosters'});
 await sleep(1800);
 console.log('Initial page',JSON.stringify(await evaluate(`({
  url:location.href,ready:document.readyState,hash:location.hash,
@@ -477,6 +477,43 @@ assert.deepEqual(other.names,['Éclat','Garde','Flux']);
 assert.ok(other.iconsLoaded,'Approved HD glyphs render on a second card');
 assert.ok(other.values.every(Number.isFinite),'Stats use the corresponding card values');
 assert.match(other.inventory,/Possédées : ×/);
+// Experiment only, on a separate branch: no save changes or booster changes.
+assert.equal(await evaluate("Boolean(document.querySelector('.recto-lab-entry .recto-lab-open'))"),true,
+ 'The recto test dock must be accessible');
+await evaluate("document.querySelector('.recto-lab-open').click()");
+await until(()=>evaluate("Boolean(document.querySelector('#inspector.recto-lab-mode-new .recto-lab-card'))"),'New recto is visible');
+await until(()=>evaluate("(()=>{const c=document.querySelector('#inspector .recto-lab-card');return [...c.querySelectorAll('img')].every(i=>i.complete&&i.naturalWidth>0)})()"),'Real art and frame loaded');
+const recto=await evaluate(`(()=>{
+ const panel=document.querySelector('#inspector'),card=panel.querySelector('.recto-lab-card');
+ const title=card.querySelector('.recto-lab-name'),art=card.querySelector('.recto-lab-illustration');
+ return {name:title.textContent,objectFit:getComputedStyle(art).objectFit,art:art.currentSrc,
+  frame:card.querySelector('.recto-lab-frame').naturalWidth,
+  titleWidth:title.scrollWidth,maxWidth:title.parentElement.clientWidth,
+  titleHeight:title.scrollHeight,maxHeight:title.parentElement.clientHeight,
+  stats:[...card.querySelectorAll('.recto-lab-stat-copy strong')].map(s=>Number(s.textContent))};
+})()`);
+console.log('New recto preview in Chromium:',JSON.stringify(recto));
+assert.equal(recto.name,'Cerf des Lueurs');
+assert.equal(recto.objectFit,'contain','Original art must not be cropped or zoomed');
+assert.ok(recto.art.includes('cerf-des-lueurs.webp'));
+assert.ok(recto.frame>300,'Transparent frame asset loaded');
+assert.ok(recto.titleWidth<=recto.maxWidth+3&&recto.titleHeight<=recto.maxHeight+3,
+ 'Title fits inside a single ornament');
+assert.deepEqual(recto.stats,[12,13,6]);
+await evaluate("document.querySelector('.recto-lab-switch-button').click()");
+assert.equal(await evaluate("document.querySelector('#inspector .inspector-art-shell')?.getBoundingClientRect().height>40"),true,
+ 'Original inspector remains visible when comparing');
+await evaluate("document.querySelectorAll('.recto-lab-open')[1].click()");
+await until(()=>evaluate("document.querySelector('#inspector .recto-lab-name')?.textContent.includes('Astra')"),'Long name example opened');
+const longTitle=await evaluate(`(()=>{
+ const n=document.querySelector('#inspector .recto-lab-name');
+ return {name:n.textContent,width:n.scrollWidth,boxWidth:n.parentElement.clientWidth,
+  height:n.scrollHeight,boxHeight:n.parentElement.clientHeight};
+})()`);
+console.log('Long title fit:',JSON.stringify(longTitle));
+assert.ok(longTitle.width<=longTitle.boxWidth+3&&longTitle.height<=longTitle.boxHeight+3,
+ 'Longer card names must fit their cartouche');
+
 assert.deepEqual(jsErrors,[],'No unexpected browser JavaScript errors');
 ws.close();
 console.log('AETHERIUM : vrai navigateur, galerie/fiche PC tablette mobile et 3 boosters OK');
