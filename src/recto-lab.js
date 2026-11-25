@@ -19,8 +19,8 @@ function fitTitle(title){
   if(!parent?.isConnected)return;
   const card=parent.closest('.recto-lab-card');
   const width=card?.getBoundingClientRect().width||320;
-  const max=width>360?22:width>290?18:15;
-  const min=width>290?10:9;
+  const max=width>360?27:width>290?23:19;
+  const min=width>290?12:11;
   title.style.fontSize=max+'px';
   let size=max;
   // Allows a second line for very long actual card names rather than clipping.
@@ -66,7 +66,7 @@ function appendCard({card,finish,artwork}){
   footer.append(season,rarity,lore,stats);
   front.append(footer);
   const frame=element('img','recto-lab-frame');
-  frame.src='./assets/preview/recto-option-1-frame.png';frame.alt='';frame.setAttribute('aria-hidden','true');
+  frame.src='./assets/preview/recto-option-1-frame-complet-v3.png';frame.alt='';frame.setAttribute('aria-hidden','true');
   front.append(frame);
   requestAnimationFrame(()=>fitTitle(title));
   return front;
