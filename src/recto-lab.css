@@ -18,7 +18,7 @@
  color:#bfaedb;letter-spacing:.09em}
 #page-collection .recto-lab-switch-button[aria-pressed="true"]{background:linear-gradient(#4b2b67,#2e204d);border-color:#f8ce81;color:#fff8e8}
 #page-collection .inspector>.recto-lab-card{display:none}
-#page-collection .inspector.recto-lab-mode-new>.recto-lab-card{display:block}
+#page-collection .inspector.recto-lab-mode-new>.recto-lab-card{display:grid}
 #page-collection .inspector.recto-lab-mode-new>.inspector-art-shell{display:none!important}
 #page-collection .inspector.recto-lab-mode-new>.inspector-copy>.kicker,
 #page-collection .inspector.recto-lab-mode-new>.inspector-copy>h2,
