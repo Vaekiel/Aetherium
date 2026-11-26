@@ -153,7 +153,10 @@
 #page-collection .recto-lab-card .recto-lab-stat-copy strong{
   color:#fff0d8;font:700 clamp(14px,5cqw,23px)/1.1 Georgia,serif;
 }
-@media(min-width:920px){
+/* Wide view only when the inspector itself has room; the desktop Codex
+   sidebar can remain narrow even on a large monitor. */
+#page-collection .inspector-shell{container:recto-inspection/inline-size}
+@container recto-inspection (min-width:780px){
   #page-collection .inspector.recto-lab-mode-new{
     grid-template-columns:minmax(230px,420px) minmax(250px,1fr);
     align-items:start;justify-items:stretch;column-gap:20px;
