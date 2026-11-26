@@ -97,6 +97,22 @@ export function createCardFront({card,finish='normal',artwork}){
 export function attachRectoLabInspector({panel,card,finish,artwork}){
   const front=createCardFront({card,finish,artwork});
   artwork.replaceWith(front);
+  // A full-size illustration stays available outside the card when cropped.
+  const image=front.querySelector('.recto-lab-illustration');
+  const copy=panel.querySelector('.inspector-copy');
+  if(copy&&image){
+    const link=element('a','recto-full-art-link','Voir l’illustration entière');
+    link.target='_blank';link.rel='noopener noreferrer';
+    const syncLink=()=>{
+      const src=image.currentSrc||image.src;
+      const isPortrait=image.naturalWidth>0&&image.naturalHeight>0&&image.naturalWidth/image.naturalHeight<.75;
+      link.hidden=!(isPortrait&&/\/assets\/cards\//.test(src));
+      if(!link.hidden)link.href=src;
+    };
+    image.addEventListener('load',syncLink);
+    syncLink();
+    copy.append(link);
+  }
   panel.classList.add('recto-lab-mode-new');
   return front;
 }
