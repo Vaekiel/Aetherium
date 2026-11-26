@@ -1462,7 +1462,7 @@ function selectGame(index,{jumpToStage=false,focusTrial=false}={}){
     openTrial(focusTrial);
     const card=mini[index].card;
     if(focusTrial)$('#trial-title-'+index).focus({preventScroll:true});
-    card.scrollIntoView({block:'start',behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});
+    if(!mobileView.matches)card.scrollIntoView({block:'start',behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});
   }
 }
 selectGame(0);
@@ -1715,7 +1715,7 @@ function renderExpedition(){
     navigate('jouer');
     openTrial();
     const target=mini[stage.game].card;
-    target.scrollIntoView({behavior:'smooth',block:'start'});
+    if(!mobileView.matches)target.scrollIntoView({behavior:'smooth',block:'start'});
     target.querySelector('button:not([disabled])')?.focus({preventScroll:true});
   },'primary expedition-continue');
   play.disabled=isFinale&&view.current.step===3&&!view.current.choice;
