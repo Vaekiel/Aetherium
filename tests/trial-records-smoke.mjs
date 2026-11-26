@@ -135,6 +135,7 @@ function exerciseComplete(){
  const browser={mini:[null,g],state,trialScore,trialReward,
   recordTrialWin,recordPersonalBest,
   grant(value){money+=value;notifications++},
+  recordCircuitVictory(index,mode,score,game){assert.equal(index,1);assert.equal(mode,'maitrise');assert.equal(score,84);assert.equal(game,g)},
   renderTrialMastery(){}};
  runInNewContext(code+'complete(1,\'Mémoire restaurée\',{moves:12,errors:0});',browser);
  assert.equal(state.trialStats[1].wins,1);
