@@ -17,7 +17,7 @@ import {codexProgress,filterCodex} from './codex.js';
 import {finishObjective} from './finish-objectives.js?v=signature-targets-1';
 import {FINISHES,FINISH_KEYS,restoreFinishCounts,synchronizeFinishCounts,finishQuantity,preferredFinish} from './finishes.js?v=finish-order-2';
 import {enableHolographicInspection} from './finish-interaction.js';
-import {sanitizeRecentFinds,recordRecentFind,buildLivingArchive} from './living-archives.js?v=au-dela-booster-1';
+import {sanitizeRecentFinds,recordRecentFind,buildLivingArchive} from './living-archives.js?v=seasons-09';
 import {createBackup,decodeBackup,installImportedSave,restorePreviousSave,PREVIOUS_SAVE_KEY,MAX_BACKUP_SIZE} from './save-backup.js';
 import {createSaveSession,parseStoredSave} from './save-session.js?v=save-safety-1';
 import {SEASONS,seasonById,collectionById,cardsForCollection,collectionForCard,seasonProgress} from './seasons.js?v=seasons-09';
