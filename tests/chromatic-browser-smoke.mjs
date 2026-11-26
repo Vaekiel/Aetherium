@@ -164,6 +164,6 @@ const finishes=await evaluate(`(()=>{
  return {labels:buttons.map(b=>b.getAttribute('aria-label')),filter:image?getComputedStyle(image).filter:null};
 })()`);
 assert.deepEqual(finishes.labels.map(s=>s.split(' · ')[0]),['Normale','Calligraphique','Chromatique','Holographique']);
-assert.match(finishes.filter||'',/grayscale\\(1\\)/,'Calligraphic grayscale wins over inline filter');
+assert.ok(finishes.filter?.includes('grayscale(1)'), 'Calligraphic grayscale wins over inline filter');
 ws.close();
 console.log('Chromatique browser audit: 72 cards across 3 collections, 3 viewports, approved art, CSS layers, rarity and inspector OK');
