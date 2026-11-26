@@ -19,7 +19,7 @@ assert.ok(main.includes("$('#reflets-art-preview').hidden=!showRefletsPreview"),
  'The historic pilot preview remains hidden once its chapter is released');
 assert.ok(main.includes("$('#collection-layout').hidden=isUpcoming"),'Unreleased collection does not display a playable gallery');
 assert.ok(main.includes("const SAVE='aetherium-save-v1'"),'Existing save key unchanged');
-assert.ok(main.includes("from './collection-data.js?v=au-dela-booster-1'"),'The released catalogue loads through the dedicated published module');
+assert.ok(main.includes("from './collection-data.js?v=seasons-09'"),'The released catalogue loads through the dedicated published module');
 assert.ok(!gameData.includes('reflets-brises-catalog.js'),'Origines pools are not modified');
 assert.ok(artwork.includes('REFLETS_GALLERY_ART'),'The former pilot joins the published art registry');
 assert.ok(season.includes("part('reflets-brises'"),'Reflets stays planned');
