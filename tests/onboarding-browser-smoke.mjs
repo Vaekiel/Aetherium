@@ -107,6 +107,7 @@ await evaluate("document.querySelector('[data-difficulty=\"initiation\"]').click
 await evaluate("(()=>{for(let i=1;i<=12;i++){const tile=[...document.querySelectorAll('#trial-panel-0 .rune-tile')].find(t=>t.getAttribute('aria-label').startsWith('Rune '+i+' sur'));if(!tile)throw Error('Missing rune '+i);tile.click()}return true})()");
 const win=await evaluate("(()=>{const s=JSON.parse(localStorage.getItem('aetherium-save-v1'));return {coins:s.coins,wins:s.wins,opened:s.opened}})()");
 assert.deepEqual(win,{coins:235,wins:1,opened:1});
+assert.equal(await evaluate("document.querySelector('#beginner-guide').hidden"),true,'Completion hides the guide immediately even after reopening an incomplete guide');
 await evaluate("location.reload();true");
 await until(()=>evaluate("document.readyState==='complete'&&document.querySelector('#arcane-launch')?.hidden===false&&document.querySelectorAll('#game-picker .game-choice').length===5"),'Completed reload');
 await evaluate("document.querySelector('#launch-play').click()");

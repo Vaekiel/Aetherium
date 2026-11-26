@@ -2501,7 +2501,7 @@ function openBoosterDialog(control){
   $('#booster-dialog-kicker').textContent=control.dataset.seasonTitle||'LES ARCHIVES';
   boosterDialog.classList.remove('has-results');
   if(!boosterDialog.open)boosterDialog.showModal();
-  $('#buy').focus({preventScroll:true});
+  ($('#buy').disabled?$('#booster-funds-action'):$('#buy')).focus({preventScroll:true});
 }
 
 $('#booster-close').addEventListener('click',closeBoosterDialog);
@@ -2541,7 +2541,7 @@ $('#guide-action').addEventListener('click',()=>{
  }
 });
 $('#guide-dismiss').addEventListener('click',()=>{guideManual=false;rememberGuideDismissal(true);renderBeginnerGuide();$('#difficulty-options button.is-active')?.focus({preventScroll:true})});
-$('#guide-reopen').addEventListener('click',()=>{guideManual=true;rememberGuideDismissal(false);navigate('jouer');$('#guide-title').focus({preventScroll:true});$('#beginner-guide').scrollIntoView({block:'nearest',behavior:'auto'})});
+$('#guide-reopen').addEventListener('click',()=>{guideManual=beginnerGuide(state,PACK_PRICE).complete;rememberGuideDismissal(false);navigate('jouer');$('#guide-title').focus({preventScroll:true});$('#beginner-guide').scrollIntoView({block:'nearest',behavior:'auto'})});
 $('#booster-funds-action').addEventListener('click',()=>navigate('jouer'));
 $('#booster-codex-action').addEventListener('click',()=>{
  if(boosterBusy||!currentDraw.length)return;
