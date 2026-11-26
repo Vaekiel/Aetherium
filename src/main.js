@@ -1,4 +1,4 @@
-import {initRectoLab,attachRectoLabInspector} from './recto-lab.js?v=recto-valide-8';
+import {createCardFront,attachRectoLabInspector} from './recto-lab.js?v=recto-officiel-2';
 import {RARITIES,PACK_PRICE,drawPack} from './data.js?v=booster-variety-1';
 import {CARDS,drawRefletsPack,drawAuDelaPack} from './collection-data.js?v=au-dela-booster-1';
 import {CRAFT_COSTS,getCraftCost,craftCard} from './crafting.js';
@@ -6,7 +6,7 @@ import {duplicateDustReward} from './duplicate-rewards.js';
 import {boosterMoment} from './booster-feedback.js?v=booster-polish-1';
 import {applyCardIllustration,hasApprovedArt,CARD_ART} from './card-art.js?v=au-dela-booster-1&chromatic=audit-1';
 import {codexProgress,filterCodex} from './codex.js';
-import {FINISHES,FINISH_KEYS,restoreFinishCounts,synchronizeFinishCounts,finishQuantity,finishUnique,finishTotal,preferredFinish} from './finishes.js';
+import {FINISHES,FINISH_KEYS,restoreFinishCounts,synchronizeFinishCounts,finishQuantity,finishUnique,finishTotal,preferredFinish} from './finishes.js?v=finish-order-2';
 import {enableHolographicInspection} from './finish-interaction.js';
 import {sanitizeRecentFinds,recordRecentFind,buildLivingArchive} from './living-archives.js?v=au-dela-booster-1';
 import {createBackup,decodeBackup,installImportedSave,restorePreviousSave,PREVIOUS_SAVE_KEY,MAX_BACKUP_SIZE} from './save-backup.js';
@@ -1628,7 +1628,8 @@ function inspectSealed(c,scroll=true){
   const panel=$('#inspector');
   panel.replaceChildren();
   // Sealed archives keep the original neutral inspection layout.
-  panel.classList.remove('is-card-polished');
+  panel.classList.remove('is-card-polished','recto-lab-mode-new');
+  enableHolographicInspection(null);
   delete panel.dataset.rarity;
   panel.classList.remove('is-chromatic','is-holographic','is-calligraphic');
   const seal=el('div','codex-sealed-inspector');
@@ -1684,7 +1685,7 @@ function inspect(c,shiny=false,scroll=true,chromaticPreview=false,finishOverride
     (activeFinish==='calligraphic'?' is-calligraphic':''));
   artwork.append(img);
   if(chromatic)artwork.append(el('span','inspector-chromatic-seal','✧ CHROMATIQUE'));
-  if(activeFinish==='holographic')enableHolographicInspection(artwork);
+
   const kicker=el('p','kicker','ARCHIVE '+String(c.id).padStart(3,'0')+' · '+RARITIES[c.rarity].label);
   const title=el('h2','',c.name);
   const location=collectionForCard(c);
@@ -1744,7 +1745,8 @@ function inspect(c,shiny=false,scroll=true,chromaticPreview=false,finishOverride
   copy.append(picker);
   addCodexNavigation(copy,c);
   panel.append(artwork,copy);
-  if(typeof attachRectoLabInspector==='function')attachRectoLabInspector({panel,card:c,finish:activeFinish,artwork});
+  const front=attachRectoLabInspector({panel,card:c,finish:activeFinish,artwork});
+  enableHolographicInspection(activeFinish==='holographic'?front:null);
   markCodexSelected(c.id);
   if(scroll){
     if(mobileView.matches)openSheet('inspector');
@@ -2185,7 +2187,7 @@ function boosterCardArtwork(item){
     revealedImage.fetchPriority='high';
     revealedImage.alt='Illustration de '+item.card.name;
   }
-  return artwork;
+  return createCardFront({card:item.card,finish:item.finish??(item.shiny?'chromatic':'normal'),artwork});
 }
 function showBoosterCard(index,focus=true){
   if(!boosterBusy||index<0||index>=currentDraw.length)return;
@@ -2274,9 +2276,9 @@ function completeBoosterReveal(){
     ...(momentNote?[momentNote]:[]),
     el('span','',drawSummary.newCount+' nouvelle(s)'),
     el('span','',drawSummary.duplicates+' doublon(s) · +'+drawSummary.dustEarned+' Éclats'),
+    el('span',drawSummary.calligraphicCount?'booster-star':'',drawSummary.calligraphicCount+' Calligraphique(s)'),
     el('span',drawSummary.shinyCount?'booster-star':'',drawSummary.shinyCount+' Chromatique(s)'),
-    el('span',drawSummary.holographicCount?'booster-star':'',drawSummary.holographicCount+' Holographique(s)'),
-    el('span',drawSummary.calligraphicCount?'booster-star':'',drawSummary.calligraphicCount+' Calligraphique(s)')
+    el('span',drawSummary.holographicCount?'booster-star':'',drawSummary.holographicCount+' Holographique(s)')
   );
   $('#pack-title').textContent='Archive ouverte · '+state.opened;
   $('#pack-msg').textContent='Voici tes cinq cartes. Touche une carte pour la retrouver dans le Codex.';
@@ -2580,7 +2582,6 @@ backupRestore.addEventListener('click',()=>{
 });
 $('#reset').addEventListener('click',()=>{if(!confirm('Effacer définitivement les cartes et la progression sauvegardées sur cet appareil ?'))return;clearBoosterScene();try{localStorage.removeItem(PREVIOUS_SAVE_KEY)}catch{}state=fresh();state.trialStats=sanitizedTrialStats(state.trialStats);trialStarters.forEach(start=>start());renderTrialMastery();renderDifficultyChoice();renderExpedition();selectedCard=null;forgeSelectedId=null;forgeFilter='all';$('#atelier-filter').value='all';$('#atelier-result').hidden=true;$('#inspector').replaceChildren(el('p','muted','Sélectionne une carte découverte pour l’admirer.'));$('#pulls').replaceChildren();$('#pack-title').textContent='Les archives attendent leur voyageur.';$('#pack-msg').textContent='Gagne des Couronnes en jouant pour ouvrir des boosters.';update();renderCollection();notify('Progression réinitialisée.')});
 syncMobileSheets();
-initRectoLab({cards:CARDS,inspect,navigate});
 selectBooster('origines');
 renderExpedition();
 update();

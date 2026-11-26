@@ -3,7 +3,7 @@ import {readFileSync,existsSync} from 'node:fs';
 const read=p=>readFileSync(new URL(p,import.meta.url),'utf8');
 const js=read('../src/main.js'),css=read('../src/card-inspector-polish.css'),codex=read('../src/codex.css'),html=read('../index.html');
 assert.match(js,/panel\.classList\.add\('is-card-polished'\)/);
-assert.match(js,/panel\.classList\.remove\('is-card-polished'\)/);
+assert.match(js,/panel\.classList\.remove\('is-card-polished','recto-lab-mode-new'\)/);
 assert.doesNotMatch(js,/if\(c\.id===8\)/,'Every revealed card uses the same panel, not only Cerf');
 assert.match(js,/applyCardIllustration\(img,c,\{shiny:chromatic,size:'full'\}\)/);
 assert.match(js,/panel\.append\(artwork,copy\)/);

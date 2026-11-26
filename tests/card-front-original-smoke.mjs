@@ -4,7 +4,7 @@ const read=p=>readFileSync(new URL(p,import.meta.url),'utf8');
 const js=read('../src/main.js'),html=read('../index.html'),css=read('../src/codex.css');
 assert.doesNotMatch(js,/pilot-card-front|makePilotCardFront|aetherium-front-pilot-frame/);
 assert.match(js,/const artwork=el\('div','inspector-art-shell'/);
-assert.match(js,/if\(activeFinish==='holographic'\)enableHolographicInspection\(artwork\)/);
+assert.match(js,/enableHolographicInspection\(activeFinish==='holographic'\?front:null\)/);
 assert.match(js,/panel\.append\(artwork,copy\)/);
 assert.match(js,/applyCardIllustration\(img,c,\{shiny:chromatic,size:'full'\}\)/);
 assert.doesNotMatch(css,/card-front-pilot\.css/);

@@ -6,7 +6,7 @@ import {CHROMATIC_RATE,HOLOGRAPHIC_RATE,CALLIGRAPHIC_RATE,rollFinish,drawPack,CA
 import {FINISHES,FINISH_KEYS,restoreFinishCounts,finishQuantity,finishUnique,finishTotal,preferredFinish,synchronizeFinishCounts} from '../src/finishes.js';
 import {createBackup,decodeBackup,validateSaveState} from '../src/save-backup.js';
 
-assert.deepEqual(FINISH_KEYS,['normal','chromatic','holographic','calligraphic']);
+assert.deepEqual(FINISH_KEYS,['normal','calligraphic','chromatic','holographic']);
 assert.equal(FINISHES.calligraphic.label,'Calligraphique');
 assert.equal(CHROMATIC_RATE,.03,'Existing 3% Chromatique rate must remain unchanged');
 assert.equal(HOLOGRAPHIC_RATE,.02);
@@ -49,7 +49,7 @@ synchronizeFinishCounts(state);
 assert.equal(finishQuantity(state.finishCounts,'holographic',1),1);
 assert.equal(finishQuantity(state.finishCounts,'calligraphic',23),2);
 assert.equal(finishQuantity(state.finishCounts,'chromatic',23),1);
-assert.equal(preferredFinish(state.finishCounts,23),'calligraphic');
+assert.equal(preferredFinish(state.finishCounts,23),'chromatic');
 assert.equal(finishTotal(state.finishCounts,'holographic'),1);
 assert.equal(finishUnique(state.finishCounts,'calligraphic'),1);
 assert.doesNotThrow(()=>validateSaveState(state,CARDS.map(c=>c.id)));
@@ -74,8 +74,9 @@ assert.match(main,/finishInventory\[card\.id\]=\(finishInventory\[card\.id\]\|\|
   'Each booster copy increments only its own finish bucket');
 assert.match(main,/finishCounts:state\.finishCounts/,'Codex filters must use exact finish quantities');
 assert.match(main,/const picker=el\('div','finish-picker'\)/,'Inspector has four finish choices');
-assert.match(main,/enableHolographicInspection\(artwork\)/,'Holographic inspector supports pointer and optional gyro');
+assert.match(main,/enableHolographicInspection\(activeFinish==='holographic'\?front:null\)/,'Holographic inspector supports pointer and optional gyro');
 assert.match(css,/grayscale\(1\) contrast\(1\.62\)/,'Calligraphic ink artwork is visibly monochrome');
 assert.match(css,/inspector-art-shell\.is-holographic::after/,'Holographic cards have interactive prism overlay');
 assert.match(html,/src\/finishes\.css\?v=finishes-2/,'New finishes stylesheet is loaded');
+assert.match(readFileSync('src/recto-lab.css','utf8'),/grayscale\(1\) contrast\(1\.62\) brightness\(1\.12\)!important/,'Calligraphic must override the inline neutral filter');
 console.log('AETHERIUM 4 finishes: exact rolls, old saves, own counts, preview filters, portable backups and art CSS OK.');

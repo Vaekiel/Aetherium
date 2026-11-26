@@ -5,9 +5,9 @@
  */
 export const FINISHES=Object.freeze({
   normal:Object.freeze({label:'Normale',plural:'Normales',symbol:'◆'}),
+  calligraphic:Object.freeze({label:'Calligraphique',plural:'Calligraphiques',symbol:'✒'}),
   chromatic:Object.freeze({label:'Chromatique',plural:'Chromatiques',symbol:'✧'}),
-  holographic:Object.freeze({label:'Holographique',plural:'Holographiques',symbol:'◈'}),
-  calligraphic:Object.freeze({label:'Calligraphique',plural:'Calligraphiques',symbol:'✒'})
+  holographic:Object.freeze({label:'Holographique',plural:'Holographiques',symbol:'◈'})
 });
 export const FINISH_KEYS=Object.freeze(Object.keys(FINISHES));
 export const newFinishCounts=()=>({
@@ -52,7 +52,7 @@ export function finishUnique(finishCounts,finish,cards=null){
   return ids.filter(id=>finishQuantity(finishCounts,finish,id)>0).length;
 }
 export function preferredFinish(finishCounts,id){
-  for(const finish of ['holographic','calligraphic','chromatic','normal'])
+  for(const finish of ['holographic','chromatic','calligraphic','normal'])
     if(finishQuantity(finishCounts,finish,id)>0)return finish;
   return 'normal';
 }

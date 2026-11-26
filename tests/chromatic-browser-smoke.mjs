@@ -126,9 +126,9 @@ for(const width of [360,768,1280]){
     const inspection=await evaluate(`(async()=>{
       const card=document.querySelector('#card-grid .card[data-card-id="${representatives[0]}"]');
       card.click();
-      const image=document.querySelector('#inspector .inspector-art-shell.is-chromatic img');
+      const image=document.querySelector('#inspector .recto-lab-card.recto-lab-chromatic .recto-lab-illustration');
       if(image)await image.decode().catch(()=>null);
-      const shell=document.querySelector('#inspector .inspector-art-shell.is-chromatic');
+      const shell=document.querySelector('#inspector .recto-lab-card.recto-lab-chromatic .recto-lab-art');
       const panel=document.querySelector('#inspector');
       const result={rarity:panel?.dataset.rarity,source:image?.currentSrc||'',
         naturalWidth:image?.naturalWidth||0,
@@ -141,8 +141,29 @@ for(const width of [360,768,1280]){
     assert.ok(inspection.rarity,'Inspector keeps its rarity frame');
     assert.ok(inspection.naturalWidth>0,'Inspector full-size authored image loads');
     assert.ok(inspection.source.includes('/assets/cards/'),'Inspector never swaps authored art');
+    assert.equal(inspection.rim,'chromatic-rim-orbit','Animated border preserved');
     assert.equal(inspection.overflow,'hidden','Inner prismatic border remains clipped');
   }
 }
+// Verify Calligraphique against the real browser cascade, including inline art style.
+await evaluate(`(()=>{
+ const save=JSON.parse(localStorage.getItem('aetherium-save-v1'));
+ save.owned[8]=4;
+ for(const f of ['normal','calligraphic','chromatic','holographic'])save.finishCounts[f][8]=1;
+ localStorage.setItem('aetherium-save-v1',JSON.stringify(save));
+ location.reload();return true;
+})()`);
+await until(()=>evaluate("Boolean(document.querySelector('.codex-chapter[data-collection=\\\"origines\\\"]'))"),'Codex reload');
+await evaluate("document.querySelector('.codex-chapter[data-collection=\\\"origines\\\"]').click()");
+await until(()=>evaluate("Boolean(document.querySelector('#card-grid [data-card-id=\\\"8\\\"]'))"),'Cerf available');
+await evaluate("document.querySelector('#card-grid [data-card-id=\\\"8\\\"]').click()");
+const finishes=await evaluate(`(()=>{
+ const buttons=[...document.querySelectorAll('#inspector .finish-choice')];
+ buttons[1].click();
+ const image=document.querySelector('#inspector .recto-lab-calligraphic .recto-lab-illustration');
+ return {labels:buttons.map(b=>b.getAttribute('aria-label')),filter:image?getComputedStyle(image).filter:null};
+})()`);
+assert.deepEqual(finishes.labels.map(s=>s.split(' · ')[0]),['Normale','Calligraphique','Chromatique','Holographique']);
+assert.ok(finishes.filter?.includes('grayscale(1)'), 'Calligraphic grayscale wins over inline filter');
 ws.close();
 console.log('Chromatique browser audit: 72 cards across 3 collections, 3 viewports, approved art, CSS layers, rarity and inspector OK');
