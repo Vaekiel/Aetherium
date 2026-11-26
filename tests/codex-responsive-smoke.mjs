@@ -87,6 +87,14 @@ const sandbox={
  RARITIES,FINISHES,FINISH_KEYS,finishQuantity,preferredFinish,el:elem,
  document:{createTextNode:text=>elem('text','',text)},
  enableHolographicInspection(){},
+ attachRectoLabInspector({panel,card,finish,artwork}){
+  assert.ok(card.id);
+  const front=elem('article','recto-lab-card recto-lab-'+finish);
+  front.append(artwork.querySelector('img'));
+  panel.children[0]=front;
+  panel.classList.add('recto-lab-mode-new');
+  return front;
+ },
  button(label,handler,klass=''){const n=elem('button',klass,label);n.click=handler;return n},
  markNothing:null,mobileView:{matches:true},
  openSheet(kind){assert.equal(kind,'inspector');shown++},
@@ -107,7 +115,7 @@ api.inspect(cards[1],true,true);
 assert.equal(shown,1,'A tap opens the existing mobile sheet');
 assert.equal(artCalls,1,'One full HD image is drawn');
 assert.equal(host.children.length,2,'Image and details use two responsive regions');
-assert.equal(host.children[0].className,'inspector-art-shell is-chromatic');
+assert.equal(host.children[0].className,'recto-lab-card recto-lab-chromatic');
 assert.equal(host.children[1].className,'inspector-copy');
 assert.ok(host.children[1].querySelector('h2').textContent.includes('Astra'));
 assert.equal(host.children[1].querySelector('.codex-inspector-navigation').children.length,3);
@@ -120,14 +128,14 @@ assert.equal(finishPicker.children[1].disabled,false,'Owned Chromatique may be s
 assert.equal(finishPicker.children[2].disabled,true,'Unowned Holographique is locked');
 assert.equal(finishPicker.children[3].disabled,true,'Unowned Calligraphique is locked');
 finishPicker.children[0].click();
-assert.equal(host.children[0].className,'inspector-art-shell');
+assert.equal(host.children[0].className,'recto-lab-card recto-lab-normal');
 assert.equal(shown,1,'Switching visual finish never reopens or scrolls the mobile sheet');
 assert.equal(host.children[1].querySelector('.codex-inspector-navigation').children.length,3);
 
 // Security of the collection surprise: direct calls, legacy preview flags,
 // and unowned finish choices must not expose their visual effects.
 api.inspect(cards[0],true,false,true,'chromatic');
-assert.equal(host.children[0].className,'inspector-art-shell',
+assert.equal(host.children[0].className,'recto-lab-card recto-lab-normal',
   'Requesting an unowned Chromatique must fall back to the owned Normal');
 assert.equal(host.children[1].querySelector('.finish-picker').children[1].disabled,true,
   'Unowned Chromatique control is disabled');
@@ -136,13 +144,13 @@ assert.equal(host.children[1].querySelector('.finish-picker').children[2].disabl
 assert.equal(host.children[1].querySelector('.finish-picker').children[3].disabled,true,
   'Unowned Calligraphique control is disabled');
 host.children[1].querySelector('.finish-picker').children[2].click();
-assert.equal(host.children[0].className,'inspector-art-shell',
+assert.equal(host.children[0].className,'recto-lab-card recto-lab-normal',
   'Forcing a disabled finish callback must still not reveal the foil');
 api.inspect(cards[1],false,false,false,'holographic');
-assert.equal(host.children[0].className,'inspector-art-shell is-chromatic',
+assert.equal(host.children[0].className,'recto-lab-card recto-lab-chromatic',
   'Unowned Holographique must fall back to an acquired finish');
 api.inspect(cards[1],false,false,false,'calligraphic');
-assert.equal(host.children[0].className,'inspector-art-shell is-chromatic',
+assert.equal(host.children[0].className,'recto-lab-card recto-lab-chromatic',
   'Unowned Calligraphique must never reveal its effect');
 api.inspectSealed({...cards[0],id:3},true);
 assert.equal(shown,2);
