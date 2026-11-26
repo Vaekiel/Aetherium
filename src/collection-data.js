@@ -3,6 +3,7 @@
 import {CARDS as ORIGINES_CARDS,drawPackFromPool} from './data.js?v=booster-variety-1';
 import {REFLETS_BRISES_DRAFT} from './reflets-brises-catalog.js';
 import {AU_DELA_DU_VERRE_DRAFT} from './au-dela-du-verre-catalog.js';
+import {SEASONS} from './seasons.js?v=au-dela-booster-1';
 
 export const REFLETS_CARDS=Object.freeze(REFLETS_BRISES_DRAFT.map((card,i)=>Object.freeze({
   id:card.id,name:card.name,type:card.type,rarity:card.rarity,lore:card.lore,
@@ -22,14 +23,25 @@ export const AU_DELA_BOOSTER_CARDS=Object.freeze(AU_DELA_CARDS.filter(card=>card
 export const CARDS=Object.freeze([...ORIGINES_CARDS,...REFLETS_CARDS,...AU_DELA_CARDS]);
 export const CARD_BY_ID=new Map(CARDS.map(card=>[card.id,card]));
 
-// A separate 24-card pool prevents crossover between the two boosters.
-// Both editions share identical odds and favour different cards inside each pack.
-// Fifth card retains its rarity guarantee; Chromatics stay at 3%.
-export function drawRefletsPack(rng=Math.random){
-  return drawPackFromPool(REFLETS_CARDS,rng);
+// Published collections are the only source of booster pools. Keep the
+// existing card objects, order and RNG so historical saves and draws are stable.
+export function buildBoosterRegistry(seasons,cards){
+  const registry=new Map();
+  for(const season of seasons)for(const collection of season.collections){
+    if(!collection.released)continue;
+    if(registry.has(collection.id))throw new Error('Duplicate collection ID: '+collection.id);
+    const pool=Object.freeze(cards.filter(card=>card.id>=collection.first&&card.id<=collection.last&&card.signature!==true&&card.boosterEligible!==false));
+    registry.set(collection.id,Object.freeze({season,collection,pool}));
+  }
+  return registry;
 }
-
-// A dedicated pack has exactly 23 eligible cards; ID 72 is earned only via the final story.
-export function drawAuDelaPack(rng=Math.random){
-  return drawPackFromPool(AU_DELA_BOOSTER_CARDS,rng);
+export const BOOSTER_REGISTRY=buildBoosterRegistry(SEASONS,CARDS);
+export const boosterById=id=>BOOSTER_REGISTRY.get(id)??null;
+export function drawCollectionPack(id,rng=Math.random){
+  const booster=boosterById(id);
+  if(!booster)throw new Error('Booster indisponible : '+id);
+  return drawPackFromPool(booster.pool,rng);
 }
+// Historical exports stay available to existing callers and smoke tests.
+export function drawRefletsPack(rng=Math.random){return drawCollectionPack('reflets-brises',rng)}
+export function drawAuDelaPack(rng=Math.random){return drawCollectionPack('au-dela-du-verre',rng)}
