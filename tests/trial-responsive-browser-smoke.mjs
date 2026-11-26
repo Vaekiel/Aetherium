@@ -160,6 +160,20 @@ const boundaries=await evaluate(`(()=>{
 assert.ok(boundaries.firstDisabled&&boundaries.lastDisabled,'Les flèches aux extrémités sont désactivées');
 assert.ok(boundaries.lastLabel.includes('Dernière épreuve'),'Boutons correctement annoncés au lecteur d’écran');
 assert.equal(boundaries.focusTarget,'-1','Le titre est ciblable au changement d’épreuve');
+// Check the new variants in the live controller and a normal alchemy discovery.
+await evaluate("document.querySelectorAll('#game-picker .game-choice')[0].click();document.querySelector('[data-difficulty=\"aventure\"]').click()");
+const runeTitles=await evaluate("(()=>{const p=document.querySelector('#trial-panel-0'),seen=new Set();for(let i=0;i<60;i++){seen.add(p.querySelector('.rune-ritual-name').textContent);p.querySelector('.small-actions button').click()}return [...seen]})()");
+assert.ok(runeTitles.includes('La Danse des constellations'));
+await evaluate("document.querySelector('[data-difficulty=\"maitrise\"]').click()");
+const masteryTitles=await evaluate("(()=>{const p=document.querySelector('#trial-panel-0'),seen=new Set();for(let i=0;i<80;i++){seen.add(p.querySelector('.rune-ritual-name').textContent);p.querySelector('.small-actions button').click()}return [...seen]})()");
+assert.ok(masteryTitles.includes('Le Cœur du sceau'));
+await evaluate("document.querySelector('[data-difficulty=\"aventure\"]').click();document.querySelectorAll('#game-picker .game-choice')[1].click()");
+const memoryLayout=await evaluate("(()=>{const p=document.querySelector('#trial-panel-1');for(let i=0;i<60&&p.querySelector('.memory-ritual-title').textContent!=='Les Deux Rives';i++)p.querySelector('.small-actions button').click();const tiles=[...p.querySelectorAll('.memory-tile')];const left=tiles.filter((_,i)=>i%4<2).map(t=>t.dataset.id).sort(),right=tiles.filter((_,i)=>i%4>=2).map(t=>t.dataset.id).sort();return {title:p.querySelector('.memory-ritual-title').textContent,count:tiles.length,left,right,unique:new Set(left).size}})()");
+assert.equal(memoryLayout.title,'Les Deux Rives');assert.equal(memoryLayout.count,16);assert.equal(memoryLayout.unique,8);assert.deepEqual(memoryLayout.left,memoryLayout.right);
+await evaluate("document.querySelectorAll('#game-picker .game-choice')[4].click();document.querySelector('[data-difficulty=\"maitrise\"]').click()");
+const alchemyLabel=await evaluate("document.querySelector('#trial-panel-4 .alchemy-board').getAttribute('aria-label')");
+assert.ok(alchemyLabel.includes('3 ingrédients'));
+console.log('Trial variety Chromium: new rune sequences, two-bank memory layout, three-ingredient Mastery label OK.');
 assert.deepEqual(exceptions,[],'Aucune erreur JavaScript pendant la navigation des Épreuves');
 ws.close();
 console.log('Épreuves responsive : 360 / 390 / 768 / 1440 px, sélection et difficulté OK');

@@ -1,4 +1,4 @@
-/* AETHERIUM 1.7.2 — Three fair, explicitly explained rune sequences.
+/* AETHERIUM — Five fair, explicitly explained rune sequences.
    A ritual is always a complete permutation of the original twelve runes.
    No change to the underlying reward, score, card save or sprite mapping. */
 const ascending=Object.freeze(Array.from({length:12},(_,index)=>index+1));
@@ -14,12 +14,18 @@ export const RUNE_RITUALS=Object.freeze([
     order:descending}),
   Object.freeze({id:'miroir',title:'Le Chemin des reflets',
     rule:'Alterne les extrêmes : 1, 12, 2, 11, 3, 10… jusqu’au centre.',
-    order:mirrored})
+    order:mirrored}),
+  Object.freeze({id:'alternance',title:'La Danse des constellations',
+    rule:'Active d’abord les impaires de 1 à 11, puis les paires de 2 à 12.',
+    order:Object.freeze([1,3,5,7,9,11,2,4,6,8,10,12])}),
+  Object.freeze({id:'convergence',title:'Le Cœur du sceau',
+    rule:'Pars du centre vers les bords : 6, 7, 5, 8, 4, 9… jusqu’à 1 et 12.',
+    order:Object.freeze([6,7,5,8,4,9,3,10,2,11,1,12])})
 ]);
 export function runeRitualsFor(difficulty='aventure'){
   const ids=difficulty==='initiation'?['ascendant']:
-    difficulty==='maitrise'?['ascendant','descendant','miroir']:
-    ['ascendant','descendant'];
+    difficulty==='maitrise'?['ascendant','descendant','miroir','alternance','convergence']:
+    ['ascendant','descendant','alternance'];
   return RUNE_RITUALS.filter(ritual=>ids.includes(ritual.id));
 }
 export function nextRuneRitual(difficulty='aventure',previousId=null,random=Math.random){

@@ -26,11 +26,11 @@ import {TRIAL_RECORD_MODES,TRIAL_RECORD_METRICS,sanitizedTrialRecords,recordPers
 import {trialChallengesFor} from './trial-challenges.js';
 import {TRIAL_TITLES,earnedTrialTitles,validEquippedTitle,toggleEquippedTitle} from './trial-titles.js';
 import {EXPEDITION_ROUTES,FINALE_ID,FINALE_PREREQUISITES,FINALE_VOWS,canStartFinale,chooseFinaleVow,awardFinaleCard,sanitizeExpedition,startExpedition,abandonExpedition,armExpedition,expeditionVictory,expeditionSummary} from './expeditions.js?v=dernier-accord-1';
-import {nextRuneRitual,runeExpectedAt} from './rune-rituals.js';
+import {nextRuneRitual,runeExpectedAt} from './rune-rituals.js?v=variety-06';
 import {makeEtherPuzzle,etherRule,evaluateEtherAttempt,etherAttemptFeedback} from './ether-lock-puzzles.js';
-import {nextMemoryRitual,buildMemoryDeck} from './memory-rituals.js';
+import {nextMemoryRitual,buildMemoryDeck} from './memory-rituals.js?v=variety-06';
 import {makeExcavationSite,chooseExcavationGuide} from './excavation-sites.js';
-import {ALCHEMY_ESSENCES,ALCHEMY_MODES,ALCHEMY_RECIPE_COUNT,alchemyClue,recipeIndex,rememberAlchemyRecipe,sanitizeAlchemyKnown} from './alchemy-rituals.js';
+import {ALCHEMY_ESSENCES,ALCHEMY_MODES,ALCHEMY_RECIPE_COUNT,alchemyClue,recipeIndex,rememberAlchemyRecipe,sanitizeAlchemyKnown,selectAlchemyRecipes} from './alchemy-rituals.js?v=variety-06';
 
 const $=(q,root=document)=>root.querySelector(q);
 const $$=(q,root=document)=>Array.from(root.querySelectorAll(q));
@@ -1187,7 +1187,7 @@ function startAlchemy(){
   g.status.classList.remove('is-complete','is-failed');
   const reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const requiredIngredients=g.mode==='maitrise'?3:2;
-  const selectedRecipes=shuffle(recipes.filter(recipe=>recipe[1].length===requiredIngredients)).slice(0,3);
+  const selectedRecipes=selectAlchemyRecipes(recipes,requiredIngredients,state.alchemyKnown,shuffle);
   let round=0,errors=0,selected=[],busy=false;
 
   let hud=g.card.querySelector('.alchemy-hud');
@@ -1228,7 +1228,7 @@ function startAlchemy(){
     const headText=el('span','alchemy-grimoire-heading');
     headText.append(el('strong','', 'Le Grimoire retrouvé'),el('small','alchemy-grimoire-count'));
     head.append(headText);
-    grimoire.append(head,el('div','alchemy-grimoire-list'));
+    grimoire.append(head,el('p','muted','Les formules encore inconnues sont proposées en priorité, selon la difficulté choisie.'),el('div','alchemy-grimoire-list'));
     g.actions.before(grimoire);
   }
   const renderGrimoire=()=>{
@@ -1285,7 +1285,7 @@ function startAlchemy(){
 
   g.board.replaceChildren();
   g.board.setAttribute('role','group');
-  g.board.setAttribute('aria-label','Six ingrédients magiques : choisis deux ingrédients pour chaque potion');
+  g.board.setAttribute('aria-label','Six ingrédients magiques : choisis '+requiredIngredients+' ingrédients pour chaque potion');
   g.board.style.setProperty('--cols',3);
   for(let i=0;i<ingredients.length;i++){
     const tile=el('button','tile alchemy-ingredient');

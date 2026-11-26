@@ -18,7 +18,7 @@ const begin=main.indexOf('function startAlchemy()');
 const end=main.indexOf('const trialStarters=[startRunes,startMemory,startLock,startMines,startAlchemy];',begin);
 assert.ok(begin>=0&&end>begin,'Alchemy runtime code exists');
 const code=main.slice(begin,end);
-for(const marker of ["selectedRecipes=shuffle(recipes.filter(recipe=>recipe[1].length===requiredIngredients)).slice(0,3)","for(let i=0;i<ingredients.length;i++)","g.board.style.setProperty('--cols',3)","if(errors===maxErrors)","if(round===3)","complete(4,'Alchimie maîtrisée !","if(g.ended||busy","const session=++alchemySession","clearTimeout(alchemyTimer)","session!==alchemySession","setAttribute('aria-pressed'","button('✦ Mélanger'"]){
+for(const marker of ["selectedRecipes=selectAlchemyRecipes(recipes,requiredIngredients,state.alchemyKnown,shuffle)","for(let i=0;i<ingredients.length;i++)","g.board.style.setProperty('--cols',3)","if(errors===maxErrors)","if(round===3)","complete(4,'Alchimie maîtrisée !","if(g.ended||busy","const session=++alchemySession","clearTimeout(alchemyTimer)","session!==alchemySession","setAttribute('aria-pressed'","button('✦ Mélanger'"]){
  assert.ok(code.includes(marker),'Missing gameplay marker: '+marker);
 }
 assert.ok(!code.includes('tileGrid(g.board'),'Generic tiles are gone');
@@ -48,7 +48,7 @@ assert.equal(recipes.filter(r=>r[1].length===3).length,8,'Eight three-essence Ma
 assert.equal(recipes.filter(r=>r[1].length===2).length,12,'Twelve two-essence recipes');
 assert.deepEqual(Array.from(recipes[0][1]),[0,4],'Legacy recipe 0 is immutable');
 assert.deepEqual(Array.from(recipes[4][1]),[2,4],'Legacy recipe 4 is immutable');
-assert.ok(main.includes("from './alchemy-rituals.js'"),'Five known formulas use solvable clues');
+assert.ok(main.includes("from './alchemy-rituals.js?v=variety-06'"),'Five known formulas use solvable clues');
 assert.ok(code.includes("renderGrimoire()"),'The laboratory shows an earned-recipe journal');
 assert.ok(code.includes("save(); // Preserve discoveries immediately"),'Every discovered formula is saved');
 assert.ok(html.includes('src/alchemy.css?v=alchemy-mastery-172b'),'Alchemy CSS refreshed');
