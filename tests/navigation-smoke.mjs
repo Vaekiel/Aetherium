@@ -30,7 +30,7 @@ assert.ok(html.includes('class="expedition-back secondary"')&&html.includes('dat
   'Dedicated expedition page can return to the existing trials');
 assert.ok(js.includes("if(page==='expeditions')renderExpedition()"),
   'Expedition progress refreshes on each visit');
-assert.ok(js.includes("navigate('jouer');\n    const target=mini[stage.game].card;"),
+assert.ok(js.includes("navigate('jouer');\n    openTrial();\n    const target=mini[stage.game].card;"),
   'Starting a chapter stage opens the original mini-game page');
 assert.ok(js.includes("g.actions?.append(button('✧ Suite de l’expédition'"),
   'After victory the player can return to the expedition instead of being redirected mid-result');
@@ -38,7 +38,7 @@ assert.ok(js.includes("el.setAttribute('aria-current','page')"),'Selected tab ha
 assert.ok(js.includes('function renderAtelier()'),'Atelier resource display updates from real save');
 assert.ok(js.includes('state.dust.toLocaleString'),'Displayed Éclats are drawn from saved resource balance');
 assert.ok(js.includes('Object.values(state.owned).reduce'),'Duplicate count is calculated from owned copies');
-assert.ok(js.includes("const SAVE='aetherium-save-v1'"),'Existing save format is unchanged');
+assert.ok(js.includes("const SAVE=GAME_SAVE_KEY;"),'Existing save format is unchanged');
 assert.ok(js.includes('const result=craftCard(state,card)'),'Validated crafting is enabled through a central rules module');
 for(const key of ['function startRunes()','function startMemory()','function startLock()','function startMines()','function startAlchemy()','function openOriginesBooster()'])
  assert.ok(js.includes(key),'Gameplay retained: '+key);
