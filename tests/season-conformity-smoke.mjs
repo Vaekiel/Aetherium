@@ -10,6 +10,7 @@ import {FINISH_KEYS,restoreFinishCounts} from '../src/finishes.js';
 import {getCraftCost} from '../src/crafting.js';
 import {getFinishCraftCost} from '../src/finish-crafting.js';
 import {validateSeasonCatalog} from '../src/season-conformity.js';
+import {defineCollectionContent,FUTURE_ART_STANDARD} from '../src/content-standard.js';
 import {createBackup,decodeBackup,validateSaveState,GAME_SAVE_KEY} from '../src/save-backup.js';
 import {parseStoredSave,createSaveSession} from '../src/save-session.js';
 
@@ -50,7 +51,11 @@ assert.equal(collectionForCard({id:73}),null);
 
 // Synthetic release in memory only: no fictional cards or lore enter the live catalogue.
 const part=future.collections[0];
-const synthetic=ORIGINES.map(c=>({...c,id:c.id+72,series:'TEST'}));
+const authored=defineCollectionContent({title:'TEST',first:part.first,last:part.last,artVersion:'test-1',
+  entries:ORIGINES.map(c=>({...c,id:c.id+72,slug:'test-card-'+c.id}))});
+const synthetic=authored.cards;
+assert.equal(authored.art[73].fullHeight,FUTURE_ART_STANDARD.fullHeight);
+assert.throws(()=>defineCollectionContent({title:'TEST',first:73,last:96,artVersion:'test-1',entries:[] }));
 const groups={...CARD_GROUPS,[part.id]:synthetic};
 assert.deepEqual(buildPublishedCatalog(SEASONS,groups),CARDS);
 const released=SEASONS.map(s=>s.id!==future.id?s:{...s,collections:s.collections.map(c=>c.id===part.id?{...c,released:true}:c)});
@@ -59,6 +64,11 @@ assert.equal(expanded.length,96);
 assert.deepEqual(expanded.slice(0,72),CARDS);
 const expandedRegistry=buildBoosterRegistry(released,expanded);
 assert.deepEqual(expandedRegistry.get(part.id).pool.map(c=>c.id),synthetic.map(c=>c.id));
+const expandedInput={...input,seasons:released,cards:expanded,art:{...CARD_ART,...authored.art},boosters:expandedRegistry,
+  views:{...BOOSTER_VIEWS,[part.id]:{title:'TEST',label:'TEST',description:'TEST',message:'TEST',theme:'standard',art:'./assets/boosters/test.webp'}}};
+assert.deepEqual(validateSeasonCatalog(expandedInput),[]);
+assert.ok(validateSeasonCatalog({...expandedInput,art:{...expandedInput.art,73:{...authored.art[73],fullWidth:999}}}).some(e=>e.includes('Nonstandard future illustration')));
+assert.ok(validateSeasonCatalog({...expandedInput,views:{...expandedInput.views,[part.id]:{...expandedInput.views[part.id],theme:'origines'}}}).some(e=>e.includes('shared design')));
 assert.throws(()=>buildPublishedCatalog(released,CARD_GROUPS));
 assert.ok(validateSeasonCatalog({...input,cards:[...CARDS,CARDS[0]]}).some(e=>e.includes('duplicate card ID')));
 assert.ok(validateSeasonCatalog({...input,cards:[...CARDS,synthetic[0]]}).some(e=>e.includes('Unreleased content exposed')));
