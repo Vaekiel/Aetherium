@@ -108,6 +108,26 @@ await evaluate("(()=>{for(let i=1;i<=12;i++){const tile=[...document.querySelect
 const win=await evaluate("(()=>{const s=JSON.parse(localStorage.getItem('aetherium-save-v1'));return {coins:s.coins,wins:s.wins,opened:s.opened}})()");
 assert.deepEqual(win,{coins:235,wins:1,opened:1});
 assert.equal(await evaluate("document.querySelector('#beginner-guide').hidden"),true,'Completion hides the guide immediately even after reopening an incomplete guide');
+// Permanent journey reflects actual purchases and victories without modifying saves.
+await evaluate("document.querySelector('#chroniques-link').click()");
+const journey=await evaluate("(()=>{const root=document.querySelector('#journey-groups'),s=JSON.parse(localStorage.getItem('aetherium-save-v1'));const values=Object.fromEntries([...root.querySelectorAll('[data-journey-track]')].map(t=>[t.dataset.journeyTrack,Number(t.querySelector('.journey-meter').getAttribute('aria-valuenow'))]));return {groups:root.children.length,tracks:Object.keys(values).length,values,discovered:Object.keys(s.owned).length,open:root.firstElementChild.open,oldSuccess:document.querySelectorAll('#achievements .achievement').length,titles:document.querySelectorAll('#honorific-list .honorific').length,save:localStorage.getItem('aetherium-save-v1')}})()");
+assert.equal(journey.groups,3);assert.equal(journey.tracks,8);assert.equal(journey.values['marches-de-verre-cards'],journey.discovered);
+assert.equal(journey.values.wins,1);assert.equal(journey.values.versatility,1);assert.equal(journey.values.medals,1);
+assert.equal(journey.values.routes,0);assert.equal(journey.values.fragments,0);
+assert.equal(journey.open,true);assert.equal(journey.oldSuccess,9);assert.equal(journey.titles,5);
+for(const [width,height] of [[320,740],[390,844],[768,1024],[1280,900]]){
+ await command('Emulation.setDeviceMetricsOverride',{width,height,deviceScaleFactor:1,mobile:width<=850});
+ await sleep(100);
+ const fits=await evaluate("(()=>{document.querySelectorAll('.journey-group').forEach(g=>g.open=true);const panel=document.querySelector('.journey-panel');return panel.getBoundingClientRect().right<=innerWidth+2&&document.documentElement.scrollWidth<=innerWidth+2&&[...panel.querySelectorAll('.journey-link')].every(b=>b.getBoundingClientRect().height>=44)})()");
+ assert.ok(fits,'Journey fits at '+width+'px');
+}
+await evaluate("document.querySelector('[data-journey-track=\"routes\"] .journey-link').click()");
+assert.equal(await evaluate("document.querySelector('#page-expeditions').classList.contains('active')"),true);
+assert.equal(await evaluate("localStorage.getItem('aetherium-save-v1')"),journey.save,'Viewing objectives and navigation do not alter saves');
+await evaluate("document.querySelector('nav [data-page=\"jouer\"]').click()");
+await command('Emulation.setDeviceMetricsOverride',{width:390,height:844,deviceScaleFactor:3,mobile:true});
+console.log('Journey Chromium: 8 tracks, real progress, existing titles and secrets, 4 viewports, expedition shortcut and unchanged save OK.');
+
 await evaluate("location.reload();true");
 await until(()=>evaluate("document.readyState==='complete'&&document.querySelector('#arcane-launch')?.hidden===false&&document.querySelectorAll('#game-picker .game-choice').length===5"),'Completed reload');
 await evaluate("document.querySelector('#launch-play').click()");
