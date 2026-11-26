@@ -1,0 +1,178 @@
+/* Branch-only Aetherium option 1 front; true transparent filigree overlay.
+   Unchanged original inspector remains under the comparison control. */
+#page-collection .recto-lab-entry{display:flex;gap:9px;align-items:center;flex-wrap:wrap;
+  margin:10px auto 16px;padding:11px 13px;border:1px solid #b493825e;
+  background:linear-gradient(100deg,#231b3beb,#16182edc);border-radius:8px;
+  box-shadow:0 2px 13px #08071a55}
+#page-collection .recto-lab-entry-text{display:flex;flex-direction:column;gap:3px;flex:1 1 220px}
+#page-collection .recto-lab-entry-text strong{font:600 12px Georgia,serif;letter-spacing:.12em;color:#f3d0a3}
+#page-collection .recto-lab-entry-text span{font:11px/1.4 system-ui,sans-serif;color:#c6b7d3}
+#page-collection .recto-lab-open,#page-collection .recto-lab-switch-button{
+ border:1px solid #af86bb9a;background:#251a40;color:#f9e9d5;border-radius:5px;
+ font:600 12px/1.3 Georgia,serif;min-height:39px;padding:8px 12px;cursor:pointer}
+#page-collection .recto-lab-open:hover,#page-collection .recto-lab-open:focus-visible,
+#page-collection .recto-lab-switch-button:hover,#page-collection .recto-lab-switch-button:focus-visible{border-color:#f5c680;outline:1px solid #f5c6804d}
+#page-collection .inspector .recto-lab-switch{display:flex;align-items:center;flex-wrap:wrap;justify-content:center;
+ gap:6px;margin:1px 0 13px;grid-column:1/-1;width:100%;}
+#page-collection .recto-lab-switch-label{width:100%;font:600 10px/1.4 system-ui,sans-serif;
+ color:#bfaedb;letter-spacing:.09em}
+#page-collection .recto-lab-switch-button[aria-pressed="true"]{background:linear-gradient(#4b2b67,#2e204d);border-color:#f8ce81;color:#fff8e8}
+#page-collection .inspector>.recto-lab-card{display:none}
+#page-collection .inspector.recto-lab-mode-new>.recto-lab-card{display:grid}
+#page-collection .inspector.recto-lab-mode-new>.inspector-art-shell{display:none!important}
+
+/* Only hide the duplicated stat badges: the Codex owns the lore and ledger. */
+#page-collection .inspector.recto-lab-mode-new>.inspector-copy>.stats{display:none!important}
+
+/* RECTO VALIDÉ V8 — original Aetherium back plus calibrated artwork aperture.
+   No fake border assets: the unchanged official back is the base.
+   The card holds only title, illustration, rarity/type and three stats.
+   Lore, season, inventory, finishes and navigation remain outside in Codex. */
+#page-collection .inspector.recto-lab-mode-new{
+  display:grid!important;grid-template-columns:minmax(0,1fr);
+  gap:12px;align-items:start;justify-items:center;
+}
+#page-collection .inspector.recto-lab-mode-new>.recto-lab-switch{
+  grid-column:1/-1;grid-row:1;align-self:center;
+}
+#page-collection .inspector.recto-lab-mode-new>.recto-lab-card{
+  grid-column:1;grid-row:2;
+}
+#page-collection .inspector.recto-lab-mode-new>.inspector-copy{
+  grid-column:1;grid-row:3;width:100%;min-width:0;
+  max-width:540px;margin:0 auto;
+  border:1px solid #a68c926e;border-radius:10px;
+  background:linear-gradient(155deg,#241a34dd,#111226dd);
+  padding:16px 14px!important;box-sizing:border-box;text-align:left;
+}
+#page-collection .inspector.recto-lab-mode-new>.inspector-copy>h2{
+  text-align:left;margin:0 0 4px!important;
+}
+#page-collection .inspector.recto-lab-mode-new>.inspector-copy>.kicker{
+  justify-content:flex-start;margin:0 0 8px!important;
+}
+#page-collection .inspector.recto-lab-mode-new>.inspector-copy>.kicker::before,
+#page-collection .inspector.recto-lab-mode-new>.inspector-copy>.kicker::after{
+  display:none!important;
+}
+#page-collection .inspector.recto-lab-mode-new>.inspector-copy>.codex-inspector-chapter{
+  text-align:left!important;
+}
+#page-collection .inspector .recto-lab-card{
+  position:relative;flex:none;
+  width:min(100%,420px);max-width:100%;aspect-ratio:2/3;
+  container-type:inline-size;box-sizing:border-box;padding:0;margin:0 auto;
+  overflow:hidden;border:0;border-radius:13px;
+  background:#140d25;box-shadow:0 12px 30px #050316c7;
+  isolation:isolate;color:#fff0d5;text-align:center;
+}
+#page-collection .inspector>.recto-lab-card{display:none!important}
+#page-collection .inspector.recto-lab-mode-new>.recto-lab-card{display:block!important}
+#page-collection .recto-lab-card *{box-sizing:border-box;min-width:0}
+#page-collection .recto-lab-card img{
+  display:block;max-width:none!important;max-height:none!important;
+  margin:0!important;padding:0!important;border:0!important;
+  box-shadow:none!important;border-radius:0!important;
+}
+#page-collection .recto-lab-card .recto-lab-original-back{
+  position:absolute;inset:0;width:100%!important;height:100%!important;
+  object-fit:fill!important;z-index:0;pointer-events:none;
+}
+#page-collection .recto-lab-card .recto-lab-title-plaque{
+  position:absolute;top:7.2%;left:12.5%;width:75%;height:9.5%;
+  z-index:2;display:flex;align-items:center;justify-content:center;
+  min-height:0;padding:0 18px;border:2px solid #e0ba80;border-radius:12px;
+  background:linear-gradient(180deg,#251440f8,#140d27f9);
+  box-shadow:inset 0 0 0 1px #57327e,0 3px 10px #060414ab;
+}
+#page-collection .recto-lab-card .recto-lab-name{
+  display:block;width:100%;max-height:100%;margin:0;
+  color:#fff0d5;font:700 19px/1.08 Georgia,serif;
+  text-align:center;text-shadow:0 2px 4px #000d;
+  overflow-wrap:anywhere;text-wrap:balance;
+}
+#page-collection .recto-lab-card .recto-lab-art{
+  position:absolute;top:17.8%;left:17%;width:66%;height:53%;
+  z-index:2;overflow:hidden;display:grid;place-items:center;
+  background:#0d1027;border:2px solid #e3bf88;border-radius:11px;
+  box-shadow:inset 0 0 0 1px #5b347d;
+}
+#page-collection .recto-lab-card .recto-lab-illustration{
+  display:block;width:100%!important;height:100%!important;
+  object-fit:contain!important;object-position:center center;
+}
+#page-collection .recto-lab-card.recto-lab-calligraphic .recto-lab-illustration{
+  filter:grayscale(1) contrast(1.2);
+}
+#page-collection .recto-lab-card.recto-lab-chromatic .recto-lab-illustration{
+  filter:saturate(1.33) hue-rotate(-7deg);
+}
+#page-collection .recto-lab-card.recto-lab-holographic .recto-lab-art::after{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(125deg,transparent 30%,#8ae8ff25 51%,#ffa8e51a 65%,transparent 83%);
+  mix-blend-mode:screen;
+}
+#page-collection .recto-lab-card .recto-lab-footer{
+  position:absolute;left:8.8%;width:82.4%;bottom:11.8%;height:16.9%;
+  z-index:2;display:grid;grid-template-rows:auto minmax(0,1fr);
+  align-items:stretch;gap:5px;padding:7px 10px 9px;
+  background:linear-gradient(180deg,#1c1432f5,#130d25fa);
+  border:2px solid #e2bc84;border-radius:12px;
+  box-shadow:inset 0 0 0 1px #5c337e,0 5px 16px #09051073;
+}
+#page-collection .recto-lab-card .recto-lab-rarity{
+  display:flex;justify-content:center;align-items:center;gap:7px;
+  white-space:nowrap;color:#f4e7d4;
+  font:700 clamp(8px,2.6cqw,11px)/1.1 system-ui,sans-serif;
+  letter-spacing:.08em;text-transform:uppercase;
+}
+#page-collection .recto-lab-card .recto-lab-rarity-label{
+  color:var(--recto-rarity,#e9cba3);
+}
+#page-collection .recto-lab-card .recto-lab-divider{color:#dfb079}
+#page-collection .recto-lab-card .recto-lab-stats{
+  display:grid;grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:3px;align-items:center;min-height:0;
+  padding-top:4px;border-top:1px solid #e5bf8a50;
+}
+#page-collection .recto-lab-card .recto-lab-stat{
+  display:flex;align-items:center;justify-content:center;gap:3px;min-width:0;
+}
+#page-collection .recto-lab-card .recto-lab-stat-icon{
+  flex:none;width:clamp(19px,7cqw,29px)!important;
+  height:clamp(19px,7cqw,29px)!important;
+  object-fit:contain!important;image-rendering:pixelated;
+}
+#page-collection .recto-lab-card .recto-lab-stat-copy{
+  display:flex;flex-direction:column;align-items:flex-start;gap:1px;
+}
+#page-collection .recto-lab-card .recto-lab-stat-copy small{
+  color:#dac8e1;font:700 clamp(7px,2.15cqw,9px)/1 system-ui,sans-serif;
+  text-transform:uppercase;
+}
+#page-collection .recto-lab-card .recto-lab-stat-copy strong{
+  color:#fff0d8;font:700 clamp(14px,5cqw,23px)/1.1 Georgia,serif;
+}
+/* Wide view only when the inspector itself has room; the desktop Codex
+   sidebar can remain narrow even on a large monitor. */
+#page-collection .inspector-shell{container:recto-inspection/inline-size}
+@container recto-inspection (min-width:780px){
+  #page-collection .inspector.recto-lab-mode-new{
+    grid-template-columns:minmax(230px,420px) minmax(250px,1fr);
+    align-items:start;justify-items:stretch;column-gap:20px;
+  }
+  #page-collection .inspector.recto-lab-mode-new>.recto-lab-card{
+    grid-column:1;grid-row:2;
+  }
+  #page-collection .inspector.recto-lab-mode-new>.inspector-copy{
+    grid-column:2;grid-row:2;max-width:none;
+  }
+}
+@media(max-width:420px){
+  #page-collection .inspector .recto-lab-card{width:min(100%,390px)}
+  #page-collection .recto-lab-card .recto-lab-title-plaque{padding-inline:11px}
+  #page-collection .inspector.recto-lab-mode-new>.inspector-copy{padding:12px 10px!important}
+}
+@media(prefers-reduced-motion:reduce){
+  #page-collection .recto-lab-card *{transition:none!important;animation:none!important}
+}

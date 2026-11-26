@@ -1,0 +1,19 @@
+import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
+const read=p=>readFileSync(new URL(p,import.meta.url),'utf8');
+const js=read('../src/recto-lab.js'),css=read('../src/recto-lab.css'),
+  main=read('../src/main.js'),codex=read('../src/codex.css');
+assert.ok(main.includes("recto-lab.js?v=recto-valide-8"));
+assert.ok(codex.includes("recto-lab.css?v=recto-valide-8"));
+assert.ok(js.includes("get('recto-test') === '1'"),'The recto stays opt-in');
+assert.match(js,/aetherium-back-original-v3\.webp/,'The real back is reused');
+assert.match(js,/element\('header','recto-lab-title-plaque'\)/);
+assert.match(js,/element\('div','recto-lab-art'\)/);
+assert.match(js,/element\('div','recto-lab-footer'\)/);
+assert.doesNotMatch(js,/recto-option-1-frame|recto-lab-frame|bottom-gem|recto-lab-chapter/);
+assert.match(css,/top:17\.8%;left:17%;width:66%;height:53%/,'Approved calibrated art window');
+assert.match(css,/object-fit:contain!important/,'No cropped illustrations');
+assert.match(css,/recto-lab-original-back/);
+assert.match(css,/inspector\.recto-lab-mode-new>.inspector-copy/,'Codex still owns full details');
+assert.doesNotMatch(js,/localStorage/,'Do not touch player saves');
+console.log('Validé : original back, calibrated art, title and stats, Codex details, no extra gem or provenance on card');

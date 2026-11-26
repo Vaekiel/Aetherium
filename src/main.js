@@ -1,3 +1,4 @@
+import {initRectoLab,attachRectoLabInspector} from './recto-lab.js?v=recto-valide-8';
 import {RARITIES,PACK_PRICE,drawPack} from './data.js?v=booster-variety-1';
 import {CARDS,drawRefletsPack,drawAuDelaPack} from './collection-data.js?v=au-dela-booster-1';
 import {CRAFT_COSTS,getCraftCost,craftCard} from './crafting.js';
@@ -1743,6 +1744,7 @@ function inspect(c,shiny=false,scroll=true,chromaticPreview=false,finishOverride
   copy.append(picker);
   addCodexNavigation(copy,c);
   panel.append(artwork,copy);
+  if(typeof attachRectoLabInspector==='function')attachRectoLabInspector({panel,card:c,finish:activeFinish,artwork});
   markCodexSelected(c.id);
   if(scroll){
     if(mobileView.matches)openSheet('inspector');
@@ -2578,6 +2580,7 @@ backupRestore.addEventListener('click',()=>{
 });
 $('#reset').addEventListener('click',()=>{if(!confirm('Effacer définitivement les cartes et la progression sauvegardées sur cet appareil ?'))return;clearBoosterScene();try{localStorage.removeItem(PREVIOUS_SAVE_KEY)}catch{}state=fresh();state.trialStats=sanitizedTrialStats(state.trialStats);trialStarters.forEach(start=>start());renderTrialMastery();renderDifficultyChoice();renderExpedition();selectedCard=null;forgeSelectedId=null;forgeFilter='all';$('#atelier-filter').value='all';$('#atelier-result').hidden=true;$('#inspector').replaceChildren(el('p','muted','Sélectionne une carte découverte pour l’admirer.'));$('#pulls').replaceChildren();$('#pack-title').textContent='Les archives attendent leur voyageur.';$('#pack-msg').textContent='Gagne des Couronnes en jouant pour ouvrir des boosters.';update();renderCollection();notify('Progression réinitialisée.')});
 syncMobileSheets();
+initRectoLab({cards:CARDS,inspect,navigate});
 selectBooster('origines');
 renderExpedition();
 update();
