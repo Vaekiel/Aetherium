@@ -1,4 +1,5 @@
 import {journeyProgress} from './journey-progress.js?v=1';
+import {loreArchive} from './lore-archive.js?v=1';
 import {completionPlan,completionRecipes,filterCompletionRecipes} from './collection-completion.js?v=1';
 import {beginnerGuide,readGuideDismissal,writeGuideDismissal} from './onboarding.js?v=1';
 import {createCardFront,attachRectoLabInspector} from './recto-lab.js?v=recto-uniforme-3';
@@ -2695,6 +2696,64 @@ function renderJourney(){
   root.replaceChildren(fragment);
   $('#journey-count').textContent=groups.flatMap(g=>g.tracks).reduce((n,t)=>n+t.achieved,0)+' paliers atteints';
 }
+function renderLoreBook(){
+  const groups=loreArchive(CARDS,state);
+  const root=$('#lore-groups');
+  const opened=new Set(Array.from(root.querySelectorAll('details[open]')).map(node=>node.dataset.loreKey));
+  const firstRender=!root.childElementCount;
+  const fragment=document.createDocumentFragment();
+  for(const group of groups){
+    const section=el('details','lore-group');
+    section.dataset.loreKey=group.id;
+    section.open=opened.has(group.id)||(firstRender&&group.id==='echoes');
+    const summary=el('summary','lore-group-summary');
+    summary.append(el('strong','',group.label),el('small','',group.unlocked+' / '+group.total));
+    section.append(summary);
+    for(const entry of group.entries){
+      if(!entry.unlocked){
+        const sealed=el('div','lore-sealed');
+        sealed.append(el('strong','','◇ '+entry.title),el('small','',entry.progress));
+        section.append(sealed);continue;
+      }
+      const page=el('details','lore-page');
+      page.dataset.loreKey=entry.id;page.open=opened.has(entry.id);
+      page.append(el('summary','','✦ '+entry.title));
+      const story=el('div','lore-story');
+      story.append(el('p','lore-source',entry.source),el('p','lore-text',entry.body));
+      if(entry.cards.length){
+        story.append(el('p','lore-source','Archives liées'));
+        const links=el('div','lore-card-links');
+        for(const related of entry.cards){
+          const card=CARDS.find(c=>c.id===related.id);
+          if(!card||!state.owned[card.id])continue;
+          links.append(button(related.name,()=>openLoreCard(card),'secondary lore-card-link'));
+        }
+        story.append(links);
+      }
+      page.append(story);section.append(page);
+    }
+    fragment.append(section);
+  }
+  root.replaceChildren(fragment);
+  $('#lore-count').textContent=groups.reduce((n,g)=>n+g.unlocked,0)+' / '+groups.reduce((n,g)=>n+g.total,0)+' récits retrouvés';
+}
+function openLoreCard(card){
+  if(!state.owned[card.id])return;
+  const chapter=collectionForCard(card);
+  if(!chapter)return;
+  activeSeason=chapter.season.id;activeCollection=chapter.collection.id;selectedCard=null;
+  navigate('collection');
+  inspect(card,!!state.shiny[card.id]);
+}
+function openLoreBook(){
+  navigate('succes');
+  const book=$('#lore-book');
+  book.open=true;
+  const summary=book.querySelector('summary');
+  summary.focus({preventScroll:true});summary.scrollIntoView({block:'start',behavior:'auto'});
+}
+$('#lore-from-journal').addEventListener('click',openLoreBook);
+$('#lore-from-expedition').addEventListener('click',openLoreBook);
 function renderAchievements(){
   const root=$('#achievements');
   root.replaceChildren();
@@ -2708,6 +2767,7 @@ function renderAchievements(){
   }
   renderHonorifics();
   renderJourney();
+  renderLoreBook();
 }
 // Save transfer remains opt-in and cannot interfere with game loops or rewards.
 const backupDialog=$('#backup-dialog');

@@ -107,3 +107,35 @@
 #page-succes .journey-track.is-complete .journey-meter>span{background:#d9b675}
 #page-succes .journey-link{min-height:44px;white-space:normal;font-size:12px;padding:8px 12px}
 @media(max-width:590px){#page-succes .journey-panel{padding:10px 12px}#page-succes .journey-track{padding:10px}}
+
+/* Annales — a compact, optional, text-first reading room. */
+.lore-archive-shortcut{display:block;min-height:44px;margin:10px 0;padding:8px 12px;white-space:normal}
+#page-collection .lore-archive-shortcut{margin:8px 12px 12px;max-width:calc(100% - 24px)}
+#page-expeditions .lore-archive-shortcut{margin:12px}
+#page-succes .lore-book{border:1px solid #aa8d9a83;border-radius:6px;background:linear-gradient(145deg,#25213bde,#161c30ef);margin:0 0 18px;min-width:0}
+#page-succes .lore-book-summary{display:flex;align-items:center;justify-content:space-between;gap:8px 12px;flex-wrap:wrap;min-height:56px;padding:12px 14px;cursor:pointer;color:#f2dbb6}
+#page-succes .lore-book-summary::before{content:"▸";color:#c3a9e3}
+#page-succes .lore-book[open]>.lore-book-summary::before{content:"▾"}
+#page-succes .lore-book-summary>span:first-child{display:grid;gap:4px;flex:1;min-width:0}
+#page-succes .lore-book-summary strong{font:small-caps 21px/1.2 Georgia,serif}
+#page-succes .lore-book-summary small{font:10px/1.3 system-ui,sans-serif;letter-spacing:.08em;color:#c5b7df}
+#page-succes #lore-count{font:12px/1.4 system-ui,sans-serif;color:#d9c6ed}
+#page-succes .lore-intro{font:13px/1.55 system-ui,sans-serif;color:#d4cbde;margin:0 14px 12px}
+#page-succes #lore-groups{padding:0 12px 12px}
+#page-succes .lore-group{border:1px solid #82709675;border-radius:6px;margin:7px 0;background:#17192be6;min-width:0}
+#page-succes .lore-group-summary{display:flex;align-items:center;justify-content:space-between;gap:8px;cursor:pointer;min-height:44px;padding:9px 12px;color:#e3cda9}
+#page-succes .lore-group-summary::before{content:"▸";color:#c3a9e3}
+#page-succes .lore-group[open]>.lore-group-summary::before{content:"▾"}
+#page-succes .lore-group-summary strong{flex:1;font-size:14px}
+#page-succes .lore-group-summary small{color:#c5b7df;font:12px/1.4 system-ui,sans-serif;white-space:nowrap}
+#page-succes .lore-sealed{display:grid;gap:3px;padding:10px 12px;border-top:1px solid #82709645}
+#page-succes .lore-sealed strong{font:13px/1.4 Georgia,serif;color:#b9aecb}
+#page-succes .lore-sealed small{font:11px/1.45 system-ui,sans-serif;color:#c1b6cf}
+#page-succes .lore-page{border-top:1px solid #82709645}
+#page-succes .lore-page>summary{cursor:pointer;min-height:44px;padding:11px 12px;color:#f0d7a9;font:600 14px/1.5 Georgia,serif;overflow-wrap:anywhere}
+#page-succes .lore-story{padding:0 14px 12px;max-width:72ch}
+#page-succes .lore-source{font:11px/1.4 system-ui,sans-serif;color:#c4b4dd;margin:4px 0 8px}
+#page-succes .lore-text{color:#eee3d7;font:15px/1.7 Georgia,serif;margin:8px 0 12px}
+#page-succes .lore-card-links{display:flex;gap:6px;flex-wrap:wrap}
+#page-succes .lore-card-link{min-height:44px;max-width:100%;padding:8px 10px;white-space:normal;overflow-wrap:anywhere;font:12px/1.4 system-ui,sans-serif}
+@media(max-width:590px){#page-succes .lore-book-summary{padding:10px 12px}#page-succes #lore-groups{padding:0 8px 8px}#page-succes .lore-story{padding:0 12px 12px}}

@@ -326,5 +326,29 @@ await until(()=>evaluate("document.readyState==='complete' && document.querySele
 await evaluate("document.querySelector('#launch-play').click()");
 assert.equal(await evaluate("JSON.parse(localStorage.getItem('aetherium-save-v1')).finishCounts.holographic[1]"),1);
 console.log('Finish Forge browser: mobile recipe, cancellation, exact cost, previous finish, reload OK.');
+// The anthology reads actual inventory, claimed fragments and completed routes.
+await evaluate("(()=>{const s=JSON.parse(localStorage.getItem('aetherium-save-v1'));s.collectionMilestones={'marches-de-verre/origines':[6]};s.expedition={route:null,step:0,mode:null,armed:false,completedRoutes:['verriers']};localStorage.setItem('aetherium-save-v1',JSON.stringify(s));location.reload();return true})()");
+await until(()=>evaluate("document.readyState==='complete'&&document.querySelector('#arcane-launch')?.hidden===false"),'Annales fixture');
+await evaluate("document.querySelector('#launch-play').click()");
+await until(()=>evaluate("document.querySelector('#arcane-launch').hidden"),'Annales entry');
+await evaluate("document.querySelector('#chroniques-link').click();document.querySelector('#lore-book').open=true");
+const reading=await evaluate("(()=>{const b=document.querySelector('#lore-book');return {count:document.querySelector('#lore-count').textContent,pages:b.querySelectorAll('.lore-page').length,sealed:b.querySelectorAll('.lore-sealed').length,links:b.querySelectorAll('.lore-card-link').length,text:b.textContent,save:localStorage.getItem('aetherium-save-v1')}})()");
+assert.equal(reading.count,'8 / 23 récits retrouvés');assert.equal(reading.pages,8);assert.equal(reading.sealed,15);assert.equal(reading.links,18);
+assert.ok(reading.text.includes('Les lanternes du sentier')&&reading.text.includes('Le premier éclat')&&reading.text.includes('Le Serment du Verre'));
+assert.ok(!reading.text.includes('Une page encore blanche')&&!reading.text.includes('Le Serment des Deux Rives'));
+for(const [width,height] of [[320,740],[390,844],[768,1024],[1280,900]]){
+ await command('Emulation.setDeviceMetricsOverride',{width,height,deviceScaleFactor:1,mobile:width<=850});
+ await sleep(120);
+ const fit=await evaluate("(()=>{const b=document.querySelector('#lore-book');b.querySelectorAll('details').forEach(d=>d.open=true);return b.getBoundingClientRect().right<=innerWidth+2&&document.documentElement.scrollWidth<=innerWidth+2&&[...b.querySelectorAll('.lore-card-link')].every(x=>x.getBoundingClientRect().height>=44)})()");
+ assert.ok(fit,'Annales fits '+width);
+}
+assert.equal(await evaluate("localStorage.getItem('aetherium-save-v1')"),reading.save,'Reading does not modify the save');
+await command('Emulation.setDeviceMetricsOverride',{width:390,height:844,deviceScaleFactor:3,mobile:true});
+await evaluate("document.querySelector('.lore-card-link').click()");
+assert.equal(await evaluate("document.querySelector('#page-collection').classList.contains('active')&&document.querySelector('#inspector').textContent.includes('Veilleuse de Nacre')"),true);
+await evaluate("document.querySelector('#inspect-close').click();document.querySelector('#codex-milestones').open=true;document.querySelector('#lore-from-journal').click()");
+assert.equal(await evaluate("document.querySelector('#page-succes').classList.contains('active')&&document.querySelector('#lore-book').open"),true);
+console.log('Annales Chromium: earned stories, sealed pages, four viewports, related card, Journal shortcut, unchanged save while reading OK.');
+
 ws.close();
 console.log('Chromatique and four-finish browser audit: 72-card catalog, 3 collections, 3 viewports, approved art, ownership, CSS and pointer interaction OK');
