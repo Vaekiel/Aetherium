@@ -1,9 +1,17 @@
 /* AETHERIUM 1.8.5 — Portable, checksummed local save files.
    No gameplay mutation: all import checks finish before the legacy save key is
    touched. Keep this format version independent of the in-game version. */
-export const GAME_SAVE_KEY='aetherium-save-v1';
-export const PREVIOUS_SAVE_KEY='aetherium-save-v1-before-import';
-export const BACKUP_FORMAT='aetherium-save-backup';
+// Browser previews use a separate economy and backup namespace. The canonical
+// production URL and Node unit tests retain the legacy keys.
+export function isDevelopmentPreview(location){
+  if(!location)return false;
+  return !(location.origin==='https://vaekiel.github.io' &&
+    ['/Aetherium','/Aetherium/','/Aetherium/index.html'].includes(location.pathname));
+}
+export const DEV_PREVIEW=isDevelopmentPreview(typeof window==='undefined'?null:window.location);
+export const GAME_SAVE_KEY=DEV_PREVIEW?'aetherium-dev-save-v1':'aetherium-save-v1';
+export const PREVIOUS_SAVE_KEY=GAME_SAVE_KEY+'-before-import';
+export const BACKUP_FORMAT=DEV_PREVIEW?'aetherium-dev-save-backup':'aetherium-save-backup';
 export const BACKUP_VERSION=1;
 export const MAX_BACKUP_SIZE=1024*1024; // 1 MiB, generous for future collections.
 
