@@ -274,6 +274,7 @@ const choicesSandbox={
  selectGame(i){calls.selected.push(i)},
  save(){calls.saved++},
  navigate(page){calls.navigated.push(page)},
+ openTrial(){calls.opened=(calls.opened||0)+1},
  el:uiNode,
  button(label,fn,klass){const b=uiNode('button',klass,label);b.addEventListener('click',fn);return b},
  $:selector=>selector==='#expedition-content'?chapterContent:
@@ -325,5 +326,6 @@ assert.deepEqual(calls.selected,[1,1]);
 assert.equal(calls.saved,5);
 assert.deepEqual(calls.navigated,['jouer','jouer']);
 assert.deepEqual(calls.scrolled,[1,1]);
+assert.equal(calls.opened,2,'Both expedition stages enter the dedicated trial view');
 assert.ok(html.includes('Les Itinéraires des Marches'),'The expedition header includes all three routes');
 console.log('AETHERIUM — 3 parcours historiques + Le Dernier Accord, checkpoints, navigation et sauvegardes compatibles');
