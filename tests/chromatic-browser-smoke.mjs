@@ -74,6 +74,7 @@ for(const width of [360,768,1280]){
     width,height:Math.max(730,Math.round(width*.9)),deviceScaleFactor:1,mobile:width<=850
   });
   await sleep(150);
+  let referenceDimensions=null;
   for(const [collection,representatives] of [
     ['origines',[1,8,24]],
     ['reflets-brises',[25,36,48]],
@@ -130,7 +131,12 @@ for(const width of [360,768,1280]){
       if(image)await image.decode().catch(()=>null);
       const shell=document.querySelector('#inspector .recto-lab-card.recto-lab-chromatic .recto-lab-art');
       const panel=document.querySelector('#inspector');
+      const outer=panel?.querySelector('.recto-lab-card')?.getBoundingClientRect();
+      const art=shell?.getBoundingClientRect();
       const result={rarity:panel?.dataset.rarity,source:image?.currentSrc||'',
+        dimensions:[outer?.width,outer?.height,art?.width,art?.height],
+        imageRatio:image?.naturalWidth/image?.naturalHeight,
+        fit:image?getComputedStyle(image).objectFit:null,
         naturalWidth:image?.naturalWidth||0,
         rim:shell?getComputedStyle(shell,'::before').animationName:null,
         overflow:shell?getComputedStyle(shell).overflow:null};
@@ -143,6 +149,11 @@ for(const width of [360,768,1280]){
     assert.ok(inspection.source.includes('/assets/cards/'),'Inspector never swaps authored art');
     assert.equal(inspection.rim,'chromatic-rim-orbit','Animated border preserved');
     assert.equal(inspection.overflow,'hidden','Inner prismatic border remains clipped');
+    assert.ok(inspection.dimensions.every(n=>n>0),'Card and aperture dimensions are visible');
+    if(!referenceDimensions)referenceDimensions=inspection.dimensions;
+    else assert.ok(inspection.dimensions.every((n,i)=>Math.abs(n-referenceDimensions[i])<=2),
+      collection+' shares the same card and aperture dimensions at '+width+'px');
+    if(inspection.imageRatio<.75)assert.equal(inspection.fit,'cover','Tall art fills the common aperture');
   }
 }
 // Verify Calligraphique against the real browser cascade, including inline art style.

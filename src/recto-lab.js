@@ -53,6 +53,14 @@ export function createCardFront({card,finish='normal',artwork}){
   const image=artwork.querySelector('img');
   image.classList.add('recto-lab-illustration');
   if(!image.alt)image.alt='Illustration de '+card.name;
+  // Narrow 2:3 artworks must fill the same aperture as the wider Origines art.
+  // Never stretch the source; retain the complete original for inspection.
+  const fitArt=()=>{
+    if(!image.naturalWidth||!image.naturalHeight)return;
+    art.classList.toggle('recto-art-portrait',image.naturalWidth/image.naturalHeight<.75);
+  };
+  image.addEventListener('load',fitArt);
+  fitArt();
   art.append(image);front.append(art);
 
   const footer=element('div','recto-lab-footer');
@@ -89,6 +97,22 @@ export function createCardFront({card,finish='normal',artwork}){
 export function attachRectoLabInspector({panel,card,finish,artwork}){
   const front=createCardFront({card,finish,artwork});
   artwork.replaceWith(front);
+  // A full-size illustration stays available outside the card when cropped.
+  const image=front.querySelector('.recto-lab-illustration');
+  const copy=panel.querySelector('.inspector-copy');
+  if(copy&&image){
+    const link=element('a','recto-full-art-link','Voir l’illustration entière');
+    link.target='_blank';link.rel='noopener noreferrer';
+    const syncLink=()=>{
+      const src=image.currentSrc||image.src;
+      const isPortrait=image.naturalWidth>0&&image.naturalHeight>0&&image.naturalWidth/image.naturalHeight<.75;
+      link.hidden=!(isPortrait&&/\/assets\/cards\//.test(src));
+      if(!link.hidden)link.href=src;
+    };
+    image.addEventListener('load',syncLink);
+    syncLink();
+    copy.append(link);
+  }
   panel.classList.add('recto-lab-mode-new');
   return front;
 }
