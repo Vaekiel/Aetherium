@@ -59,7 +59,7 @@
   text-align:left!important;
 }
 #page-collection .inspector .recto-lab-card{
-  position:relative;display:block!important;flex:none;
+  position:relative;flex:none;
   width:min(100%,420px);max-width:100%;aspect-ratio:2/3;
   container-type:inline-size;box-sizing:border-box;padding:0;margin:0 auto;
   overflow:hidden;border:0;border-radius:13px;
