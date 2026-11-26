@@ -49,12 +49,23 @@ export function hasApprovedArt(id){return Object.hasOwn(CARD_ART,id)}
 
 /** Apply the same art consistently in the collection, inspector and booster. */
 const codexCandidates=new WeakMap();
+const codexWaiting=new WeakSet();
 export function upgradeCodexIllustration(img){
   const candidate=img&&codexCandidates.get(img);
   if(!candidate)return;
-  codexCandidates.delete(img);
+  // Do not cancel the first, lightweight request in favour of a large image.
+  if(!img.complete||!img.naturalWidth){
+    if(!codexWaiting.has(img)){
+      codexWaiting.add(img);
+      img.addEventListener('load',()=>{
+        codexWaiting.delete(img);
+        if(img.closest('.codex-near-view'))upgradeCodexIllustration(img);
+      },{once:true});
+    }
+    return;
+  }
   const width=Math.ceil(img.getBoundingClientRect().width);
-  if(width>0){img.sizes=width+'px';img.srcset=candidate;}
+  if(width>0){codexCandidates.delete(img);img.sizes=width+'px';img.srcset=candidate;}
 }
 export function applyCardIllustration(img,card,{shiny=false,size='thumbnail',delivery='default'}={}){
   img.alt='Illustration de '+card.name;
