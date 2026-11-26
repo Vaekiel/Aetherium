@@ -1,4 +1,4 @@
-import {createCardFront,attachRectoLabInspector} from './recto-lab.js?v=recto-officiel-1';
+import {createCardFront,attachRectoLabInspector} from './recto-lab.js?v=recto-officiel-2';
 import {RARITIES,PACK_PRICE,drawPack} from './data.js?v=booster-variety-1';
 import {CARDS,drawRefletsPack,drawAuDelaPack} from './collection-data.js?v=au-dela-booster-1';
 import {CRAFT_COSTS,getCraftCost,craftCard} from './crafting.js';
@@ -6,7 +6,7 @@ import {duplicateDustReward} from './duplicate-rewards.js';
 import {boosterMoment} from './booster-feedback.js?v=booster-polish-1';
 import {applyCardIllustration,hasApprovedArt,CARD_ART} from './card-art.js?v=au-dela-booster-1&chromatic=audit-1';
 import {codexProgress,filterCodex} from './codex.js';
-import {FINISHES,FINISH_KEYS,restoreFinishCounts,synchronizeFinishCounts,finishQuantity,finishUnique,finishTotal,preferredFinish} from './finishes.js';
+import {FINISHES,FINISH_KEYS,restoreFinishCounts,synchronizeFinishCounts,finishQuantity,finishUnique,finishTotal,preferredFinish} from './finishes.js?v=finish-order-2';
 import {enableHolographicInspection} from './finish-interaction.js';
 import {sanitizeRecentFinds,recordRecentFind,buildLivingArchive} from './living-archives.js?v=au-dela-booster-1';
 import {createBackup,decodeBackup,installImportedSave,restorePreviousSave,PREVIOUS_SAVE_KEY,MAX_BACKUP_SIZE} from './save-backup.js';
@@ -2276,9 +2276,9 @@ function completeBoosterReveal(){
     ...(momentNote?[momentNote]:[]),
     el('span','',drawSummary.newCount+' nouvelle(s)'),
     el('span','',drawSummary.duplicates+' doublon(s) · +'+drawSummary.dustEarned+' Éclats'),
+    el('span',drawSummary.calligraphicCount?'booster-star':'',drawSummary.calligraphicCount+' Calligraphique(s)'),
     el('span',drawSummary.shinyCount?'booster-star':'',drawSummary.shinyCount+' Chromatique(s)'),
-    el('span',drawSummary.holographicCount?'booster-star':'',drawSummary.holographicCount+' Holographique(s)'),
-    el('span',drawSummary.calligraphicCount?'booster-star':'',drawSummary.calligraphicCount+' Calligraphique(s)')
+    el('span',drawSummary.holographicCount?'booster-star':'',drawSummary.holographicCount+' Holographique(s)')
   );
   $('#pack-title').textContent='Archive ouverte · '+state.opened;
   $('#pack-msg').textContent='Voici tes cinq cartes. Touche une carte pour la retrouver dans le Codex.';
