@@ -4,8 +4,9 @@ import {loreArchive} from './lore-archive.js?v=1';
 import {completionPlan,completionRecipes,filterCompletionRecipes} from './collection-completion.js?v=1';
 import {beginnerGuide,readGuideDismissal,writeGuideDismissal} from './onboarding.js?v=1';
 import {createCardFront,attachRectoLabInspector} from './recto-lab.js?v=recto-uniforme-3';
-import {RARITIES,PACK_PRICE,drawPack} from './data.js?v=booster-variety-1';
-import {CARDS,drawRefletsPack,drawAuDelaPack} from './collection-data.js?v=au-dela-booster-1';
+import {RARITIES,PACK_PRICE} from './data.js?v=booster-variety-1';
+import {CARDS,CARD_BY_ID,drawCollectionPack} from './collection-data.js?v=seasons-09';
+import {boosterView} from './booster-views.js?v=1';
 import {CRAFT_COSTS,getCraftCost,craftCard} from './crafting.js';
 import {getFinishCraftCost,canCraftFinish,craftFinish} from './finish-crafting.js?v=forge-finish-1';
 import {duplicateDustReward} from './duplicate-rewards.js';
@@ -2363,31 +2364,27 @@ function clearBoosterScene(){
 /* Switch only between complete released collections. Never change a purchased
    draw during its animation or re-roll cards on edition change. */
 function selectBooster(edition){
-  if(boosterBusy||!['origines','reflets-brises','au-dela-du-verre'].includes(edition))return;
-  const isReflets=edition==='reflets-brises';
-  const isAuDela=edition==='au-dela-du-verre';
+  const view=boosterView(edition);
+  if(boosterBusy||!view)return;
   selectedBooster=edition;
   clearBoosterScene();
-  boosterArt.classList.toggle('pack-reflets',isReflets);
-  boosterArt.classList.toggle('pack-au-dela',isAuDela);
-  boosterArt.classList.toggle('reliquaire-origines',!isReflets&&!isAuDela);
-  boosterArt.classList.toggle('reliquaire-reflets',isReflets);
-  boosterArt.classList.toggle('reliquaire-au-dela',isAuDela);
-  $('#booster-pack .pack-title').textContent=isAuDela?'AU-DELÀ DU VERRE':isReflets?'REFLETS BRISÉS':'ORIGINES';
-  $('#booster-pack .pack-edition').textContent='SAISON 1 · 5 CARTES';
-  $('#booster-collection-kicker').textContent='SAISON I · LES MARCHES DE VERRE · PARTIE '+(isAuDela?'III':isReflets?'II':'I');
-  $('#booster-family-title').textContent='Booster '+(isAuDela?'Au-delà du Verre':isReflets?'des Reflets brisés':'des Origines');
-  $('#booster-family-description').textContent=isAuDela
-    ?'Cinq cartes venues d’au-delà du Verre, dont au moins une Inhabituelle. Le reste attend d’être découvert.'
-    :isReflets
-      ?'Cinq cartes issues du Revers, dont au moins une Inhabituelle.'
-      :'Cinq cartes à révéler, dont au moins une Inhabituelle.';
+  boosterArt.classList.toggle('pack-reflets',view.theme==='reflets');
+  boosterArt.classList.toggle('pack-au-dela',view.theme==='au-dela');
+  boosterArt.classList.toggle('reliquaire-origines',view.theme==='origines');
+  boosterArt.classList.toggle('reliquaire-reflets',view.theme==='reflets');
+  boosterArt.classList.toggle('reliquaire-au-dela',view.theme==='au-dela');
+  $('#booster-pack .pack-title').textContent=view.title;
+  $('#booster-pack .pack-edition').textContent=view.edition;
+  $('#booster-pack .pack-collection').textContent=view.season.title.toLocaleUpperCase('fr-FR');
+  $('#booster-collection-kicker').textContent=view.kicker;
+  $('#booster-family-title').textContent=view.label;
+  $('#booster-family-description').textContent=view.description;
   for(const control of $$('.booster-choice')){
     const active=control.dataset.booster===edition;
     control.classList.toggle('is-selected',active);
     control.setAttribute('aria-pressed',String(active));
   }
-  $('#pack-title').textContent=isAuDela?'Deux rives, un même horizon.':isReflets?'Les miroirs du Revers t’attendent.':'Les archives attendent leur voyageur.';
+  $('#pack-title').textContent=view.message;
   $('#pack-msg').textContent='Un rituel, cinq révélations. À toi de jouer.';
   update();
 }
@@ -2541,16 +2538,17 @@ function revealBoosterAll(){
 }
 function openOriginesBooster(){
   if(boosterBusy||state.coins<PACK_PRICE)return;
+  const edition=selectedBooster;
+  if(!boosterView(edition))return;
+  const results=drawCollectionPack(edition);
   cancelBoosterTimers();
   boosterBusy=true;
-  const edition=typeof selectedBooster==='undefined'?'origines':selectedBooster;
-  const results=edition==='au-dela-du-verre'?drawAuDelaPack():edition==='origines'?drawPack():drawRefletsPack();
   state.coins-=PACK_PRICE;
   state.opened++;
   let newCount=0,duplicates=0,shinyCount=0,dustEarned=0;
   let holographicCount=0,calligraphicCount=0;
   currentDraw=results.map(item=>{
-    const card=CARDS[item.id-1];
+    const card=CARD_BY_ID.get(item.id);
     const isNew=!state.owned[card.id];
     const dustGain=isNew?0:duplicateDustReward(card);
     if(isNew)newCount++;else{duplicates++;state.dust+=dustGain;dustEarned+=dustGain}
@@ -2639,7 +2637,7 @@ function closeBoosterDialog(){
   if(boosterDialog.open)boosterDialog.close();
 }
 function openBoosterDialog(control){
-  if(boosterBusy)return;
+  if(boosterBusy||!boosterView(control.dataset.booster))return;
   if(selectedBooster!==control.dataset.booster)selectBooster(control.dataset.booster);
   $('#booster-dialog-kicker').textContent=control.dataset.seasonTitle||'LES ARCHIVES';
   boosterDialog.classList.remove('has-results');
