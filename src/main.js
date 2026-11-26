@@ -1467,7 +1467,6 @@ function selectGame(index,{jumpToStage=false,focusTrial=false}={}){
 }
 selectGame(0);
 setTrialView('hub');
-mountTrialMobilePlay();
 const difficultyButtons=$$('#difficulty-options [data-difficulty]');
 function renderDifficultyChoice(){
   for(const control of difficultyButtons){
@@ -3027,6 +3026,7 @@ selectBooster('origines');
 renderExpedition();
 update();
 navigate(APP_PAGES.includes(location.hash.slice(1))?location.hash.slice(1):'jouer');
+mountTrialMobilePlay();
 window.addEventListener('hashchange',()=>{
   const page=location.hash.slice(1);
   if(APP_PAGES.includes(page)&&!$('#page-'+page).classList.contains('active'))navigate(page);
