@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import {boosterView} from '../src/booster-views.js';
 import {readFileSync} from 'node:fs';
 import {runInNewContext} from 'node:vm';
 import {CARDS as ORIGINES,drawPack,PACK_PRICE,CHROMATIC_RATE} from '../src/data.js';
@@ -63,8 +64,8 @@ assert.ok(css.includes('grid-template-columns:repeat(3,minmax(0,1fr))'));
 assert.ok(css.includes('@media(max-width:850px)'));
 assert.ok(css.includes('@media(max-width:420px)'));
 assert.ok(css.includes('prefers-reduced-motion:reduce'));
-assert.ok(source.includes("boosterArt.classList.toggle('pack-au-dela',isAuDela);"));
-assert.ok(source.includes("boosterArt.classList.toggle('reliquaire-au-dela',isAuDela);"),
+assert.ok(source.includes("boosterArt.classList.toggle('pack-au-dela',view.theme==='au-dela');"));
+assert.ok(source.includes("boosterArt.classList.toggle('reliquaire-au-dela',view.theme==='au-dela');"),
   'Selecting Au-delà du Verre uses its full premium foil envelope');
 assert.ok(source.includes("const SAVE='aetherium-save-v1'"));
 assert.ok(source.includes("forgeMode===\'discovery\'?(!state.owned[card.id]&&getCraftCost(card)!==null):canCraftFinish(state,card,forgeMode)"),"Discovery excludes owned cards; finish mode delegates eligibility to the audited helper");
@@ -80,9 +81,8 @@ const state={coins:300,dust:0,opened:0,owned:{1:1,25:1},shiny:{},recentFinds:[]}
 let saved=0,thirdDraws=0;
 const ctx={
  selectedBooster:'au-dela-du-verre',boosterBusy:false,state,CARDS,PACK_PRICE,
- drawAuDelaPack(){thirdDraws++;return drawAuDelaPack(()=>.5)},
- drawPack(){throw Error('Wrong booster pool: Origines')},
- drawRefletsPack(){throw Error('Wrong booster pool: Reflets')},
+ CARD_BY_ID:new Map(CARDS.map(c=>[c.id,c])),boosterView,
+ drawCollectionPack(id){assert.equal(id,'au-dela-du-verre');thirdDraws++;return drawAuDelaPack(()=>.5)},
  duplicateDustReward(){return 5},
  recordRecentFind:(list,id,kind)=>[{id,kind},...list].slice(0,6),
  cancelBoosterTimers(){},update(){saved++},
