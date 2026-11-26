@@ -1,13 +1,9 @@
-/* AETHERIUM — experimental recto only, isolated behind ?recto-test=1.
-   Never changes collection data, saves, booster views or the production design. */
-const LAB_ENABLED = new URLSearchParams(window.location.search).get('recto-test') === '1';
+/* AETHERIUM — universal revealed card front. Rendering only. */
 const ICONS = Object.freeze({
   eclat: './assets/icons/stat-eclat-hd.webp',
   garde: './assets/icons/stat-garde-hd.webp',
   flux: './assets/icons/stat-flux-hd.webp'
 });
-// E2E testing starts with the original inspector to preserve existing regression checks.
-let currentMode = new URLSearchParams(window.location.search).has('booster-e2e') ? 'old' : 'new';
 const element=(tag,cls='',text='')=>{
   const node=document.createElement(tag);
   if(cls)node.className=cls;
@@ -18,11 +14,11 @@ function fitTitle(title){
   const zone=title.parentElement;
   if(!zone?.isConnected||!zone.clientWidth)return;
   const width=zone.closest('.recto-lab-card')?.clientWidth||320;
-  const max=width>365?25:width>300?21:18;
-  const min=10;
+  const max=width>365?25:width>300?21:Math.max(11,Math.floor(width*.06));
+  const min=7;
   title.style.fontSize=max+'px';
   while(parseFloat(title.style.fontSize)>min &&
-    (title.scrollWidth>zone.clientWidth-24||title.scrollHeight>zone.clientHeight-8)){
+    (title.scrollWidth>zone.clientWidth-12||title.scrollHeight>zone.clientHeight-4)){
     title.style.fontSize=(parseFloat(title.style.fontSize)-.5)+'px';
   }
 }
@@ -32,7 +28,7 @@ function cardLabel(card){
   return names[card.rarity]||card.rarity;
 }
 
-function appendCard({card,finish,artwork}){
+export function createCardFront({card,finish='normal',artwork}){
   const front=element('article','recto-lab-card recto-lab-'+finish);
   front.dataset.rarity=card.rarity;
   front.style.setProperty('--recto-rarity',({
@@ -52,9 +48,9 @@ function appendCard({card,finish,artwork}){
   titleZone.append(title);front.append(titleZone);
 
   const art=element('div','recto-lab-art');
-  const source=artwork.querySelector('img');
-  const image=element('img','recto-lab-illustration');
-  image.src=source.currentSrc||source.src;
+  // Reuse the image node, including its original load/error fallback.
+  const image=artwork.querySelector('img');
+  image.classList.add('recto-lab-illustration');
   image.alt='Illustration de '+card.name;
   image.decoding='async';
   art.append(image);front.append(art);
@@ -80,47 +76,15 @@ function appendCard({card,finish,artwork}){
   }
   footer.append(rarity,stats);front.append(footer);
   requestAnimationFrame(()=>fitTitle(title));
+  if(typeof ResizeObserver==='function'){
+    const observer=new ResizeObserver(()=>fitTitle(title));
+    observer.observe(front);
+  }
   return front;
 }
 export function attachRectoLabInspector({panel,card,finish,artwork}){
-  if(!LAB_ENABLED)return;
-  const bar=element('div','recto-lab-switch');
-  const heading=element('span','recto-lab-switch-label','ESSAI RECTO · '+card.name);
-  const original=element('button','recto-lab-switch-button','Recto actuel');
-  const proposed=element('button','recto-lab-switch-button','Nouveau recto');
-  for(const b of [original,proposed])b.type='button';
-  bar.append(heading,original,proposed);
-  const preview=appendCard({card,finish,artwork});
-  const update=mode=>{
-    currentMode=mode;
-    panel.classList.toggle('recto-lab-mode-new',mode==='new');
-    original.setAttribute('aria-pressed',String(mode==='old'));
-    proposed.setAttribute('aria-pressed',String(mode==='new'));
-    if(mode==='new')requestAnimationFrame(()=>fitTitle(preview.querySelector('.recto-lab-name')));
-  };
-  original.addEventListener('click',()=>update('old'));
-  proposed.addEventListener('click',()=>update('new'));
-  panel.prepend(bar,preview);
-  update(currentMode);
-}
-export function initRectoLab({cards,inspect,navigate}){
-  if(!LAB_ENABLED)return;
-  const target=document.querySelector('#page-collection .collection-header');
-  if(!target || document.querySelector('.recto-lab-entry'))return;
-  const panel=element('div','recto-lab-entry');
-  const text=element('div','recto-lab-entry-text');
-  text.append(element('strong','','ATELIER · RECTO EXPÉRIMENTAL'),element('span','','Comparaison isolée : aucun déblocage, aucune modification de sauvegarde.'));
-  panel.append(text);
-  for(const [id,label] of [[8,'Cerf des Lueurs'],[22,'Astra (nom long)']]){
-    const button=element('button','recto-lab-open',label);
-    button.type='button';
-    button.addEventListener('click',()=>{
-      const c=cards.find(c=>c.id===id);
-      if(!c)return;
-      navigate('collection');
-      inspect(c,false,true,false,'normal');
-    });
-    panel.append(button);
-  }
-  target.insertAdjacentElement('afterend',panel);
+  const front=createCardFront({card,finish,artwork});
+  artwork.replaceWith(front);
+  panel.classList.add('recto-lab-mode-new');
+  return front;
 }
