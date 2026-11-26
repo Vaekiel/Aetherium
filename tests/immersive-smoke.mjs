@@ -18,8 +18,8 @@ for(const size of [192,512]){
  assert.equal(buffer.readUInt32BE(16),size,'Icon must have actual declared width');
  assert.equal(buffer.readUInt32BE(20),size,'Icon must have actual declared height');
 }
-assert.match(html,/<link rel="manifest" href="\.\/manifest\.webmanifest\?v=immersive-1"/);
-assert.ok(html.includes('rel="apple-touch-icon"'));
+assert.match(html,/<link rel="manifest" href="\.\/manifest\.webmanifest\?v=arcane-launch-1"/);
+assert.ok(html.includes('rel="apple-touch-icon" href="./assets/icons/aetherium-app-192.png"'));
 assert.ok(html.includes('apple-mobile-web-app-capable'));
 assert.ok(html.includes('id="immersive-toggle" hidden'));
 assert.ok(html.includes('class="app-mode-help"'));
