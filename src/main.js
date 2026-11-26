@@ -1,4 +1,4 @@
-import {createCardFront,attachRectoLabInspector} from './recto-lab.js?v=recto-officiel-2';
+import {createCardFront,attachRectoLabInspector} from './recto-lab.js?v=recto-uniforme-3';
 import {RARITIES,PACK_PRICE,drawPack} from './data.js?v=booster-variety-1';
 import {CARDS,drawRefletsPack,drawAuDelaPack} from './collection-data.js?v=au-dela-booster-1';
 import {CRAFT_COSTS,getCraftCost,craftCard} from './crafting.js';
@@ -1713,6 +1713,13 @@ function inspect(c,shiny=false,scroll=true,chromaticPreview=false,finishOverride
   const copy=el('div','inspector-copy');
   copy.append(kicker,title,chapterLabel,el('p','muted',c.type+
     ' · '+FINISHES[activeFinish].symbol+' Version '+FINISHES[activeFinish].label),desc,stats);
+  // The card aperture may crop a taller illustration, but the original remains accessible.
+  if(CARD_ART[c.id]?.full){
+    const fullArt=el('a','recto-full-art-link','Voir l’illustration entière');
+    fullArt.href=CARD_ART[c.id].full;
+    fullArt.target='_blank';fullArt.rel='noopener noreferrer';
+    copy.append(fullArt);
+  }
   const owned=el('p','stat-inventory-total');
   owned.append(el('span','stat-inventory-heading','Collection'),
     el('strong','','Possédées : ×'+(state.owned[c.id]||0)));
