@@ -3,8 +3,8 @@ import {readFileSync} from 'node:fs';
 const read=p=>readFileSync(new URL(p,import.meta.url),'utf8');
 const js=read('../src/recto-lab.js'),css=read('../src/recto-lab.css'),
   main=read('../src/main.js'),codex=read('../src/codex.css');
-assert.ok(main.includes("recto-lab.js?v=recto-officiel-2"));
-assert.ok(codex.includes("recto-lab.css?v=recto-officiel-2"));
+assert.ok(main.includes("recto-lab.js?v=recto-uniforme-3"));
+assert.ok(codex.includes("recto-lab.css?v=recto-uniforme-3"));
 assert.doesNotMatch(js,/recto-test|LAB_ENABLED|recto-lab-switch/,'The official front is enabled by default');
 assert.match(main,/return createCardFront\(\{card:item\.card/,'Booster reveal shares the official front');
 assert.match(js,/aetherium-back-original-v3\.webp/,'The real back is reused');
