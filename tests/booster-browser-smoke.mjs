@@ -475,8 +475,24 @@ await command('Page.navigate',{url:'http://127.0.0.1:8765/?booster-e2e=1#collect
 await until(()=>evaluate("Boolean(document.querySelector('#page-collection.active #card-grid [data-card-id=\\\"8\\\"]'))"),'Owned Cerf in gallery after QA reload');
 assert.equal(await evaluate("Boolean(document.querySelector('#preview-art'))"),false,
  'The obsolete preview toggle never reappears after reload');
+const ownedFixture=await evaluate(`(()=>{
+ const save=JSON.parse(localStorage.getItem('aetherium-save-v1'));
+ const tile=document.querySelector('#card-grid [data-card-id="8"]');
+ return {savedOwned:save?.owned?.[8],tileClass:tile?.className,
+   tileText:tile?.innerText?.slice(0,150),
+   recto:!!document.querySelector('#inspector .recto-lab-illustration'),
+   location:location.href};
+})()`);
+console.log('QA owned-card fixture after reload:',JSON.stringify(ownedFixture));
+assert.ok(ownedFixture.savedOwned>=1,'Test localStorage contains the Cerf before inspection');
+
 // Regression: Cerf des Lueurs uses the original Codex illustration when owned.
 await evaluate("document.querySelector('#card-grid [data-card-id=\"8\"]').click()");
+console.log('Cerf inspector after click:',JSON.stringify(await evaluate(`(()=>{
+ const pane=document.querySelector('#inspector');
+ return {text:pane?.innerText?.slice(0,200),sealed:!!pane?.querySelector('.codex-sealed-inspector'),
+ recto:!!pane?.querySelector('.recto-lab-illustration')};
+})()`)));
 await until(()=>evaluate("Boolean(document.querySelector('#inspector .recto-lab-illustration'))"),'Original inspector ready');
 await until(()=>evaluate("document.querySelector('#inspector .recto-lab-illustration').complete"),'Original Cerf artwork loaded');
 const originalCerf=await evaluate(`(()=>{
