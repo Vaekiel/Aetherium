@@ -3,7 +3,7 @@
 import {CARDS as ORIGINES_CARDS,drawPackFromPool} from './data.js?v=booster-variety-1';
 import {REFLETS_BRISES_DRAFT} from './reflets-brises-catalog.js';
 import {AU_DELA_DU_VERRE_DRAFT} from './au-dela-du-verre-catalog.js';
-import {SEASONS} from './seasons.js?v=au-dela-booster-1';
+import {SEASONS} from './seasons.js?v=seasons-09';
 
 export const REFLETS_CARDS=Object.freeze(REFLETS_BRISES_DRAFT.map((card,i)=>Object.freeze({
   id:card.id,name:card.name,type:card.type,rarity:card.rarity,lore:card.lore,
@@ -20,7 +20,24 @@ export const AU_DELA_CARDS=Object.freeze(AU_DELA_DU_VERRE_DRAFT.map((card,i)=>Ob
   boosterEligible:card.boosterEligible
 })));
 export const AU_DELA_BOOSTER_CARDS=Object.freeze(AU_DELA_CARDS.filter(card=>card.boosterEligible));
-export const CARDS=Object.freeze([...ORIGINES_CARDS,...REFLETS_CARDS,...AU_DELA_CARDS]);
+// Register one authored group per released collection. Draft groups are never
+// added to the playable catalogue merely because their IDs have been reserved.
+export const CARD_GROUPS=Object.freeze({
+  origines:ORIGINES_CARDS,
+  'reflets-brises':REFLETS_CARDS,
+  'au-dela-du-verre':AU_DELA_CARDS
+});
+export function buildPublishedCatalog(seasons,groups){
+  const cards=[];
+  for(const season of seasons)for(const part of season.collections){
+    if(!part.released)continue;
+    const group=Object.hasOwn(groups,part.id)?groups[part.id]:null;
+    if(!Array.isArray(group))throw new Error('Missing published collection: '+part.id);
+    cards.push(...group);
+  }
+  return Object.freeze(cards);
+}
+export const CARDS=buildPublishedCatalog(SEASONS,CARD_GROUPS);
 export const CARD_BY_ID=new Map(CARDS.map(card=>[card.id,card]));
 
 // Published collections are the only source of booster pools. Keep the
