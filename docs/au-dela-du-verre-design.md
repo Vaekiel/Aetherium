@@ -42,7 +42,7 @@ Le fil du scénario part de **La Traversée des Reflets** (l'expédition existan
 
 **Composition :** un sujet principal occupant la partie centrale, un premier plan pixel-art travaillé, une profondeur de décor en petits plans nets. Éviter les personnages génériques de photoréaliste, les silhouettes aux mains incohérentes et les brillances/effets lisses incompatibles avec des pixels HD nets. Priorité à la lisibilité des cartes de 132–180 px de large sur mobile.
 
-**Booster livré :** pochette originale en pixel art HD nuit/indigo, arches de verre réunies par une couture turquoise et aube corail, avec le même rituel de déchirure et le même affichage mobile que les autres éditions. Illustration indépendante dans `assets/boosters/au-dela-du-verre-pack-pixel-hd.webp`, sans reproduction de carte ni spoiler de la Signature.
+**Booster livré :** pochette originale en pixel art HD nuit/indigo, arches de verre réunies par une couture turquoise et aube corail, avec le même rituel de déchirure et le même affichage mobile que les autres éditions. Illustration indépendante dans `assets/boosters/au-dela-du-verre-unified-v5.webp` (la pochette précédente reste accessible dans l’historique Git), sans reproduction de carte ni spoiler de la Signature.
 
 ### Règles de publication et de progression
 

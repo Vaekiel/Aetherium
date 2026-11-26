@@ -51,7 +51,6 @@ jobs:
           test -s src/booster-artworks.css
           test -s src/booster-feedback.css
           test -s src/booster-feedback.js
-          test -s assets/boosters/origines-pack-pixel-hd-v2.webp
           test -s assets/boosters/reflets-brises-pack-pixel-hd-v2.webp
           test -s tests/booster-artworks-smoke.mjs
           test -s tests/booster-variety-smoke.mjs
@@ -87,7 +86,6 @@ jobs:
           test -s src/au-dela-gallery.js
           test -s src/au-dela-gallery.css
           test -s src/au-dela-booster.css
-          test -s assets/boosters/au-dela-du-verre-pack-pixel-hd.webp
           test -s assets/boosters/au-dela-du-verre-unified-v5.webp
           test -s assets/boosters/origines-unified-v5.webp
           test -s assets/boosters/reflets-brises-unified-v5.webp
