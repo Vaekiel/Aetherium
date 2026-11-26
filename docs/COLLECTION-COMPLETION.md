@@ -1,0 +1,7 @@
+# Chantier 04 — Carnet de complétion
+
+Le Codex possédait déjà les objectifs de saison, le Journal et les Archives Vivantes. Le carnet ajoute une vue par collection : quatre objectifs de finition, les recettes actuellement accessibles sur les cartes découvertes, leur coût cumulé en Éclats et des raccourcis pour filtrer les cartes concernées. Les objectifs de la Signature respectent le chantier 02 (23 normales/calligraphiques/holographiques et 24 chromatiques dans le dernier chapitre). La Signature n'est jamais proposée à la Forge.
+
+Le filtre de complétion réinitialise les autres filtres via un raccourci explicite ; les cartes affichent uniquement une finition réellement détenue, jamais l'effet non possédé. La fiche de la carte offre les recettes de ses finitions manquantes dans un volet facultatif. Sélectionner une recette ouvre l'Atelier sur la bonne carte et le bon mode, mais n'achète rien. Les coûts proviennent des règles existantes. Le coût affiché est celui des recettes actuellement accessibles, pas celui de toutes les cartes encore scellées.
+
+Aucune modification de la sauvegarde, des probabilités, des cartes ni des tarifs. Aucun nouveau chargement d'image, aucune animation ajoutée. Les filtres passent toujours par le rendu optimisé du chantier 2.5. Le carnet reste fermé par défaut. Les favoris multiples, la recherche globale et les nouveaux objectifs de progression ne font pas partie de cette première passe.
