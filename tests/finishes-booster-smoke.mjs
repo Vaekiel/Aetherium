@@ -29,7 +29,8 @@ const next=box(),progress=box(),progressFill=box(),step=box(),page=box();
 let saved=0;
 const sandbox={
  boosterBusy:false,state,CARDS:[{id:1,rarity:'common',name:'Veilleuse de Nacre'}],
- PACK_PRICE:100,drawPack:()=>draw,duplicateDustReward:()=>5,
+ PACK_PRICE:100,boosterView:id=>id==='origines'?{collection:{id}}:null,
+ drawCollectionPack(id){assert.equal(id,'origines');return draw},duplicateDustReward:()=>5,
  recordRecentFind:(items)=>items,
  selectedBooster:'origines',
  cancelBoosterTimers(){},boosterArt:pack,boosterOpening:opening,boosterGrid:grid,
@@ -39,6 +40,7 @@ const sandbox={
  showBoosterCard(){},update(){saved++},
  $:selector=>selector==='#page-boosters'?page:box()
 };
+sandbox.CARD_BY_ID=new Map(sandbox.CARDS.map(c=>[c.id,c]));
 runInNewContext(code+'openOriginesBooster()',sandbox);
 assert.equal(state.coins,200);
 assert.equal(state.opened,1);
