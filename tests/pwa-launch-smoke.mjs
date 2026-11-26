@@ -17,8 +17,9 @@ assert.match(html,/#arcane-launch\{position:fixed;inset:0/);
 const launchStyle=html.match(/<style id="aetherium-launch-style">([\s\S]*?)<\/style>/)[1];
 assert.ok(!launchStyle.includes('aetherium-launch.webp'),'No second copy of the title illustration in CSS');
 assert.equal((html.match(/class="launch-art"/g)||[]).length,1);
-assert.match(launchStyle,/@media\(orientation:portrait\)\{#arcane-launch \.launch-art\{inset:0 0 auto;width:100%;height:auto;object-fit:contain/);
-assert.match(launchStyle,/mask-image:linear-gradient\(#000 0%,#000 72%,transparent 100%\)/);
+assert.match(launchStyle,/@media\(orientation:portrait\)\{#arcane-launch \.launch-art\{inset:0;width:100%;height:100%;object-fit:cover/);
+assert.match(launchStyle,/@media\(orientation:portrait\)[^\n]+mask-image:none/);
+assert.doesNotMatch(launchStyle,/@media\(orientation:portrait\)[^\n]+height:auto/);
 assert.ok(!/DOMContentLoaded[^\n]*enter|setTimeout\(enter/.test(script),'No automatic entry');
 function simulate(){
  const events={},timers=[];let leaving=false;
