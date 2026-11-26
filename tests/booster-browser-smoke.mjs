@@ -471,7 +471,8 @@ await evaluate(`(()=>{
  delete save.finishCounts;
  localStorage.setItem(key,JSON.stringify(save));
 })()`);
-await command('Page.navigate',{url:'http://127.0.0.1:8765/?booster-e2e=1#collection'});
+// A same-document #collection navigation does not reload the JS save state.
+await command('Page.reload',{ignoreCache:true});
 await until(()=>evaluate("Boolean(document.querySelector('#page-collection.active #card-grid [data-card-id=\\\"8\\\"]'))"),'Owned Cerf in gallery after QA reload');
 assert.equal(await evaluate("Boolean(document.querySelector('#preview-art'))"),false,
  'The obsolete preview toggle never reappears after reload');
@@ -485,14 +486,10 @@ const ownedFixture=await evaluate(`(()=>{
 })()`);
 console.log('QA owned-card fixture after reload:',JSON.stringify(ownedFixture));
 assert.ok(ownedFixture.savedOwned>=1,'Test localStorage contains the Cerf before inspection');
+assert.ok(!ownedFixture.tileClass.includes('is-sealed'),'Reload applies the isolated owned-card test fixture');
 
 // Regression: Cerf des Lueurs uses the original Codex illustration when owned.
 await evaluate("document.querySelector('#card-grid [data-card-id=\"8\"]').click()");
-console.log('Cerf inspector after click:',JSON.stringify(await evaluate(`(()=>{
- const pane=document.querySelector('#inspector');
- return {text:pane?.innerText?.slice(0,200),sealed:!!pane?.querySelector('.codex-sealed-inspector'),
- recto:!!pane?.querySelector('.recto-lab-illustration')};
-})()`)));
 await until(()=>evaluate("Boolean(document.querySelector('#inspector .recto-lab-illustration'))"),'Original inspector ready');
 await until(()=>evaluate("document.querySelector('#inspector .recto-lab-illustration').complete"),'Original Cerf artwork loaded');
 const originalCerf=await evaluate(`(()=>{
