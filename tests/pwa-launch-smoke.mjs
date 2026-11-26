@@ -14,25 +14,18 @@ const art=readFileSync('assets/icons/aetherium-launch.webp');assert.equal(art.su
 const script=html.match(/<script id="aetherium-launch-controller">([\s\S]*?)<\/script>/)[1];
 assert.ok(!/localStorage|sessionStorage|indexedDB/.test(script));
 assert.match(html,/#arcane-launch\{position:fixed;inset:0/);
-assert.match(html,/center 43%\/cover no-repeat/);
-assert.match(html,/\.launch-status\{position:absolute/);
-assert.match(html,/\.launch-art\{position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;display:block;object-fit:cover/);
-assert.doesNotMatch(html,/@media\(max-aspect-ratio:848\/1100\)/);
-function simulate({fallback=false,delayedArt=false,lateGame=false,alreadyReady=false}={}){
- let ready,now=0,id=0,leaving=false;const timers=new Map(),events={};
- const art={complete:!delayedArt,addEventListener(name,fn){events[name]=fn;}};
- const screen={hidden:true,querySelector(){return art;},classList:{add(x){assert.equal(x,'is-leaving');leaving=true;}},setAttribute(){}};
- runInNewContext(script,{document:{getElementById(){return screen;},readyState:alreadyReady?'complete':'loading',addEventListener(name,fn){assert.equal(name,'DOMContentLoaded');ready=fn;}},performance:{now:()=>now},setTimeout(fn,ms){timers.set(++id,{fn,at:now+ms,ms});return id;},clearTimeout(i){timers.delete(i);}});
- function advance(to){while(true){const next=[...timers].filter(([,t])=>t.at<=to).sort((a,b)=>a[1].at-b[1].at)[0];if(!next)break;timers.delete(next[0]);now=next[1].at;next[1].fn();}now=to;}
- assert.equal(screen.hidden,false);
- if(fallback){advance(14999);assert.equal(leaving,false);advance(15000);assert.equal(leaving,true);advance(15450);assert.equal(screen.hidden,true);return;}
- if(!alreadyReady&&!lateGame)ready();
- if(delayedArt){advance(1000);events.load();}
- if(lateGame){advance(7200);ready();}
- const finishAt=lateGame?7200:delayedArt?6000:5000;
- if(now<finishAt)advance(finishAt-1);assert.equal(leaving,false);
- advance(finishAt);assert.equal(leaving,true);assert.equal(screen.hidden,false);
- advance(finishAt+450);assert.equal(screen.hidden,true);assert.equal(timers.size,0);
+assert.match(html,/center bottom\/cover no-repeat/);
+assert.ok(!/DOMContentLoaded[^\n]*enter|setTimeout\(enter/.test(script),'No automatic entry');
+function simulate(){
+ const events={},timers=[];let leaving=false;
+ const node=(name,hidden=false)=>({hidden,inert:false,events:{},addEventListener(key,fn){this.events[key]=fn;},setAttribute(){},focus(){},classList:{add(x){assert.equal(x,'is-leaving');leaving=true;}},querySelector(){return art;}});
+ const art={complete:true,naturalWidth:400,addEventListener(){}};
+ const ids=Object.fromEntries(['arcane-launch','launch-play','launch-news-open','launch-news-close','launch-menu','launch-news','launch-news-title','launch-fallback','app'].map(n=>[n,node(n,n==='arcane-launch'||n==='launch-news'||n==='launch-fallback')]));
+ runInNewContext(script,{document:{getElementById:id=>ids[id],querySelector:()=>null,readyState:'loading',addEventListener(key,fn){events[key]=fn;}},setTimeout(fn,ms){timers.push({fn,ms});}});
+ const screen=ids['arcane-launch'];assert.equal(screen.hidden,false);events.DOMContentLoaded();assert.equal(ids.app.inert,true);
+ assert.equal(timers.length,0,'No automatic dismissal, no timeout');
+ ids['launch-news-open'].events.click();assert.equal(ids['launch-news'].hidden,false);assert.equal(ids['launch-menu'].hidden,true);assert.equal(screen.hidden,false);
+ ids['launch-news-close'].events.click();assert.equal(ids['launch-news'].hidden,true);assert.equal(ids['launch-menu'].hidden,false);assert.equal(timers.length,0);
+ ids['launch-play'].events.click();assert.equal(leaving,true);assert.equal(ids.app.inert,false);assert.equal(timers.length,1);assert.equal(timers[0].ms,450);timers[0].fn();assert.equal(screen.hidden,true);
 }
-simulate();simulate({delayedArt:true});simulate({lateGame:true});simulate({alreadyReady:true});simulate({fallback:true,delayedArt:true});
-console.log('PWA launch: full-bleed layout, icons, identity, minimum hold, late artwork and fail-safe verified');
+simulate();console.log('PWA title: persistent menu, news, explicit Play, app identity and save isolation verified');

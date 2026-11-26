@@ -56,6 +56,9 @@ await command('Runtime.enable');
 await command('Page.enable');
 await command('Page.navigate',{url:'http://127.0.0.1:8765/?chromatic-audit=1#collection'});
 await until(()=>evaluate("document.readyState==='complete' && !!document.querySelector('#card-grid')"),'initial Codex load');
+await until(()=>evaluate("document.readyState==='complete' && document.querySelector('#arcane-launch')?.hidden===false"),'Title ready');
+await evaluate("document.querySelector('#launch-play').click()");
+await until(()=>evaluate("document.querySelector('#arcane-launch')?.hidden===true"),'Enter game');
 // Isolated synthetic save: every card has exactly one Chromatique copy.
 await evaluate(`(()=>{
  const ids=Array.from({length:72},(_,i)=>i+1);
@@ -69,6 +72,9 @@ await evaluate(`(()=>{
  return true;
 })()`);
 await until(()=>evaluate("document.querySelector('#page-collection')?.classList.contains('active') && document.querySelectorAll('#card-grid .card.is-chromatic').length===24"),'all Origines Chromatiques present');
+await until(()=>evaluate("document.readyState==='complete' && document.querySelector('#arcane-launch')?.hidden===false"),'Title ready');
+await evaluate("document.querySelector('#launch-play').click()");
+await until(()=>evaluate("document.querySelector('#arcane-launch')?.hidden===true"),'Enter game');
 for(const width of [360,768,1280]){
   await command('Emulation.setDeviceMetricsOverride',{
     width,height:Math.max(730,Math.round(width*.9)),deviceScaleFactor:1,mobile:width<=850
@@ -165,6 +171,9 @@ await evaluate(`(()=>{
  location.reload();return true;
 })()`);
 await until(()=>evaluate("Boolean(document.querySelector('.codex-chapter[data-collection=\\\"origines\\\"]'))"),'Codex reload');
+await until(()=>evaluate("document.readyState==='complete' && document.querySelector('#arcane-launch')?.hidden===false"),'Title ready');
+await evaluate("document.querySelector('#launch-play').click()");
+await until(()=>evaluate("document.querySelector('#arcane-launch')?.hidden===true"),'Enter game');
 await evaluate("document.querySelector('.codex-chapter[data-collection=\\\"origines\\\"]').click()");
 await until(()=>evaluate("Boolean(document.querySelector('#card-grid [data-card-id=\\\"8\\\"]'))"),'Cerf available');
 await evaluate("document.querySelector('#card-grid [data-card-id=\\\"8\\\"]').click()");

@@ -87,16 +87,20 @@ assert.equal(installedManifest.display_override[0],'fullscreen');
 assert.equal(installedManifest.icons.length,3,'Two standard icons and one adaptive Android icon');
 assert.deepEqual(installedManifest.icons.filter(icon=>icon.purpose==='any').map(icon=>icon.sizes).sort(),['192x192','512x512']);
 assert.ok(installedManifest.icons.some(icon=>icon.purpose==='maskable'&&icon.sizes==='512x512'));
-const launchLayout=await evaluate(`(()=>{const s=document.querySelector('#arcane-launch');const c=getComputedStyle(s);return {position:c.position,top:c.top,right:c.right,bottom:c.bottom,left:c.left,backgroundSize:c.backgroundSize}})()`);
-assert.deepEqual(launchLayout,{position:'fixed',top:'0px',right:'0px',bottom:'0px',left:'0px',backgroundSize:'cover'},'Splash fills the entire viewport');
-const launchImage=await evaluate(`(()=>{const s=document.querySelector('#arcane-launch'),a=s.querySelector('.launch-art'),r=a.getBoundingClientRect();return {hidden:s.hidden,leaving:s.classList.contains('is-leaving'),fit:getComputedStyle(a).objectFit,width:r.width,height:r.height,viewportWidth:innerWidth,viewportHeight:innerHeight,left:r.left,top:r.top}})()`);
-assert.equal(launchImage.hidden,false,'Splash must still be visible on a fast connection');
-assert.equal(launchImage.leaving,false,'No premature fade');
-assert.equal(launchImage.fit,'cover');
-assert.ok(Math.abs(launchImage.width-launchImage.viewportWidth)<2&&Math.abs(launchImage.height-launchImage.viewportHeight)<2&&Math.abs(launchImage.left)<2&&Math.abs(launchImage.top)<2,'Actual mobile image fills the viewport');
-await until(()=>evaluate("document.querySelector('#arcane-launch')?.hidden===true"),'Launch screen dismissed after startup');
-assert.ok(await evaluate("performance.now()>=5000"),'Splash is visible for at least five seconds');
-assert.equal(await evaluate("document.querySelectorAll('#booster-gallery .booster-choice').length"),3,'All three published boosters are present');
+const launchLayout=await evaluate(`(()=>{const s=document.querySelector('#arcane-launch'),r=s.getBoundingClientRect();return {hidden:s.hidden,width:r.width,height:r.height,viewportWidth:innerWidth,viewportHeight:innerHeight,backgroundSize:getComputedStyle(s).backgroundSize,appInert:document.querySelector('#app').inert}})()`);
+assert.equal(launchLayout.hidden,false);
+assert.equal(launchLayout.backgroundSize,'cover');
+assert.equal(launchLayout.appInert,true);
+assert.ok(Math.abs(launchLayout.width-launchLayout.viewportWidth)<2&&Math.abs(launchLayout.height-launchLayout.viewportHeight)<2,'Title fills mobile viewport');
+await sleep(5500);
+assert.equal(await evaluate("document.querySelector('#arcane-launch').hidden"),false,'Menu remains visible without player action');
+await evaluate("document.querySelector('#launch-news-open').click()");
+assert.equal(await evaluate("document.querySelector('#launch-news').hidden"),false,'News opens inside title');
+await evaluate("document.querySelector('#launch-news-close').click()");
+assert.equal(await evaluate("document.querySelector('#launch-menu').hidden"),false,'Return to title');
+await evaluate("document.querySelector('#launch-play').click()");
+await until(()=>evaluate("document.querySelector('#arcane-launch')?.hidden===true"),'Title dismissed after Play');
+assert.equal(await evaluate("document.querySelector('#app').inert"),false,'Game unlocked');
 
 // Simulate camera notches using the browser's actual safe-area CSS env values.
 // This catches selector precedence regressions that source-only tests miss.

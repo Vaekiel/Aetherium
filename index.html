@@ -1,32 +1,64 @@
 <!doctype html>
 <html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#101322"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="Aetherium"><link rel="manifest" href="./manifest.webmanifest?v=arcane-launch-1"><link rel="apple-touch-icon" href="./assets/icons/aetherium-app-192.png"><link rel="icon" type="image/png" sizes="192x192" href="./assets/icons/aetherium-app-192.png"><meta name="description" content="Aetherium, jeu gratuit de collection de cartes fantastiques et de mini-jeux."><title>AETHERIUM · Chroniques des Arcanes</title><link rel="preload" as="image" href="./assets/icons/aetherium-launch.webp"><link rel="stylesheet" href="./src/style.css"><link rel="stylesheet" href="./src/fullscreen.css?v=safearea-2"><link rel="stylesheet" href="./src/theme.css?v=card-ornament-1"><link rel="stylesheet" href="./src/mobile.css?v=inspector-layer-3"><link rel="stylesheet" href="./src/booster.css?v=card-back-original-v3"><link rel="stylesheet" href="./src/booster-packaging.css?v=ouverture-183"><link rel="stylesheet" href="./src/reflets-booster.css?v=mobile-pack-align-1"><link rel="stylesheet" href="./src/booster-artworks.css?v=pixel-packs-2"><link rel="stylesheet" href="./src/au-dela-booster.css?v=au-dela-booster-1"><link rel="stylesheet" href="./src/booster-feedback.css?v=booster-polish-1"><link rel="stylesheet" href="./src/runes.css?v=rituels-1.7.2"><link rel="stylesheet" href="./src/memory.css?v=memoire-1.7.2"><link rel="stylesheet" href="./src/lock.css?v=logique-1.7.2"><link rel="stylesheet" href="./src/mines.css?v=fouilles-1.7.2"><link rel="stylesheet" href="./src/alchemy.css?v=alchemy-mastery-172b"><link rel="stylesheet" href="./src/shell.css?v=onglet-actif-1"><link rel="stylesheet" href="./src/trial-titles.css?v=titres-1.7.3"><link rel="stylesheet" href="./src/expedition.css?v=revers-expedition-1"><link rel="stylesheet" href="./src/expedition-finale.css?v=dernier-accord-1"><link rel="stylesheet" href="./src/navigation.css?v=navigation-atelier-1"><link rel="stylesheet" href="./src/crafting.css?v=forge-active-1"><link rel="stylesheet" href="./src/save-backup.css?v=backup-185"><link rel="stylesheet" href="./src/chromatic.css?v=chromatiques-7"><link rel="stylesheet" href="./src/finishes.css?v=finishes-2"><link rel="stylesheet" href="./src/reflets-gallery.css?v=reflets-final-24"><link rel="stylesheet" href="./src/au-dela-gallery.css?v=au-dela-lot-1"><link rel="stylesheet" href="./src/reflets-preview.css?v=art-pilot-38"><link rel="stylesheet" href="./src/rarity-frames.css?v=rarity-halo-1"><link rel="stylesheet" href="./src/codex.css?v=au-dela-pilot-49&amp;front=original-restored-1&amp;polish=codex-stats-hd-all-1&amp;rectoborder=recto-uniforme-3"><link rel="stylesheet" href="./src/living-archives.css?v=archives-184"><link rel="stylesheet" href="./src/trial-progress.css?v=defis-1.7.3&amp;polish=epreuves-v2"><link rel="stylesheet" href="./src/ui-harmony.css?v=archives-harmony-3&amp;polish=1&amp;gallery=2&amp;background=clean-1&amp;relics=2&amp;origines=1&amp;reflets=normalized-2&amp;audela=premium-3&amp;typographie=v5&amp;pack-template=1"><style id="aetherium-launch-style">
-#arcane-launch[hidden]{display:none!important}
-#arcane-launch{position:fixed;inset:0;z-index:2147483647;isolation:isolate;overflow:hidden;background:#101322 url("./assets/icons/aetherium-launch.webp") center 43%/cover no-repeat;color:#f8dfac;opacity:1;visibility:visible;transition:opacity .45s ease,visibility .45s}
-
-#arcane-launch .launch-art{position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;display:block;object-fit:cover;object-position:center 43%;z-index:1;mask-image:none;-webkit-mask-image:none}
-#arcane-launch .launch-status{position:absolute;z-index:2;inset:auto 0 0;display:grid;justify-items:center;gap:7px;padding:clamp(16px,5vh,48px) max(16px,env(safe-area-inset-right)) max(24px,calc(env(safe-area-inset-bottom) + 18px)) max(16px,env(safe-area-inset-left));text-align:center;font:italic 16px Georgia,serif;letter-spacing:.13em;color:#f8dfac;text-shadow:0 1px 5px #101322,0 0 12px #a85cff;background:linear-gradient(transparent,rgba(16,19,34,.75))}
-#arcane-launch .launch-star{display:block;color:#ffe4a3;font-size:30px;line-height:1;text-shadow:0 0 18px #ae6eff;animation:arcane-pulse 1.5s ease-in-out infinite}
-#arcane-launch .launch-track{height:5px;width:min(64vw,280px);overflow:hidden;border:1px solid #b78a5a;border-radius:20px;background:#1a1733;box-shadow:0 0 12px #8c4de355}
-#arcane-launch .launch-track::before{content:"";display:block;width:42%;height:100%;border-radius:20px;background:linear-gradient(90deg,transparent,#a56bff,#ffe5a7,#b866ff,transparent);animation:arcane-flow 1.25s ease-in-out infinite}
+#arcane-launch[hidden],#arcane-launch [hidden]{display:none!important}
+#arcane-launch{position:fixed;inset:0;z-index:2147483647;isolation:isolate;overflow:hidden;background:#101322 url("./assets/icons/aetherium-launch.webp") center bottom/cover no-repeat;color:#f8dfac;opacity:1;visibility:visible;transition:opacity .45s ease,visibility .45s;font-family:Georgia,serif}
+#arcane-launch .launch-art{position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;display:block;object-fit:cover;object-position:center 35%;z-index:0}
+#arcane-launch .launch-shade{position:absolute;inset:0;z-index:1;pointer-events:none;background:linear-gradient(180deg,transparent 42%,#10132222 55%,#101322e8 89%,#101322 100%)}
+#arcane-launch .launch-menu{position:absolute;z-index:2;inset:auto 0 0;display:grid;justify-items:center;gap:12px;padding:12px max(16px,env(safe-area-inset-right)) max(24px,calc(env(safe-area-inset-bottom) + 18px)) max(16px,env(safe-area-inset-left));text-align:center}
+#arcane-launch .launch-button{box-sizing:border-box;width:min(78vw,320px);min-height:50px;padding:12px 20px;border:1px solid #d5ab73;border-radius:8px;background:linear-gradient(180deg,#34234c,#211932);color:#f9e3b9;font:600 16px Georgia,serif;letter-spacing:.07em;cursor:pointer;box-shadow:0 3px 14px #0007,inset 0 0 16px #a16ae01c;touch-action:manipulation}
+#arcane-launch .launch-button--play{background:linear-gradient(180deg,#ffe6af,#c89453);color:#271830;border-color:#ffe8b5;font-size:19px;box-shadow:0 0 24px #a46aff60,inset 0 0 0 2px #8c613844}
+#arcane-launch .launch-button:focus-visible{outline:2px solid #fff3da;outline-offset:3px}
+#arcane-launch .launch-studio{font:12px Georgia,serif;letter-spacing:.16em;color:#d4c3e5;margin:2px 0 0}
+#arcane-launch .launch-news{position:absolute;z-index:3;inset:max(12px,env(safe-area-inset-top)) max(12px,env(safe-area-inset-right)) max(12px,env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-left));margin:auto;box-sizing:border-box;width:min(90%,560px);max-height:calc(100% - 24px);height:max-content;overflow:auto;overscroll-behavior:contain;background:linear-gradient(155deg,#211b38f7,#121526fc);border:1px solid #c6a16c;border-radius:14px;padding:clamp(16px,4vw,28px);box-shadow:0 12px 80px #080611df;color:#e9def5;text-align:left}
+#arcane-launch .launch-news h2{color:#f8dfac;font:600 clamp(21px,5vw,28px) Georgia,serif;margin:0 0 16px}
+#arcane-launch .launch-news h3{color:#e6c18a;font:600 16px Georgia,serif;margin:18px 0 5px}
+#arcane-launch .launch-news p{font:14px/1.5 system-ui,sans-serif;margin:0 0 10px;color:#e0d7ed}
+#arcane-launch .launch-news .launch-button{display:block;width:100%;margin-top:20px}
+#arcane-launch .launch-fallback{position:absolute;z-index:1;top:23%;width:100%;margin:0;text-align:center;color:#ffe4ad;font:600 clamp(28px,8vw,60px) Georgia,serif;text-shadow:0 0 20px #c289fa}
 #arcane-launch.is-leaving{opacity:0;visibility:hidden;pointer-events:none}
-@keyframes arcane-pulse{50%{opacity:.55;transform:scale(.88)}}
-@keyframes arcane-flow{from{transform:translateX(-100%)}to{transform:translateX(340%)}}
-@media(orientation:landscape) and (max-height:550px){#arcane-launch .launch-status{gap:4px;padding-top:12px;padding-bottom:max(12px,calc(env(safe-area-inset-bottom) + 8px));font-size:13px}#arcane-launch .launch-star{font-size:20px}#arcane-launch .launch-track{width:min(35vw,240px)}}
-@media(prefers-reduced-motion:reduce){#arcane-launch{transition:none}#arcane-launch .launch-star,#arcane-launch .launch-track::before{animation:none}#arcane-launch .launch-track::before{width:100%;background:#a56bff}}
+@media(max-aspect-ratio:3/4){#arcane-launch .launch-art{object-fit:contain;object-position:center top;mask-image:linear-gradient(#000 0%,#000 55%,transparent 84%);-webkit-mask-image:linear-gradient(#000 0%,#000 55%,transparent 84%)}}
+@media(orientation:landscape) and (min-aspect-ratio:5/4){#arcane-launch .launch-art{width:63%;object-fit:contain;object-position:center;mask-image:linear-gradient(90deg,transparent,#000 10%,#000 90%,transparent);-webkit-mask-image:linear-gradient(90deg,transparent,#000 10%,#000 90%,transparent)}#arcane-launch .launch-shade{background:linear-gradient(90deg,#10132222 30%,#101322cc 68%,#101322ee)}#arcane-launch .launch-menu{inset:0 0 0 60%;align-content:center;padding:max(12px,env(safe-area-inset-top)) max(16px,env(safe-area-inset-right)) max(12px,env(safe-area-inset-bottom)) 8px}#arcane-launch .launch-button{width:min(100%,290px)}}
+@media(max-height:360px){#arcane-launch .launch-menu{gap:7px}#arcane-launch .launch-button{min-height:44px;padding:8px 12px}#arcane-launch .launch-studio{font-size:10px}}
+@media(prefers-reduced-motion:reduce){#arcane-launch{transition:none}}
 </style></head>
-<body><div id="arcane-launch" hidden role="status" aria-label="Chargement d’Aetherium"><img class="launch-art" src="./assets/icons/aetherium-launch.webp" alt="" fetchpriority="high"><div class="launch-status" aria-hidden="true"><span class="launch-star">✦</span><span>Chargement…</span><div class="launch-track"></div></div></div>
+<body><div id="arcane-launch" hidden role="dialog" aria-modal="true" aria-label="Aetherium — menu titre">
+<img class="launch-art" src="./assets/icons/aetherium-launch.webp" alt="Aetherium — Chroniques des Arcanes" fetchpriority="high">
+<h1 id="launch-fallback" class="launch-fallback" hidden>AETHERIUM</h1>
+<div class="launch-shade" aria-hidden="true"></div>
+<div class="launch-menu" id="launch-menu">
+<button id="launch-play" class="launch-button launch-button--play" type="button">✦ &nbsp; Jouer</button>
+<button id="launch-news-open" class="launch-button" type="button" aria-controls="launch-news" aria-expanded="false">Nouveautés</button>
+<p class="launch-studio">NOCTILOOM STUDIO</p>
+</div>
+<section id="launch-news" class="launch-news" hidden aria-labelledby="launch-news-title">
+<h2 id="launch-news-title" tabindex="-1">✦ Nouveautés des Arcanes</h2>
+<h3>26 novembre 2026 · Nouvelle identité</h3>
+<p>Un écran titre inédit, une nouvelle icône d’application et un recto de carte harmonisé sur les trois collections. Les cartes conservent leurs illustrations et leurs statistiques.</p>
+<h3>23 novembre 2026 · Interface et ergonomie</h3>
+<p>Les paquets des trois boosters adoptent une présentation commune. Les Épreuves et la navigation ont également reçu des améliorations sur mobile, tablette et ordinateur.</p>
+<h3>19 novembre 2026 · Finitions des cartes</h3>
+<p>Les versions Calligraphique, Chromatique et Holographique enrichissent la collection. Les effets spéciaux restent à découvrir en jeu.</p>
+<button id="launch-news-close" class="launch-button" type="button">Retour</button>
+</section>
+</div>
 <script id="aetherium-launch-controller">
 (()=>{const screen=document.getElementById('arcane-launch');if(!screen)return;
-const art=screen.querySelector('.launch-art');
-const minimum=5000,maximum=15000,fade=450;
-screen.hidden=false;
-let done=false,ready=document.readyState!=='loading',visibleAt=null,hold,fallback;
-const finish=()=>{if(done)return;done=true;clearTimeout(hold);clearTimeout(fallback);screen.classList.add('is-leaving');screen.setAttribute('aria-hidden','true');setTimeout(()=>{screen.hidden=true;},fade);};
-const schedule=()=>{if(done||!ready||visibleAt===null)return;clearTimeout(hold);hold=setTimeout(finish,Math.max(0,minimum-(performance.now()-visibleAt)));};
-const artworkReady=()=>{if(visibleAt!==null)return;visibleAt=performance.now();schedule();};
-fallback=setTimeout(finish,maximum);
-if(!ready)document.addEventListener('DOMContentLoaded',()=>{ready=true;schedule();},{once:true});
-if(!art||art.complete)artworkReady();else{art.addEventListener('load',artworkReady,{once:true});art.addEventListener('error',artworkReady,{once:true});}
+const play=document.getElementById('launch-play'),open=document.getElementById('launch-news-open'),close=document.getElementById('launch-news-close'),menu=document.getElementById('launch-menu'),news=document.getElementById('launch-news'),heading=document.getElementById('launch-news-title'),fallback=document.getElementById('launch-fallback'),art=screen.querySelector('.launch-art');
+if(!play||!open||!close||!menu||!news)return;
+let entered=false;
+const lockApp=()=>{const app=document.getElementById('app');if(app)app.inert=!entered;};
+const focus=el=>el?.focus({preventScroll:true});
+const showMenu=()=>{news.hidden=true;menu.hidden=false;open.setAttribute('aria-expanded','false');focus(open);};
+const showNews=()=>{menu.hidden=true;news.hidden=false;open.setAttribute('aria-expanded','true');focus(heading);};
+const enter=()=>{if(entered)return;entered=true;screen.classList.add('is-leaving');screen.setAttribute('aria-hidden','true');lockApp();focus(document.querySelector('#app .brand'));setTimeout(()=>{screen.hidden=true;},450);};
+play.addEventListener('click',enter);
+open.addEventListener('click',showNews);
+close.addEventListener('click',showMenu);
+screen.addEventListener('keydown',e=>{if(e.key==='Escape'&&!news.hidden){e.preventDefault();showMenu();return;}if(e.key==='Tab'&&!entered){const controls=news.hidden?[play,open]:[close];const first=controls[0],last=controls[controls.length-1];if(e.shiftKey&&(document.activeElement===first||!controls.includes(document.activeElement))){e.preventDefault();focus(last);}else if(!e.shiftKey&&(document.activeElement===last||!controls.includes(document.activeElement))){e.preventDefault();focus(first);}}});
+const missingArt=()=>{if(fallback)fallback.hidden=false;};
+if(art){art.addEventListener('error',missingArt,{once:true});if(art.complete&&!art.naturalWidth)missingArt();}
+screen.hidden=false;focus(play);
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',lockApp,{once:true});else lockApp();
 })();
 </script><div id="app"><div class="ambient-landscape" aria-hidden="true"><div class="landscape-sky"></div><div class="landscape-moon"></div><div class="landscape-island island-left"></div><div class="landscape-island island-right"></div><div class="landscape-ruins"></div><div class="landscape-foreground"></div></div>
 <header class="top"><a class="brand" href="#jouer"><span class="brand-wordmark">AETHERIUM</span></a><nav aria-label="Navigation principale"><button type="button" data-page="jouer" class="active" aria-current="page"><span class="nav-icon" aria-hidden="true">✧</span><span>Épreuves</span></button><button type="button" data-page="boosters"><span class="nav-icon" aria-hidden="true">◈</span><span>Boosters</span></button><button type="button" data-page="collection"><span class="nav-icon" aria-hidden="true">▣</span><span>Codex</span></button><button type="button" data-page="atelier"><span class="nav-icon" aria-hidden="true">✦</span><span>Atelier</span></button></nav><div class="wallet" aria-label="Ressources"><button type="button" class="wallet-link" data-go="boosters" title="Utiliser les Couronnes dans les Boosters" aria-label="Couronnes — aller aux Boosters"><span class="relic-icon relic-icon--crown" aria-hidden="true"></span><b id="coins">300</b></button><button type="button" class="wallet-link" data-go="atelier" title="Consulter les Éclats dans l’Atelier" aria-label="Éclats — aller à l’Atelier"><span class="relic-icon relic-icon--shard" aria-hidden="true"></span><b id="dust">0</b></button></div><button type="button" id="chroniques-link" class="chronicles-link" data-go="succes" aria-label="Ouvrir les Chroniques et les Succès" title="Chroniques et Succès"><span class="chronicles-icon relic-icon relic-icon--honors" aria-hidden="true"></span><span class="chronicles-label">Chroniques</span></button><button type="button" id="immersive-toggle" hidden aria-pressed="false" aria-label="Passer en plein écran" title="Passer en plein écran"><span class="immersive-icon relic-icon relic-icon--expand" aria-hidden="true"></span></button></header>

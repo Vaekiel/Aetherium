@@ -63,6 +63,8 @@ await command('Page.enable');
 await command('Emulation.clearDeviceMetricsOverride');
 await command('Page.navigate',{url:'http://127.0.0.1:8765/?trial-e2e=1#jouer'});
 await until(()=>evaluate("document.querySelectorAll('#game-picker .game-choice').length===5&&Boolean(document.querySelector('.game.mobile-active'))"),'Épreuves chargées');
+await evaluate("document.querySelector('#launch-play').click()");
+await until(()=>evaluate("document.querySelector('#arcane-launch')?.hidden===true"),'Entrée en jeu');
 
 async function snapshot(width,height,mobile){
   await command('Emulation.setDeviceMetricsOverride',{width,height,deviceScaleFactor:1,mobile});
