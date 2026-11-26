@@ -32,6 +32,7 @@ const mobileView=window.matchMedia('(max-width:850px)');
 const sheetScrim=$('#sheet-scrim'), filterDrawer=$('#collection-filters'), inspectorShell=$('#inspector-shell');
 let sheetReturnFocus=null;
 function closeSheets(restoreFocus=true){
+  if(restoreFocus&&mobileView.matches)enableHolographicInspection(null);
   // A mobile Codex inspection lives in the browser top layer, not inside
   // the animated page stacking context beneath the blurred scrim.
   if(typeof inspectorShell.hidePopover==='function'&&inspectorShell.matches(':popover-open'))inspectorShell.hidePopover();
@@ -335,6 +336,7 @@ $('#atelier-confirm-accept').addEventListener('click',completeCraft);
 $('#atelier-confirm').addEventListener('close',()=>{pendingCraftId=null});
 function navigate(page){
   if(!APP_PAGES.includes(page))return;
+  if(page!=='collection')enableHolographicInspection(null);
   closeSheets(false);
   if(typeof boosterDialog!=='undefined'&&boosterDialog.open)closeBoosterDialog();
   $$('.page').forEach(el=>el.classList.toggle('active',el.id==='page-'+page));
@@ -2011,6 +2013,7 @@ function renderCollection(){
   if(showRefletsPreview)mountRefletsGallery($('#reflets-gallery-grid'));
   $('#collection-layout').hidden=isUpcoming;
   if(isUpcoming){
+    enableHolographicInspection(null);
     $('#codex-milestones').hidden=true;
     $('#codex-living').hidden=true;
     $('#codex-upcoming-title').textContent='Partie '+selectedPart.number+' · '+selectedPart.title;
@@ -2064,6 +2067,7 @@ function renderCollection(){
       inspect(next,chromatic,false,false,finish);
     }
   }else{
+    enableHolographicInspection(null);
     selectedCard=null;
     const panel=$('#inspector');
     panel.classList.remove('is-chromatic','is-holographic','is-calligraphic');
@@ -2589,7 +2593,7 @@ backupRestore.addEventListener('click',()=>{
     syncBackupRestore();
   }
 });
-$('#reset').addEventListener('click',()=>{if(!confirm('Effacer définitivement les cartes et la progression sauvegardées sur cet appareil ?'))return;try{saveSession.write(fresh(),{replace:true})}catch(error){showSaveWarning(error.message);return}clearBoosterScene();try{localStorage.removeItem(PREVIOUS_SAVE_KEY)}catch{}state=fresh();state.trialStats=sanitizedTrialStats(state.trialStats);trialStarters.forEach(start=>start());renderTrialMastery();renderDifficultyChoice();renderExpedition();selectedCard=null;forgeSelectedId=null;forgeFilter='all';$('#atelier-filter').value='all';$('#atelier-result').hidden=true;$('#inspector').replaceChildren(el('p','muted','Sélectionne une carte découverte pour l’admirer.'));$('#pulls').replaceChildren();$('#pack-title').textContent='Les archives attendent leur voyageur.';$('#pack-msg').textContent='Gagne des Couronnes en jouant pour ouvrir des boosters.';update();renderCollection();notify('Progression réinitialisée.')});
+$('#reset').addEventListener('click',()=>{if(!confirm('Effacer définitivement les cartes et la progression sauvegardées sur cet appareil ?'))return;try{saveSession.write(fresh(),{replace:true})}catch(error){showSaveWarning(error.message);return}clearBoosterScene();enableHolographicInspection(null);try{localStorage.removeItem(PREVIOUS_SAVE_KEY)}catch{}state=fresh();state.trialStats=sanitizedTrialStats(state.trialStats);trialStarters.forEach(start=>start());renderTrialMastery();renderDifficultyChoice();renderExpedition();selectedCard=null;forgeSelectedId=null;forgeFilter='all';$('#atelier-filter').value='all';$('#atelier-result').hidden=true;$('#inspector').replaceChildren(el('p','muted','Sélectionne une carte découverte pour l’admirer.'));$('#pulls').replaceChildren();$('#pack-title').textContent='Les archives attendent leur voyageur.';$('#pack-msg').textContent='Gagne des Couronnes en jouant pour ouvrir des boosters.';update();renderCollection();notify('Progression réinitialisée.')});
 syncMobileSheets();
 selectBooster('origines');
 renderExpedition();
