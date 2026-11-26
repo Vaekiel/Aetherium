@@ -1,3 +1,4 @@
+import {mountTrialMobilePlay} from './trial-mobile-play.js?v=1';
 import {ARCANE_CIRCUITS,createCircuitSession} from './arcane-circuits.js?v=1';
 import {journeyProgress} from './journey-progress.js?v=1';
 import {loreArchive} from './lore-archive.js?v=1';
@@ -1466,6 +1467,7 @@ function selectGame(index,{jumpToStage=false,focusTrial=false}={}){
 }
 selectGame(0);
 setTrialView('hub');
+mountTrialMobilePlay();
 const difficultyButtons=$$('#difficulty-options [data-difficulty]');
 function renderDifficultyChoice(){
   for(const control of difficultyButtons){
