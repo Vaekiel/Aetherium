@@ -75,6 +75,35 @@ await until(()=>evaluate("document.querySelector('#page-collection')?.classList.
 await until(()=>evaluate("document.readyState==='complete' && document.querySelector('#arcane-launch')?.hidden===false"),'Title ready');
 await evaluate("document.querySelector('#launch-play').click()");
 await until(()=>evaluate("document.querySelector('#arcane-launch')?.hidden===true"),'Enter game');
+// Real browser regression: no scrolling or forced eager/decode before checking
+// all 24 illustrations, even those below the fold on a high-density phone.
+await command('Emulation.setDeviceMetricsOverride',{width:390,height:844,deviceScaleFactor:3,mobile:true});
+await command('Network.enable');
+await command('Network.clearBrowserCache');
+await command('Network.setCacheDisabled',{cacheDisabled:true});
+for(const collection of ['origines','reflets-brises','au-dela-du-verre']){
+ await evaluate("window.scrollTo(0,0);document.querySelector('.codex-chapter[data-collection=\""+collection+"\"]').click();true");
+ const start=Date.now();
+ await until(()=>evaluate("(()=>{const a=[...document.querySelectorAll('#card-grid .card img')];return a.length===24&&a.every(i=>i.complete&&i.naturalWidth>0)})()"),collection+' all 24 images without scroll');
+ const info=await evaluate("(()=>{const a=[...document.querySelectorAll('#card-grid .card img')];const last=a.at(-1),tile=last.closest('.card');return {scrollY,offscreen:tile.getBoundingClientRect().top>innerHeight,loading:a.map(i=>i.loading),thumbnail:last.currentSrc.includes('-thumb.webp'),paused:getComputedStyle(tile.querySelector('.chromatic-art-window'),'::before').animationPlayState,pageAnimation:getComputedStyle(document.querySelector('#page-collection')).animationName}})()");
+ assert.equal(info.scrollY,0);
+ assert.ok(info.offscreen);
+ assert.ok(info.loading.every(s=>s==='eager'));
+ assert.ok(info.thumbnail,'Distant artwork uses the lightweight authored thumbnail');
+ assert.equal(info.paused,'paused','Offscreen foil is paused');
+ assert.equal(info.pageAnimation,'none','Codex has no transformed page animation');
+ console.log('CODEX_NATURAL_LOAD '+JSON.stringify({collection,images:24,elapsedMs:Date.now()-start,viewport:390,dpr:3}));
+}
+await command('Network.setCacheDisabled',{cacheDisabled:false});
+await evaluate("window.__codexTile=document.querySelector('#card-grid .card:last-child');window.__codexTile.scrollIntoView({block:'center',behavior:'instant'});true");
+await until(()=>evaluate("window.__codexTile.classList.contains('codex-near-view')"),'Foil resumes near viewport');
+assert.equal(await evaluate("getComputedStyle(window.__codexTile.querySelector('.chromatic-art-window'),'::before').animationPlayState"),'running');
+assert.ok(await evaluate("window.__codexTile.querySelector('img').naturalWidth>0"));
+await evaluate("window.scrollTo({top:0,behavior:'instant'});true");
+await until(()=>evaluate("!window.__codexTile.classList.contains('codex-near-view')"),'Foil paused again');
+const retained=await evaluate("(()=>{const grid=document.querySelector('#card-grid'),old=grid.firstElementChild,side=document.querySelector('#codex-collection-list').firstElementChild,save=localStorage.getItem('aetherium-save-v1');const input=document.querySelector('#search');input.value='';input.dispatchEvent(new Event('input'));document.querySelector('[data-discovery=\"collected\"]').click();const result={tile:grid.firstElementChild===old,sidebar:document.querySelector('#codex-collection-list').firstElementChild===side,save:localStorage.getItem('aetherium-save-v1')===save};document.querySelector('[data-discovery=\"all\"]').click();return result})()");
+assert.deepEqual(retained,{tile:true,sidebar:true,save:true});
+console.log('Codex performance: natural loading, offscreen animation pause/resume, stable tiles and read-only filters OK.');
 for(const width of [360,768,1280]){
   await command('Emulation.setDeviceMetricsOverride',{
     width,height:Math.max(730,Math.round(width*.9)),deviceScaleFactor:1,mobile:width<=850

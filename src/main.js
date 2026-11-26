@@ -5,7 +5,8 @@ import {CRAFT_COSTS,getCraftCost,craftCard} from './crafting.js';
 import {getFinishCraftCost,canCraftFinish,craftFinish} from './finish-crafting.js?v=forge-finish-1';
 import {duplicateDustReward} from './duplicate-rewards.js';
 import {boosterMoment} from './booster-feedback.js?v=booster-polish-1';
-import {applyCardIllustration,hasApprovedArt,CARD_ART} from './card-art.js?v=au-dela-booster-1&chromatic=audit-1';
+import {applyCardIllustration,upgradeCodexIllustration,hasApprovedArt,CARD_ART} from './card-art.js?v=au-dela-booster-1&chromatic=audit-1&codex=2-5';
+import {reconcileCodexGrid,createCodexViewport} from './codex-performance.js?v=1';
 import {codexProgress,filterCodex} from './codex.js';
 import {finishObjective} from './finish-objectives.js?v=signature-targets-1';
 import {FINISHES,FINISH_KEYS,restoreFinishCounts,synchronizeFinishCounts,finishQuantity,preferredFinish} from './finishes.js?v=finish-order-2';
@@ -1586,7 +1587,7 @@ function renderExpedition(){
   },'secondary expedition-leave'));
   host.append(controls);
 }
-function makeCard(c,isShiny=false,locked=false){
+function makeCard(c,isShiny=false,locked=false,delivery='default'){
   const finish=typeof isShiny==='string'?isShiny:(isShiny?'chromatic':'normal');
   const chromatic=finish==='chromatic'&&!locked;
   const holographic=finish==='holographic'&&!locked;
@@ -1608,7 +1609,7 @@ function makeCard(c,isShiny=false,locked=false){
     b.append(art);
   }else{
     const img=el('img');
-    applyCardIllustration(img,c,{shiny:chromatic,size:'thumbnail'});
+    applyCardIllustration(img,c,{shiny:chromatic,size:'thumbnail',delivery});
     if(chromatic){
       const art=el('span','chromatic-art-window');
       art.append(img);b.append(art);
@@ -1647,6 +1648,7 @@ function makeCard(c,isShiny=false,locked=false){
 let filterType='all',filterRarity='all',filterFinish='all',selectedCard=null;
 let activeSeason=SEASONS[0].id,activeCollection=SEASONS[0].collections[0].id;
 let discoveryFilter='all',codexVisibleCards=[];
+const codexViewport=createCodexViewport(upgradeCodexIllustration);
 function markCodexSelected(id){
   $$('#card-grid .card').forEach(tile=>{
     const selected=Number(tile.dataset.cardId)===id;
@@ -2069,22 +2071,31 @@ function renderCollection(){
       :'24 cartes prévues. Cette collection sera disponible dans une prochaine mise à jour.';
     selectedCard=null;
     codexVisibleCards=[];
+    codexViewport.clear();$('#card-grid').replaceChildren();
     update();
     return;
   }
   renderCollectionMilestones(availableCards);
   renderLivingArchives(availableCards);
+  renderCodexResults();
+  update();
+}
+function renderCodexResults(){
+  if(!collectionById(activeSeason,activeCollection)?.released)return;
+  const availableCards=cardsForCollection(CARDS,activeSeason,activeCollection);
   const gallery=$('#card-grid');
   const q=$('#search').value.trim();
   const cards=filterCodex(availableCards,{type:filterType,rarity:filterRarity,
     finish:filterFinish,discovery:discoveryFilter,query:q,owned:state.owned,shiny:state.shiny,
     finishCounts:state.finishCounts});
   codexVisibleCards=cards;
-  gallery.replaceChildren();
-  for(const c of cards){
-    const finish=filterFinish==='normal'?'normal':(FINISHES[filterFinish]?filterFinish:preferredFinish(state.finishCounts,c.id));
-    gallery.append(makeCard(c,finish,!state.owned[c.id]));
-  }
+  const entries=cards.map(card=>{
+    const finish=filterFinish==='normal'?'normal':(FINISHES[filterFinish]?filterFinish:preferredFinish(state.finishCounts,card.id));
+    const locked=!state.owned[card.id];
+    return {card,finish,locked,key:locked?'sealed':finish+':'+finishQuantity(state.finishCounts,finish,card.id)};
+  });
+  reconcileCodexGrid(gallery,entries,entry=>makeCard(entry.card,entry.finish,entry.locked,'codex'),
+    tile=>codexViewport.remove(tile),tile=>codexViewport.add(tile));
   const inChapter=availableCards.length;
   $('#codex-results').textContent=cards.length+' / '+inChapter+' archives';
   const empty=$('#empty');
@@ -2102,7 +2113,12 @@ function renderCollection(){
   filterCount.hidden=appliedFilters===0;
   filterCount.textContent=String(appliedFilters);
   const next=cards.find(c=>c.id===selectedCard?.id)||cards[0];
-  if(next){
+  if(next&&mobileView.matches&&!inspectorShell.classList.contains('is-open')){
+    // The full-size recto is built only when the mobile reader is opened.
+    enableHolographicInspection(null);
+    selectedCard=selectedCard?.id===next.id?selectedCard:null;
+    markCodexSelected(selectedCard?.id??null);
+  }else if(next){
     const revealed=!!state.owned[next.id];
     if(!revealed)inspectSealed(next,false);
     else{
@@ -2120,23 +2136,22 @@ function renderCollection(){
     delete panel.dataset.rarity;
     panel.replaceChildren(el('p','muted','Choisis une autre collection ou ajuste les filtres pour feuilleter les archives.'));
   }
-  update();
 }
-$('#search').addEventListener('input',renderCollection);
+$('#search').addEventListener('input',renderCodexResults);
 $$('[data-type]').forEach(b=>b.addEventListener('click',()=>{
   filterType=b.dataset.type;
   $$('[data-type]').forEach(x=>{x.classList.toggle('active',x===b);x.setAttribute('aria-pressed',String(x===b))});
-  renderCollection();
+  renderCodexResults();
 }));
 $$('[data-rarity]').forEach(b=>b.addEventListener('click',()=>{
   filterRarity=b.dataset.rarity;
   $$('[data-rarity]').forEach(x=>{x.classList.toggle('active',x===b);x.setAttribute('aria-pressed',String(x===b))});
-  renderCollection();
+  renderCodexResults();
 }));
 $$('[data-finish]').forEach(b=>b.addEventListener('click',()=>{
   filterFinish=b.dataset.finish;
   $$('[data-finish]').forEach(x=>{x.classList.toggle('active',x===b);x.setAttribute('aria-pressed',String(x===b))});
-  renderCollection();
+  renderCodexResults();
 }));
 $$('[data-discovery]').forEach(b=>b.addEventListener('click',()=>{
   discoveryFilter=b.dataset.discovery;
@@ -2144,7 +2159,7 @@ $$('[data-discovery]').forEach(b=>b.addEventListener('click',()=>{
     x.classList.toggle('is-active',x===b);
     x.setAttribute('aria-pressed',String(x===b));
   });
-  renderCollection();
+  renderCodexResults();
 }));
 
 /* Season I boosters: one sealed card at a time, from a five-card stack.

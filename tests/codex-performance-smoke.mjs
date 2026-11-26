@@ -1,0 +1,31 @@
+import assert from 'node:assert/strict';
+import {reconcileCodexGrid,createCodexViewport} from '../src/codex-performance.js';
+import {applyCardIllustration,upgradeCodexIllustration,CARD_ART} from '../src/card-art.js';
+import {CARDS} from '../src/collection-data.js';
+const gallery={children:[],insertBefore(tile,before){
+ const old=this.children.indexOf(tile);if(old>=0)this.children.splice(old,1);
+ const pos=before===null?this.children.length:this.children.indexOf(before);
+ this.children.splice(pos<0?this.children.length:pos,0,tile)
+}};
+const make=e=>({dataset:{cardId:String(e.card.id)},remove(){gallery.children.splice(gallery.children.indexOf(this),1)}});
+const entry=(id,key)=>({card:{id},key});
+let added=0,removed=0;
+const render=entries=>reconcileCodexGrid(gallery,entries,make,()=>removed++,()=>added++);
+render([entry(1,'normal:1'),entry(2,'sealed'),entry(3,'chromatic:2')]);
+const [a,b,c]=gallery.children;
+render([entry(1,'normal:1'),entry(2,'sealed'),entry(3,'chromatic:2')]);
+assert.equal(added,3);assert.equal(removed,0);assert.equal(gallery.children[0],a);
+render([entry(3,'chromatic:2'),entry(1,'normal:2')]);
+assert.equal(gallery.children[0],c);assert.notEqual(gallery.children[1],a);
+assert.equal(added,4);assert.equal(removed,2);
+render([entry(25,'sealed')]);assert.equal(gallery.children.length,1);assert.equal(removed,4);
+const image={style:{},complete:true,naturalWidth:350,removeAttribute(k){delete this[k]},getBoundingClientRect(){return {width:160}}};
+applyCardIllustration(image,CARDS[0],{delivery:'codex'});
+assert.equal(image.loading,'eager');assert.equal(image.srcset,undefined);assert.ok(image.src.startsWith(CARD_ART[1].thumbnail));
+upgradeCodexIllustration(image);assert.equal(image.sizes,'160px');assert.ok(image.srcset.includes(CARD_ART[1].full));
+const defaultImg={style:{},removeAttribute(k){delete this[k]}};
+applyCardIllustration(defaultImg,CARDS[0]);assert.equal(defaultImg.loading,'lazy');assert.ok(defaultImg.srcset.includes(CARD_ART[1].full));
+const classes=new Set();let upgrades=0;
+const tile={querySelector:()=>image,classList:{add:v=>classes.add(v),remove:v=>classes.delete(v)}};
+const fallback=createCodexViewport(()=>upgrades++);fallback.add(tile);assert.equal(upgrades,1);assert.ok(classes.has('codex-near-view'));fallback.clear();assert.equal(classes.size,0);
+console.log('Codex performance: stable grid nodes, quantity invalidation, eager thumbnails, opt-in HD and observer fallback OK.');
