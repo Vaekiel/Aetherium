@@ -2397,7 +2397,7 @@ function selectBooster(edition){
 function mountReleasedBoosterChoices(){
   const template=$('.booster-choice');
   if(!template)return;
-  const existing=new Set($('.booster-choice').map(control=>control.dataset.booster));
+  const existing=new Set($$('.booster-choice').map(control=>control.dataset.booster));
   for(const id of Object.keys(BOOSTER_VIEWS)){
     if(existing.has(id))continue;
     const view=boosterView(id);
@@ -2425,7 +2425,7 @@ function mountReleasedBoosterChoices(){
   }
 }
 mountReleasedBoosterChoices();
-$('.booster-choice').forEach(control=>control.addEventListener('click',
+$$('.booster-choice').forEach(control=>control.addEventListener('click',
   ()=>{selectBooster(control.dataset.booster);if(typeof openBoosterDialog==='function')openBoosterDialog(control)}));
 
 /** The face-up card is decorative: tapping it should not leave the reveal sequence.
