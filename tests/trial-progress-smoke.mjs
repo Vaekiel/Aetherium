@@ -62,7 +62,7 @@ const {sanitizeMilestoneClaims}=await import('data:text/javascript;charset=utf-8
  encodeURIComponent(read('src/collection-milestones.js')));
 const main=read('src/main.js'),html=read('index.html'),style=read('src/trial-progress.css');
 assert.ok(main.includes("from './trial-progress.js?v=mastery-balance-2'"),'Game loads the new scoring rules');
-assert.ok(main.includes("const SAVE='aetherium-save-v1'"),'Legacy save key preserved');
+assert.ok(main.includes("const SAVE=GAME_SAVE_KEY;"),'Legacy save key preserved');
 assert.ok(main.includes('state.trialStats=recordTrialWin('),'Victory records stored');
 assert.ok(main.includes("const difficultyButtons=$$('#difficulty-options [data-difficulty]');"),
   'All difficulty buttons are selected, not just the first button');
@@ -113,6 +113,7 @@ const browser={state:{difficulty:'aventure'},mini:Array.from({length:5},mockGame
  $$:selector=>selector==='#difficulty-options [data-difficulty]'?modeButtons:
    selector==='.game-choice'?pickerButtons:[],
  renderTrialMastery:null,
+ refreshTrialPreview(){},setTrialView(){},
  save(){browser.saves++;},
  notify(message){browser.messages.push(message);}
 };
