@@ -23,10 +23,10 @@ assert.ok(main.includes('restorePreviousSave(localStorage)'),
   'Player can undo last import');
 assert.ok(main.includes('window.location.reload()'),
   'After import the known-good game bootloader restores all visible panels');
-assert.ok(main.includes("const SAVE='aetherium-save-v1'"),
-  'Legacy localStorage identifier is preserved');
-assert.ok(backup.includes("GAME_SAVE_KEY='aetherium-save-v1'"),
-  'Module writes the same original save key');
+assert.ok(main.includes('const SAVE=GAME_SAVE_KEY;'),
+  'Storage listener uses the current environment key');
+assert.ok(backup.includes("'aetherium-dev-save-v1':'aetherium-save-v1'"),
+  'Production retains its original key while previews use a separate key');
 assert.ok(backup.includes("cryptoApi.subtle.digest('SHA-256'"),
   'Export supports checksum validation');
 assert.ok(!backup.includes('fetch('),'Transfers never send local saves to a remote server');
