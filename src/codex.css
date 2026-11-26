@@ -583,3 +583,9 @@
 @media(prefers-reduced-motion:reduce){
  #page-collection .au-dela-teaser{transition:none!important;animation:none!important}
 }
+
+/* Codex-only: avoid transforming the whole scrolling gallery at page entry.
+   Keep the static foil visible; animate only near the viewport. */
+#page-collection.page{animation:none}
+#page-collection #card-grid .card:not(.codex-near-view) .chromatic-art-window::before,
+#page-collection #card-grid .card:not(.codex-near-view) .chromatic-art-window::after{animation-play-state:paused}

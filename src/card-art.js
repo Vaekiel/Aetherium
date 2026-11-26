@@ -48,10 +48,19 @@ const BLANK_PIXEL='data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=';
 export function hasApprovedArt(id){return Object.hasOwn(CARD_ART,id)}
 
 /** Apply the same art consistently in the collection, inspector and booster. */
-export function applyCardIllustration(img,card,{shiny=false,size='thumbnail'}={}){
+const codexCandidates=new WeakMap();
+export function upgradeCodexIllustration(img){
+  const candidate=img&&codexCandidates.get(img);
+  if(!candidate)return;
+  codexCandidates.delete(img);
+  const width=Math.ceil(img.getBoundingClientRect().width);
+  if(width>0){img.sizes=width+'px';img.srcset=candidate;}
+}
+export function applyCardIllustration(img,card,{shiny=false,size='thumbnail',delivery='default'}={}){
   img.alt='Illustration de '+card.name;
   img.decoding='async';
-  img.loading=size==='full'?'eager':'lazy';
+  img.loading=size==='full'||delivery==='codex'?'eager':'lazy';
+  codexCandidates.delete(img);
   img.style.backgroundImage='none';
   img.style.backgroundSize='';
   img.style.backgroundPosition='';
@@ -73,13 +82,17 @@ export function applyCardIllustration(img,card,{shiny=false,size='thumbnail'}={}
       // Let the browser select the original 1138px illustration when a
       // 350px miniature would otherwise appear soft or pixelated.
       img.sizes='(max-width: 589px) calc((100vw - 56px) / 2), (max-width: 850px) calc((100vw - 80px) / 3), (max-width: 1200px) 175px, 220px';
-      img.srcset=approved.thumbnail+version+' 350w, '+approved.full+version+(card.id>=49?' 1024w':' 1138w');
+      if(delivery==='codex'){
+        codexCandidates.set(img,approved.thumbnail+version+' 350w, '+approved.full+version+(card.id>=49?' 1024w':' 1138w'));
+        img.removeAttribute('sizes');
+      }else img.srcset=approved.thumbnail+version+' 350w, '+approved.full+version+(card.id>=49?' 1024w':' 1138w');
     }
     img.src=(size==='full'?approved.full:approved.thumbnail)+version;
     img.onerror=()=>{
       // A broken high-density candidate must not replace an approved HD
       // illustration with an unrelated procedural background. First try
       // the other authored size without the browser's stale srcset.
+      codexCandidates.delete(img);
       const failedSource=img.currentSrc||img.src||'';
       const failedFull=failedSource.includes(approved.full.replace(/^\./,''));
       const alternate=(failedFull?approved.thumbnail:approved.full)+version;
