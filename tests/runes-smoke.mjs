@@ -15,7 +15,7 @@ const start=main.indexOf('function startRunes()');
 const end=main.indexOf('function startMemory()',start);
 assert.ok(start>=0&&end>start,'Le Chemin runique doit exister');
 const code=main.slice(start,end);
-assert.ok(main.includes("from './rune-rituals.js'"),'Les parcours runiques sont isolés du moteur du jeu');
+assert.ok(main.includes("from './rune-rituals.js?v=variety-06'"),'Les parcours runiques sont isolés du moteur du jeu');
 assert.ok(main.includes("const runeNames=['Soleil'"),'Symboles runiques nommés');
 assert.ok(code.includes('Array.from({length:12}'),'Douze runes dans une grille');
 assert.ok(code.includes("g.board.style.setProperty('--cols',4)"),'Grille de quatre colonnes');
