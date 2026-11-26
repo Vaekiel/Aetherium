@@ -124,9 +124,9 @@ assert.equal(host.querySelector('img').alt,'Illustration de Astra, Reine Fractal
 const finishPicker=host.children[1].querySelector('.finish-picker');
 assert.equal(finishPicker.children.length,4,'Each finish is listed in the Codex');
 assert.equal(finishPicker.children[0].disabled,false,'Owned Normal may be selected');
-assert.equal(finishPicker.children[1].disabled,false,'Owned Chromatique may be selected');
-assert.equal(finishPicker.children[2].disabled,true,'Unowned Holographique is locked');
-assert.equal(finishPicker.children[3].disabled,true,'Unowned Calligraphique is locked');
+assert.equal(finishPicker.children[2].disabled,false,'Owned Chromatique may be selected');
+assert.equal(finishPicker.children[3].disabled,true,'Unowned Holographique is locked');
+assert.equal(finishPicker.children[1].disabled,true,'Unowned Calligraphique is locked');
 finishPicker.children[0].click();
 assert.equal(host.children[0].className,'recto-lab-card recto-lab-normal');
 assert.equal(shown,1,'Switching visual finish never reopens or scrolls the mobile sheet');
@@ -137,13 +137,13 @@ assert.equal(host.children[1].querySelector('.codex-inspector-navigation').child
 api.inspect(cards[0],true,false,true,'chromatic');
 assert.equal(host.children[0].className,'recto-lab-card recto-lab-normal',
   'Requesting an unowned Chromatique must fall back to the owned Normal');
-assert.equal(host.children[1].querySelector('.finish-picker').children[1].disabled,true,
-  'Unowned Chromatique control is disabled');
 assert.equal(host.children[1].querySelector('.finish-picker').children[2].disabled,true,
-  'Unowned Holographique control is disabled');
+  'Unowned Chromatique control is disabled');
 assert.equal(host.children[1].querySelector('.finish-picker').children[3].disabled,true,
+  'Unowned Holographique control is disabled');
+assert.equal(host.children[1].querySelector('.finish-picker').children[1].disabled,true,
   'Unowned Calligraphique control is disabled');
-host.children[1].querySelector('.finish-picker').children[2].click();
+host.children[1].querySelector('.finish-picker').children[3].click();
 assert.equal(host.children[0].className,'recto-lab-card recto-lab-normal',
   'Forcing a disabled finish callback must still not reveal the foil');
 api.inspect(cards[1],false,false,false,'holographic');
