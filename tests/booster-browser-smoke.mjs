@@ -83,7 +83,11 @@ console.log('Initial JS exceptions',JSON.stringify(jsErrors));
 await until(()=>evaluate("Boolean(document.querySelector('#page-boosters.active') && document.querySelector('#booster-season-tabs button'))"),'game booted on #boosters');
 const installedManifest=await evaluate("fetch('./manifest.webmanifest').then(r=>r.json())");
 assert.equal(installedManifest.display_override[0],'fullscreen');
-assert.equal(installedManifest.icons.length,2);
+assert.equal(installedManifest.icons.length,3,'Two standard icons and one adaptive Android icon');
+assert.deepEqual(installedManifest.icons.filter(icon=>icon.purpose==='any').map(icon=>icon.sizes).sort(),['192x192','512x512']);
+assert.ok(installedManifest.icons.some(icon=>icon.purpose==='maskable'&&icon.sizes==='512x512'));
+await until(()=>evaluate("document.querySelector('#arcane-launch')?.hidden===true"),'Launch screen dismissed after startup');
+assert.equal(await evaluate("document.querySelectorAll('#booster-gallery .booster-choice').length"),3,'All three published boosters are present');
 
 // Simulate camera notches using the browser's actual safe-area CSS env values.
 // This catches selector precedence regressions that source-only tests miss.
