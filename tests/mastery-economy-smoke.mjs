@@ -73,6 +73,7 @@ runInNewContext(source+
  mini:[null,null,null,game],state,
  trialScore,trialReward,recordTrialWin,recordPersonalBest,
  grant(earned){credits++;state.coins+=earned;state.earned+=earned;state.wins++},
+ recordCircuitVictory(){},
  renderTrialMastery(){refreshes++}
 });
 assert.equal(credits,1,'A finished trial can never be credited twice');
