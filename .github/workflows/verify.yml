@@ -24,6 +24,8 @@ jobs:
         run: node --experimental-default-type=module --test tests/duplicate-rewards.test.mjs
       - name: Audit seeded collection economy
         run: node scripts/audit-economy.mjs
+      - name: Simulate targeted finish Forge
+        run: node scripts/audit-finish-forge.mjs
       - name: Run full game and future collection smoke test suite
         run: |
           failed=0

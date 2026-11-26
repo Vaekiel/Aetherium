@@ -231,5 +231,32 @@ for(const width of [360,768,1280]){
  }
  console.log('Four-finish browser regression OK at '+width+'px (3 collections).');
 }
+// Exercise a real Forge transaction, cancellation and reload on mobile.
+await command('Emulation.setDeviceMetricsOverride',{width:360,height:800,deviceScaleFactor:2,mobile:true});
+await evaluate("(()=>{const s=JSON.parse(localStorage.getItem('aetherium-save-v1'));s.dust=1000;localStorage.setItem('aetherium-save-v1',JSON.stringify(s));location.reload();return true})()");
+await until(()=>evaluate("document.readyState==='complete' && document.querySelector('#arcane-launch')?.hidden===false"),'Forge title ready');
+await evaluate("document.querySelector('#launch-play').click()");
+await until(()=>evaluate("document.querySelector('#arcane-launch')?.hidden===true"),'Enter Forge game');
+await evaluate("location.hash='atelier';true");
+await until(()=>evaluate("document.querySelector('#page-atelier').classList.contains('active')"),'Forge page');
+await evaluate("(()=>{const select=document.querySelector('#atelier-mode');select.value='holographic';select.dispatchEvent(new Event('change'));return true})()");
+await until(()=>evaluate("Boolean(document.querySelector('#atelier-card-list [data-card-id=\"1\"]'))"),'Missing holographic recipe');
+const candidates=await evaluate("({signature:!!document.querySelector('#atelier-card-list [data-card-id=\"72\"]'),already:!!document.querySelector('#atelier-card-list [data-card-id=\"8\"]')})");
+assert.deepEqual(candidates,{signature:false,already:false});
+await evaluate("document.querySelector('#atelier-card-list [data-card-id=\"1\"]').click()");
+await evaluate("document.querySelector('.atelier-craft-action').click()");
+await until(()=>evaluate("document.querySelector('#atelier-confirm').open"),'Forge confirmation');
+await evaluate("document.querySelector('#atelier-confirm-cancel').click()");
+assert.equal(await evaluate("JSON.parse(localStorage.getItem('aetherium-save-v1')).dust"),1000);
+await sleep(100);
+await evaluate("document.querySelector('.atelier-craft-action').click()");
+await evaluate("document.querySelector('#atelier-confirm-accept').click()");
+const forged=await evaluate("(()=>{const s=JSON.parse(localStorage.getItem('aetherium-save-v1'));return {dust:s.dust,owned:s.owned[1],holo:s.finishCounts.holographic[1],chroma:s.finishCounts.chromatic[1],visible:!!document.querySelector('#atelier-card-list [data-card-id=\"1\"]')}})()");
+assert.deepEqual(forged,{dust:945,owned:2,holo:1,chroma:1,visible:false});
+await evaluate("location.reload();true");
+await until(()=>evaluate("document.readyState==='complete' && document.querySelector('#arcane-launch')?.hidden===false"),'Reload after Forge');
+await evaluate("document.querySelector('#launch-play').click()");
+assert.equal(await evaluate("JSON.parse(localStorage.getItem('aetherium-save-v1')).finishCounts.holographic[1]"),1);
+console.log('Finish Forge browser: mobile recipe, cancellation, exact cost, previous finish, reload OK.');
 ws.close();
 console.log('Chromatique and four-finish browser audit: 72-card catalog, 3 collections, 3 viewports, approved art, ownership, CSS and pointer interaction OK');
