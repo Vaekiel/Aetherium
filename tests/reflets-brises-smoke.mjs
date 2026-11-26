@@ -71,7 +71,7 @@ const main=read('src/main.js');
 const gameData=read('src/data.js');
 const artwork=read('src/card-art.js');
 const save=read('src/save-backup.js');
-assert.ok(main.includes("from './collection-data.js?v=au-dela-booster-1'"),'The game loads the released catalogue');
+assert.ok(main.includes("from './collection-data.js?v=seasons-09'"),'The game loads the released catalogue');
 assert.ok(!gameData.includes('reflets-brises-catalog'),'Booster pools remain unchanged');
 assert.ok(!artwork.includes('reflets-brises-catalog'),'No placeholder art is published');
 assert.ok(save.includes("GAME_SAVE_KEY='aetherium-save-v1'"),'Save key is unchanged');
