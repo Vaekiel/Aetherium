@@ -178,3 +178,5 @@
 }
 #page-collection .inspector.recto-lab-mode-new>.recto-lab-card{justify-self:center;align-self:start}
 #page-collection .recto-full-art-link{display:inline-block;margin:4px 0 8px;color:#d9c2ee;text-decoration:underline;text-underline-offset:3px;font:12px/1.5 system-ui,sans-serif}
+
+#page-collection .recto-full-art-link[hidden]{display:none!important}
