@@ -16,6 +16,8 @@ assert.ok(!/localStorage|sessionStorage|indexedDB/.test(script));
 assert.match(html,/#arcane-launch\{position:fixed;inset:0/);
 assert.match(html,/center 43%\/cover no-repeat/);
 assert.match(html,/\.launch-status\{position:absolute/);
+assert.match(html,/\.launch-art\{position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;display:block;object-fit:cover/);
+assert.doesNotMatch(html,/@media\(max-aspect-ratio:848\/1100\)/);
 function simulate({fallback=false,delayedArt=false,lateGame=false,alreadyReady=false}={}){
  let ready,now=0,id=0,leaving=false;const timers=new Map(),events={};
  const art={complete:!delayedArt,addEventListener(name,fn){events[name]=fn;}};
@@ -23,11 +25,11 @@ function simulate({fallback=false,delayedArt=false,lateGame=false,alreadyReady=f
  runInNewContext(script,{document:{getElementById(){return screen;},readyState:alreadyReady?'complete':'loading',addEventListener(name,fn){assert.equal(name,'DOMContentLoaded');ready=fn;}},performance:{now:()=>now},setTimeout(fn,ms){timers.set(++id,{fn,at:now+ms,ms});return id;},clearTimeout(i){timers.delete(i);}});
  function advance(to){while(true){const next=[...timers].filter(([,t])=>t.at<=to).sort((a,b)=>a[1].at-b[1].at)[0];if(!next)break;timers.delete(next[0]);now=next[1].at;next[1].fn();}now=to;}
  assert.equal(screen.hidden,false);
- if(fallback){advance(7999);assert.equal(leaving,false);advance(8000);assert.equal(leaving,true);advance(8450);assert.equal(screen.hidden,true);return;}
+ if(fallback){advance(14999);assert.equal(leaving,false);advance(15000);assert.equal(leaving,true);advance(15450);assert.equal(screen.hidden,true);return;}
  if(!alreadyReady&&!lateGame)ready();
  if(delayedArt){advance(1000);events.load();}
- if(lateGame){advance(4200);ready();}
- const finishAt=lateGame?4200:delayedArt?4000:3000;
+ if(lateGame){advance(7200);ready();}
+ const finishAt=lateGame?7200:delayedArt?6000:5000;
  if(now<finishAt)advance(finishAt-1);assert.equal(leaving,false);
  advance(finishAt);assert.equal(leaving,true);assert.equal(screen.hidden,false);
  advance(finishAt+450);assert.equal(screen.hidden,true);assert.equal(timers.size,0);
