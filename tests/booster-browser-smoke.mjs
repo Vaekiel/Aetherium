@@ -87,9 +87,21 @@ assert.equal(installedManifest.display_override[0],'fullscreen');
 assert.equal(installedManifest.icons.length,3,'Two standard icons and one adaptive Android icon');
 assert.deepEqual(installedManifest.icons.filter(icon=>icon.purpose==='any').map(icon=>icon.sizes).sort(),['192x192','512x512']);
 assert.ok(installedManifest.icons.some(icon=>icon.purpose==='maskable'&&icon.sizes==='512x512'));
-const launchLayout=await evaluate(`(()=>{const s=document.querySelector('#arcane-launch'),r=s.getBoundingClientRect();return {hidden:s.hidden,width:r.width,height:r.height,viewportWidth:innerWidth,viewportHeight:innerHeight,backgroundSize:getComputedStyle(s).backgroundSize,appInert:document.querySelector('#app').inert}})()`);
+const launchLayout=await evaluate(`(()=>{const s=document.querySelector('#arcane-launch'),r=s.getBoundingClientRect();return {hidden:s.hidden,width:r.width,height:r.height,viewportWidth:innerWidth,viewportHeight:innerHeight,backgroundImage:getComputedStyle(s).backgroundImage,appInert:document.querySelector('#app').inert}})()`);
 assert.equal(launchLayout.hidden,false);
-assert.equal(launchLayout.backgroundSize,'cover');
+assert.ok(!launchLayout.backgroundImage.includes('url('),'Never repeat the artwork behind the title');
+for(const [width,height] of [[390,844],[377,831],[360,800],[430,932]]){
+ await command('Emulation.setDeviceMetricsOverride',{width,height,deviceScaleFactor:1,mobile:true});
+ const image=await evaluate(`(()=>{const a=document.querySelector('#arcane-launch .launch-art'),r=a.getBoundingClientRect(),c=getComputedStyle(a);return {count:document.querySelectorAll('#arcane-launch .launch-art').length,width:r.width,height:r.height,top:r.top,naturalWidth:a.naturalWidth,naturalHeight:a.naturalHeight,viewport:innerWidth,mask:c.maskImage,fit:c.objectFit,button:document.querySelector('#launch-play').getBoundingClientRect().bottom}})()`);
+ assert.equal(image.count,1);
+ assert.ok(image.naturalWidth>0&&image.naturalHeight>0,'Title image loaded');
+ assert.ok(Math.abs(image.width-image.viewport)<2&&Math.abs(image.top)<2,'Portrait art spans width from top');
+ assert.ok(Math.abs(image.height-image.width*image.naturalHeight/image.naturalWidth)<3,'No distorted or repeated artwork');
+ assert.equal(image.fit,'contain');
+ assert.ok(image.mask.includes('linear-gradient'),'Fade artwork smoothly into menu');
+ assert.ok(image.button<=height,'Play remains visible');
+}
+await command('Emulation.setDeviceMetricsOverride',{width:390,height:844,deviceScaleFactor:1,mobile:true});
 assert.equal(launchLayout.appInert,true);
 assert.ok(Math.abs(launchLayout.width-launchLayout.viewportWidth)<2&&Math.abs(launchLayout.height-launchLayout.viewportHeight)<2,'Title fills mobile viewport');
 await sleep(5500);

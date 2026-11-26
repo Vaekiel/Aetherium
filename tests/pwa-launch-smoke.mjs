@@ -14,7 +14,11 @@ const art=readFileSync('assets/icons/aetherium-launch.webp');assert.equal(art.su
 const script=html.match(/<script id="aetherium-launch-controller">([\s\S]*?)<\/script>/)[1];
 assert.ok(!/localStorage|sessionStorage|indexedDB/.test(script));
 assert.match(html,/#arcane-launch\{position:fixed;inset:0/);
-assert.match(html,/center bottom\/cover no-repeat/);
+const launchStyle=html.match(/<style id="aetherium-launch-style">([\s\S]*?)<\/style>/)[1];
+assert.ok(!launchStyle.includes('aetherium-launch.webp'),'No second copy of the title illustration in CSS');
+assert.equal((html.match(/class="launch-art"/g)||[]).length,1);
+assert.match(launchStyle,/@media\(orientation:portrait\)\{#arcane-launch \.launch-art\{inset:0 0 auto;width:100%;height:auto;object-fit:contain/);
+assert.match(launchStyle,/mask-image:linear-gradient\(#000 0%,#000 72%,transparent 100%\)/);
 assert.ok(!/DOMContentLoaded[^\n]*enter|setTimeout\(enter/.test(script),'No automatic entry');
 function simulate(){
  const events={},timers=[];let leaving=false;
