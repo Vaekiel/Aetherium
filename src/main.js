@@ -11,7 +11,7 @@ import {CRAFT_COSTS,getCraftCost,craftCard} from './crafting.js';
 import {getFinishCraftCost,canCraftFinish,craftFinish} from './finish-crafting.js?v=forge-finish-1';
 import {duplicateDustReward} from './duplicate-rewards.js';
 import {boosterMoment} from './booster-feedback.js?v=booster-polish-1';
-import {applyCardIllustration,upgradeCodexIllustration,hasApprovedArt,CARD_ART} from './card-art.js?v=au-dela-booster-1&chromatic=audit-1&codex=2-5';
+import {applyCardIllustration,upgradeCodexIllustration,hasApprovedArt,CARD_ART} from './card-art.js?v=seasons-09&chromatic=audit-1&codex=2-5';
 import {reconcileCodexGrid,createCodexViewport} from './codex-performance.js?v=1';
 import {codexProgress,filterCodex} from './codex.js';
 import {finishObjective} from './finish-objectives.js?v=signature-targets-1';
@@ -20,7 +20,7 @@ import {enableHolographicInspection} from './finish-interaction.js';
 import {sanitizeRecentFinds,recordRecentFind,buildLivingArchive} from './living-archives.js?v=au-dela-booster-1';
 import {createBackup,decodeBackup,installImportedSave,restorePreviousSave,PREVIOUS_SAVE_KEY,MAX_BACKUP_SIZE} from './save-backup.js';
 import {createSaveSession,parseStoredSave} from './save-session.js?v=save-safety-1';
-import {SEASONS,seasonById,collectionById,cardsForCollection,collectionForCard,seasonProgress} from './seasons.js?v=au-dela-booster-1';
+import {SEASONS,seasonById,collectionById,cardsForCollection,collectionForCard,seasonProgress} from './seasons.js?v=seasons-09';
 import {mountRefletsGallery} from './reflets-gallery.js?v=reflets-final-24';
 import {mountAuDelaGallery} from './au-dela-gallery.js?v=au-dela-lot-3';
 import {milestonesFor,sanitizeMilestoneClaims,uniqueCardsOwned,collectionMilestoneStatus,claimCollectionMilestone} from './collection-milestones.js?v=au-dela-journal-1';
@@ -1596,7 +1596,7 @@ function renderExpedition(){
       if(state.owned?.[72]){
         const reward=el('div','expedition-finale-reward');
         const art=el('img','expedition-finale-art');
-        applyCardIllustration(art,CARDS[71],{shiny:!!state.shiny?.[72],size:'thumbnail'});
+        applyCardIllustration(art,CARD_BY_ID.get(72),{shiny:!!state.shiny?.[72],size:'thumbnail'});
         art.alt='Cœur des Marches'+(state.shiny?.[72]?' Chromatique':'');
         const text=el('div','expedition-finale-copy');
         text.append(el('small','expedition-finale-eyebrow','✦ RÉCOMPENSE UNIQUE · ARCHIVE 072'),
@@ -1608,7 +1608,7 @@ function renderExpedition(){
           activeSeason='marches-de-verre';
           activeCollection='au-dela-du-verre';
           navigate('collection');
-          inspect(CARDS[71],!!state.shiny?.[72]);
+          inspect(CARD_BY_ID.get(72),!!state.shiny?.[72]);
         },'secondary expedition-finale-link');
         text.append(see);
         reward.append(art,text);
