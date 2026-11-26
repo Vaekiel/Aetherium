@@ -86,6 +86,8 @@ assert.equal(installedManifest.display_override[0],'fullscreen');
 assert.equal(installedManifest.icons.length,3,'Two standard icons and one adaptive Android icon');
 assert.deepEqual(installedManifest.icons.filter(icon=>icon.purpose==='any').map(icon=>icon.sizes).sort(),['192x192','512x512']);
 assert.ok(installedManifest.icons.some(icon=>icon.purpose==='maskable'&&icon.sizes==='512x512'));
+const launchLayout=await evaluate(`(()=>{const s=document.querySelector('#arcane-launch');const c=getComputedStyle(s);return {position:c.position,top:c.top,right:c.right,bottom:c.bottom,left:c.left,backgroundSize:c.backgroundSize}})()`);
+assert.deepEqual(launchLayout,{position:'fixed',top:'0px',right:'0px',bottom:'0px',left:'0px',backgroundSize:'cover'},'Splash fills the entire viewport');
 await until(()=>evaluate("document.querySelector('#arcane-launch')?.hidden===true"),'Launch screen dismissed after startup');
 assert.equal(await evaluate("document.querySelectorAll('#booster-gallery .booster-choice').length"),3,'All three published boosters are present');
 
