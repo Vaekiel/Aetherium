@@ -1,0 +1,89 @@
+/* Compact trial hub, scoped to the existing Épreuves page. */
+#page-jouer[data-trial-view="hub"]>.play-stage,
+#page-jouer:not([data-trial-view="circuits"])>#arcane-circuits,
+#page-jouer:not([data-trial-view="hub"])>.trial-setup,
+#page-jouer:not([data-trial-view="hub"])>#beginner-guide,
+#page-jouer[data-trial-view="circuits"]>.play-stage,
+#page-jouer[data-trial-view="play"] .games>.game:not(.mobile-active),
+#page-jouer .trial-subpage-back[hidden]{display:none!important}
+#page-jouer[data-trial-view="play"] .games>.game.mobile-active{display:block!important}
+#page-jouer .trial-subpage-back{margin:0 0 10px}
+#page-jouer .trial-subpage-back button{min-height:44px}
+#page-jouer .trial-hub-layout{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr) minmax(0,.72fr);gap:12px;align-items:start}
+#page-jouer .trial-hub-picker,#page-jouer .trial-preview{min-width:0;border:1px solid #88768e91;border-radius:6px;padding:12px;background:linear-gradient(145deg,#222039b0,#171c30e0)}
+#page-jouer .trial-hub-picker .trial-setup-title{margin:0 0 8px}
+#page-jouer .trial-setup .game-picker{display:grid;grid-template-columns:minmax(0,1fr);gap:5px;overflow:visible;margin:0;padding:0;scroll-snap-type:none}
+#page-jouer .trial-setup .game-picker .game-choice{min-height:49px;min-width:0;padding:6px 21px 6px 56px;gap:2px;text-align:left;justify-content:center;flex:none;width:100%}
+#page-jouer .trial-setup .game-picker .game-choice::before{width:39px;left:8px}
+#page-jouer .trial-setup .game-choice-name{font-size:clamp(13px,1.1vw,16px);line-height:1.15;text-wrap:initial}
+#page-jouer .trial-setup .game-choice-hint{font-size:11px;line-height:1.2}
+#page-jouer .trial-setup .difficulty-panel{padding:9px 12px;gap:8px}
+#page-jouer .trial-setup .difficulty-options{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:5px;flex:0 1 54%}
+#page-jouer .trial-setup .difficulty-options button{min-width:0;min-height:44px;padding:5px 6px;white-space:normal;font-size:clamp(11px,1.2vw,14px)}
+#page-jouer .future-difficulty small{display:block;font:10px/1.1 Georgia,serif;color:#b9a6d8}
+#page-jouer .future-difficulty{opacity:.65;cursor:default;border-style:dashed}
+#page-jouer .trial-preview{display:grid;gap:10px}
+#page-jouer .trial-preview h2{margin:0;color:#efdfc5;font:small-caps clamp(21px,2.1vw,30px)/1.2 Georgia,serif}
+#page-jouer .trial-preview p{margin:0;color:#d9cbdc;font:14px/1.45 Georgia,serif}
+#page-jouer .trial-preview-meta{display:flex;flex-wrap:wrap;gap:6px}
+#page-jouer .trial-preview-meta span{padding:6px 8px;border:1px solid #88768e91;border-radius:4px;color:#ecd5b0;font:12px/1.3 Georgia,serif}
+#page-jouer #trial-launch{min-height:44px;width:100%;margin-top:5px}
+#page-jouer .trial-hub-portals{display:grid;gap:9px;min-width:0}
+#page-jouer .trial-hub-portals .expedition-portal{display:grid;grid-template-columns:26px minmax(0,1fr);gap:6px;padding:10px;margin:0;width:100%;min-width:0;box-sizing:border-box}
+#page-jouer .trial-hub-portals .expedition-portal-symbol{width:26px;height:26px;font-size:20px}
+#page-jouer .trial-hub-portals .expedition-portal-copy{min-width:0}
+#page-jouer .trial-hub-portals .expedition-portal-copy strong{font-size:16px}
+#page-jouer .trial-hub-portals .expedition-portal-copy span{font-size:11px}
+#page-jouer .trial-hub-portals .expedition-portal-button{grid-column:1/-1;min-height:44px;width:100%;margin:0}
+#page-jouer .trial-circuit-portal{display:grid;gap:5px;min-height:80px;text-align:left;white-space:normal;padding:10px;border:1px solid #88768e91;background:linear-gradient(145deg,#28233c,#191e31);color:#e9d8bd}
+#page-jouer .trial-circuit-portal strong{font:16px/1.2 Georgia,serif}
+#page-jouer .trial-circuit-portal small{font:12px/1.2 Georgia,serif;color:#c5b7d5}
+#page-jouer[data-trial-view="hub"]>.heading{margin-bottom:10px}
+#page-jouer[data-trial-view="hub"] .trial-setup{margin-bottom:0}
+#page-jouer[data-trial-view="play"] .games{display:block}
+@media(max-width:850px){
+ #page-jouer .trial-hub-layout{grid-template-columns:minmax(0,1fr);gap:8px}
+ #page-jouer .trial-preview{display:none}
+ #page-jouer .trial-hub-picker{padding:0;border:0;background:none}
+ #page-jouer .trial-hub-picker .trial-setup-title{margin:0 0 5px}
+ #page-jouer .trial-setup .game-picker .game-choice{min-height:44px;padding:4px 20px 4px 48px;gap:1px}
+ #page-jouer .trial-setup .game-picker .game-choice::before{width:34px;left:6px}
+ #page-jouer .trial-setup .game-choice-name{font-size:13px}
+ #page-jouer .trial-setup .game-choice-hint{font-size:10px}
+ #page-jouer .trial-setup .difficulty-panel{flex-direction:column;align-items:stretch;padding:7px;gap:4px}
+ #page-jouer .trial-setup .difficulty-description small{display:none}
+ #page-jouer .trial-setup .difficulty-options{flex:auto}
+ #page-jouer .trial-hub-portals{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+ #page-jouer .trial-hub-portals .expedition-portal{grid-template-columns:minmax(0,1fr);padding:7px;gap:3px}
+ #page-jouer .trial-hub-portals .expedition-portal-symbol{display:none}
+ #page-jouer .trial-hub-portals .expedition-portal-copy strong,#page-jouer .trial-circuit-portal strong{font-size:13px}
+ #page-jouer .trial-hub-portals .expedition-portal-copy span,#page-jouer .trial-circuit-portal small{font-size:10px}
+ #page-jouer .trial-hub-portals .expedition-portal-button{min-height:33px;padding:4px;font-size:11px}
+ #page-jouer .trial-circuit-portal{min-height:65px;padding:7px}
+ #page-jouer[data-trial-view="hub"]>.heading h1{font-size:clamp(20px,5vw,27px);margin:0}
+ #page-jouer[data-trial-view="hub"]>.heading>span{display:none}
+ #page-jouer[data-trial-view="hub"]>.kicker{font-size:10px;margin-bottom:3px}
+}
+@media(min-width:600px) and (max-width:850px){
+ #page-jouer .trial-hub-layout{grid-template-columns:minmax(0,1fr) minmax(0,.8fr)}
+ #page-jouer .trial-hub-portals{grid-template-columns:minmax(0,1fr)}
+}
+@media(max-height:700px) and (max-width:599px){
+ #page-jouer .trial-setup .game-choice-hint{display:none}
+ #page-jouer .trial-setup .game-picker .game-choice{min-height:40px}
+ #page-jouer .trial-setup .game-picker .game-choice::before{width:30px}
+}
+@media(max-height:520px) and (orientation:landscape){
+ #page-jouer .trial-hub-layout{grid-template-columns:minmax(0,1.65fr) minmax(0,1fr);gap:8px}
+ #page-jouer .trial-preview{display:none}
+ #page-jouer .trial-hub-picker{padding:0;border:0;background:none}
+ #page-jouer .trial-setup .game-picker{grid-template-columns:repeat(2,minmax(0,1fr));gap:4px}
+ #page-jouer .trial-setup .game-picker .game-choice{min-height:40px;padding-left:40px}
+ #page-jouer .trial-setup .game-picker .game-choice::before{width:28px;left:5px}
+ #page-jouer .trial-setup .game-choice-hint,#page-jouer .difficulty-description small,#page-jouer[data-trial-view="hub"]>.heading>span{display:none}
+ #page-jouer .trial-setup .difficulty-panel{flex-direction:row;align-items:center;padding:4px}
+ #page-jouer .trial-setup .difficulty-options{flex:1}
+ #page-jouer .trial-hub-portals{grid-template-columns:1fr}
+ #page-jouer .trial-hub-portals .expedition-portal-button{min-height:30px}
+ #page-jouer .trial-circuit-portal{min-height:45px}
+}
