@@ -1,4 +1,6 @@
 import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
+import {runInNewContext} from 'node:vm';
 import {CARDS} from '../src/collection-data.js';
 import {completionPlan,completionRecipes,filterCompletionRecipes} from '../src/collection-completion.js';
 import {restoreFinishCounts} from '../src/finishes.js';
@@ -24,3 +26,21 @@ assert.ok(result.ok);
 assert.equal(completionPlan(origines,result.state).find(r=>r.finish==='chromatic').recipes,0);
 assert.deepEqual(completionPlan([],{owned:{},finishCounts:{},dust:0}).map(r=>r.total),[0,0,0,0]);
 console.log('Collection completion: chapter objectives, real costs, recipes, Signature excluded, read-only and post-forge refresh OK.');
+
+// Execute the actual filter shortcut, including resetting the other controls.
+const source=readFileSync('src/main.js','utf8');
+const shortcut=source.slice(source.indexOf('function showCompletionRecipes(finish){'),source.indexOf('function renderCodexSeasons(){'));
+const input={value:'old search'},chip={focus(){},scrollIntoView(){}};
+const groups=Object.fromEntries(['type','rarity','finish','discovery'].map(attr=>[attr,['all','other'].map(value=>({dataset:{[attr]:value},active:false,pressed:null,classList:{toggle(name,active){this.owner.active=active}},setAttribute(name,value){this.pressed=value}}))]));
+for(const group of Object.values(groups))for(const control of group)control.classList.owner=control;
+let renders=0;
+const ctx={filterFinish:'normal',filterType:'Héros',filterRarity:'rare',discoveryFilter:'missing',missingFinish:'all',
+ $:q=>q==='#search'?input:q==='#codex-completion-clear'?chip:{selector:q},
+ $$:(q,root)=>{assert.ok(root.selector==='#collection-filters'||root.selector==='.codex-discovery-tabs');return groups[q.match(/data-(\w+)/)[1]]},
+ renderCodexResults(){renders++}
+};
+runInNewContext(shortcut+"showCompletionRecipes('holographic')",ctx);
+assert.equal(ctx.missingFinish,'holographic');assert.equal(renders,1);assert.equal(input.value,'');
+for(const key of ['filterFinish','filterType','filterRarity','discoveryFilter'])assert.equal(ctx[key],'all');
+for(const group of Object.values(groups))assert.deepEqual(group.map(c=>[c.active,c.pressed]),[[true,'true'],[false,'false']]);
+console.log('Completion shortcut: compatible filter controls reset and single render OK.');

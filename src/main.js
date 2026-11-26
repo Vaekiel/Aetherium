@@ -1886,7 +1886,7 @@ function showCompletionRecipes(finish){
   filterFinish=filterRarity=filterType=discoveryFilter='all';
   $('#search').value='';
   for(const attr of ['type','rarity','finish','discovery']){
-    $('[data-'+attr+']').forEach(control=>{
+    $('button[data-'+attr+']',attr==='discovery'?$('.codex-discovery-tabs'):$('#collection-filters')).forEach(control=>{
       const active=control.dataset[attr]==='all';
       control.classList.toggle(attr==='discovery'?'is-active':'active',active);
       control.setAttribute('aria-pressed',String(active));
