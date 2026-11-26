@@ -33,6 +33,7 @@ export function mountTrialMobilePlay(){
   read('Le récit des Marches',Array.from(content.querySelectorAll('.expedition-chapter,.expedition-fragment,.expedition-after,.expedition-stage-title,.expedition-description')));
  });
  page.classList.add('mobile-play-ready');expedition.classList.add('mobile-story-ready');
+ info.hidden=false;story.hidden=false;
  let frame=0,observed=null;
  const observer=typeof ResizeObserver==='function'?new ResizeObserver(schedule):null;
  function schedule(){
