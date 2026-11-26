@@ -14,3 +14,5 @@
 #booster-codex-action{width:100%;margin-top:10px}
 @media(max-width:600px){.beginner-guide{align-items:stretch;flex-direction:column;gap:8px;padding:12px;margin:8px 0 14px}.guide-actions{grid-template-columns:minmax(0,1fr) auto;align-items:center}.guide-actions .primary{font-size:13px;padding:8px 10px}.guide-actions .text-button{padding:6px 8px;max-width:116px}}
 @media(max-width:360px){.guide-actions{grid-template-columns:1fr}.guide-actions .text-button{max-width:none}}
+
+.guide-details{margin-top:7px;color:#d9c6ed;font:12px/1.45 system-ui,sans-serif}.guide-details summary{cursor:pointer;min-height:32px;display:list-item;padding:6px 0}.beginner-guide .guide-details p{margin:5px 0;font-size:12px}

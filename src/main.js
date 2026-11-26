@@ -143,7 +143,7 @@ function renderBeginnerGuide(){
  $('#guide-pack-step').textContent=progress.collected?'✓ Premières cartes':'◇ Découvrir des cartes';
  $('#guide-trial-step').textContent=progress.won?'✓ Première victoire':'◇ Remporter une épreuve';
  $('#guide-title').textContent=progress.complete?'Ton aventure continue':progress.collected?'Tes premières archives':'Bienvenue dans les Marches de Verre';
- $('#guide-copy').textContent=progress.complete?'Explore les collections, relève les défis et utilise la Forge pour compléter ton Codex.':progress.stage==='pack'?'Tu disposes de '+state.coins+' Couronnes. Un booster coûte '+PACK_PRICE+' Couronnes et révèle cinq cartes.':progress.collected?'Gagne des Couronnes en remportant une épreuve. Choisis Initiation si tu souhaites découvrir les règles à ton rythme.':'Remporte une épreuve pour réunir les Couronnes nécessaires à ton premier booster.';
+ $('#guide-copy').textContent=progress.complete?'Explore les collections, relève les défis et utilise la Forge pour compléter ton Codex.':progress.stage==='pack'?'Tu disposes de '+state.coins+' Couronnes : de quoi ouvrir '+Math.floor(state.coins/PACK_PRICE)+' booster'+(Math.floor(state.coins/PACK_PRICE)>1?'s':'')+'. Chaque paquet coûte '+PACK_PRICE+' Couronnes et révèle cinq cartes.':progress.collected?'Gagne des Couronnes en remportant une épreuve. Choisis Initiation si tu souhaites découvrir les règles à ton rythme.':'Remporte une épreuve pour réunir les Couronnes nécessaires à ton premier booster.';
  $('#guide-action').textContent=progress.complete?'Explorer le Codex ›':progress.stage==='pack'?'Découvrir les boosters ›':'Choisir une épreuve ›';
  $('#guide-dismiss').textContent=progress.complete?'Fermer':'Masquer le guide';
  const funds=$('#booster-funds');
