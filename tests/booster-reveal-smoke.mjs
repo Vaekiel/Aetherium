@@ -36,6 +36,16 @@ for(const shiny of [false,true]){
  const runtime={
   makeCard(c,isShiny){assert.equal(c.id,4);assert.equal(isShiny,shiny);return card},
   el:node,
+  createCardFront({card:c,finish,artwork}){
+   assert.equal(c.id,4);
+   assert.equal(finish,shiny?'chromatic':'normal');
+   assert.equal(artwork.dataset.rarity,'common');
+   assert.equal(artwork.dataset.cardId,'4');
+   const front=node('article','recto-lab-card recto-lab-'+finish);
+   front.dataset={...artwork.dataset};
+   front.append(artwork.querySelector('img'),node('div','recto-lab-footer'));
+   return front;
+  },
   applyCardIllustration(img,c,options){
    applied++;
    assert.equal(img,image);
@@ -49,8 +59,8 @@ for(const shiny of [false,true]){
  };
  const result=runInNewContext(helper+
   'boosterCardArtwork({card:{id:4,name:"Floraison Cendrée"},shiny:'+shiny+'})',runtime);
- assert.equal(result.tagName,'div','Preview must not be an interactive Codex button');
- assert.equal(result.className,card.className);
+ assert.equal(result.tagName,'article','Preview must not be an interactive Codex button');
+ assert.equal(result.className,'recto-lab-card recto-lab-'+(shiny?'chromatic':'normal'));
  assert.equal(result.dataset.rarity,'common','Rarity frame survives the booster button-to-div conversion');
  assert.equal(result.dataset.cardId,'4','Card identity survives the conversion');
  assert.equal(result.querySelector('img'),image,'Image remains inside rendered artwork');
