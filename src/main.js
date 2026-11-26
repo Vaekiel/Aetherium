@@ -34,7 +34,7 @@ let sheetReturnFocus=null;
 function closeSheets(restoreFocus=true){
   // A mobile Codex inspection lives in the browser top layer, not inside
   // the animated page stacking context beneath the blurred scrim.
-  if(inspectorShell.matches(':popover-open'))inspectorShell.hidePopover();
+  if(typeof inspectorShell.hidePopover==='function'&&inspectorShell.matches(':popover-open'))inspectorShell.hidePopover();
   document.body.classList.remove('sheet-open');
   sheetScrim.hidden=true;
   filterDrawer.classList.remove('is-open');
