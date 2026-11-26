@@ -67,7 +67,7 @@ assert.ok(source.includes("boosterArt.classList.toggle('pack-au-dela',isAuDela);
 assert.ok(source.includes("boosterArt.classList.toggle('reliquaire-au-dela',isAuDela);"),
   'Selecting Au-delà du Verre uses its full premium foil envelope');
 assert.ok(source.includes("const SAVE='aetherium-save-v1'"));
-assert.ok(source.includes("const missing=CARDS.filter(card=>!state.owned[card.id]&&getCraftCost(card)!==null);"));
+assert.ok(source.includes("forgeMode===\'discovery\'?(!state.owned[card.id]&&getCraftCost(card)!==null):canCraftFinish(state,card,forgeMode)"),"Discovery excludes owned cards; finish mode delegates eligibility to the audited helper");
 const start=source.indexOf('function openOriginesBooster(){');
 const end=source.indexOf("$('#buy').addEventListener('click',openOriginesBooster);",start);
 assert.ok(start>0&&end>start);
