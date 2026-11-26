@@ -76,6 +76,12 @@ for(const [width,height] of [[320,740],[390,844],[768,1024],[1280,900]]){
  assert.ok(fits,'Guide fits at '+width+'px');
 }
 await command('Emulation.setDeviceMetricsOverride',{width:390,height:844,deviceScaleFactor:3,mobile:true});
+// Annales never expose sealed titles, text, or related card names on a fresh save.
+await evaluate("document.querySelector('#chroniques-link').click();document.querySelector('#lore-book').open=true");
+const sealedLore=await evaluate("(()=>{const b=document.querySelector('#lore-book');return {count:document.querySelector('#lore-count').textContent,sealed:b.querySelectorAll('.lore-sealed').length,pages:b.querySelectorAll('.lore-page').length,links:b.querySelectorAll('.lore-card-link').length,text:b.textContent}})()");
+assert.equal(sealedLore.count,'0 / 23 récits retrouvés');assert.equal(sealedLore.sealed,23);assert.equal(sealedLore.pages,0);assert.equal(sealedLore.links,0);
+assert.ok(!sealedLore.text.includes('Cœur des Marches')&&!sealedLore.text.includes('Les lanternes du sentier')&&!sealedLore.text.includes('Le premier éclat'));
+await evaluate("document.querySelector('nav [data-page=\"jouer\"]').click()");
 const original=await evaluate("localStorage.getItem('aetherium-save-v1')");
 await evaluate("document.querySelector('#guide-dismiss').click()");
 assert.equal(await evaluate("document.querySelector('#beginner-guide').hidden"),true);
