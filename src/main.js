@@ -6,7 +6,7 @@ import {beginnerGuide,readGuideDismissal,writeGuideDismissal} from './onboarding
 import {createCardFront,attachRectoLabInspector} from './recto-lab.js?v=recto-uniforme-3';
 import {RARITIES,PACK_PRICE} from './data.js?v=booster-variety-1';
 import {CARDS,CARD_BY_ID,drawCollectionPack} from './collection-data.js?v=seasons-09';
-import {boosterView} from './booster-views.js?v=1';
+import {BOOSTER_VIEWS,boosterView} from './booster-views.js?v=2';
 import {CRAFT_COSTS,getCraftCost,craftCard} from './crafting.js';
 import {getFinishCraftCost,canCraftFinish,craftFinish} from './finish-crafting.js?v=forge-finish-1';
 import {duplicateDustReward} from './duplicate-rewards.js';
@@ -2370,7 +2370,11 @@ function selectBooster(edition){
   clearBoosterScene();
   boosterArt.classList.toggle('pack-reflets',view.theme==='reflets');
   boosterArt.classList.toggle('pack-au-dela',view.theme==='au-dela');
-  boosterArt.classList.toggle('reliquaire-origines',view.theme==='origines');
+  boosterArt.classList.toggle('reliquaire-origines',view.theme==='origines'||view.theme==='standard');
+  if(view.theme==='origines'||view.theme==='standard'){
+    const image=$('.pack-artwork:not(.pack-artwork-reflets):not(.pack-artwork-au-dela)',boosterArt);
+    if(image&&image.getAttribute('src')!==view.art)image.setAttribute('src',view.art);
+  }
   boosterArt.classList.toggle('reliquaire-reflets',view.theme==='reflets');
   boosterArt.classList.toggle('reliquaire-au-dela',view.theme==='au-dela');
   $('#booster-pack .pack-title').textContent=view.title;
@@ -2388,7 +2392,40 @@ function selectBooster(edition){
   $('#pack-msg').textContent='Un rituel, cinq révélations. À toi de jouer.';
   update();
 }
-$$('.booster-choice').forEach(control=>control.addEventListener('click',
+// Preserve the original three approved tiles. Future released collections
+// reuse the same markup and packaging without requiring a new HTML block.
+function mountReleasedBoosterChoices(){
+  const template=$('.booster-choice');
+  if(!template)return;
+  const existing=new Set($('.booster-choice').map(control=>control.dataset.booster));
+  for(const id of Object.keys(BOOSTER_VIEWS)){
+    if(existing.has(id))continue;
+    const view=boosterView(id);
+    if(!view||view.theme!=='standard')continue;
+    const control=template.cloneNode(true);
+    control.classList.remove('is-selected');
+    control.hidden=false;
+    control.dataset.booster=id;
+    control.dataset.season=view.season.id;
+    control.dataset.seasonTitle=view.seasonLabel;
+    control.setAttribute('aria-pressed','false');
+    control.setAttribute('aria-label',view.label+' · '+PACK_PRICE+' Couronnes · voir le paquet');
+    const pack=$('.booster-tile-pack',control);
+    pack.classList.remove('reliquaire-reflets','reliquaire-au-dela');
+    pack.classList.add('reliquaire-origines');
+    $('.pack-collection',pack).textContent=view.season.title.toLocaleUpperCase('fr-FR');
+    $('.pack-scene img',pack).setAttribute('src',view.art);
+    $('.pack-title',pack).textContent=view.title;
+    $('.pack-edition',pack).textContent=view.edition;
+    $('.booster-tile-chapter',control).textContent='PARTIE '+view.collection.number;
+    $('.booster-tile-caption strong',control).textContent=view.collection.title;
+    $('.booster-tile-price',control).textContent=PACK_PRICE+' ♛';
+    template.parentNode.append(control);
+    existing.add(id);
+  }
+}
+mountReleasedBoosterChoices();
+$('.booster-choice').forEach(control=>control.addEventListener('click',
   ()=>{selectBooster(control.dataset.booster);if(typeof openBoosterDialog==='function')openBoosterDialog(control)}));
 
 /** The face-up card is decorative: tapping it should not leave the reveal sequence.
