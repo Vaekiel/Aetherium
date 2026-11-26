@@ -93,6 +93,41 @@ assert.equal(completed,1,'Closing an unfinished reveal resolves it once');
 assert.equal(cleared,1,'Closing resets presentation once');
 assert.equal(updated,1,'The inventory UI refreshes once');
 assert.equal(dialog.open,false);
+// Exercise the actual future tile factory with an unpublished and a released
+// entry. This catches accidental querySelector (single element) use at startup.
+const mountStart=js.indexOf('function mountReleasedBoosterChoices(){');
+const mountEnd=js.indexOf('mountReleasedBoosterChoices();',mountStart);
+assert.ok(mountStart>0&&mountEnd>mountStart);
+const makeTile=()=> {
+ const pack=ev(),scene=ev(),title=ev(),edition=ev(),chapter=ev(),caption=ev(),price=ev(),collection=ev();
+ const tile=ev({dataset:{booster:'origines'},hidden:false});
+ pack.fields={'.pack-collection':collection,'.pack-scene img':scene,'.pack-title':title,'.pack-edition':edition};
+ tile.fields={'.booster-tile-pack':pack,'.booster-tile-chapter':chapter,'.booster-tile-caption strong':caption,'.booster-tile-price':price};
+ return tile;
+};
+const template=makeTile(),mounted=[template];
+template.cloneNode=()=>makeTile();
+template.parentNode={append(tile){mounted.push(tile)}};
+const fixture={theme:'standard',title:'TEST',label:'Booster TEST',edition:'SAISON 2 · 5 CARTES',art:'./assets/boosters/test.webp',
+ season:{id:'test-season',title:'Test season'},seasonLabel:'Saison II · Test season',collection:{number:'I',title:'TEST'}};
+const mountContext={
+ $:(selector,root)=>root?root.fields[selector]:selector==='.booster-choice'?template:null,
+ $$:selector=>selector==='.booster-choice'?mounted:[],
+ BOOSTER_VIEWS:{origines:{},'test-published':{},'test-draft':{}},
+ boosterView:id=>id==='test-published'?fixture:null,
+ PACK_PRICE:100
+};
+runInNewContext(js.slice(mountStart,mountEnd)+'mountReleasedBoosterChoices();mountReleasedBoosterChoices();',mountContext);
+assert.equal(mounted.length,2,'A released future tile is generated exactly once, draft stays absent');
+const added=mounted[1],addedPack=added.fields['.booster-tile-pack'];
+assert.equal(added.dataset.booster,'test-published');
+assert.equal(added.dataset.season,'test-season');
+assert.equal(added.dataset.seasonTitle,fixture.seasonLabel);
+assert.equal(addedPack.fields['.pack-scene img'].attributes.src,fixture.art);
+assert.equal(addedPack.fields['.pack-edition'].textContent,'SAISON 2 · 5 CARTES');
+assert.equal(added.fields['.booster-tile-caption strong'].textContent,'TEST');
+assert.equal(added.attributes['aria-pressed'],'false');
+
 const mobileSceneryCss=read('src/mobile-background.css');
 assert.ok(ui.includes('@import "./mobile-background.css?v=clean-1";'));
 assert.ok(mobileSceneryCss.includes('Mobile scenery cleanup'));
