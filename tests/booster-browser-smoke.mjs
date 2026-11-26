@@ -70,7 +70,7 @@ async function until(check,label){
 await command('Runtime.enable');
 await command('Page.enable');
 // Reload after Runtime.enable to capture early module errors instead of missing them.
-await command('Page.navigate',{url:'http://127.0.0.1:8765/?booster-e2e=1&recto-test=1#boosters'});
+await command('Page.navigate',{url:'http://127.0.0.1:8765/?booster-e2e=1#boosters'});
 await sleep(1800);
 console.log('Initial page',JSON.stringify(await evaluate(`({
  url:location.href,ready:document.readyState,hash:location.hash,
@@ -356,6 +356,10 @@ console.log('Reveal debug',JSON.stringify(await evaluate(`(()=>{
    status:document.querySelector('#pack-msg').textContent,step:document.querySelector('#booster-step').textContent}
 })()`)), 'exceptions:',JSON.stringify(jsErrors));
 await until(()=>evaluate("document.querySelector('#pulls .pull-flip')!==null"),'first sealed card appeared');
+await evaluate("document.querySelector('#pulls .pull-back').click()");
+await until(()=>evaluate("Boolean(document.querySelector('#pulls .is-revealed .recto-lab-card'))"),'Official recto shown after flip');
+await until(()=>evaluate("document.querySelector('#pulls .recto-lab-illustration')?.naturalWidth>0"),'Booster front uses real artwork');
+assert.equal(await evaluate("document.querySelector('#pulls .recto-lab-stat-copy strong')!==null"),true);
 await evaluate("document.querySelector('#reveal-all').click()");
 const after=await evaluate(`(()=>{
  const save=JSON.parse(localStorage.getItem('aetherium-save-v1'));
@@ -393,11 +397,11 @@ await until(()=>evaluate("Boolean(document.querySelector('#page-collection.activ
 await evaluate("document.querySelector('#preview-art').click()");
 await until(()=>evaluate("Boolean(document.querySelector('#card-grid [data-card-id=\"8\"]'))"),'Original Cerf in gallery');
 await evaluate("document.querySelector('#card-grid [data-card-id=\"8\"]').click()");
-await until(()=>evaluate("Boolean(document.querySelector('#inspector .inspector-art-shell img'))"),'Original inspector ready');
-await until(()=>evaluate("document.querySelector('#inspector .inspector-art-shell img').complete"),'Original Cerf artwork loaded');
+await until(()=>evaluate("Boolean(document.querySelector('#inspector .recto-lab-illustration'))"),'Original inspector ready');
+await until(()=>evaluate("document.querySelector('#inspector .recto-lab-illustration').complete"),'Original Cerf artwork loaded');
 const originalCerf=await evaluate(`(()=>{
  const inspector=document.querySelector('#inspector');
- const img=inspector.querySelector('.inspector-art-shell img');
+ const img=inspector.querySelector('.recto-lab-illustration');
  return {hasPilot:!!inspector.querySelector('.pilot-card-front'),
   src:img.currentSrc||img.src,loaded:img.complete&&img.naturalWidth>300,
   width:img.getBoundingClientRect().width,height:img.getBoundingClientRect().height,
@@ -412,7 +416,7 @@ assert.ok(originalCerf.width>60&&originalCerf.height>100,'Original artwork is vi
 // The shared Codex styling only changes text and stat components, never the original art.
 const polish=await evaluate(`(()=>{
  const panel=document.querySelector('#inspector');
- const img=panel.querySelector('.inspector-art-shell img');
+ const img=panel.querySelector('.recto-lab-illustration');
  const copy=panel.querySelector('.inspector-copy');
  return {active:panel.classList.contains('is-card-polished'),
   imageSource:img.currentSrc||img.src,imageLoaded:img.complete&&img.naturalWidth>300,
@@ -421,7 +425,7 @@ const polish=await evaluate(`(()=>{
   rarity:copy.querySelector('.kicker')?.textContent,
   lore:copy.querySelector('p:not(.kicker):not(.muted):not(.codex-inspector-chapter)')?.textContent,
   stats:copy.querySelectorAll('.stats > span').length,
-  statsDisplay:getComputedStyle(copy.querySelector('.stats')).display};
+  statsDisplay:getComputedStyle(panel.querySelector('.recto-lab-stats')).display};
 })()`);
 console.log('Polished Cerf on Chromium:',JSON.stringify(polish));
 assert.equal(polish.active,true,'Approved shared Codex style active on Cerf');
@@ -434,12 +438,12 @@ assert.equal(polish.stats,3,'Stats keep their existing three values');
 assert.equal(polish.statsDisplay,'grid','Three compact stat cells are visible');
 const cerfStats=await evaluate(`(()=>{
  const panel=document.querySelector('#inspector');
- const stats=[...panel.querySelectorAll('.stats > .stat-stat')].map(s=>{
-  const glyph=s.querySelector('.stat-glyph');
+ const stats=[...panel.querySelectorAll('.recto-lab-stat')].map(s=>{
+  const glyph=s.querySelector('.recto-lab-stat-icon');
   const rect=glyph?.getBoundingClientRect();
-  return {name:s.querySelector('.stat-name')?.textContent,
-   value:Number(s.querySelector('.stat-value')?.textContent),
-   icon:glyph?.getAttribute('src'),visible:!!rect && rect.width>=39 && rect.height>=39,
+  return {name:s.querySelector('.recto-lab-stat-copy small')?.textContent,
+   value:Number(s.querySelector('.recto-lab-stat-copy strong')?.textContent),
+   icon:glyph?.getAttribute('src'),visible:!!rect && rect.width>=12 && rect.height>=12,
    loaded:glyph?.complete && glyph?.naturalWidth===144 && glyph?.naturalHeight===144};
  });
  return {stats,inventory:panel.querySelector('.stat-inventory-total')?.textContent};
@@ -453,18 +457,18 @@ assert.ok(cerfStats.stats.every(s=>/^\.\/assets\/icons\/stat-(eclat|garde|flux)-
 assert.match(cerfStats.inventory,/Possédées : ×/);
 
 await evaluate("document.querySelector('#card-grid [data-card-id=\"7\"]').click()");
-await until(()=>evaluate("(()=>{const img=document.querySelector('#inspector .inspector-art-shell img');return img?.complete && img?.naturalWidth>300})()"),'Archiviste HD artwork fully loaded');
+await until(()=>evaluate("(()=>{const img=document.querySelector('#inspector .recto-lab-illustration');return img?.complete && img?.naturalWidth>300})()"),'Archiviste HD artwork fully loaded');
 const other=await evaluate(`(()=>{
  const panel=document.querySelector('#inspector');
- const img=panel.querySelector('.inspector-art-shell img');
- const stats=[...panel.querySelectorAll('.stats > .stat-stat')];
+ const img=panel.querySelector('.recto-lab-illustration');
+ const stats=[...panel.querySelectorAll('.recto-lab-stat')];
  return {active:panel.classList.contains('is-card-polished'),
    title:panel.querySelector('.inspector-copy h2')?.textContent,
    art:img?.currentSrc||img?.src,artLoaded:img?.complete&&img?.naturalWidth>300,
-   statsDisplay:getComputedStyle(panel.querySelector('.stats')).display,
-   names:stats.map(s=>s.querySelector('.stat-name')?.textContent),
+   statsDisplay:getComputedStyle(panel.querySelector('.recto-lab-stats')).display,
+   names:stats.map(s=>s.querySelector('.recto-lab-stat-copy small')?.textContent),
    iconsLoaded:stats.every(s=>s.querySelector('img')?.complete && s.querySelector('img')?.naturalWidth===144),
-   values:stats.map(s=>Number(s.querySelector('.stat-value')?.textContent)),
+   values:stats.map(s=>Number(s.querySelector('.recto-lab-stat-copy strong')?.textContent)),
    inventory:panel.querySelector('.stat-inventory-total')?.textContent};
 })()`);
 console.log('Second card uses HD stats:',JSON.stringify(other));
@@ -477,11 +481,9 @@ assert.deepEqual(other.names,['Éclat','Garde','Flux']);
 assert.ok(other.iconsLoaded,'Approved HD glyphs render on a second card');
 assert.ok(other.values.every(Number.isFinite),'Stats use the corresponding card values');
 assert.match(other.inventory,/Possédées : ×/);
-// Experiment only, on a separate branch: no save changes or booster changes.
-assert.equal(await evaluate("Boolean(document.querySelector('.recto-lab-entry .recto-lab-open'))"),true,
- 'The recto test dock must be accessible');
-await evaluate("document.querySelector('.recto-lab-open').click()");
-await evaluate("document.querySelectorAll('.recto-lab-switch-button')[1].click()");
+// The approved front is now the default, with no lab controls.
+assert.equal(await evaluate("Boolean(document.querySelector('.recto-lab-entry,.recto-lab-switch'))"),false);
+await evaluate("document.querySelector('#card-grid [data-card-id=\\\"8\\\"]').click()");
 await until(()=>evaluate("Boolean(document.querySelector('#inspector.recto-lab-mode-new .recto-lab-card'))"),'New recto is visible');
 await until(()=>evaluate("(()=>{const c=document.querySelector('#inspector .recto-lab-card');return [...c.querySelectorAll('img')].every(i=>i.complete&&i.naturalWidth>0)})()"),'Real art and frame loaded');
 const recto=await evaluate(`(()=>{
@@ -513,12 +515,8 @@ assert.ok(recto.titleWidth<=recto.maxWidth+3&&recto.titleHeight<=recto.maxHeight
  'Card title fits even on phones');
 assert.deepEqual(recto.stats,[12,13,6]);
 assert.ok(recto.copy,'The Codex metadata panel remains present');
-await evaluate("document.querySelector('.recto-lab-switch-button').click()");
-assert.equal(await evaluate("document.querySelector('#inspector .inspector-art-shell')?.getBoundingClientRect().height>40"),true,
- 'Original inspector remains visible when comparing');
-await evaluate("document.querySelectorAll('.recto-lab-open')[1].click()");
-await until(()=>evaluate("document.querySelector('#inspector .recto-lab-name')?.textContent.includes('Astra')"),'Long name example opened');
-await evaluate("document.querySelectorAll('.recto-lab-switch-button')[1].click()");
+await evaluate("document.querySelector('#card-grid [data-card-id=\\\"22\\\"]').click()");
+await until(()=>evaluate("document.querySelector('#inspector .recto-lab-name')?.textContent.includes('Astra')"),'Long name opened through normal Codex');
 await until(()=>evaluate("document.querySelector('#inspector .recto-lab-name')?.getBoundingClientRect().width>100"),'Astra name is visible in actual new front');
 await until(()=>evaluate("(()=>{const n=document.querySelector('#inspector .recto-lab-name');return !!n&&n.scrollHeight<=n.parentElement.clientHeight+3})()"),'Long title resize completes');
 const longTitle=await evaluate(`(()=>{
