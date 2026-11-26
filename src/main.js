@@ -2,6 +2,7 @@ import {createCardFront,attachRectoLabInspector} from './recto-lab.js?v=recto-un
 import {RARITIES,PACK_PRICE,drawPack} from './data.js?v=booster-variety-1';
 import {CARDS,drawRefletsPack,drawAuDelaPack} from './collection-data.js?v=au-dela-booster-1';
 import {CRAFT_COSTS,getCraftCost,craftCard} from './crafting.js';
+import {getFinishCraftCost,canCraftFinish,craftFinish} from './finish-crafting.js?v=forge-finish-1';
 import {duplicateDustReward} from './duplicate-rewards.js';
 import {boosterMoment} from './booster-feedback.js?v=booster-polish-1';
 import {applyCardIllustration,hasApprovedArt,CARD_ART} from './card-art.js?v=au-dela-booster-1&chromatic=audit-1';
@@ -168,6 +169,9 @@ const APP_PAGES=[...MAIN_PAGES,'succes','expeditions'];
 let forgeSelectedId=null;
 let forgeFilter='all';
 let pendingCraftId=null;
+let forgeMode='discovery',pendingCraftFinish=null;
+const forgeCost=card=>forgeMode==='discovery'?getCraftCost(card):getFinishCraftCost(card,forgeMode);
+const forgeModeLabel=()=>forgeMode==='discovery'?'Carte manquante':FINISHES[forgeMode].label;
 
 function renderAtelier(){
   $('#atelier-dust').textContent=state.dust.toLocaleString('fr-FR');
@@ -195,6 +199,7 @@ function renderAtelier(){
     summary.append(progress,el('p','',remaining?remaining+' Éclats manquants sur '+cost:'Tu peux fabriquer cette carte !'));
     summary.append(button('Voir mon objectif ›',()=>{
       forgeSelectedId=goal.id;
+      forgeMode='discovery';$('#atelier-mode').value=forgeMode;
       forgeFilter='all';
       $('#atelier-filter').value='all';
       renderAtelier();
@@ -202,9 +207,11 @@ function renderAtelier(){
     },'secondary atelier-side-link'));
   }else summary.append(el('p','atelier-goal-placeholder','Choisis une carte manquante et désigne-la comme objectif. Ta progression sera conservée.'));
 
-  const missing=CARDS.filter(card=>!state.owned[card.id]&&getCraftCost(card)!==null);
+  const missing=CARDS.filter(card=>forgeMode==='discovery'?(!state.owned[card.id]&&getCraftCost(card)!==null):canCraftFinish(state,card,forgeMode));
   const visible=missing.filter(card=>
-    forgeFilter==='all'||(forgeFilter==='affordable'?state.dust>=getCraftCost(card):card.rarity===forgeFilter));
+    forgeFilter==='all'||(forgeFilter==='affordable'?state.dust>=forgeCost(card):card.rarity===forgeFilter));
+  $('#atelier-rarity-note').textContent='Coûts · '+forgeModeLabel()+' : '+Object.keys(CRAFT_COSTS).map(r=>RARITIES[r].label+' '+forgeCost({id:1,rarity:r})).join(' · ')+' Éclats.';
+  $('#atelier-card-list').setAttribute('aria-label','Recettes disponibles · '+forgeModeLabel());
   const chooseFrom=visible.find(c=>c.id===forgeSelectedId)
     ||visible.find(c=>c.id===state.goalId)
     ||visible[0]||null;
@@ -213,12 +220,12 @@ function renderAtelier(){
   gallery.replaceChildren();
   $('#atelier-empty').hidden=visible.length>0;
   $('#atelier-empty').textContent=missing.length===0
-    ?'Tu possèdes toutes les cartes disponibles en booster ou à la Forge. La Signature du dernier chapitre se mérite en aventure.'
-    :'Aucune carte manquante ne correspond à ce filtre.';
+    ?(forgeMode==='discovery'?'Tu possèdes toutes les cartes disponibles en booster ou à la Forge. La Signature du dernier chapitre se mérite en aventure.':'Aucune finition manquante sur les cartes découvertes. Les cartes inédites doivent d’abord être découvertes.')
+    :'Aucune recette ne correspond à ce filtre.';
   for(const card of visible){
     const selected=card.id===forgeSelectedId;
-    const wish=card.id===state.goalId;
-    const cost=getCraftCost(card);
+    const wish=forgeMode==='discovery'&&card.id===state.goalId;
+    const cost=forgeCost(card);
     const tile=el('button','atelier-craft-tile'+(selected?' is-selected':'')+(wish?' is-wished':''));
     tile.type='button';
     tile.dataset.cardId=String(card.id);
@@ -246,13 +253,13 @@ function renderAtelier(){
   details.replaceChildren();
   if(!chooseFrom){
     const text=missing.length===0
-      ?'Toutes les cartes accessibles à la Forge ont rejoint ton Codex. Les Chromatiques restent à découvrir en booster ; la Signature est une récompense d’aventure.'
+      ?(forgeMode==='discovery'?'Toutes les cartes accessibles à la Forge ont rejoint ton Codex. Choisis une finition pour poursuivre ta collection.':'Toutes les recettes accessibles de cette finition sont déjà possédées, ou aucune carte éligible n’a été découverte.')
       :'Modifie le filtre pour choisir une carte à fabriquer.';
-    details.append(el('p','kicker','LES FORGES DES ARCHIVES'),el('h3','',missing.length?'Aucune recette affichée':'Le Codex est complet'),el('p','atelier-detail-placeholder',text));
+    details.append(el('p','kicker','LES FORGES DES ARCHIVES'),el('h3','',missing.length?'Aucune recette affichée':'Aucune recette manquante'),el('p','atelier-detail-placeholder',text));
     if(missing.length===0)details.append(button('Explorer mon Codex ›',()=>navigate('collection'),'secondary atelier-detail-link'));
     return;
   }
-  const cost=getCraftCost(chooseFrom);
+  const cost=forgeCost(chooseFrom);
   const remaining=Math.max(0,cost-state.dust);
   const art=el('img','atelier-detail-art');
   applyCardIllustration(art,chooseFrom,{shiny:false,size:'full'});
@@ -268,7 +275,7 @@ function renderAtelier(){
   meter.setAttribute('aria-valuenow',String(Math.min(cost,state.dust)));
   const fill=el('span');fill.style.width=Math.min(100,state.dust/cost*100)+'%';
   meter.append(fill);
-  const craft=button('Forger · '+cost+' Éclats',()=>askCraft(chooseFrom.id),'primary atelier-craft-action');
+  const craft=button('Forger · '+cost+' Éclats',()=>forgeMode==='discovery'?askCraft(chooseFrom.id):askFinishCraft(chooseFrom.id,forgeMode),'primary atelier-craft-action');
   craft.disabled=state.dust<cost;
   craft.title=remaining?'Encore '+remaining+' Éclats nécessaires':'Forger cette carte et dépenser '+cost+' Éclats';
   const goalButton=button(state.goalId===chooseFrom.id?'Retirer mon objectif':'✧ Choisir comme objectif',()=>{
@@ -282,9 +289,11 @@ function renderAtelier(){
   const message=el('p','atelier-detail-progress',remaining?remaining+' Éclats encore nécessaires':'La Forge peut accueillir cette carte.');
   details.append(el('p','kicker','FICHE DE FABRICATION'),frame,
     el('h3','',chooseFrom.name),
-    el('p','atelier-detail-rarity',RARITIES[chooseFrom.rarity].label+' · '+chooseFrom.type),
+    el('p','atelier-detail-rarity',RARITIES[chooseFrom.rarity].label+' · '+chooseFrom.type+' · '+forgeModeLabel()),
     el('p','atelier-detail-lore','« '+chooseFrom.lore+' »'),
-    count,meter,message,craft,goalButton);
+    count,meter,message,craft);
+  if(forgeMode==='discovery')details.append(goalButton);
+  else details.append(el('p','atelier-detail-progress','Ajoute un exemplaire de cette finition. Tes autres exemplaires restent intacts.'));
 }
 
 function askCraft(cardId){
@@ -293,7 +302,7 @@ function askCraft(cardId){
   const cost=getCraftCost(card);
   if(cost===null)return notify('Cette carte est réservée à une aventure, elle ne peut pas être fabriquée.');
   if(state.dust<cost)return notify('Tu ne possèdes pas encore assez d’Éclats.');
-  pendingCraftId=card.id;
+  pendingCraftId=card.id;pendingCraftFinish=null;
   $('#atelier-confirm-text').textContent='Fabriquer « '+card.name+' » pour '+cost+' Éclats ? Solde actuel : '+state.dust+' Éclats.';
   const modal=$('#atelier-confirm');
   if(typeof modal.showModal==='function')modal.showModal();
@@ -301,12 +310,37 @@ function askCraft(cardId){
   else pendingCraftId=null;
 }
 
+function askFinishCraft(cardId,finish){
+  const card=CARDS.find(c=>c.id===cardId);
+  if(!canCraftFinish(state,card,finish))return notify('Cette recette n’est plus disponible.');
+  const cost=getFinishCraftCost(card,finish);
+  if(state.dust<cost)return notify('Tu ne possèdes pas encore assez d’Éclats.');
+  pendingCraftId=cardId;pendingCraftFinish=finish;
+  $('#atelier-confirm-text').textContent='Forger « '+card.name+' » · '+FINISHES[finish].label+' pour '+cost+' Éclats ? Solde actuel : '+state.dust+' Éclats.';
+  const modal=$('#atelier-confirm');
+  if(typeof modal.showModal==='function')modal.showModal();
+  else if(window.confirm('Forger cette finition pour '+cost+' Éclats ?'))completeCraft();
+  else{pendingCraftId=null;pendingCraftFinish=null;}
+}
 function completeCraft(){
-  const cardId=pendingCraftId;
-  pendingCraftId=null;
+  const cardId=pendingCraftId,finish=pendingCraftFinish;
+  pendingCraftId=null;pendingCraftFinish=null;
   const modal=$('#atelier-confirm');
   if(modal.open)modal.close();
   const card=CARDS.find(c=>c.id===cardId);
+  if(finish!==null){
+    const result=craftFinish(state,card,finish);
+    if(!result.ok)return notify(result.reason);
+    state=result.state;
+    state.recentFinds=recordRecentFind(state.recentFinds,card.id,finish==='chromatic'?'chromatic':'forge');
+    forgeSelectedId=null;
+    update();
+    renderCollection();
+    const report=$('#atelier-result');report.hidden=false;
+    report.textContent='✧ '+card.name+' · '+FINISHES[finish].label+' forgée ! −'+result.cost+' Éclats.';
+    notify('Finition forgée : '+FINISHES[finish].label+' !');
+    return;
+  }
   const result=craftCard(state,card);
   if(!result.ok)return notify(result.reason);
   state=result.state;
@@ -319,6 +353,12 @@ function completeCraft(){
   report.textContent='✧ '+card.name+' rejoint ton Codex ! −'+result.cost+' Éclats.';
   notify('Carte fabriquée : '+card.name+' !');
 }
+$('#atelier-mode').addEventListener('change',event=>{
+  const value=event.target.value;
+  forgeMode=value==='discovery'||FINISH_KEYS.includes(value)?value:'discovery';
+  forgeSelectedId=null;forgeFilter='all';$('#atelier-filter').value='all';
+  $('#atelier-result').hidden=true;renderAtelier();
+});
 $('#atelier-filter').addEventListener('change',event=>{
   forgeFilter=event.target.value;
   forgeSelectedId=null;
@@ -329,11 +369,11 @@ $('#atelier-jump').addEventListener('click',()=>{
   $('#atelier-catalogue-title').focus({preventScroll:true});
 });
 $('#atelier-confirm-cancel').addEventListener('click',()=>{
-  pendingCraftId=null;
+  pendingCraftId=null;pendingCraftFinish=null;
   $('#atelier-confirm').close();
 });
 $('#atelier-confirm-accept').addEventListener('click',completeCraft);
-$('#atelier-confirm').addEventListener('close',()=>{pendingCraftId=null});
+$('#atelier-confirm').addEventListener('close',()=>{pendingCraftId=null;pendingCraftFinish=null});
 function navigate(page){
   if(!APP_PAGES.includes(page))return;
   if(page!=='collection')enableHolographicInspection(null);
@@ -2593,7 +2633,7 @@ backupRestore.addEventListener('click',()=>{
     syncBackupRestore();
   }
 });
-$('#reset').addEventListener('click',()=>{if(!confirm('Effacer définitivement les cartes et la progression sauvegardées sur cet appareil ?'))return;try{saveSession.write(fresh(),{replace:true})}catch(error){showSaveWarning(error.message);return}clearBoosterScene();enableHolographicInspection(null);try{localStorage.removeItem(PREVIOUS_SAVE_KEY)}catch{}state=fresh();state.trialStats=sanitizedTrialStats(state.trialStats);trialStarters.forEach(start=>start());renderTrialMastery();renderDifficultyChoice();renderExpedition();selectedCard=null;forgeSelectedId=null;forgeFilter='all';$('#atelier-filter').value='all';$('#atelier-result').hidden=true;$('#inspector').replaceChildren(el('p','muted','Sélectionne une carte découverte pour l’admirer.'));$('#pulls').replaceChildren();$('#pack-title').textContent='Les archives attendent leur voyageur.';$('#pack-msg').textContent='Gagne des Couronnes en jouant pour ouvrir des boosters.';update();renderCollection();notify('Progression réinitialisée.')});
+$('#reset').addEventListener('click',()=>{if(!confirm('Effacer définitivement les cartes et la progression sauvegardées sur cet appareil ?'))return;try{saveSession.write(fresh(),{replace:true})}catch(error){showSaveWarning(error.message);return}clearBoosterScene();enableHolographicInspection(null);try{localStorage.removeItem(PREVIOUS_SAVE_KEY)}catch{}state=fresh();state.trialStats=sanitizedTrialStats(state.trialStats);trialStarters.forEach(start=>start());renderTrialMastery();renderDifficultyChoice();renderExpedition();selectedCard=null;forgeSelectedId=null;forgeFilter='all';forgeMode='discovery';$('#atelier-mode').value=forgeMode;$('#atelier-filter').value='all';$('#atelier-result').hidden=true;$('#inspector').replaceChildren(el('p','muted','Sélectionne une carte découverte pour l’admirer.'));$('#pulls').replaceChildren();$('#pack-title').textContent='Les archives attendent leur voyageur.';$('#pack-msg').textContent='Gagne des Couronnes en jouant pour ouvrir des boosters.';update();renderCollection();notify('Progression réinitialisée.')});
 syncMobileSheets();
 selectBooster('origines');
 renderExpedition();
