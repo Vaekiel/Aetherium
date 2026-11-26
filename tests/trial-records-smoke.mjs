@@ -184,7 +184,7 @@ const mini=Array.from({length:5},(_,index)=>{
  summary.append(dom('span','trial-records-current'),dom('span','trial-challenges-summary'));
  recordsEl.append(summary,dom('tbody'),dom('div','trial-challenges-list'));
  return {mode:index===0?'initiation':'aventure',reward:[35,45,50,65,60][index],
-  descriptionEl:{textContent:''},rewardEl:{textContent:'',title:''},
+  descriptionEl:{textContent:''},rewardEl:dom('span','trial-reward'),
   masteryEl:{textContent:'',attrs:{},setAttribute(name,value){this.attrs[name]=value}},
   recordsEl};
 });
@@ -197,6 +197,8 @@ const uiCtx={mini,definitions,state:{trialStats:[
 runInNewContext(renderCode+'renderTrialMastery()',uiCtx);
 const firstRecords=mini[0].recordsEl.querySelector('tbody');
 assert.equal(firstRecords.children.length,3,'Each game renders one row per difficulty');
+assert.equal(mini[0].rewardEl.textContent,'♛ 35 Couronnes');
+assert.equal(mini[3].rewardEl.textContent,'♛ 65–70 Couronnes');
 assert.equal(mini[0].recordsEl.querySelector('.trial-challenges-summary').textContent,'✦ 2/3',
  'Old aggregate wins secure Bronze, while the qualifying Mastery record secures Silver');
 const firstChallenges=mini[0].recordsEl.querySelector('.trial-challenges-list');
@@ -222,6 +224,8 @@ assert.equal(mini[3].recordsEl.querySelector('tbody').children[2].children[3].te
 assert.equal(mini[4].recordsEl.querySelector('tbody').children[2].children[3].textContent,'2 mélanges ratés');
 mini[0].mode='maitrise';
 runInNewContext('renderTrialMastery()',uiCtx);
+assert.equal(mini[0].rewardEl.textContent,'♛ 50–55 Couronnes');
+assert.ok(mini[0].rewardEl.attrs['aria-label'].includes('+5 si score ≥ 90/100'));
 assert.equal(mini[0].recordsEl.querySelector('.trial-records-current').textContent,'85/100',
  'Changing difficulty updates the visible current record without touching the save');
 console.log('AETHERIUM 1.7.3 — Carnet : UI réel, modes séparés, ancienne sauvegarde et victoires protégées OK');

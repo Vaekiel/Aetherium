@@ -504,9 +504,10 @@ function renderTrialMastery(){
     g.recordsEl.setAttribute('aria-label','Carnet des records de '+definitions[index].name+
       ' · '+metric.label+' · '+current.wins+' victoires dans la difficulté actuelle');
     const levelMode=DIFFICULTIES.find(d=>d.id===g.mode)||DIFFICULTIES[1];
-    const high=trialReward(g.reward,g.mode,100);
-    g.rewardEl.textContent='♛ '+g.reward+' Couronnes'+(high>g.reward?' · jusqu’à +'+(high-g.reward)+' bonus':'');
-    g.rewardEl.title='Mode '+levelMode.label+' · récompense de base conservée';
+    const low=trialReward(g.reward,g.mode,0),high=trialReward(g.reward,g.mode,100);
+    g.rewardEl.textContent='♛ '+low+(high>low?'–'+high:'')+' Couronnes';
+    g.rewardEl.title='Mode '+levelMode.label+' · '+low+' Couronnes par victoire'+(high>low?' · +5 si score ≥ 90/100':'');
+    g.rewardEl.setAttribute('aria-label',g.rewardEl.title);
   });
 }
 function complete(i,description,performance={}){
@@ -1134,6 +1135,8 @@ function startMines(){
     if(hint){sondes++;markGuide(hint)}
     else g.status.textContent='Tous les passages sûrs ont été explorés.';
   });
+  sondeButton.title='Repère une dalle sûre · chaque sonde retire 10 points au score, jamais de Couronnes au gain de base.';
+  sondeButton.setAttribute('aria-label','Sonder un passage sûr : moins 10 points au score');
   g.actions.replaceChildren(sondeButton,button('✧ Nouvelle fouille',startMines));
   markGuide({index:site.entrance,deduction:false});
 }
