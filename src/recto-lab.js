@@ -53,6 +53,14 @@ export function createCardFront({card,finish='normal',artwork}){
   const image=artwork.querySelector('img');
   image.classList.add('recto-lab-illustration');
   if(!image.alt)image.alt='Illustration de '+card.name;
+  // Narrow 2:3 artworks must fill the same aperture as the wider Origines art.
+  // Never stretch the source; retain the complete original for inspection.
+  const fitArt=()=>{
+    if(!image.naturalWidth||!image.naturalHeight)return;
+    art.classList.toggle('recto-art-portrait',image.naturalWidth/image.naturalHeight<.75);
+  };
+  image.addEventListener('load',fitArt);
+  fitArt();
   art.append(image);front.append(art);
 
   const footer=element('div','recto-lab-footer');
