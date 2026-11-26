@@ -15,51 +15,70 @@ const element=(tag,cls='',text='')=>{
   return node;
 };
 function fitTitle(title){
- const zone=title.parentElement;
- if(!zone?.isConnected||!zone.clientWidth)return;
- const width=zone.closest('.recto-lab-card')?.clientWidth||320;
- const max=width>360?21:width>290?19:16;
- const min=width>290?10:9;
- title.style.fontSize=max+'px';
- while(parseFloat(title.style.fontSize)>min &&
-  (title.scrollWidth>zone.clientWidth-4||title.scrollHeight>zone.clientHeight-3)){
-   title.style.fontSize=(parseFloat(title.style.fontSize)-.5)+'px';
- }
+  const zone=title.parentElement;
+  if(!zone?.isConnected||!zone.clientWidth)return;
+  const width=zone.closest('.recto-lab-card')?.clientWidth||320;
+  const max=width>365?25:width>300?21:18;
+  const min=10;
+  title.style.fontSize=max+'px';
+  while(parseFloat(title.style.fontSize)>min &&
+    (title.scrollWidth>zone.clientWidth-24||title.scrollHeight>zone.clientHeight-8)){
+    title.style.fontSize=(parseFloat(title.style.fontSize)-.5)+'px';
+  }
 }
 function cardLabel(card){
   // Rarity comes directly from the actual card's metadata, not an illustration.
   const names={common:'Commune',uncommon:'Inhabituelle',rare:'Rare',epic:'Épique',legendary:'Légendaire'};
   return names[card.rarity]||card.rarity;
 }
+
 function appendCard({card,finish,artwork}){
-  const front=element('div','recto-lab-card recto-lab-'+finish);
-  front.setAttribute('role','img');
-  front.setAttribute('aria-label',card.name+', '+cardLabel(card)+', Éclat '+card.attack+', Garde '+card.health);
-  const header=element('header','recto-lab-header');
+  const front=element('article','recto-lab-card recto-lab-'+finish);
+  front.dataset.rarity=card.rarity;
+  front.style.setProperty('--recto-rarity',({
+    common:'#f9fbff',uncommon:'#62dfa8',rare:'#64b9ff',epic:'#cc82ff',
+    legendary:'#ffd27b'})[card.rarity]||'#f9fbff');
+  front.setAttribute('aria-label',card.name+', '+cardLabel(card)+
+    ', Éclat '+card.attack+', Garde '+card.health);
+
+  // Authentic universal card back under independent, readable HTML zones.
+  const back=element('img','recto-lab-original-back');
+  back.src='./assets/cards/aetherium-back-original-v3.webp';
+  back.alt='';back.setAttribute('aria-hidden','true');
+  back.decoding='async';front.append(back);
+
+  const titleZone=element('header','recto-lab-title-plaque');
   const title=element('strong','recto-lab-name',card.name);
-  header.append(title);front.append(header);
+  titleZone.append(title);front.append(titleZone);
+
   const art=element('div','recto-lab-art');
   const source=artwork.querySelector('img');
   const image=element('img','recto-lab-illustration');
   image.src=source.currentSrc||source.src;
-  image.alt='';image.decoding='async';
+  image.alt='Illustration de '+card.name;
+  image.decoding='async';
   art.append(image);front.append(art);
+
   const footer=element('div','recto-lab-footer');
-  const season=element('div','recto-lab-chapter','ARCHIVE '+String(card.id).padStart(3,'0')+'  ·  SAISON '+(card.series==='Origines'?'1':'')+'  ·  '+card.series);
   const rarity=element('div','recto-lab-rarity');
-  rarity.append(element('span','recto-lab-rarity-label',cardLabel(card)),element('span','recto-lab-divider','✦'),element('span','',card.type),element('span','recto-lab-divider','·'),element('span','',finish==='normal'?'Normale':finish==='chromatic'?'Chromatique':finish==='holographic'?'Holographique':'Calligraphique'));
-  const lore=element('p','recto-lab-lore','« '+card.lore+' »');
+  rarity.append(
+    element('span','recto-lab-rarity-label',cardLabel(card)),
+    element('span','recto-lab-divider','✦'),
+    element('span','recto-lab-type',card.type)
+  );
   const stats=element('div','recto-lab-stats');
   const flux=Math.max(1,Math.round((card.attack+card.health)/4));
-  for(const [key,label,num] of [['eclat','Éclat',card.attack],['garde','Garde',card.health],['flux','Flux',flux]]){
+  for(const [key,label,num] of [
+    ['eclat','Éclat',card.attack],['garde','Garde',card.health],['flux','Flux',flux]
+  ]){
     const stat=element('div','recto-lab-stat');
-    const icon=element('img','recto-lab-stat-icon');icon.src=ICONS[key];icon.alt='';
+    const icon=element('img','recto-lab-stat-icon');
+    icon.src=ICONS[key];icon.alt='';icon.setAttribute('aria-hidden','true');
     const statCopy=element('span','recto-lab-stat-copy');
     statCopy.append(element('small','',label),element('strong','',String(num)));
     stat.append(icon,statCopy);stats.append(stat);
   }
-  footer.append(season,rarity,lore,stats);
-  front.append(footer);
+  footer.append(rarity,stats);front.append(footer);
   requestAnimationFrame(()=>fitTitle(title));
   return front;
 }

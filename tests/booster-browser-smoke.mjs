@@ -487,49 +487,32 @@ await until(()=>evaluate("(()=>{const c=document.querySelector('#inspector .rect
 const recto=await evaluate(`(()=>{
  const panel=document.querySelector('#inspector'),card=panel.querySelector('.recto-lab-card');
  const title=card.querySelector('.recto-lab-name'),art=card.querySelector('.recto-lab-illustration');
+ const back=card.querySelector('.recto-lab-original-back');
+ const windowEl=card.querySelector('.recto-lab-art');
+ const r=windowEl.getBoundingClientRect(),c=card.getBoundingClientRect();
  return {name:title.textContent,objectFit:getComputedStyle(art).objectFit,art:art.currentSrc,
-  frame:card.querySelectorAll('.recto-lab-frame').length,
-  titleWidth:title.scrollWidth,maxWidth:title.parentElement.clientWidth,
+  back:back.currentSrc,backLoaded:back.complete&&back.naturalWidth===640,
+  cardSize:[c.width,c.height],aperture:[r.width,r.height],
+  text:card.innerText, titleWidth:title.scrollWidth,maxWidth:title.parentElement.clientWidth,
   titleHeight:title.scrollHeight,maxHeight:title.parentElement.clientHeight,
-  stats:[...card.querySelectorAll('.recto-lab-stat-copy strong')].map(s=>Number(s.textContent))};
+  stats:[...card.querySelectorAll('.recto-lab-stat-copy strong')].map(s=>Number(s.textContent)),
+  children:[...card.children].map(el=>el.className),
+  copy:!!panel.querySelector('.inspector-copy p:not(.kicker)')};
 })()`);
-console.log('New recto preview in Chromium:',JSON.stringify(recto));
+console.log('Validated original-back recto:',JSON.stringify(recto));
 assert.equal(recto.name,'Cerf des Lueurs');
-assert.equal(recto.objectFit,'contain','Original art must not be cropped or zoomed');
+assert.equal(recto.objectFit,'contain','Original art is never distorted');
 assert.ok(recto.art.includes('cerf-des-lueurs.webp'));
-assert.equal(recto.frame,0,'No decorative frame image in real HTML template');
+assert.ok(recto.back.includes('aetherium-back-original-v3.webp')&&recto.backLoaded,'Real 640px back');
+assert.deepEqual(recto.children,[
+ 'recto-lab-original-back','recto-lab-title-plaque','recto-lab-art','recto-lab-footer']);
+assert.ok(!/ARCHIVE|SAISON/i.test(recto.text),'Provenance must not appear on card');
+assert.ok(recto.aperture[0]/recto.aperture[1]>.79&&recto.aperture[0]/recto.aperture[1]<.9,
+ 'Calibrated art ratio close to real images');
 assert.ok(recto.titleWidth<=recto.maxWidth+3&&recto.titleHeight<=recto.maxHeight+3,
- 'Title fits inside a single ornament');
-const layout=await evaluate(`(()=>{
- const card=document.querySelector('#inspector .recto-lab-card');
- return {display:getComputedStyle(card).display,
-   zones:[...card.children].map(x=>x.className),
-   rows:getComputedStyle(card).gridTemplateRows};
-})()`);
-assert.equal(layout.display,'grid','Real CSS Grid');
-assert.deepEqual(layout.zones,['recto-lab-header','recto-lab-art','recto-lab-footer'],
- 'Three HTML zones, no invented border or overlays');
-assert.equal(layout.rows.split(' ').length,3,'Title, artwork and footer each occupy a grid row');
-const borderDecor=await evaluate(`(()=>{
- const card=document.querySelector('#inspector .recto-lab-card');
- const css=getComputedStyle(card);
- const before=getComputedStyle(card,'::before'),after=getComputedStyle(card,'::after');
- return {border:css.borderTopColor,decoration:before.content,
-    corners:before.backgroundImage,gem:after.content,
-    gemSize:[after.width,after.height],
-    children:[...card.children].map(el=>el.className),
-    rows:getComputedStyle(card).gridTemplateRows,
-    actualArtFit:getComputedStyle(card.querySelector('.recto-lab-illustration')).objectFit};
-})()`);
-assert.equal(borderDecor.border,'rgb(213, 172, 128)','Épure astrale muted gold edge');
-assert.notEqual(borderDecor.decoration,'none','Minimal corner details appear');
-assert.ok(borderDecor.corners.includes('linear-gradient'),'Four simple CSS corners');
-assert.equal(borderDecor.gemSize[0],'12px','Single small amethyst at the top');
-assert.deepEqual(borderDecor.children,['recto-lab-header','recto-lab-art','recto-lab-footer'],
- 'No new card elements or overlays');
-assert.equal(borderDecor.rows.split(' ').length,3,'Three-zone layout preserved');
-assert.equal(borderDecor.actualArtFit,'contain','Unchanged original artwork');
+ 'Card title fits even on phones');
 assert.deepEqual(recto.stats,[12,13,6]);
+assert.ok(recto.copy,'The Codex metadata panel remains present');
 await evaluate("document.querySelector('.recto-lab-switch-button').click()");
 assert.equal(await evaluate("document.querySelector('#inspector .inspector-art-shell')?.getBoundingClientRect().height>40"),true,
  'Original inspector remains visible when comparing');
