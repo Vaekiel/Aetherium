@@ -5,7 +5,7 @@ import {runInNewContext} from 'node:vm';
 const read=file=>readFileSync(file,'utf8');
 const load=file=>import('data:text/javascript;charset=utf-8,'+encodeURIComponent(read(file)));
 const {ALCHEMY_ESSENCES,ALCHEMY_MODES,ALCHEMY_RECIPE_COUNT,alchemyClue,recipeIndex,
- sanitizeAlchemyKnown,rememberAlchemyRecipe}=await load('src/alchemy-rituals.js');
+ sanitizeAlchemyKnown,rememberAlchemyRecipe,selectAlchemyRecipes}=await load('src/alchemy-rituals.js');
 const {trialRules}=await load('src/trial-progress.js');
 const originalRecipes=[
  ['Élixir de Vie',[0,4]],['Sérum solaire',[1,2]],['Souffle lunaire',[3,5]],
@@ -58,10 +58,10 @@ assert.ok(main.includes("s.alchemyKnown=sanitizeAlchemyKnown(raw.alchemyKnown)")
  'The old save key reads a validated expanded formula catalogue');
 assert.ok(main.includes("state.alchemyKnown=remembered")&&main.includes("save(); // Preserve discoveries immediately"),
  'Recipes persist immediately, even when a trial is interrupted');
-assert.ok(main.includes("shuffle(recipes.filter(recipe=>recipe[1].length===requiredIngredients)).slice(0,3)"));
+assert.ok(main.includes("selectAlchemyRecipes(recipes,requiredIngredients,state.alchemyKnown,shuffle)"));
 assert.ok(main.includes("g.mode==='maitrise'?3:2"));
 assert.ok(main.includes('slot.hidden=index>=requiredIngredients'));
-assert.ok(main.includes("from './alchemy-rituals.js'"));
+assert.ok(main.includes("from './alchemy-rituals.js?v=variety-06'"));
 const asState=(values)=>{
  const start=main.slice(main.indexOf('const fresh='),main.indexOf('function load(){'));
  const loader=main.slice(main.indexOf('function load(){'),main.indexOf('let state=load();'));
@@ -149,7 +149,7 @@ function exercise(mode,{fail=false,restart=false,knownBefore=[]}={}){
  const completions=[];const timers=new Map();let nextTimer=1,saved=0;
  const ctx={
    mini:[null,null,null,null,g],state,trialRules,alchemyClue,recipeIndex,
-   rememberAlchemyRecipe,ALCHEMY_ESSENCES,ALCHEMY_MODES,
+   rememberAlchemyRecipe,selectAlchemyRecipes,ALCHEMY_ESSENCES,ALCHEMY_MODES,
    window:{matchMedia:()=>({matches:true})},
    el:element,
    $:(selector,root)=>root.querySelector(selector),
@@ -203,7 +203,7 @@ function exercise(mode,{fail=false,restart=false,knownBefore=[]}={}){
    assert.equal(state.alchemyKnown.length,knownBefore.length);
    return;
  }
- const firstThree=mode==='maitrise'?[12,13,14]:[0,1,2];
+ const firstThree=selectAlchemyRecipes(recipes,mode==='maitrise'?3:2,knownBefore,arr=>[...arr]).map(recipe=>recipes.indexOf(recipe));
  for(let i=0;i<3;i++){
    const recipeId=firstThree[i];
    const ingredientsFor=recipes[recipeId][1];
@@ -228,6 +228,8 @@ exercise('aventure',{restart:true});
 exercise('maitrise');
 exercise('maitrise',{fail:true});
 exercise('initiation',{knownBefore:[0,1,2]});
+exercise('initiation',{knownBefore:Array.from({length:11},(_,i)=>i)});
+exercise('maitrise',{knownBefore:[12,13,14,15,16,17,18,19]});
 const html=read('index.html'),css=read('src/alchemy.css');
 assert.ok(html.includes('src/alchemy.css?v=alchemy-mastery-172b'));
 assert.ok(html.includes('src/main.js?v='));
@@ -236,3 +238,20 @@ assert.ok(css.includes('.alchemy-ritual-clue'));
 assert.ok(css.includes('@media(max-width:850px)'));
 assert.ok(css.includes('prefers-reduced-motion'));
 console.log('AETHERIUM 1.7.2 — 20 recettes, trios de Maîtrise, indices uniques et sauvegardes OK');
+
+// A complete discovery path: no wasted all-known draw before the book is filled.
+const bookProgress=[];
+for(const [size,sessions,expected] of [[2,4,12],[3,3,20]]){
+ for(let session=0;session<sessions;session++){
+  const group=selectAlchemyRecipes(recipes,size,bookProgress,arr=>[...arr].reverse());
+  assert.equal(group.length,3);assert.equal(new Set(group).size,3);
+  assert.ok(group.every(r=>r[1].length===size));
+  const unknown=recipes.filter((r,i)=>r[1].length===size&&!bookProgress.includes(i)).length;
+  const ids=group.map(r=>recipes.indexOf(r));
+  assert.equal(ids.filter(i=>!bookProgress.includes(i)).length,Math.min(3,unknown));
+  for(const id of ids)if(!bookProgress.includes(id))bookProgress.push(id);
+ }
+ assert.equal(bookProgress.length,expected);
+}
+assert.equal(selectAlchemyRecipes(recipes,2,bookProgress,arr=>[...arr]).length,3);
+console.log('Alchemy discovery: all 20 formulas in seven successful sessions, no repeats until necessary, stable identifiers and existing rewards.');

@@ -9,7 +9,7 @@ const {trialRules}=await moduleFor('src/trial-progress.js');
 const names=Array.from({length:8},(_,i)=>({id:'sym-'+i,label:'Rune '+i,sprite:i+1}));
 const shuffle=list=>[...list].reverse();
 assert.deepEqual(memoryRitualsFor('initiation').map(r=>r.id),['guided']);
-assert.deepEqual(memoryRitualsFor('aventure').map(r=>r.id),['ancient','echoes']);
+assert.deepEqual(memoryRitualsFor('aventure').map(r=>r.id),['ancient','echoes','rives']);
 assert.deepEqual(memoryRitualsFor('maitrise').map(r=>r.id),['ancient','glimpse']);
 assert.equal(nextMemoryRitual('aventure','ancient',()=>0).id,'echoes');
 assert.equal(nextMemoryRitual('aventure','echoes',()=>0).id,'ancient');
@@ -31,6 +31,10 @@ for(const ritual of MEMORY_RITUALS){
  if(ritual.id==='echoes')for(const name of names){
    assert.equal(deck.slice(0,8).filter(t=>t.id===name.id).length,1);
    assert.equal(deck.slice(8).filter(t=>t.id===name.id).length,1);
+ }
+ if(ritual.id==='rives')for(const name of names){
+   assert.equal(deck.filter((t,i)=>i%4<2&&t.id===name.id).length,1);
+   assert.equal(deck.filter((t,i)=>i%4>=2&&t.id===name.id).length,1);
  }
  assert.ok(ritual.title.length>8&&ritual.rule.length>20);
 }
@@ -166,6 +170,7 @@ function exercise(mode,ritualId,{wrong=false,fail=false,restart=false}={}){
 exercise('initiation','guided',{wrong:true});
 exercise('aventure','ancient',{wrong:true});
 exercise('aventure','echoes');
+exercise('aventure','rives',{wrong:true});
 exercise('maitrise','ancient');
 exercise('maitrise','glimpse',{restart:true});
 exercise('maitrise','ancient',{fail:true});
@@ -176,4 +181,4 @@ assert.ok(css.includes('.memory-board.is-previewing'));
 assert.ok(css.includes('dusk-horizon.webp'));
 assert.ok(css.includes('@media(max-width:850px)'));
 assert.ok(css.includes('prefers-reduced-motion'));
-console.log('AETHERIUM 1.7.2 — Mémoire ancienne : 4 rituels, fresque, aperçu, relance, victoires et échecs OK');
+console.log('AETHERIUM 1.7.2 — Mémoire ancienne : 5 rituels, fresque, aperçu, relance, victoires et échecs OK');

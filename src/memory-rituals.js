@@ -13,11 +13,14 @@ export const MEMORY_RITUALS=Object.freeze([
    previewMs:0}),
  Object.freeze({id:'glimpse',title:'Le Souffle du passé',
    rule:'Observe les tablettes révélées brièvement au départ, puis retrouve leurs paires.',
-   previewMs:2400})
+   previewMs:2400}),
+ Object.freeze({id:'rives',title:'Les Deux Rives',
+   rule:'Chaque symbole se trouve une fois dans les deux colonnes de gauche et une fois dans les deux colonnes de droite.',
+   previewMs:0})
 ]);
 export function memoryRitualsFor(mode='aventure'){
  const ids=mode==='initiation'?['guided']:
-   mode==='maitrise'?['ancient','glimpse']:['ancient','echoes'];
+   mode==='maitrise'?['ancient','glimpse']:['ancient','echoes','rives'];
  return MEMORY_RITUALS.filter(item=>ids.includes(item.id));
 }
 export function nextMemoryRitual(mode='aventure',previousId=null,random=Math.random){
@@ -44,6 +47,11 @@ export function buildMemoryDeck(runes,ritual,shuffle){
    const symbols=shuffle(runes);
    return [...shuffle(symbols.map(item=>make(item,'a'))),
            ...shuffle(symbols.map(item=>make(item,'b')))];
+ }
+ if(id==='rives'){
+   const left=shuffle(runes.map(item=>make(item,'a')));
+   const right=shuffle(runes.map(item=>make(item,'b')));
+   return Array.from({length:4},(_,row)=>[...left.slice(row*2,row*2+2),...right.slice(row*2,row*2+2)]).flat();
  }
  return shuffle(runes.flatMap(item=>[make(item,'a'),make(item,'b')]));
 }

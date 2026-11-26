@@ -79,3 +79,15 @@ export function rememberAlchemyRecipe(known,recipeId){
    return sanitizeAlchemyKnown(known);
  return sanitizeAlchemyKnown([...sanitizeAlchemyKnown(known),recipeId]);
 }
+
+/* Three distinct recipes at the current difficulty. Unknown formulas come
+ * first, with random order within each group. Known formulas fill the rest.
+ * No change to clues, recipe identifiers, rewards or persisted data. */
+export function selectAlchemyRecipes(recipes,requiredIngredients,known,shuffle){
+ const discovered=new Set(sanitizeAlchemyKnown(known));
+ const eligible=recipes.map((recipe,index)=>({recipe,index}))
+  .filter(entry=>entry.recipe[1].length===requiredIngredients);
+ const mixed=shuffle(eligible);
+ return [...mixed.filter(entry=>!discovered.has(entry.index)),...mixed.filter(entry=>discovered.has(entry.index))]
+  .slice(0,3).map(entry=>entry.recipe);
+}

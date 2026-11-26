@@ -9,10 +9,10 @@ const {RUNE_RITUALS,runeRitualsFor,nextRuneRitual,runeExpectedAt}=
 const {trialRules}=await import(moduleSource('src/trial-progress.js'));
 
 assert.deepEqual(runeRitualsFor('initiation').map(x=>x.id),['ascendant']);
-assert.deepEqual(runeRitualsFor('aventure').map(x=>x.id),['ascendant','descendant']);
-assert.deepEqual(runeRitualsFor('maitrise').map(x=>x.id),['ascendant','descendant','miroir']);
-assert.deepEqual(runeRitualsFor('aventure-inconnu').map(x=>x.id),['ascendant','descendant']);
-assert.deepEqual(RUNE_RITUALS.map(r=>r.order.length),[12,12,12]);
+assert.deepEqual(runeRitualsFor('aventure').map(x=>x.id),['ascendant','descendant','alternance']);
+assert.deepEqual(runeRitualsFor('maitrise').map(x=>x.id),['ascendant','descendant','miroir','alternance','convergence']);
+assert.deepEqual(runeRitualsFor('aventure-inconnu').map(x=>x.id),['ascendant','descendant','alternance']);
+assert.deepEqual(RUNE_RITUALS.map(r=>r.order.length),[12,12,12,12,12]);
 for(const ritual of RUNE_RITUALS){
   assert.equal(new Set(ritual.order).size,12,'Each ritual uses every rune exactly once');
   assert.deepEqual([...ritual.order].sort((a,b)=>a-b),Array.from({length:12},(_,i)=>i+1));
@@ -27,10 +27,10 @@ assert.deepEqual([...RUNE_RITUALS[1].order],Array.from({length:12},(_,i)=>12-i))
 assert.deepEqual([...RUNE_RITUALS[2].order],[1,12,2,11,3,10,4,9,5,8,6,7]);
 assert.equal(nextRuneRitual('initiation','ascendant',()=>1).id,'ascendant');
 assert.equal(nextRuneRitual('aventure','ascendant',()=>0).id,'descendant');
-assert.equal(nextRuneRitual('aventure','descendant',()=>1).id,'ascendant');
+assert.equal(nextRuneRitual('aventure','descendant',()=>1).id,'alternance');
 assert.equal(nextRuneRitual('maitrise','ascendant',()=>0).id,'descendant');
-assert.equal(nextRuneRitual('maitrise','ascendant',()=>1).id,'miroir');
-assert.equal(nextRuneRitual('maitrise','miroir',()=>1).id,'descendant');
+assert.equal(nextRuneRitual('maitrise','ascendant',()=>1).id,'convergence');
+assert.equal(nextRuneRitual('maitrise','miroir',()=>1).id,'convergence');
 let previous=null;
 for(let i=0;i<200;i++){
  const ritual=nextRuneRitual('maitrise',previous,()=>i/200);
@@ -130,6 +130,11 @@ instantiate('aventure','descendant',true);
 instantiate('maitrise','ascendant',true);
 instantiate('maitrise','descendant',true);
 instantiate('maitrise','miroir',true);
+instantiate('aventure','alternance',true);
+instantiate('maitrise','alternance',true);
+instantiate('maitrise','convergence',true);
+assert.deepEqual([...RUNE_RITUALS[3].order],[1,3,5,7,9,11,2,4,6,8,10,12]);
+assert.deepEqual([...RUNE_RITUALS[4].order],[6,7,5,8,4,9,3,10,2,11,1,12]);
 
 // Failure path must not grant a win, and no clicks can resume the failed grille.
 {
@@ -155,4 +160,4 @@ instantiate('maitrise','miroir',true);
  correct.click();
  assert.equal(status.textContent,text,'Failed grille cannot advance after its error budget');
 }
-console.log('AETHERIUM 1.7.2 — 3 parcours runiques résolubles, niveaux et clics réels testés');
+console.log('AETHERIUM 1.7.2 — 5 parcours runiques résolubles, niveaux et clics réels testés');
