@@ -118,6 +118,7 @@ test('preview economy and backups cannot cross the normal save boundary',async()
    const live=gameState();
    const simulated={...live,coins:999999,dust:12345};
    const mem=storage(JSON.stringify(live));
+   mem.setItem(dev.GAME_SAVE_KEY,JSON.stringify({...live,coins:300,dust:0}));
    dev.installImportedSave(mem,simulated);
    assert.deepEqual(JSON.parse(mem.getItem(production.GAME_SAVE_KEY)),live);
    assert.deepEqual(JSON.parse(mem.getItem(dev.GAME_SAVE_KEY)),simulated);
