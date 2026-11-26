@@ -68,7 +68,7 @@ function simulate(reduced){
   showBoosterCard(index,focus){renders.push({index,focus})},
   $:selector=>selector==='#pack-title'?ui.title:
    selector==='#pack-msg'?ui.message:
-   selector==='#page-boosters'?ui.page:null
+   selector==='#page-boosters'?ui.page:selector==='#booster-codex-action'?box():null
  };
  runInNewContext(handler+'openOriginesBooster()',sandbox);
  assert.equal(draws,1,'The pack contents are drawn exactly once');

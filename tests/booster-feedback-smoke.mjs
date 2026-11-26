@@ -88,7 +88,7 @@ function runCase(draw){
    update(){updates++},
    makeCard(){artCards++;return node('button','card')},
    el:node,
-   $:selector=>selector==='#pack-title'?title:selector==='#pack-msg'?message:null
+   $:selector=>selector==='#pack-title'?title:selector==='#pack-msg'?message:selector==='#booster-codex-action'?node():null
  };
  runInNewContext(code+'completeBoosterReveal()',sandbox);
  assert.equal(sandbox.boosterBusy,false);
