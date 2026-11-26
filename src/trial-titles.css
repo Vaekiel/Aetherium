@@ -79,3 +79,31 @@
 @media(prefers-reduced-motion:reduce){
   #page-succes .honorific{transition:none}
 }
+
+/* Permanent journey tracks, scoped to Chroniques. No animation or artwork. */
+#page-succes .journey-panel{padding:14px 16px;margin:0 0 18px;border:1px solid #aa8d9a83;border-radius:6px;background:linear-gradient(145deg,#25213bde,#161c30ef);min-width:0}
+#page-succes .journey-header{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+#page-succes .journey-header .kicker{margin:0 0 4px;color:#b7a5c8;font-size:10px}
+#page-succes .journey-header h2,#page-succes .journey-secret-heading{font:small-caps 21px/1.2 Georgia,serif;color:#f2dbb6;margin:0}
+#page-succes .journey-secret-heading{margin:8px 0 12px}
+#page-succes #journey-count{font:12px/1.4 system-ui,sans-serif;color:#d9c6ed}
+#page-succes .journey-intro{font:12px/1.5 system-ui,sans-serif;color:#d4cbde;margin:8px 0 12px}
+#page-succes .journey-group{border:1px solid #82709675;border-radius:6px;margin:7px 0;background:#17192be6;min-width:0}
+#page-succes .journey-summary{cursor:pointer;min-height:44px;padding:10px;display:flex;align-items:center;gap:6px 10px;flex-wrap:wrap;color:#e3cda9}
+#page-succes .journey-summary::before{content:"▸";color:#c3a9e3}
+#page-succes .journey-group[open]>.journey-summary::before{content:"▾"}
+#page-succes .journey-summary strong{flex:1;font-size:14px}
+#page-succes .journey-summary small{color:#c5b7df;font:11px/1.4 system-ui,sans-serif}
+#page-succes .journey-track{padding:11px 12px;border-top:1px solid #82709645;min-width:0}
+#page-succes .journey-track-title,#page-succes .journey-track-foot{display:flex;justify-content:space-between;align-items:center;gap:6px 10px;flex-wrap:wrap}
+#page-succes .journey-track-title h3{margin:0;font:600 14px/1.4 Georgia,serif;color:#e8d9c5;overflow-wrap:anywhere;min-width:0}
+#page-succes .journey-value{font:600 13px/1.4 system-ui,sans-serif;color:#d7c2ef;white-space:nowrap;font-variant-numeric:tabular-nums}
+#page-succes .journey-track p,#page-succes .journey-track-foot small{font:12px/1.45 system-ui,sans-serif;color:#cbc0d8;margin:5px 0}
+#page-succes .journey-meter{height:6px;border-radius:4px;background:#0e1324;overflow:hidden}
+#page-succes .journey-meter>span{display:block;height:100%;background:#c1a0ea}
+#page-succes .journey-milestones{display:flex;gap:5px;flex-wrap:wrap;margin:8px 0 3px}
+#page-succes .journey-milestones span{font:11px/1.4 system-ui,sans-serif;color:#c5b7df;border:1px solid #82709675;border-radius:4px;padding:3px 6px}
+#page-succes .journey-milestones .is-earned,#page-succes .journey-track.is-complete .journey-value{color:#f2d9a3;border-color:#c4a46b}
+#page-succes .journey-track.is-complete .journey-meter>span{background:#d9b675}
+#page-succes .journey-link{min-height:44px;white-space:normal;font-size:12px;padding:8px 12px}
+@media(max-width:590px){#page-succes .journey-panel{padding:10px 12px}#page-succes .journey-track{padding:10px}}

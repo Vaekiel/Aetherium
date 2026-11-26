@@ -1,3 +1,4 @@
+import {journeyProgress} from './journey-progress.js?v=1';
 import {completionPlan,completionRecipes,filterCompletionRecipes} from './collection-completion.js?v=1';
 import {beginnerGuide,readGuideDismissal,writeGuideDismissal} from './onboarding.js?v=1';
 import {createCardFront,attachRectoLabInspector} from './recto-lab.js?v=recto-uniforme-3';
@@ -2649,6 +2650,51 @@ function renderHonorifics(){
     list.append(tile);
   });
 }
+function renderJourney(){
+  const groups=journeyProgress(CARDS,state);
+  const root=$('#journey-groups');
+  // Keep the player's expanded sections while refreshing actual progress.
+  const expanded=new Map(Array.from(root.children).map(section=>[section.dataset.journeyGroup,section.open]));
+  const fragment=document.createDocumentFragment();
+  for(const group of groups){
+    const section=el('details','journey-group');
+    section.dataset.journeyGroup=group.id;
+    section.open=expanded.has(group.id)?expanded.get(group.id):group.id==='collection';
+    const earned=group.tracks.reduce((n,t)=>n+t.achieved,0);
+    const total=group.tracks.reduce((n,t)=>n+t.targets.length,0);
+    const summary=el('summary','journey-summary');
+    summary.append(el('strong','',group.label),el('small','',earned+' / '+total+' paliers'));
+    section.append(summary);
+    for(const entry of group.tracks){
+      const row=el('article','journey-track'+(entry.complete?' is-complete':''));
+      row.dataset.journeyTrack=entry.id;
+      const title=el('div','journey-track-title');
+      title.append(el('h3','',entry.label),el('strong','journey-value',entry.current.toLocaleString('fr-FR')+' / '+entry.total.toLocaleString('fr-FR')));
+      row.append(title,el('p','',entry.description));
+      const meter=el('div','journey-meter');
+      meter.setAttribute('role','progressbar');meter.setAttribute('aria-label',entry.label);
+      meter.setAttribute('aria-valuemin','0');meter.setAttribute('aria-valuemax',String(entry.total));meter.setAttribute('aria-valuenow',String(Math.min(entry.current,entry.total)));
+      const fill=el('span');fill.style.width=entry.percent+'%';meter.append(fill);row.append(meter);
+      const milestones=el('div','journey-milestones');milestones.setAttribute('aria-label','Paliers permanents');
+      for(const value of entry.targets){
+        const done=entry.current>=value;
+        const mark=el('span',done?'is-earned':'',(done?'✓ ':'◇ ')+value.toLocaleString('fr-FR'));
+        mark.setAttribute('aria-label',value+' · '+(done?'atteint':'à atteindre'));
+        milestones.append(mark);
+      }
+      const foot=el('div','journey-track-foot');
+      foot.append(el('small','',entry.complete?'✦ Parcours achevé':'Prochain palier : '+entry.next.toLocaleString('fr-FR')));
+      if(!entry.complete){
+        const label=entry.page==='collection'?'Ouvrir le Codex':entry.page==='expeditions'?'Explorer':'Jouer';
+        foot.append(button(label+' ›',()=>navigate(entry.page),'secondary journey-link'));
+      }
+      row.append(milestones,foot);section.append(row);
+    }
+    fragment.append(section);
+  }
+  root.replaceChildren(fragment);
+  $('#journey-count').textContent=groups.flatMap(g=>g.tracks).reduce((n,t)=>n+t.achieved,0)+' paliers atteints';
+}
 function renderAchievements(){
   const root=$('#achievements');
   root.replaceChildren();
@@ -2661,6 +2707,7 @@ function renderAchievements(){
     root.append(box);
   }
   renderHonorifics();
+  renderJourney();
 }
 // Save transfer remains opt-in and cannot interfere with game loops or rewards.
 const backupDialog=$('#backup-dialog');
