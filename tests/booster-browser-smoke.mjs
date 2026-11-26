@@ -520,6 +520,7 @@ await evaluate("document.querySelectorAll('.recto-lab-open')[1].click()");
 await until(()=>evaluate("document.querySelector('#inspector .recto-lab-name')?.textContent.includes('Astra')"),'Long name example opened');
 await evaluate("document.querySelectorAll('.recto-lab-switch-button')[1].click()");
 await until(()=>evaluate("document.querySelector('#inspector .recto-lab-name')?.getBoundingClientRect().width>100"),'Astra name is visible in actual new front');
+await until(()=>evaluate("(()=>{const n=document.querySelector('#inspector .recto-lab-name');return !!n&&n.scrollHeight<=n.parentElement.clientHeight+3})()"),'Long title resize completes');
 const longTitle=await evaluate(`(()=>{
  const n=document.querySelector('#inspector .recto-lab-name');
  return {name:n.textContent,width:n.scrollWidth,boxWidth:n.parentElement.clientWidth,
