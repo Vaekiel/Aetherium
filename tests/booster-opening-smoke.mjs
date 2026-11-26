@@ -53,8 +53,9 @@ function simulate(reduced){
  const state={coins:300,opened:0,owned:{},shiny:{},dust:0,recentFinds:[]};
  const sandbox={
   boosterBusy:false,state,CARDS:Array.from({length:4},(_,i)=>({id:i+1,name:i===3?'Floraison Cendrée':'Carte',rarity:i===3?'rare':'common'})),
-  PACK_PRICE:100,duplicateDustReward,
-  drawPack(){draws++;return Array.from({length:5},(_,i)=>({id:4,shiny:i===0}))},
+  PACK_PRICE:100,duplicateDustReward,selectedBooster:'origines',
+  boosterView:id=>id==='origines'?{collection:{id}}:null,
+  drawCollectionPack(id){assert.equal(id,'origines');draws++;return Array.from({length:5},(_,i)=>({id:4,shiny:i===0}))},
   update(){saves++},
   recordRecentFind(entries,id,kind){return [{id,kind},...entries].slice(0,6)},
   cancelBoosterTimers(){cancels++},
@@ -70,6 +71,7 @@ function simulate(reduced){
    selector==='#pack-msg'?ui.message:
    selector==='#page-boosters'?ui.page:selector==='#booster-codex-action'?box():null
  };
+ sandbox.CARD_BY_ID=new Map(sandbox.CARDS.map(c=>[c.id,c]));
  runInNewContext(handler+'openOriginesBooster()',sandbox);
  assert.equal(draws,1,'The pack contents are drawn exactly once');
  assert.equal(state.coins,200,'The price remains 100 Couronnes');
