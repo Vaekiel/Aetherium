@@ -1,8 +1,5 @@
 /* Release gate: pure validation, never changes gameplay or player storage. */
-export const FUTURE_ART_STANDARD=Object.freeze({
-  thumbnailWidth:350,thumbnailHeight:525,fullWidth:1024,fullHeight:1536,
-  format:'webp',boosterWidth:640,boosterHeight:1040
-});
+import {FUTURE_ART_STANDARD} from './content-standard.js';
 const text=value=>typeof value==='string'&&value.trim().length>0;
 const types=new Set(['Héros','Créature','Sort','Artefact']);
 const artPath=path=>typeof path==='string'&&/^\.\/assets\/cards\/[a-z0-9-]+\.webp$/.test(path);
@@ -53,12 +50,19 @@ export function validateSeasonCatalog({seasons,cards,art,boosters,views,rarities
       require(group.length===part.plannedCards,'Incomplete collection: '+part.id);
       const signatures=group.filter(c=>c.signature===true);
       require(signatures.length===(part.signature?1:0)&&(!part.signature||signatures[0]?.id===part.last),'Invalid Signature placement: '+part.id);
-      for(const card of group)publishedIds.add(card.id);
+      for(const card of group){
+        publishedIds.add(card.id);
+        if(season.number>1){
+          const a=art[card.id];
+          require(!!a&&['thumbnailWidth','thumbnailHeight','fullWidth','fullHeight'].every(k=>a[k]===FUTURE_ART_STANDARD[k]),'Nonstandard future illustration: '+card.id);
+        }
+      }
       const expected=group.filter(c=>c.signature!==true&&c.boosterEligible!==false);
       require(expected.length===part.plannedCards-(part.signature?1:0),'Unexpected booster exclusion: '+part.id);
       require(!!booster&&booster.season.id===season.id&&booster.collection.id===part.id&&JSON.stringify(booster.pool.map(c=>c.id))===JSON.stringify(expected.map(c=>c.id)),'Invalid booster pool: '+part.id);
       for(const rarity of Object.keys(rarities))require(expected.some(c=>c.rarity===rarity),'Missing booster rarity '+rarity+': '+part.id);
       const view=views[part.id];
+      if(season.number>1)require(view?.theme==='standard','Future pack must use the shared design: '+part.id);
       require(!!view&&text(view.title)&&text(view.label)&&text(view.description)&&text(view.message)&&text(view.theme)&&packPath(view.art),'Missing/invalid booster presentation: '+part.id);
     }
   }
