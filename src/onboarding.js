@@ -1,5 +1,6 @@
 /* Optional onboarding: derive milestones from the real save, never grant rewards. */
-export const GUIDE_PREF_KEY='aetherium-guide-dismissed-v1';
+import {DEV_PREVIEW} from './save-backup.js';
+export const GUIDE_PREF_KEY=DEV_PREVIEW?'aetherium-dev-guide-dismissed-v1':'aetherium-guide-dismissed-v1';
 export function beginnerGuide(state,packPrice){
  const discovered=Object.values(state?.owned||{}).some(n=>Number(n)>0);
  const opened=Number(state?.opened)>0;
