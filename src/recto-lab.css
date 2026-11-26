@@ -34,7 +34,7 @@
 }
 :is(#page-collection,#page-boosters) .recto-lab-card{
   position:relative;flex:none;
-  width:min(100%,420px);max-width:100%;aspect-ratio:2/3;
+  width:100%;max-width:420px;min-width:0;aspect-ratio:2/3;
   container-type:inline-size;box-sizing:border-box;padding:0;margin:0 auto;
   overflow:hidden;border:0;border-radius:13px;
   background:#140d25;box-shadow:0 12px 30px #050316c7;
@@ -66,13 +66,13 @@
 }
 :is(#page-collection,#page-boosters) .recto-lab-card .recto-lab-art{
   position:absolute;top:17.8%;left:17%;width:66%;height:53%;
-  z-index:2;overflow:hidden;display:grid;place-items:center;
+  z-index:2;overflow:hidden;display:grid;grid-template:minmax(0,1fr)/minmax(0,1fr);place-items:center;
   background:#0d1027;border:2px solid #e3bf88;border-radius:11px;
   box-shadow:inset 0 0 0 1px #5b347d;
 }
 :is(#page-collection,#page-boosters) .recto-lab-card .recto-lab-illustration{
   display:block;width:100%!important;height:100%!important;
-  object-fit:contain!important;object-position:center center;
+  object-fit:contain!important;object-position:center center;min-height:0;
 }
 :is(#page-collection,#page-boosters) .recto-lab-card.recto-lab-calligraphic .recto-lab-illustration{
   filter:grayscale(1) contrast(1.62) brightness(1.12)!important;
@@ -170,3 +170,11 @@
 /* Calligraphic finish: mineral ink and paper texture, not a tinted illustration. */
 :is(#page-collection,#page-boosters) .recto-lab-card.recto-lab-calligraphic .recto-lab-art{background:#e2dfd8;border-color:#d6c9b0;isolation:isolate}
 :is(#page-collection,#page-boosters) .recto-lab-card.recto-lab-calligraphic .recto-lab-art::after{content:"";position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(0deg,transparent 0 2px,#2b27240b 3px,transparent 4px);mix-blend-mode:multiply;opacity:.72}
+
+/* Consistent physical card and art window, whatever the source aspect ratio.
+   Portrait originals are center-cropped only in the card, never distorted. */
+:is(#page-collection,#page-boosters) .recto-lab-card .recto-art-portrait .recto-lab-illustration{
+  object-fit:cover!important;object-position:center;
+}
+#page-collection .inspector.recto-lab-mode-new>.recto-lab-card{justify-self:center;align-self:start}
+#page-collection .recto-full-art-link{display:inline-block;margin:4px 0 8px;color:#d9c2ee;text-decoration:underline;text-underline-offset:3px;font:12px/1.5 system-ui,sans-serif}
