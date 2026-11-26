@@ -43,6 +43,7 @@ win.dispatchEvent(event('deviceorientation',{gamma:20,beta:10}));flush();
 assert.notEqual(shell.values['--holo-x'],'50.00%');
 shell.children[0].click();
 assert.equal(activeListeners,0);
+flush(); // The intentional recenter frame on opt-out is allowed.
 shell.visible=false;
 shell.dispatchEvent(event('pointermove',{clientX:90,clientY:20}));
 assert.equal(frames.size,0,'No animation queued for hidden card');
