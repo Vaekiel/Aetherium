@@ -8,9 +8,11 @@ for(const page of [...mainPages,'succes'])assert.ok(html.includes('id="page-'+pa
 for(const page of mainPages)assert.ok(html.includes('data-page="'+page+'"'),`Onglet ${page} présent`);
 assert.ok(!html.includes('data-page="succes"'),'Chroniques n’occupe plus un onglet principal');
 assert.ok(html.includes('id="chroniques-link"')&&html.includes('data-go="succes"'),'Chroniques restent accessibles séparément');
-for(const id of ['games','game-picker','buy','pulls','booster-summary','booster-step','next-pull','collection-filters','card-grid','search','preview-art','inspector','inspector-shell','filter-close','filter-open','achievements','toast','coins','dust','reset']){
+for(const id of ['games','game-picker','buy','pulls','booster-summary','booster-step','next-pull','collection-filters','card-grid','search','inspector','inspector-shell','filter-close','filter-open','achievements','toast','coins','dust','reset']){
  assert.ok(html.includes('id="'+id+'"'),`Contrôle préservé : ${id}`);
 }
+assert.ok(!html.includes('id="preview-art"'),
+ 'The retired preview button cannot be exposed on PC, tablet or mobile');
 assert.ok(html.includes('src/shell.css'),'Nouvelle interface chargée');
 const styleLinks=[...html.matchAll(/href="\.\/src\/([^" ]+\.css)(?:\?[^" ]+)?"/g)].map(x=>x[1]);
 assert.ok(styleLinks.indexOf('chromatic.css')<styleLinks.indexOf('codex.css'),
