@@ -13,6 +13,6 @@ export function boosterView(id){
   if(!booster||!view)return null;
   const {season,collection}=booster;
   const roman=['','I','II','III','IV','V','VI','VII','VIII','IX','X'][season.number]??String(season.number);
-  return {...view,season,collection,edition:'SAISON '+season.number+' · 5 CARTES',
+  return {...view,season,collection,seasonLabel:'Saison '+roman+' · '+season.title,edition:'SAISON '+season.number+' · 5 CARTES',
     kicker:'SAISON '+roman+' · '+season.title.toLocaleUpperCase('fr-FR')+' · PARTIE '+collection.number};
 }
