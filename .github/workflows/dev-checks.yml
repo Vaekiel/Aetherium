@@ -1,0 +1,24 @@
+name: Development sandbox checks
+on:
+  push:
+    branches: [dev]
+  pull_request:
+    branches: [main, dev]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: |
+          node --check --input-type=module < src/main.js
+          node --check --input-type=module < src/save-backup.js
+          node --check --input-type=module < src/onboarding.js
+          node --experimental-default-type=module --test tests/save-backup.test.mjs
+          node tests/save-backup-smoke.mjs
+          node --experimental-default-type=module tests/onboarding-smoke.mjs
