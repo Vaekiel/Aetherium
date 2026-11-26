@@ -75,7 +75,7 @@
   object-fit:contain!important;object-position:center center;
 }
 :is(#page-collection,#page-boosters) .recto-lab-card.recto-lab-calligraphic .recto-lab-illustration{
-  filter:grayscale(1) contrast(1.62) brightness(1.12);
+  filter:grayscale(1) contrast(1.62) brightness(1.12)!important;
 }
 :is(#page-collection,#page-boosters) .recto-lab-card.recto-lab-chromatic .recto-lab-illustration{
   filter:none;
@@ -166,3 +166,7 @@
 :is(#page-collection,#page-boosters) .recto-lab-card .recto-lab-stat-copy small{font-size:clamp(5px,2.15cqw,9px)}
 :is(#page-collection,#page-boosters) .recto-lab-card .recto-lab-stat-copy strong{font-size:clamp(9px,5cqw,23px)}
 @media(prefers-reduced-motion:reduce){:is(#page-collection,#page-boosters) .recto-lab-card::before,:is(#page-collection,#page-boosters) .recto-lab-card .recto-lab-art::before,:is(#page-collection,#page-boosters) .recto-lab-card .recto-lab-art::after{animation:none!important}.recto-lab-card.recto-lab-holographic{transform:none!important;transition:none!important}}
+
+/* Calligraphic finish: mineral ink and paper texture, not a tinted illustration. */
+:is(#page-collection,#page-boosters) .recto-lab-card.recto-lab-calligraphic .recto-lab-art{background:#e2dfd8;border-color:#d6c9b0;isolation:isolate}
+:is(#page-collection,#page-boosters) .recto-lab-card.recto-lab-calligraphic .recto-lab-art::after{content:"";position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(0deg,transparent 0 2px,#2b27240b 3px,transparent 4px);mix-blend-mode:multiply;opacity:.72}
