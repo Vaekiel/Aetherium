@@ -151,6 +151,7 @@ function renderBeginnerGuide(){
  const guide=$('#beginner-guide');
  const progress=beginnerGuide(state,PACK_PRICE);
  guide.hidden=!!saveSession.problem||(!guideManual&&(guideDismissed||progress.complete));
+ $('#trial-guide-shortcut').hidden=guide.hidden;
  $('#guide-pack-step').textContent=progress.collected?'✓ Premières cartes':'◇ Découvrir des cartes';
  $('#guide-trial-step').textContent=progress.won?'✓ Première victoire':'◇ Remporter une épreuve';
  $('#guide-title').textContent=progress.complete?'Ton aventure continue':progress.collected?'Tes premières archives':'Bienvenue dans les Marches de Verre';
@@ -1406,7 +1407,7 @@ const picker=$('#game-picker');
 let selectedGame=0;
 const trialSubtitles=['Ordre & observation','Mémoire & association','Logique des cristaux','Exploration & prudence','Recettes & alchimie'];
 definitions.forEach((entry,index)=>{
-  const control=button('',()=>{selectGame(index);if(mobileView.matches)openTrial();},'game-choice');
+  const control=button('',()=>{selectGame(index);if(mobileView.matches||window.matchMedia('(max-height:520px) and (orientation:landscape)').matches)openTrial();},'game-choice');
   control.append(el('span','game-choice-name',(index+1)+' · '+entry.name),
     el('span','game-choice-hint',trialSubtitles[index]));
   control.setAttribute('aria-label','Choisir '+entry.name);
@@ -1435,6 +1436,7 @@ function openTrial(focus=false){
   if(focus)$('#trial-title-'+selectedGame)?.focus({preventScroll:true});
 }
 $('#trial-launch').addEventListener('click',()=>openTrial(true));
+$('#trial-guide-shortcut').addEventListener('click',()=>{setTrialView('guide');$('#guide-title').focus({preventScroll:true})});
 $('#trial-return').addEventListener('click',()=>{setTrialView('hub');picker.children[selectedGame]?.focus({preventScroll:true})});
 $('#circuit-shortcut').addEventListener('click',showCircuits);
 function selectGame(index,{jumpToStage=false,focusTrial=false}={}){
@@ -2749,13 +2751,14 @@ $('#guide-action').addEventListener('click',()=>{
  else if(progress.stage==='pack')navigate('boosters');
  else{
   // Offer the difficulty controls; do not silently change a player's choice.
+  setTrialView('hub');
   const target=$('#difficulty-options button[data-difficulty="initiation"]');
   target.focus({preventScroll:true});
   target.scrollIntoView({block:'nearest',behavior:'auto'});
  }
 });
-$('#guide-dismiss').addEventListener('click',()=>{guideManual=false;rememberGuideDismissal(true);renderBeginnerGuide();$('#difficulty-options button.is-active')?.focus({preventScroll:true})});
-$('#guide-reopen').addEventListener('click',()=>{guideManual=beginnerGuide(state,PACK_PRICE).complete;rememberGuideDismissal(false);navigate('jouer');$('#guide-title').focus({preventScroll:true});$('#beginner-guide').scrollIntoView({block:'nearest',behavior:'auto'})});
+$('#guide-dismiss').addEventListener('click',()=>{guideManual=false;rememberGuideDismissal(true);renderBeginnerGuide();setTrialView('hub');$('#difficulty-options button.is-active')?.focus({preventScroll:true})});
+$('#guide-reopen').addEventListener('click',()=>{guideManual=beginnerGuide(state,PACK_PRICE).complete;rememberGuideDismissal(false);navigate('jouer');setTrialView('guide');$('#guide-title').focus({preventScroll:true});$('#beginner-guide').scrollIntoView({block:'nearest',behavior:'auto'})});
 $('#booster-funds-action').addEventListener('click',()=>navigate('jouer'));
 $('#booster-codex-action').addEventListener('click',()=>{
  if(boosterBusy||!currentDraw.length)return;
