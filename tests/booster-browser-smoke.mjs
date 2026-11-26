@@ -90,11 +90,16 @@ assert.ok(installedManifest.icons.some(icon=>icon.purpose==='maskable'&&icon.siz
 const launchLayout=await evaluate(`(()=>{const s=document.querySelector('#arcane-launch'),r=s.getBoundingClientRect();return {hidden:s.hidden,width:r.width,height:r.height,viewportWidth:innerWidth,viewportHeight:innerHeight,backgroundImage:getComputedStyle(s).backgroundImage,appInert:document.querySelector('#app').inert}})()`);
 assert.equal(launchLayout.hidden,false);
 assert.ok(!launchLayout.backgroundImage.includes('url('),'Never repeat the artwork behind the title');
-for(const [width,height] of [[390,844],[377,831],[360,800],[430,932]]){
+for(const [width,height] of [[390,844],[377,831],[360,800],[430,932],[320,760]]){
  await command('Emulation.setDeviceMetricsOverride',{width,height,deviceScaleFactor:1,mobile:true});
- const image=await evaluate(`(()=>{const a=document.querySelector('#arcane-launch .launch-art'),r=a.getBoundingClientRect(),c=getComputedStyle(a);return {count:document.querySelectorAll('#arcane-launch .launch-art').length,width:r.width,height:r.height,top:r.top,left:r.left,naturalWidth:a.naturalWidth,naturalHeight:a.naturalHeight,viewportWidth:innerWidth,viewportHeight:innerHeight,mask:c.maskImage,fit:c.objectFit,buttons:[...document.querySelectorAll('#launch-menu button')].map(b=>{const r=b.getBoundingClientRect();return {top:r.top,bottom:r.bottom,left:r.left,right:r.right}})}})()`);
+ const image=await evaluate(`(()=>{const a=document.querySelector('#arcane-launch .launch-art'),r=a.getBoundingClientRect(),c=getComputedStyle(a);return {count:document.querySelectorAll('#arcane-launch .launch-art').length,width:r.width,height:r.height,top:r.top,left:r.left,naturalWidth:a.naturalWidth,naturalHeight:a.naturalHeight,source:a.currentSrc,position:c.objectPosition,viewportWidth:innerWidth,viewportHeight:innerHeight,mask:c.maskImage,fit:c.objectFit,buttons:[...document.querySelectorAll('#launch-menu button')].map(b=>{const r=b.getBoundingClientRect();return {top:r.top,bottom:r.bottom,left:r.left,right:r.right}})}})()`);
  assert.equal(image.count,1);
  assert.ok(image.naturalWidth>0&&image.naturalHeight>0,'Title image loaded');
+ assert.ok(image.source.endsWith('/aetherium-launch-mobile.webp'),'Portrait loads the dedicated mobile artwork');
+ assert.equal(image.naturalWidth,941);
+ assert.equal(image.naturalHeight,2352);
+ assert.ok(image.width/image.height>=image.naturalWidth/image.naturalHeight,'Cover must never crop the title horizontally');
+ assert.equal(image.position,'50% 0%','Keep all of the original crest at the top');
  assert.ok(Math.abs(image.width-image.viewportWidth)<2&&Math.abs(image.left)<2,'Portrait art spans full width');
  assert.ok(Math.abs(image.height-image.viewportHeight)<2&&Math.abs(image.top)<2,'Portrait art spans full height');
  assert.equal(image.fit,'cover','No letterboxing or stretching');
