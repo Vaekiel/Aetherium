@@ -43,7 +43,8 @@ for(const shiny of [false,true]){
    assert.equal(artwork.dataset.cardId,'4');
    const front=node('article','recto-lab-card recto-lab-'+finish);
    front.dataset={...artwork.dataset};
-   front.append(artwork.querySelector('img'),node('div','recto-lab-footer'));
+   front.append(artwork.querySelector('img'));
+   front.append(node('div','recto-lab-footer'));
    return front;
   },
   applyCardIllustration(img,c,options){
