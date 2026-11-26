@@ -1,0 +1,9 @@
+# Independent DEV preview. The official game remains on GitHub Pages.
+[build]
+  command = "test \"$BRANCH\" = dev && mkdir -p public && cp -R index.html manifest.webmanifest src assets public/"
+  publish = "public"
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow"
