@@ -18,7 +18,7 @@ import {finishObjective} from './finish-objectives.js?v=signature-targets-1';
 import {FINISHES,FINISH_KEYS,restoreFinishCounts,synchronizeFinishCounts,finishQuantity,preferredFinish} from './finishes.js?v=finish-order-2';
 import {enableHolographicInspection} from './finish-interaction.js';
 import {sanitizeRecentFinds,recordRecentFind,buildLivingArchive} from './living-archives.js?v=seasons-09';
-import {createBackup,decodeBackup,installImportedSave,restorePreviousSave,PREVIOUS_SAVE_KEY,MAX_BACKUP_SIZE} from './save-backup.js';
+import {createBackup,decodeBackup,installImportedSave,restorePreviousSave,PREVIOUS_SAVE_KEY,MAX_BACKUP_SIZE,GAME_SAVE_KEY,DEV_PREVIEW} from './save-backup.js';
 import {createSaveSession,parseStoredSave} from './save-session.js?v=save-safety-1';
 import {SEASONS,seasonById,collectionById,cardsForCollection,collectionForCard,seasonProgress} from './seasons.js?v=seasons-09';
 import {mountRefletsGallery} from './reflets-gallery.js?v=reflets-final-24';
@@ -116,7 +116,12 @@ mobileView.addEventListener('change',syncMobileSheets);
 // The first art atlas uses twelve reference illustrations cropped from the
 // approved Collection mockup. These are *visual placeholders*, not final art
 // for the corresponding 24 catalogue entries. All gameplay/save data is unchanged.
-const SAVE='aetherium-save-v1';
+const SAVE=GAME_SAVE_KEY;
+if(DEV_PREVIEW){
+  document.title='[DEV] '+document.title;
+  const brand=document.querySelector('.brand-wordmark');
+  if(brand){brand.textContent='AETHERIUM · DEV';brand.title='Version de test : progression et monnaies isolées';}
+}
 const saveCardIds=CARDS.map(card=>card.id);
 const saveSession=createSaveSession(()=>localStorage,saveCardIds);
 const circuitSession=createCircuitSession();
@@ -2914,7 +2919,7 @@ $('#backup-export').addEventListener('click',async()=>{
     try{
       const link=document.createElement('a');
       link.href=url;
-      link.download=(recovery?'Aetherium-recuperation-brute-':'Aetherium-sauvegarde-')+new Date().toISOString().slice(0,10)+(recovery?'.txt':'.json');
+      link.download=(DEV_PREVIEW?'DEV-':'')+(recovery?'Aetherium-recuperation-brute-':'Aetherium-sauvegarde-')+new Date().toISOString().slice(0,10)+(recovery?'.txt':'.json');
       document.body.append(link);
       link.click();
       link.remove();
