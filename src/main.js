@@ -416,7 +416,7 @@ function navigate(page){
   });
   $('#chroniques-link').classList.toggle('active',page==='succes');
   if(page==='collection')renderCollection();
-  if(page==='jouer'){renderBeginnerGuide();renderCircuits();}
+  if(page==='jouer'){setTrialView('hub');renderBeginnerGuide();renderCircuits();refreshTrialPreview();}
   if(page==='atelier')renderAtelier();
   if(page==='succes')renderAchievements();
   if(page==='expeditions')renderExpedition();
@@ -1406,7 +1406,7 @@ const picker=$('#game-picker');
 let selectedGame=0;
 const trialSubtitles=['Ordre & observation','Mémoire & association','Logique des cristaux','Exploration & prudence','Recettes & alchimie'];
 definitions.forEach((entry,index)=>{
-  const control=button('',()=>selectGame(index,{jumpToStage:mobileView.matches}),'game-choice');
+  const control=button('',()=>{selectGame(index);if(mobileView.matches)openTrial();},'game-choice');
   control.append(el('span','game-choice-name',(index+1)+' · '+entry.name),
     el('span','game-choice-hint',trialSubtitles[index]));
   control.setAttribute('aria-label','Choisir '+entry.name);
@@ -1414,6 +1414,29 @@ definitions.forEach((entry,index)=>{
   control.setAttribute('aria-pressed',String(index===0));
   picker.append(control);
 });
+function setTrialView(view){
+  const page=$('#page-jouer');
+  page.dataset.trialView=view;
+  $('.trial-subpage-back',page).hidden=view==='hub';
+  if(view==='circuits')$('#arcane-circuits').open=true;
+  window.scrollTo(0,0);
+}
+function refreshTrialPreview(){
+  const g=mini[selectedGame];
+  if(!g)return;
+  $('#trial-preview-name').textContent='✧ '+definitions[selectedGame].name;
+  $('#trial-preview-hint').textContent=trialSubtitles[selectedGame];
+  $('#trial-preview-reward').textContent=g.rewardEl.textContent;
+  $('#trial-preview-mastery').textContent=g.masteryEl.textContent;
+  $('#trial-preview-objective').textContent=trialObjective(selectedGame,state.difficulty);
+}
+function openTrial(focus=false){
+  setTrialView('play');
+  if(focus)$('#trial-title-'+selectedGame)?.focus({preventScroll:true});
+}
+$('#trial-launch').addEventListener('click',()=>openTrial(true));
+$('#trial-return').addEventListener('click',()=>{setTrialView('hub');picker.children[selectedGame]?.focus({preventScroll:true})});
+$('#circuit-shortcut').addEventListener('click',showCircuits);
 function selectGame(index,{jumpToStage=false,focusTrial=false}={}){
   if(index<0||index>=mini.length)return;
   if(mini[index].mode!==state.difficulty){trialStarters[index]();renderTrialMastery();}
@@ -1431,13 +1454,16 @@ function selectGame(index,{jumpToStage=false,focusTrial=false}={}){
     const left=picker.scrollLeft+delta-(picker.clientWidth-selected.clientWidth)/2;
     picker.scrollTo({left,behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});
   }
+  refreshTrialPreview();
   if(jumpToStage){
+    openTrial(focusTrial);
     const card=mini[index].card;
     if(focusTrial)$('#trial-title-'+index).focus({preventScroll:true});
     card.scrollIntoView({block:'start',behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});
   }
 }
 selectGame(0);
+setTrialView('hub');
 const difficultyButtons=$$('#difficulty-options [data-difficulty]');
 function renderDifficultyChoice(){
   for(const control of difficultyButtons){
@@ -1447,6 +1473,7 @@ function renderDifficultyChoice(){
   }
   const mode=DIFFICULTIES.find(d=>d.id===state.difficulty);
   $('#difficulty-hint').textContent=mode.description;
+  refreshTrialPreview();
 }
 difficultyButtons.forEach(control=>control.addEventListener('click',()=>{
   const next=validDifficulty(control.dataset.difficulty);
@@ -1456,10 +1483,12 @@ difficultyButtons.forEach(control=>control.addEventListener('click',()=>{
   renderDifficultyChoice();
   renderTrialMastery();
   save();
+  refreshTrialPreview();
   notify('Mode '+DIFFICULTIES.find(d=>d.id===next).label+' · épreuve relancée.');
 }));
 renderDifficultyChoice();
 function showCircuits(){
+  setTrialView('circuits');
   const panel=$('#arcane-circuits');
   panel.open=true;
   const summary=panel.querySelector('summary');
@@ -1471,6 +1500,7 @@ function renderCircuits(){
   const v=circuitSession.view();
   const blocked=state.expedition?.armed===true;
   $('#circuit-summary').textContent=v?(v.finished?'Circuit achevé · '+v.total+'/'+v.max:'Étape '+(v.step+1)+'/'+v.circuit.games.length):'3 circuits permanents';
+  $('#circuit-shortcut-progress').textContent=$('#circuit-summary').textContent;
   root.replaceChildren();
   if(blocked)root.append(el('p','circuit-notice','Une étape d’expédition est engagée. Termine-la ou quitte le parcours avant de lancer une étape de circuit.'));
   if(!v){
@@ -1679,6 +1709,7 @@ function renderExpedition(){
     renderTrialMastery();
     renderExpedition();
     navigate('jouer');
+    openTrial();
     const target=mini[stage.game].card;
     target.scrollIntoView({behavior:'smooth',block:'start'});
     target.querySelector('button:not([disabled])')?.focus({preventScroll:true});
