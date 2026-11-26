@@ -1713,13 +1713,6 @@ function inspect(c,shiny=false,scroll=true,chromaticPreview=false,finishOverride
   const copy=el('div','inspector-copy');
   copy.append(kicker,title,chapterLabel,el('p','muted',c.type+
     ' · '+FINISHES[activeFinish].symbol+' Version '+FINISHES[activeFinish].label),desc,stats);
-  // The card aperture may crop a taller illustration, but the original remains accessible.
-  if(CARD_ART[c.id]?.full){
-    const fullArt=el('a','recto-full-art-link','Voir l’illustration entière');
-    fullArt.href=CARD_ART[c.id].full;
-    fullArt.target='_blank';fullArt.rel='noopener noreferrer';
-    copy.append(fullArt);
-  }
   const owned=el('p','stat-inventory-total');
   owned.append(el('span','stat-inventory-heading','Collection'),
     el('strong','','Possédées : ×'+(state.owned[c.id]||0)));
