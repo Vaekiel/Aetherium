@@ -2,7 +2,10 @@
 #page-jouer[data-trial-view="hub"]>.play-stage,
 #page-jouer:not([data-trial-view="circuits"])>#arcane-circuits,
 #page-jouer:not([data-trial-view="hub"])>.trial-setup,
-#page-jouer:not([data-trial-view="hub"])>#beginner-guide,
+#page-jouer:not([data-trial-view="guide"])>#beginner-guide,
+#page-jouer[data-trial-view="guide"]>.play-stage,
+#page-jouer:not([data-trial-view="hub"]) #trial-guide-shortcut,
+#page-jouer #trial-guide-shortcut[hidden],
 #page-jouer[data-trial-view="circuits"]>.play-stage,
 #page-jouer[data-trial-view="play"] .games>.game:not(.mobile-active),
 #page-jouer .trial-subpage-back[hidden]{display:none!important}
@@ -86,4 +89,29 @@
  #page-jouer .trial-hub-portals{grid-template-columns:1fr}
  #page-jouer .trial-hub-portals .expedition-portal-button{min-height:30px}
  #page-jouer .trial-circuit-portal{min-height:45px}
+}
+
+#page-jouer .trial-guide-shortcut{font:12px/1.2 Georgia,serif;min-height:40px;padding:5px 9px}
+@media(max-width:850px){
+ #page-jouer[data-trial-view="hub"]>.heading{flex-wrap:nowrap;gap:6px}
+ #page-jouer .trial-guide-shortcut{flex:none;white-space:nowrap;min-height:36px;font-size:10px;padding:4px 6px}
+ #page-jouer .trial-hub-portals .expedition-portal-button{min-height:44px}
+}
+@media(max-height:520px) and (orientation:landscape){
+ #page-jouer[data-trial-view="hub"]>.kicker{display:none}
+ #page-jouer[data-trial-view="hub"]>.heading{margin:0 0 5px}
+ #page-jouer[data-trial-view="hub"]>.heading h1{font-size:clamp(18px,3vw,23px)}
+ #page-jouer .trial-setup{gap:4px}
+ #page-jouer .trial-hub-picker .trial-setup-title{display:none}
+ #page-jouer .trial-setup .game-picker{grid-template-columns:repeat(3,minmax(0,1fr))}
+ #page-jouer .trial-setup .game-picker .game-choice{min-height:44px;padding-right:6px}
+ #page-jouer .trial-setup .game-choice-name{font-size:11px;white-space:normal;overflow-wrap:normal}
+ #page-jouer .trial-hub-portals .expedition-portal{padding:5px;gap:2px}
+ #page-jouer .trial-hub-portals .expedition-portal-button{min-height:32px}
+ #page-jouer .trial-circuit-portal{padding:6px;min-height:40px;gap:2px}
+}
+@media(max-height:620px) and (orientation:portrait){
+ #page-jouer .trial-setup .game-picker{grid-template-columns:repeat(2,minmax(0,1fr))}
+ #page-jouer .trial-setup .game-picker .game-choice{min-height:44px;padding-right:8px;white-space:normal}
+ #page-jouer .trial-setup .game-choice-name{font-size:12px}
 }
