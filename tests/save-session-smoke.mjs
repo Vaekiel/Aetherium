@@ -18,6 +18,9 @@ for(const raw of ['{broken','null','[]','{}',JSON.stringify({...legacy,owned:{99
   assert.equal(storage.raw(),raw,'Unreadable or unknown original is never silently overwritten');
 }
 assert.deepEqual(parseStoredSave(JSON.stringify(legacy),ids),legacy);
+const historical={...legacy,shiny:{1:true,2:true},titleId:-1};
+assert.deepEqual(parseStoredSave(JSON.stringify(historical),ids),historical,
+ 'Known orphan markers and stale titles do not block the historic loader');
 assert.deepEqual(parseStoredSave(JSON.stringify(current),ids),current);
 const fresh=store(),first=createSaveSession(()=>fresh,ids);
 first.write(legacy);

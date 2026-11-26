@@ -1,3 +1,4 @@
+import {createSaveSession} from '../src/save-session.js';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {runInNewContext} from 'node:vm';
@@ -168,7 +169,7 @@ const legacy={coins:430,dust:125,wins:3,earned:800,opened:15,
  owned:own(12),shiny:{1:true},goalId:20,difficulty:'maitrise'};
 const legacyState=runInNewContext(freshCode+loadCode+'load()',{
  SAVE:'aetherium-save-v1',CARDS,sanitizeMilestoneClaims,
- localStorage:{getItem:()=>JSON.stringify(legacy)}
+ saveSession:createSaveSession(()=>({getItem:()=>JSON.stringify(legacy)}),CARDS.map(c=>c.id))
 });
 assert.equal(legacyState.coins,430);assert.equal(legacyState.dust,125);
 assert.equal(legacyState.owned[1],2);assert.equal(legacyState.shiny[1],true);
@@ -180,7 +181,7 @@ assert.deepEqual(collectionMilestoneStatus(seasonId,collectionId,cards,legacySta
 const saved=JSON.parse(JSON.stringify({...legacy,collectionMilestones:{'marches-de-verre/origines':[6]}}));
 const restored=runInNewContext(freshCode+loadCode+'load()',{
  SAVE:'aetherium-save-v1',CARDS,sanitizeMilestoneClaims,
- localStorage:{getItem:()=>JSON.stringify(saved)}
+ saveSession:createSaveSession(()=>({getItem:()=>JSON.stringify(saved)}),CARDS.map(c=>c.id))
 });
 assert.deepEqual(JSON.parse(JSON.stringify(restored.collectionMilestones)),{'marches-de-verre/origines':[6]},
  'Already claimed rewards survive reload without duplication');
@@ -188,7 +189,7 @@ const mixedSave={...legacy,owned:{...own(12),...ownReflets(18)},
  collectionMilestones:{'marches-de-verre/origines':[6,12],[refletsKey]:[6,12,18]}};
 const restoredMixed=runInNewContext(freshCode+loadCode+'load()',{
  SAVE:'aetherium-save-v1',CARDS:ALL_CARDS,sanitizeMilestoneClaims,
- localStorage:{getItem:()=>JSON.stringify(mixedSave)}
+ saveSession:createSaveSession(()=>({getItem:()=>JSON.stringify(mixedSave)}),ALL_CARDS.map(c=>c.id))
 });
 assert.deepEqual(JSON.parse(JSON.stringify(restoredMixed.collectionMilestones)),mixedSave.collectionMilestones,
  'Combined Origines and Reflets claims survive existing-key local save reload');
@@ -197,7 +198,7 @@ const thirdSave={...legacy,owned:{...own(12),...ownReflets(18),...ownAuDela(18)}
  collectionMilestones:{...mixedSave.collectionMilestones,[auDelaKey]:[6,12,18]}};
 const restoredThird=runInNewContext(freshCode+loadCode+'load()',{
  SAVE:'aetherium-save-v1',CARDS:ALL_CARDS,sanitizeMilestoneClaims,
- localStorage:{getItem:()=>JSON.stringify(thirdSave)}
+ saveSession:createSaveSession(()=>({getItem:()=>JSON.stringify(thirdSave)}),ALL_CARDS.map(c=>c.id))
 });
 assert.deepEqual(JSON.parse(JSON.stringify(restoredThird.collectionMilestones)),
  thirdSave.collectionMilestones,'Old and new collection fragments survive one save load');

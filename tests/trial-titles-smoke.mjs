@@ -1,3 +1,4 @@
+import {createSaveSession} from '../src/save-session.js';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {runInNewContext} from 'node:vm';
@@ -70,7 +71,7 @@ function restore(raw){
  return runInNewContext(fresh+loader+'load()',{
   CARDS,SAVE:'aetherium-save-v1',sanitizeMilestoneClaims,
   sanitizeAlchemyKnown,sanitizedTrialRecords,
-  localStorage:{getItem:()=>JSON.stringify(raw)}
+  saveSession:createSaveSession(()=>({getItem:()=>JSON.stringify(raw)}),CARDS.map(c=>c.id))
  });
 }
 const legacy={coins:715,dust:50,earned:1145,wins:19,opened:7,

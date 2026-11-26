@@ -14,6 +14,20 @@ export function parseStoredSave(raw,cardIds){
   // Older saves did not necessarily include every counter or finishing field.
   // Validate present data without inventing fields in the stored snapshot.
   const legacy={coins:300,dust:0,wins:0,earned:0,opened:0,shiny:{},...data};
+  if(data.finishCounts===undefined){
+    // Historical saves used a boolean Chromatique marker. The original
+    // loader ignored orphan markers for known but unowned cards and invalid
+    // equipped titles; retain that harmless migration instead of blocking
+    // an otherwise valid old collection.
+    if(legacy.shiny&&typeof legacy.shiny==='object'&&!Array.isArray(legacy.shiny)){
+      const known=new Set(cardIds);
+      legacy.shiny=Object.fromEntries(Object.entries(legacy.shiny).filter(([id,flag])=>
+        !(known.has(Number(id))&&/^[1-9]\d*$/.test(id)&&flag===true&&!legacy.owned?.[id])));
+    }
+    if(legacy.titleId!==undefined&&legacy.titleId!==null&&
+      (!Number.isInteger(legacy.titleId)||legacy.titleId<0||legacy.titleId>4))
+      delete legacy.titleId;
+  }
   validateSaveState(legacy,cardIds);
   return data;
 }
