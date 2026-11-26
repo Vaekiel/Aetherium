@@ -74,7 +74,7 @@ assert.match(main,/finishInventory\[card\.id\]=\(finishInventory\[card\.id\]\|\|
   'Each booster copy increments only its own finish bucket');
 assert.match(main,/finishCounts:state\.finishCounts/,'Codex filters must use exact finish quantities');
 assert.match(main,/const picker=el\('div','finish-picker'\)/,'Inspector has four finish choices');
-assert.match(main,/enableHolographicInspection\(artwork\)/,'Holographic inspector supports pointer and optional gyro');
+assert.match(main,/enableHolographicInspection\(activeFinish==='holographic'\?front:null\)/,'Holographic inspector supports pointer and optional gyro');
 assert.match(css,/grayscale\(1\) contrast\(1\.62\)/,'Calligraphic ink artwork is visibly monochrome');
 assert.match(css,/inspector-art-shell\.is-holographic::after/,'Holographic cards have interactive prism overlay');
 assert.match(html,/src\/finishes\.css\?v=finishes-2/,'New finishes stylesheet is loaded');
