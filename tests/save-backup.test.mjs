@@ -105,3 +105,31 @@ test('no rollback exists until an import has occurred',()=>{
 test('user-facing backup controls and legacy save key remain wired',()=>{
  assert.equal(GAME_SAVE_KEY,'aetherium-save-v1');
 });
+
+test('preview economy and backups cannot cross the normal save boundary',async()=>{
+ const production=await import('../src/save-backup.js');
+ const previousWindow=globalThis.window;
+ try{
+   globalThis.window={location:new URL('https://vaekiel.github.io/Aetherium-dev/')};
+   const dev=await import('../src/save-backup.js?dev-isolation-test=1');
+   assert.equal(dev.DEV_PREVIEW,true);
+   assert.equal(dev.GAME_SAVE_KEY,'aetherium-dev-save-v1');
+   assert.notEqual(dev.PREVIOUS_SAVE_KEY,production.PREVIOUS_SAVE_KEY);
+   const live=gameState();
+   const simulated={...live,coins:999999,dust:12345};
+   const mem=storage(JSON.stringify(live));
+   dev.installImportedSave(mem,simulated);
+   assert.deepEqual(JSON.parse(mem.getItem(production.GAME_SAVE_KEY)),live);
+   assert.deepEqual(JSON.parse(mem.getItem(dev.GAME_SAVE_KEY)),simulated);
+   const devBackup=await dev.createBackup(simulated,ids,webcrypto);
+   const prodBackup=await production.createBackup(live,ids,webcrypto);
+   await assert.rejects(()=>production.decodeBackup(devBackup,ids,webcrypto),/compatible/);
+   await assert.rejects(()=>dev.decodeBackup(prodBackup,ids,webcrypto),/compatible/);
+   assert.deepEqual((await dev.decodeBackup(devBackup,ids,webcrypto)).state,simulated);
+   assert.equal(dev.isDevelopmentPreview(new URL('https://vaekiel.github.io/Aetherium/')),false);
+   assert.equal(dev.isDevelopmentPreview(new URL('http://localhost:8000/')),true);
+ }finally{
+   if(previousWindow===undefined)delete globalThis.window;
+   else globalThis.window=previousWindow;
+ }
+});
