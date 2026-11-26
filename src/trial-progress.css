@@ -446,3 +446,33 @@
 @media (prefers-reduced-motion:reduce){
   #page-jouer .trial-switcher .trial-switch-button{transition:none}
 }
+
+/* Permanent circuits: no countdown, new art, or animation. */
+#page-jouer .arcane-circuits{margin:12px 0 0;border:1px solid #aa8d9a83;border-radius:6px;background:linear-gradient(145deg,#25213bde,#161c30ef);box-sizing:border-box;min-width:0;max-width:100%;overflow-wrap:anywhere}
+#page-jouer .circuit-heading{display:flex;align-items:center;justify-content:space-between;gap:8px 12px;flex-wrap:wrap;cursor:pointer;min-height:56px;padding:12px 14px;color:#f2dbb6}
+#page-jouer .circuit-heading::before{content:"▸";color:#c3a9e3}
+#page-jouer .arcane-circuits[open]>.circuit-heading::before{content:"▾"}
+#page-jouer .circuit-heading>span:first-child{display:grid;gap:4px;flex:1;min-width:0}
+#page-jouer .circuit-heading strong{font:small-caps 21px/1.2 Georgia,serif}
+#page-jouer .circuit-heading small{font:10px/1.3 system-ui,sans-serif;letter-spacing:.08em;color:#c5b7df}
+#page-jouer #circuit-summary{font:12px/1.4 system-ui,sans-serif;color:#d9c6ed}
+#page-jouer .circuit-intro,#page-jouer .circuit-notice{margin:0 12px 12px;font:12px/1.55 system-ui,sans-serif;color:#d4cbde}
+#page-jouer .circuit-notice{border-left:2px solid #d6ba88;padding-left:9px;color:#f2d9a3}
+#page-jouer #circuit-content{padding:0 12px 12px;min-width:0}
+#page-jouer .circuit-choice{display:flex;align-items:center;gap:10px;justify-content:space-between;flex-wrap:wrap;border:1px solid #82709675;border-radius:6px;background:#17192be6;padding:11px 12px;margin:6px 0;min-width:0}
+#page-jouer .circuit-copy{display:grid;gap:5px;flex:1;min-width:0}
+#page-jouer .circuit-copy strong,#page-jouer .circuit-current h3{font:600 16px/1.4 Georgia,serif;color:#e3cda9;margin:0}
+#page-jouer .circuit-copy small,#page-jouer .circuit-current small,#page-jouer .circuit-steps small{font:12px/1.4 system-ui,sans-serif;color:#c5b7df}
+#page-jouer .circuit-copy p{font:12px/1.45 system-ui,sans-serif;color:#d4cbde;margin:0}
+#page-jouer .circuit-copy .circuit-best{color:#f2d9a3}
+#page-jouer .circuit-current{display:flex;gap:8px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+#page-jouer .circuit-steps{list-style:none;padding:0;margin:10px 0;display:grid;gap:5px}
+#page-jouer .circuit-steps li{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:9px 10px;border:1px solid #82709675;border-radius:5px;background:#17192be6;min-width:0}
+#page-jouer .circuit-steps li strong{font-size:13px;flex:1;min-width:0}
+#page-jouer .circuit-step-number{font:600 13px/1.5 system-ui,sans-serif;color:#d9c6ed;width:20px;text-align:center}
+#page-jouer .circuit-steps li.is-current{border-color:#b69bda}
+#page-jouer .circuit-steps li.is-done .circuit-step-number,#page-jouer .circuit-result{color:#f2d9a3}
+#page-jouer .circuit-result{font:14px/1.5 Georgia,serif;margin:10px 0}
+#page-jouer .circuit-actions{display:flex;gap:6px;flex-wrap:wrap}
+#page-jouer .circuit-actions button,#page-jouer .circuit-select,#page-jouer .circuit-return{box-sizing:border-box;min-height:44px!important;height:auto;min-width:0;max-width:100%;white-space:normal!important;overflow-wrap:anywhere;padding:8px 12px;font-size:12px}
+@media(max-width:420px){#page-jouer .circuit-choice{display:grid;grid-template-columns:minmax(0,1fr)}#page-jouer .circuit-select{width:100%}#page-jouer .circuit-actions button{flex:1 1 100%}#page-jouer .circuit-heading>span:first-child{flex-basis:calc(100% - 24px)}}
