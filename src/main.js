@@ -1531,8 +1531,8 @@ function makeCard(c,isShiny=false,locked=false){
   const chromatic=finish==='chromatic'&&!locked;
   const holographic=finish==='holographic'&&!locked;
   const calligraphic=finish==='calligraphic'&&!locked;
-  const preview=locked&&previewArt&&hasApprovedArt(c.id);
-  const reallyLocked=locked&&!preview;
+  // A sealed card never exposes its art, title or rarity in the Codex.
+  const reallyLocked=locked;
   const b=el('button','card'+(reallyLocked?' is-sealed':'')+(chromatic?' is-chromatic':'')+
     (holographic?' is-holographic':'')+(calligraphic?' is-calligraphic':''));
   b.type='button';
@@ -1566,10 +1566,7 @@ function makeCard(c,isShiny=false,locked=false){
   if(chromatic)b.append(el('span','shine chromatic-seal','✧ CHROMATIQUE'));
   if(holographic)b.append(el('span','shine holographic-seal','◈ HOLOGRAPHIQUE'));
   if(calligraphic)b.append(el('span','shine calligraphic-seal','✒ CALLIGRAPHIQUE'));
-  if(preview){
-    b.append(el('span','shine','APERÇU'));
-    b.setAttribute('aria-label','Voir l’illustration de '+c.name+' sans posséder cette carte');
-  }else if(reallyLocked){
+  if(reallyLocked){
     b.setAttribute('aria-label','Archive '+String(c.id).padStart(3,'0')+', non découverte : ouvrir la fiche scellée');
   }else if(chromatic){
     b.setAttribute('aria-label',c.name+' — version Chromatique, '+RARITIES[c.rarity].label);
@@ -1587,7 +1584,7 @@ function makeCard(c,isShiny=false,locked=false){
   });
   return b;
 }
-let filterType='all',filterRarity='all',filterFinish='all',selectedCard=null,previewArt=false;
+let filterType='all',filterRarity='all',filterFinish='all',selectedCard=null;
 let activeSeason=SEASONS[0].id,activeCollection=SEASONS[0].collections[0].id;
 let discoveryFilter='all',codexVisibleCards=[];
 function markCodexSelected(id){
@@ -1599,7 +1596,7 @@ function markCodexSelected(id){
 }
 function codexBrowseTo(card){
   if(!card)return;
-  const locked=!state.owned[card.id]&&!(previewArt&&hasApprovedArt(card.id));
+  const locked=!state.owned[card.id];
   if(locked)inspectSealed(card,false);
   else{
     const finish=FINISHES[filterFinish]?filterFinish:preferredFinish(state.finishCounts,card.id);
@@ -1657,13 +1654,14 @@ function inspectSealed(c,scroll=true){
   }
 }
 function inspect(c,shiny=false,scroll=true,chromaticPreview=false,finishOverride=null){
-  // Finishes never render before being found. The old preview argument is
-  // kept only for compatibility with callers, but intentionally ignored.
+  // Covers direct calls, Codex pagination and keyboard interactions alike.
+  // Never render HD artwork or effect controls for an undiscovered archive.
+  if(!state.owned[c.id])return inspectSealed(c,scroll);
+  // Retained legacy preview parameter is ignored: only acquired finishes render.
   const requestedFinish=FINISHES[finishOverride]?finishOverride:(shiny?'chromatic':'normal');
   const requestedOwned=finishQuantity(state.finishCounts,requestedFinish,c.id)>0;
   const fallback=preferredFinish(state.finishCounts,c.id);
-  // The original art can still be inspected as a normal illustration when
-  // a card is permitted as an art preview. No locked finish effects appear.
+  // Unowned finishes never render, even on an already discovered card.
   const activeFinish=requestedOwned?requestedFinish:
     (state.owned[c.id]?fallback:'normal');
   const chromatic=activeFinish==='chromatic';
@@ -2038,7 +2036,7 @@ function renderCollection(){
   filterCount.textContent=String(appliedFilters);
   const next=cards.find(c=>c.id===selectedCard?.id)||cards[0];
   if(next){
-    const revealed=!!state.owned[next.id]||(previewArt&&hasApprovedArt(next.id));
+    const revealed=!!state.owned[next.id];
     if(!revealed)inspectSealed(next,false);
     else{
       const finish=FINISHES[filterFinish]?filterFinish:
@@ -2057,18 +2055,6 @@ function renderCollection(){
   update();
 }
 $('#search').addEventListener('input',renderCollection);
-const previewToggle=$('#preview-art');
-function syncPreviewToggle(){
-  previewToggle.textContent=previewArt?'Masquer les aperçus':'Aperçu des cartes scellées';
-  previewToggle.setAttribute('aria-pressed',String(previewArt));
-  previewToggle.classList.toggle('active',previewArt);
-}
-previewToggle.addEventListener('click',()=>{
-  previewArt=!previewArt;
-  if(!previewArt&&selectedCard&&!state.owned[selectedCard.id])selectedCard=null;
-  syncPreviewToggle();renderCollection();
-});
-syncPreviewToggle();
 $$('[data-type]').forEach(b=>b.addEventListener('click',()=>{
   filterType=b.dataset.type;
   $$('[data-type]').forEach(x=>{x.classList.toggle('active',x===b);x.setAttribute('aria-pressed',String(x===b))});

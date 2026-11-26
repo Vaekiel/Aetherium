@@ -21,10 +21,16 @@ assert.ok(css.includes('#page-collection .codex-finish-grid'),'Folded variants r
 assert.ok(css.includes('@media(max-width:420px)'),'Small phones are supported');
 assert.ok(!css.includes('url('),'No new heavyweight visual assets');
 // Unknown cards, signatures, rarities, and unfinished success titles stay hidden by default.
-assert.ok(main.includes('const preview=locked&&previewArt&&hasApprovedArt(c.id);'));
+assert.ok(!html.includes('id="preview-art"'),'No sealed-card preview button in any viewport');
+assert.ok(!main.includes('previewArt')&&!main.includes('syncPreviewToggle()'),
+ 'No legacy shortcut can reveal cards that have not been collected');
+assert.ok(main.includes('const reallyLocked=locked;'),
+ 'Sealed gallery cards always use the undiscovered presentation');
+assert.ok(main.includes('if(!state.owned[c.id])return inspectSealed(c,scroll);'),
+ 'Direct inspector calls also protect unrevealed art');
 assert.ok(main.includes("reallyLocked?'À découvrir':"));
 assert.ok(main.includes("reallyLocked?'Archive scellée':c.name"));
-assert.ok(main.includes("const revealed=!!state.owned[next.id]||(previewArt&&hasApprovedArt(next.id));"));
+assert.ok(main.includes("const revealed=!!state.owned[next.id];"));
 assert.ok(main.includes("el('p','kicker','ARCHIVE '+String(c.id).padStart(3,'0'))"));
 assert.ok(!main.includes('La 24e, le Cœur des Marches'));
 assert.ok(!main.includes('Le Cœur des Marches est une Signature unique'));

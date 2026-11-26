@@ -83,7 +83,7 @@ const before=JSON.stringify(saved);
 let shown=0,scrolls=0,artCalls=0;
 const sandbox={
  state:saved,selectedCard:null,codexVisibleCards:cards,filterFinish:'all',
- previewArt:false,activeSeason:'marches-de-verre',activeCollection:'origines',
+ activeSeason:'marches-de-verre',activeCollection:'origines',
  RARITIES,FINISHES,FINISH_KEYS,finishQuantity,preferredFinish,el:elem,
  document:{createTextNode:text=>elem('text','',text)},
  enableHolographicInspection(){},
@@ -152,6 +152,11 @@ assert.equal(host.children[0].className,'recto-lab-card recto-lab-chromatic',
 api.inspect(cards[1],false,false,false,'calligraphic');
 assert.equal(host.children[0].className,'recto-lab-card recto-lab-chromatic',
   'Unowned Calligraphique must never reveal its effect');
+const beforeDirectSealedArt=artCalls;
+api.inspect({...cards[0],id:3},false,false,true,'chromatic');
+assert.equal(host.children[0].className,'codex-sealed-inspector',
+ 'A direct inspector call cannot reveal the art of an unowned card');
+assert.equal(artCalls,beforeDirectSealedArt,'No HD assets loaded for a sealed card');
 api.inspectSealed({...cards[0],id:3},true);
 assert.equal(shown,2);
 assert.equal(host.children.length,2,'Sealed archives also use the new responsive layout');

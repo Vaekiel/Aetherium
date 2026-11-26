@@ -426,11 +426,56 @@ await sleep(50);
 assert.equal(await evaluate("document.querySelector('#coins').closest('.wallet-link').classList.contains('is-gaining')"),true,
  'Earning resources should trigger visual feedback only');
 assert.equal(rewardCheck.icon,true);
-// Regression: Cerf des Lueurs uses the original Codex illustration again.
-await evaluate("document.querySelector('button[data-page=\"collection\"]').click()");
-await until(()=>evaluate("Boolean(document.querySelector('#page-collection.active #preview-art'))"),'Codex ready');
-await evaluate("document.querySelector('#preview-art').click()");
-await until(()=>evaluate("Boolean(document.querySelector('#card-grid [data-card-id=\"8\"]'))"),'Original Cerf in gallery');
+// Sealed Codex tiles must not reveal a spoiler on any viewport, including
+// tablet and desktop where the retired preview button used to be visible.
+await evaluate("document.querySelector('button[data-page=\\\"collection\\\"]').click()");
+await until(()=>evaluate("Boolean(document.querySelector('#page-collection.active #card-grid .card.is-sealed'))"),'Codex sealed tiles ready');
+for(const width of [390,760,1280]){
+ await command('Emulation.setDeviceMetricsOverride',{
+   width,height:900,deviceScaleFactor:1,mobile:width<850
+ });
+ await sleep(140);
+ const sealedBefore=await evaluate(`(()=>{
+   const tile=document.querySelector('#card-grid .card.is-sealed');
+   return {buttonAbsent:document.querySelector('#preview-art')===null,
+     tilePresent:!!tile,tileContainsImage:!!tile?.querySelector('img'),
+     name:tile?.querySelector('.name')?.textContent,
+     viewport:innerWidth};
+ })()`);
+ assert.equal(sealedBefore.buttonAbsent,true,
+   'No sealed-card preview button on '+width+'px');
+ assert.ok(sealedBefore.tilePresent&&!sealedBefore.tileContainsImage,
+   'Unowned artwork must remain concealed on '+width+'px');
+ assert.equal(sealedBefore.name,'Archive scellée',
+   'Even the undiscovered card name remains secret');
+ await evaluate("document.querySelector('#card-grid .card.is-sealed').click()");
+ const sealedInspect=await evaluate(`(()=>{
+   const panel=document.querySelector('#inspector');
+   return {sealed:!!panel.querySelector('.codex-sealed-inspector'),
+     artwork:!!panel.querySelector('.recto-lab-illustration'),
+     title:panel.querySelector('.inspector-copy h2')?.textContent};
+ })()`);
+ assert.equal(sealedInspect.sealed,true,'Inspector is sealed on '+width+'px');
+ assert.equal(sealedInspect.artwork,false,'No concealed art in inspector on '+width+'px');
+ assert.equal(sealedInspect.title,'Archive non découverte');
+}
+console.log('Sealed Codex protected on 390, 760 and 1280px; no preview toggle.');
+
+// Isolated browser QA fixture: award known cards in test localStorage only.
+// Production players still have to earn or forge their cards normally.
+// This preserves the existing HD rendering checks for Cerf, Archiviste, Astra.
+await evaluate(`(()=>{
+ const key='aetherium-save-v1';
+ const save=JSON.parse(localStorage.getItem(key));
+ for(const id of [7,8,22])save.owned[id]=Math.max(1,save.owned[id]||0);
+ delete save.finishCounts;
+ localStorage.setItem(key,JSON.stringify(save));
+})()`);
+await command('Page.navigate',{url:'http://127.0.0.1:8765/?booster-e2e=1#collection'});
+await until(()=>evaluate("Boolean(document.querySelector('#page-collection.active #card-grid [data-card-id=\\\"8\\\"]'))"),'Owned Cerf in gallery after QA reload');
+assert.equal(await evaluate("Boolean(document.querySelector('#preview-art'))"),false,
+ 'The obsolete preview toggle never reappears after reload');
+// Regression: Cerf des Lueurs uses the original Codex illustration when owned.
 await evaluate("document.querySelector('#card-grid [data-card-id=\"8\"]').click()");
 await until(()=>evaluate("Boolean(document.querySelector('#inspector .recto-lab-illustration'))"),'Original inspector ready');
 await until(()=>evaluate("document.querySelector('#inspector .recto-lab-illustration').complete"),'Original Cerf artwork loaded');
