@@ -77,7 +77,11 @@ export function createCardFront({card,finish='normal',artwork}){
   footer.append(rarity,stats);front.append(footer);
   requestAnimationFrame(()=>fitTitle(title));
   if(typeof ResizeObserver==='function'){
-    const observer=new ResizeObserver(()=>fitTitle(title));
+    // Observe only while mounted; release detached cards after resizing.
+    const observer=new ResizeObserver(()=>{
+      if(!front.isConnected){observer.disconnect();return;}
+      fitTitle(title);
+    });
     observer.observe(front);
   }
   return front;
