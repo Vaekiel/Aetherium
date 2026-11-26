@@ -2,11 +2,13 @@ import {createCardFront,attachRectoLabInspector} from './recto-lab.js?v=recto-un
 import {RARITIES,PACK_PRICE,drawPack} from './data.js?v=booster-variety-1';
 import {CARDS,drawRefletsPack,drawAuDelaPack} from './collection-data.js?v=au-dela-booster-1';
 import {CRAFT_COSTS,getCraftCost,craftCard} from './crafting.js';
+import {getFinishCraftCost,canCraftFinish,craftFinish} from './finish-crafting.js?v=forge-finish-1';
 import {duplicateDustReward} from './duplicate-rewards.js';
 import {boosterMoment} from './booster-feedback.js?v=booster-polish-1';
 import {applyCardIllustration,hasApprovedArt,CARD_ART} from './card-art.js?v=au-dela-booster-1&chromatic=audit-1';
 import {codexProgress,filterCodex} from './codex.js';
-import {FINISHES,FINISH_KEYS,restoreFinishCounts,synchronizeFinishCounts,finishQuantity,finishUnique,finishTotal,preferredFinish} from './finishes.js?v=finish-order-2';
+import {finishObjective} from './finish-objectives.js?v=signature-targets-1';
+import {FINISHES,FINISH_KEYS,restoreFinishCounts,synchronizeFinishCounts,finishQuantity,preferredFinish} from './finishes.js?v=finish-order-2';
 import {enableHolographicInspection} from './finish-interaction.js';
 import {sanitizeRecentFinds,recordRecentFind,buildLivingArchive} from './living-archives.js?v=au-dela-booster-1';
 import {createBackup,decodeBackup,installImportedSave,restorePreviousSave,PREVIOUS_SAVE_KEY,MAX_BACKUP_SIZE} from './save-backup.js';
@@ -148,17 +150,13 @@ let toastTimer;
 function notify(message){const el=$('#toast');el.textContent=message;el.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove('show'),3000)}
 function update(){if(state.goalId&&state.owned[state.goalId])state.goalId=null;save();$('#coins').textContent=state.coins.toLocaleString('fr-FR');$('#dust').textContent=state.dust.toLocaleString('fr-FR');$('#buy').disabled=state.coins<PACK_PRICE||boosterBusy;for(const control of $$('.booster-choice'))control.disabled=boosterBusy;$('#collection-progress').textContent=Object.keys(state.owned).length+' / '+CARDS.length;
 $('#mobile-collection-progress').textContent=Object.keys(state.owned).length+' / '+CARDS.length+' obtenues';
-  const chromaticTotal=Object.keys(state.shiny).length;
   $('#codex-card-count').textContent=Object.keys(state.owned).length+' / '+CARDS.length;
-  $('#codex-chromatic-count').textContent=chromaticTotal+' / '+CARDS.length+' · '+finishTotal(state.finishCounts,'chromatic',CARDS)+' ex.';
-  $('#mobile-chromatic-count').textContent='✧ '+chromaticTotal+' / '+CARDS.length+' Chromatiques';
   for(const finish of FINISH_KEYS){
-    const unique=finishUnique(state.finishCounts,finish,CARDS);
-    const copies=finishTotal(state.finishCounts,finish,CARDS);
+    const {unique,total,copies}=finishObjective(CARDS,state.finishCounts,finish);
     const el=document.querySelector('#codex-'+finish+'-count');
-    if(el)el.textContent=unique+' / '+CARDS.length+' · '+copies+' ex.';
+    if(el)el.textContent=unique+' / '+total+' · '+copies+' ex.';
     const mobile=document.querySelector('#mobile-'+finish+'-count');
-    if(mobile)mobile.textContent=FINISHES[finish].symbol+' '+unique+' / '+CARDS.length;
+    if(mobile)mobile.textContent=FINISHES[finish].symbol+' '+unique+' / '+total+(finish==='chromatic'?' Chromatiques':'');
   }
   if($('#page-succes').classList.contains('active'))renderAchievements();
   if($('#page-atelier').classList.contains('active'))renderAtelier()}
@@ -168,6 +166,9 @@ const APP_PAGES=[...MAIN_PAGES,'succes','expeditions'];
 let forgeSelectedId=null;
 let forgeFilter='all';
 let pendingCraftId=null;
+let forgeMode='discovery',pendingCraftFinish=null;
+const forgeCost=card=>forgeMode==='discovery'?getCraftCost(card):getFinishCraftCost(card,forgeMode);
+const forgeModeLabel=()=>forgeMode==='discovery'?'Carte manquante':FINISHES[forgeMode].label;
 
 function renderAtelier(){
   $('#atelier-dust').textContent=state.dust.toLocaleString('fr-FR');
@@ -195,6 +196,7 @@ function renderAtelier(){
     summary.append(progress,el('p','',remaining?remaining+' Éclats manquants sur '+cost:'Tu peux fabriquer cette carte !'));
     summary.append(button('Voir mon objectif ›',()=>{
       forgeSelectedId=goal.id;
+      forgeMode='discovery';$('#atelier-mode').value=forgeMode;
       forgeFilter='all';
       $('#atelier-filter').value='all';
       renderAtelier();
@@ -202,9 +204,11 @@ function renderAtelier(){
     },'secondary atelier-side-link'));
   }else summary.append(el('p','atelier-goal-placeholder','Choisis une carte manquante et désigne-la comme objectif. Ta progression sera conservée.'));
 
-  const missing=CARDS.filter(card=>!state.owned[card.id]&&getCraftCost(card)!==null);
+  const missing=CARDS.filter(card=>forgeMode==='discovery'?(!state.owned[card.id]&&getCraftCost(card)!==null):canCraftFinish(state,card,forgeMode));
   const visible=missing.filter(card=>
-    forgeFilter==='all'||(forgeFilter==='affordable'?state.dust>=getCraftCost(card):card.rarity===forgeFilter));
+    forgeFilter==='all'||(forgeFilter==='affordable'?state.dust>=forgeCost(card):card.rarity===forgeFilter));
+  $('#atelier-rarity-note').textContent='Coûts · '+forgeModeLabel()+' : '+Object.keys(CRAFT_COSTS).map(r=>RARITIES[r].label+' '+forgeCost({id:1,rarity:r})).join(' · ')+' Éclats.';
+  $('#atelier-card-list').setAttribute('aria-label','Recettes disponibles · '+forgeModeLabel());
   const chooseFrom=visible.find(c=>c.id===forgeSelectedId)
     ||visible.find(c=>c.id===state.goalId)
     ||visible[0]||null;
@@ -213,12 +217,12 @@ function renderAtelier(){
   gallery.replaceChildren();
   $('#atelier-empty').hidden=visible.length>0;
   $('#atelier-empty').textContent=missing.length===0
-    ?'Tu possèdes toutes les cartes disponibles en booster ou à la Forge. La Signature du dernier chapitre se mérite en aventure.'
-    :'Aucune carte manquante ne correspond à ce filtre.';
+    ?(forgeMode==='discovery'?'Tu possèdes toutes les cartes disponibles en booster ou à la Forge. La Signature du dernier chapitre se mérite en aventure.':'Aucune finition manquante sur les cartes découvertes. Les cartes inédites doivent d’abord être découvertes.')
+    :'Aucune recette ne correspond à ce filtre.';
   for(const card of visible){
     const selected=card.id===forgeSelectedId;
-    const wish=card.id===state.goalId;
-    const cost=getCraftCost(card);
+    const wish=forgeMode==='discovery'&&card.id===state.goalId;
+    const cost=forgeCost(card);
     const tile=el('button','atelier-craft-tile'+(selected?' is-selected':'')+(wish?' is-wished':''));
     tile.type='button';
     tile.dataset.cardId=String(card.id);
@@ -246,13 +250,13 @@ function renderAtelier(){
   details.replaceChildren();
   if(!chooseFrom){
     const text=missing.length===0
-      ?'Toutes les cartes accessibles à la Forge ont rejoint ton Codex. Les Chromatiques restent à découvrir en booster ; la Signature est une récompense d’aventure.'
+      ?(forgeMode==='discovery'?'Toutes les cartes accessibles à la Forge ont rejoint ton Codex. Choisis une finition pour poursuivre ta collection.':'Toutes les recettes accessibles de cette finition sont déjà possédées, ou aucune carte éligible n’a été découverte.')
       :'Modifie le filtre pour choisir une carte à fabriquer.';
-    details.append(el('p','kicker','LES FORGES DES ARCHIVES'),el('h3','',missing.length?'Aucune recette affichée':'Le Codex est complet'),el('p','atelier-detail-placeholder',text));
+    details.append(el('p','kicker','LES FORGES DES ARCHIVES'),el('h3','',missing.length?'Aucune recette affichée':'Aucune recette manquante'),el('p','atelier-detail-placeholder',text));
     if(missing.length===0)details.append(button('Explorer mon Codex ›',()=>navigate('collection'),'secondary atelier-detail-link'));
     return;
   }
-  const cost=getCraftCost(chooseFrom);
+  const cost=forgeCost(chooseFrom);
   const remaining=Math.max(0,cost-state.dust);
   const art=el('img','atelier-detail-art');
   applyCardIllustration(art,chooseFrom,{shiny:false,size:'full'});
@@ -268,7 +272,7 @@ function renderAtelier(){
   meter.setAttribute('aria-valuenow',String(Math.min(cost,state.dust)));
   const fill=el('span');fill.style.width=Math.min(100,state.dust/cost*100)+'%';
   meter.append(fill);
-  const craft=button('Forger · '+cost+' Éclats',()=>askCraft(chooseFrom.id),'primary atelier-craft-action');
+  const craft=button('Forger · '+cost+' Éclats',()=>forgeMode==='discovery'?askCraft(chooseFrom.id):askFinishCraft(chooseFrom.id,forgeMode),'primary atelier-craft-action');
   craft.disabled=state.dust<cost;
   craft.title=remaining?'Encore '+remaining+' Éclats nécessaires':'Forger cette carte et dépenser '+cost+' Éclats';
   const goalButton=button(state.goalId===chooseFrom.id?'Retirer mon objectif':'✧ Choisir comme objectif',()=>{
@@ -282,9 +286,11 @@ function renderAtelier(){
   const message=el('p','atelier-detail-progress',remaining?remaining+' Éclats encore nécessaires':'La Forge peut accueillir cette carte.');
   details.append(el('p','kicker','FICHE DE FABRICATION'),frame,
     el('h3','',chooseFrom.name),
-    el('p','atelier-detail-rarity',RARITIES[chooseFrom.rarity].label+' · '+chooseFrom.type),
+    el('p','atelier-detail-rarity',RARITIES[chooseFrom.rarity].label+' · '+chooseFrom.type+' · '+forgeModeLabel()),
     el('p','atelier-detail-lore','« '+chooseFrom.lore+' »'),
-    count,meter,message,craft,goalButton);
+    count,meter,message,craft);
+  if(forgeMode==='discovery')details.append(goalButton);
+  else details.append(el('p','atelier-detail-progress','Ajoute un exemplaire de cette finition. Tes autres exemplaires restent intacts.'));
 }
 
 function askCraft(cardId){
@@ -293,7 +299,7 @@ function askCraft(cardId){
   const cost=getCraftCost(card);
   if(cost===null)return notify('Cette carte est réservée à une aventure, elle ne peut pas être fabriquée.');
   if(state.dust<cost)return notify('Tu ne possèdes pas encore assez d’Éclats.');
-  pendingCraftId=card.id;
+  pendingCraftId=card.id;pendingCraftFinish=null;
   $('#atelier-confirm-text').textContent='Fabriquer « '+card.name+' » pour '+cost+' Éclats ? Solde actuel : '+state.dust+' Éclats.';
   const modal=$('#atelier-confirm');
   if(typeof modal.showModal==='function')modal.showModal();
@@ -301,12 +307,37 @@ function askCraft(cardId){
   else pendingCraftId=null;
 }
 
+function askFinishCraft(cardId,finish){
+  const card=CARDS.find(c=>c.id===cardId);
+  if(!canCraftFinish(state,card,finish))return notify('Cette recette n’est plus disponible.');
+  const cost=getFinishCraftCost(card,finish);
+  if(state.dust<cost)return notify('Tu ne possèdes pas encore assez d’Éclats.');
+  pendingCraftId=cardId;pendingCraftFinish=finish;
+  $('#atelier-confirm-text').textContent='Forger « '+card.name+' » · '+FINISHES[finish].label+' pour '+cost+' Éclats ? Solde actuel : '+state.dust+' Éclats.';
+  const modal=$('#atelier-confirm');
+  if(typeof modal.showModal==='function')modal.showModal();
+  else if(window.confirm('Forger cette finition pour '+cost+' Éclats ?'))completeCraft();
+  else{pendingCraftId=null;pendingCraftFinish=null;}
+}
 function completeCraft(){
-  const cardId=pendingCraftId;
-  pendingCraftId=null;
+  const cardId=pendingCraftId,finish=pendingCraftFinish;
+  pendingCraftId=null;pendingCraftFinish=null;
   const modal=$('#atelier-confirm');
   if(modal.open)modal.close();
   const card=CARDS.find(c=>c.id===cardId);
+  if(finish!==null){
+    const result=craftFinish(state,card,finish);
+    if(!result.ok)return notify(result.reason);
+    state=result.state;
+    state.recentFinds=recordRecentFind(state.recentFinds,card.id,finish==='chromatic'?'chromatic':'forge');
+    forgeSelectedId=null;
+    update();
+    renderCollection();
+    const report=$('#atelier-result');report.hidden=false;
+    report.textContent='✧ '+card.name+' · '+FINISHES[finish].label+' forgée ! −'+result.cost+' Éclats.';
+    notify('Finition forgée : '+FINISHES[finish].label+' !');
+    return;
+  }
   const result=craftCard(state,card);
   if(!result.ok)return notify(result.reason);
   state=result.state;
@@ -319,6 +350,12 @@ function completeCraft(){
   report.textContent='✧ '+card.name+' rejoint ton Codex ! −'+result.cost+' Éclats.';
   notify('Carte fabriquée : '+card.name+' !');
 }
+$('#atelier-mode').addEventListener('change',event=>{
+  const value=event.target.value;
+  forgeMode=value==='discovery'||FINISH_KEYS.includes(value)?value:'discovery';
+  forgeSelectedId=null;forgeFilter='all';$('#atelier-filter').value='all';
+  $('#atelier-result').hidden=true;renderAtelier();
+});
 $('#atelier-filter').addEventListener('change',event=>{
   forgeFilter=event.target.value;
   forgeSelectedId=null;
@@ -329,11 +366,11 @@ $('#atelier-jump').addEventListener('click',()=>{
   $('#atelier-catalogue-title').focus({preventScroll:true});
 });
 $('#atelier-confirm-cancel').addEventListener('click',()=>{
-  pendingCraftId=null;
+  pendingCraftId=null;pendingCraftFinish=null;
   $('#atelier-confirm').close();
 });
 $('#atelier-confirm-accept').addEventListener('click',completeCraft);
-$('#atelier-confirm').addEventListener('close',()=>{pendingCraftId=null});
+$('#atelier-confirm').addEventListener('close',()=>{pendingCraftId=null;pendingCraftFinish=null});
 function navigate(page){
   if(!APP_PAGES.includes(page))return;
   if(page!=='collection')enableHolographicInspection(null);
@@ -467,9 +504,10 @@ function renderTrialMastery(){
     g.recordsEl.setAttribute('aria-label','Carnet des records de '+definitions[index].name+
       ' · '+metric.label+' · '+current.wins+' victoires dans la difficulté actuelle');
     const levelMode=DIFFICULTIES.find(d=>d.id===g.mode)||DIFFICULTIES[1];
-    const high=trialReward(g.reward,g.mode,100);
-    g.rewardEl.textContent='♛ '+g.reward+' Couronnes'+(high>g.reward?' · jusqu’à +'+(high-g.reward)+' bonus':'');
-    g.rewardEl.title='Mode '+levelMode.label+' · récompense de base conservée';
+    const low=trialReward(g.reward,g.mode,0),high=trialReward(g.reward,g.mode,100);
+    g.rewardEl.textContent='♛ '+low+(high>low?'–'+high:'')+' Couronnes';
+    g.rewardEl.title='Mode '+levelMode.label+' · '+low+' Couronnes par victoire'+(high>low?' · +5 si score ≥ 90/100':'');
+    g.rewardEl.setAttribute('aria-label',g.rewardEl.title);
   });
 }
 function complete(i,description,performance={}){
@@ -1097,6 +1135,8 @@ function startMines(){
     if(hint){sondes++;markGuide(hint)}
     else g.status.textContent='Tous les passages sûrs ont été explorés.';
   });
+  sondeButton.title='Repère une dalle sûre · chaque sonde retire 10 points au score, jamais de Couronnes au gain de base.';
+  sondeButton.setAttribute('aria-label','Sonder un passage sûr : moins 10 points au score');
   g.actions.replaceChildren(sondeButton,button('✧ Nouvelle fouille',startMines));
   markGuide({index:site.entrance,deduction:false});
 }
@@ -1755,9 +1795,12 @@ function inspect(c,shiny=false,scroll=true,chromaticPreview=false,finishOverride
       'secondary finish-choice');
     selector.disabled=quantity===0;
     selector.setAttribute('aria-pressed',String(selected));
+    const unavailable=c.signature&&(finish==='calligraphic'||finish==='holographic');
+    const evolved=c.signature&&finish==='normal'&&state.shiny?.[c.id]===true;
+    const lockedLabel=unavailable?'Non disponible pour la Signature':evolved?'Évoluée en Chromatique':'Non possédée · verrouillée';
     selector.setAttribute('aria-label',FINISHES[finish].label+
-      (quantity?' · Possédée, '+quantity+' exemplaire(s)':' · Non possédée, finition verrouillée'));
-    selector.append(el('span','finish-state',quantity?'Possédée · ×'+quantity:'Non possédée · verrouillée'));
+      (quantity?' · Possédée, '+quantity+' exemplaire(s)':' · '+lockedLabel));
+    selector.append(el('span','finish-state',quantity?'Possédée · ×'+quantity:lockedLabel));
     picker.append(selector);
   }
   copy.append(picker);
@@ -1846,22 +1889,25 @@ function renderCodexSeasons(){
   const collection=collectionById(activeSeason,activeCollection);
   $('#codex-chapter-title').textContent='Partie '+collection.number+' · '+collection.title;
   $('#codex-chapter-subtitle').textContent=collection.subtitle+(collection.id==='au-dela-du-verre'?' · 23 cartes en booster, une Signature à mériter lors du final.':'');
-  const stats=codexProgress(season.collections.flatMap(part=>cardsForCollection(CARDS,season.id,part.id)),state.owned,state.shiny);
-  $('#codex-progress-discovered').textContent=stats.discovered+' / '+stats.total;
-  $('#codex-progress-chromatic').textContent=stats.chromatic+' / '+stats.total;
   const chapterCards=season.collections.flatMap(part=>cardsForCollection(CARDS,season.id,part.id));
+  const stats=codexProgress(chapterCards,state.owned,state.shiny);
+  $('#codex-progress-discovered').textContent=stats.discovered+' / '+stats.total;
+  $('#codex-signature-note').hidden=!chapterCards.some(card=>card.signature);
   for(const finish of FINISH_KEYS){
+    const {unique,total,percent}=finishObjective(chapterCards,state.finishCounts,finish);
     const target=document.querySelector('#codex-progress-'+finish);
-    if(target)target.textContent=finishUnique(state.finishCounts,finish,chapterCards)+' / '+stats.total;
+    if(target)target.textContent=unique+' / '+total;
     const fill=document.querySelector('#codex-'+finish+'-fill');
-    if(fill)fill.style.width=(stats.total?100*finishUnique(state.finishCounts,finish,chapterCards)/stats.total:0)+'%';
+    if(fill)fill.style.width=percent+'%';
+    const track=document.querySelector('#codex-'+finish+'-track');
+    if(track){
+      track.setAttribute('aria-valuenow',String(unique));
+      track.setAttribute('aria-valuemax',String(Math.max(total,1)));
+    }
   }
   $('#codex-progress-fill').style.width=stats.percent+'%';
-  $('#codex-chromatic-fill').style.width=stats.chromaticPercent+'%';
   $('#codex-progress-track').setAttribute('aria-valuenow',String(stats.discovered));
   $('#codex-progress-track').setAttribute('aria-valuemax',String(Math.max(stats.total,1)));
-  $('#codex-chromatic-track').setAttribute('aria-valuenow',String(stats.chromatic));
-  $('#codex-chromatic-track').setAttribute('aria-valuemax',String(Math.max(stats.total,1)));
 }
 function claimDiscoveryFragment(threshold){
   const cards=cardsForCollection(CARDS,activeSeason,activeCollection);
@@ -2593,7 +2639,7 @@ backupRestore.addEventListener('click',()=>{
     syncBackupRestore();
   }
 });
-$('#reset').addEventListener('click',()=>{if(!confirm('Effacer définitivement les cartes et la progression sauvegardées sur cet appareil ?'))return;try{saveSession.write(fresh(),{replace:true})}catch(error){showSaveWarning(error.message);return}clearBoosterScene();enableHolographicInspection(null);try{localStorage.removeItem(PREVIOUS_SAVE_KEY)}catch{}state=fresh();state.trialStats=sanitizedTrialStats(state.trialStats);trialStarters.forEach(start=>start());renderTrialMastery();renderDifficultyChoice();renderExpedition();selectedCard=null;forgeSelectedId=null;forgeFilter='all';$('#atelier-filter').value='all';$('#atelier-result').hidden=true;$('#inspector').replaceChildren(el('p','muted','Sélectionne une carte découverte pour l’admirer.'));$('#pulls').replaceChildren();$('#pack-title').textContent='Les archives attendent leur voyageur.';$('#pack-msg').textContent='Gagne des Couronnes en jouant pour ouvrir des boosters.';update();renderCollection();notify('Progression réinitialisée.')});
+$('#reset').addEventListener('click',()=>{if(!confirm('Effacer définitivement les cartes et la progression sauvegardées sur cet appareil ?'))return;try{saveSession.write(fresh(),{replace:true})}catch(error){showSaveWarning(error.message);return}clearBoosterScene();enableHolographicInspection(null);try{localStorage.removeItem(PREVIOUS_SAVE_KEY)}catch{}state=fresh();state.trialStats=sanitizedTrialStats(state.trialStats);trialStarters.forEach(start=>start());renderTrialMastery();renderDifficultyChoice();renderExpedition();selectedCard=null;forgeSelectedId=null;forgeFilter='all';forgeMode='discovery';$('#atelier-mode').value=forgeMode;$('#atelier-filter').value='all';$('#atelier-result').hidden=true;$('#inspector').replaceChildren(el('p','muted','Sélectionne une carte découverte pour l’admirer.'));$('#pulls').replaceChildren();$('#pack-title').textContent='Les archives attendent leur voyageur.';$('#pack-msg').textContent='Gagne des Couronnes en jouant pour ouvrir des boosters.';update();renderCollection();notify('Progression réinitialisée.')});
 syncMobileSheets();
 selectBooster('origines');
 renderExpedition();

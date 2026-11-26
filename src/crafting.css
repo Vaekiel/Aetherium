@@ -211,3 +211,9 @@
 @media(prefers-reduced-motion:reduce){
   .atelier-craft-tile,.atelier-goal-meter>span,.atelier-detail-meter>span{transition:none!important}
 }
+
+/* Finish recipe selector follows the existing Forge control. */
+#atelier-mode{min-height:44px;padding:9px 11px;max-width:100%;border:1px solid #92788cb3;border-radius:3px;color:#f1e3e6;background:#26233e;font:13px Georgia,serif;cursor:pointer}
+#atelier-mode:focus-visible{outline:2px solid #ebc791;outline-offset:2px}
+@media(min-width:851px){.atelier-catalogue-head>.atelier-filter-label{flex:0 1 190px;min-width:0}}
+@media(max-width:850px){#atelier-mode{min-height:48px;font-size:15px}}
