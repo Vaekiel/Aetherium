@@ -84,7 +84,7 @@ const ctx={
  currentDraw:[],drawSummary:null,
  reducedMotion:{matches:true},mobileView:{matches:false},BOOSTER_UNSEAL_MS:980,
  afterBooster(){},showBoosterCard(){},
- $:selector=>selector==='#pack-title'?title:selector==='#pack-msg'?message:selector==='#page-boosters'?page:null
+ $:selector=>selector==='#pack-title'?title:selector==='#pack-msg'?message:selector==='#page-boosters'?page:selector==='#booster-codex-action'?box():null
 };
 runInNewContext(handler+'openOriginesBooster()',ctx);
 assert.equal(refletsDraws,1);

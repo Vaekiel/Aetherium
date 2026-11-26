@@ -92,7 +92,7 @@ const ctx={
  currentDraw:[],drawSummary:null,reducedMotion:{matches:true},
  mobileView:{matches:false},BOOSTER_UNSEAL_MS:980,
  afterBooster(){},showBoosterCard(){},
- $:selector=>selector==='#pack-title'?title:selector==='#pack-msg'?msg:selector==='#page-boosters'?page:null
+ $:selector=>selector==='#pack-title'?title:selector==='#pack-msg'?msg:selector==='#page-boosters'?page:selector==='#booster-codex-action'?node():null
 };
 runInNewContext(script+'openOriginesBooster()',ctx);
 assert.equal(thirdDraws,1);

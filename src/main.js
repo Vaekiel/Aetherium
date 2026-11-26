@@ -1,3 +1,4 @@
+import {beginnerGuide,readGuideDismissal,writeGuideDismissal} from './onboarding.js?v=1';
 import {createCardFront,attachRectoLabInspector} from './recto-lab.js?v=recto-uniforme-3';
 import {RARITIES,PACK_PRICE,drawPack} from './data.js?v=booster-variety-1';
 import {CARDS,drawRefletsPack,drawAuDelaPack} from './collection-data.js?v=au-dela-booster-1';
@@ -132,6 +133,23 @@ state.trialRecords=sanitizedTrialRecords(state.trialRecords);
 state.titleId=validEquippedTitle(state.titleId,state.trialStats,state.trialRecords);
 state.expedition=sanitizeExpedition(state.expedition);
 let boosterBusy=false;
+let guideDismissed=false,guideManual=false;
+try{guideDismissed=readGuideDismissal(localStorage)}catch{}
+function rememberGuideDismissal(value){guideDismissed=value;try{writeGuideDismissal(localStorage,value)}catch{}}
+function renderBeginnerGuide(){
+ const guide=$('#beginner-guide');
+ const progress=beginnerGuide(state,PACK_PRICE);
+ guide.hidden=!!saveSession.problem||(!guideManual&&(guideDismissed||progress.complete));
+ $('#guide-pack-step').textContent=progress.collected?'✓ Premières cartes':'◇ Découvrir des cartes';
+ $('#guide-trial-step').textContent=progress.won?'✓ Première victoire':'◇ Remporter une épreuve';
+ $('#guide-title').textContent=progress.complete?'Ton aventure continue':progress.collected?'Tes premières archives':'Bienvenue dans les Marches de Verre';
+ $('#guide-copy').textContent=progress.complete?'Explore les collections, relève les défis et utilise la Forge pour compléter ton Codex.':progress.stage==='pack'?'Tu disposes de '+state.coins+' Couronnes : de quoi ouvrir '+Math.floor(state.coins/PACK_PRICE)+' booster'+(Math.floor(state.coins/PACK_PRICE)>1?'s':'')+'. Chaque paquet coûte '+PACK_PRICE+' Couronnes et révèle cinq cartes.':progress.collected?'Gagne des Couronnes en remportant une épreuve. Choisis Initiation si tu souhaites découvrir les règles à ton rythme.':'Remporte une épreuve pour réunir les Couronnes nécessaires à ton premier booster.';
+ $('#guide-action').textContent=progress.complete?'Explorer le Codex ›':progress.stage==='pack'?'Découvrir les boosters ›':'Choisir une épreuve ›';
+ $('#guide-dismiss').textContent=progress.complete?'Fermer':'Masquer le guide';
+ const funds=$('#booster-funds');
+ funds.hidden=boosterBusy||progress.canBuy;
+ $('#booster-funds-text').textContent='Il te manque '+Math.max(0,PACK_PRICE-state.coins)+' Couronnes pour ce booster.';
+}
 function showSaveWarning(message=''){
   const warning=$('#save-warning');
   warning.textContent=message;
@@ -159,6 +177,7 @@ $('#mobile-collection-progress').textContent=Object.keys(state.owned).length+' /
     const mobile=document.querySelector('#mobile-'+finish+'-count');
     if(mobile)mobile.textContent=FINISHES[finish].symbol+' '+unique+' / '+total+(finish==='chromatic'?' Chromatiques':'');
   }
+  renderBeginnerGuide();
   if($('#page-succes').classList.contains('active'))renderAchievements();
   if($('#page-atelier').classList.contains('active'))renderAtelier()}
 function grant(value){state.coins+=value;state.earned+=value;state.wins++;update();notify('+'+value+' Couronnes remportées !')}
@@ -386,6 +405,7 @@ function navigate(page){
   });
   $('#chroniques-link').classList.toggle('active',page==='succes');
   if(page==='collection')renderCollection();
+  if(page==='jouer')renderBeginnerGuide();
   if(page==='atelier')renderAtelier();
   if(page==='succes')renderAchievements();
   if(page==='expeditions')renderExpedition();
@@ -2194,6 +2214,7 @@ function clearBoosterScene(){
   boosterActions.hidden=true;
   nextPullButton.hidden=true;
   boosterSummary.hidden=true;
+  $('#booster-codex-action').hidden=true;
   boosterSummary.replaceChildren();
 }
 /* Switch only between complete released collections. Never change a purchased
@@ -2329,6 +2350,7 @@ function completeBoosterReveal(){
   boosterGrid.classList.add('booster-gallery');
   boosterGrid.replaceChildren(...currentDraw.map(item=>makeCard(item.card,item.finish??item.shiny)));
   boosterSummary.hidden=false;
+  $('#booster-codex-action').hidden=false;
   // A single, late reveal highlight for exceptional finds. Never preview
   // hidden cards or alter the already-saved purchase and shard rewards.
   const moment=boosterMoment(currentDraw);
@@ -2407,6 +2429,7 @@ function openOriginesBooster(){
   drawSummary={newCount,duplicates,shinyCount,holographicCount,calligraphicCount,dustEarned};
   update(); // Persists the purchase before any animation or navigation.
   boosterSummary.hidden=true;
+  $('#booster-codex-action').hidden=true;
   boosterSummary.replaceChildren();
   boosterGrid.replaceChildren();
   boosterGrid.classList.remove('booster-gallery');
@@ -2478,7 +2501,7 @@ function openBoosterDialog(control){
   $('#booster-dialog-kicker').textContent=control.dataset.seasonTitle||'LES ARCHIVES';
   boosterDialog.classList.remove('has-results');
   if(!boosterDialog.open)boosterDialog.showModal();
-  $('#buy').focus({preventScroll:true});
+  ($('#buy').disabled?$('#booster-funds-action'):$('#buy')).focus({preventScroll:true});
 }
 
 $('#booster-close').addEventListener('click',closeBoosterDialog);
@@ -2505,6 +2528,26 @@ renderBoosterSeasons();
 // after it, without entering the isolated gameplay handler tested by old suites.
 $('#buy').addEventListener('click',()=>{
   if(boosterBusy)boosterDialog.classList.add('has-results');
+});
+$('#guide-action').addEventListener('click',()=>{
+ const progress=beginnerGuide(state,PACK_PRICE);
+ if(progress.complete)navigate('collection');
+ else if(progress.stage==='pack')navigate('boosters');
+ else{
+  // Offer the difficulty controls; do not silently change a player's choice.
+  const target=$('#difficulty-options button[data-difficulty="initiation"]');
+  target.focus({preventScroll:true});
+  target.scrollIntoView({block:'nearest',behavior:'auto'});
+ }
+});
+$('#guide-dismiss').addEventListener('click',()=>{guideManual=false;rememberGuideDismissal(true);renderBeginnerGuide();$('#difficulty-options button.is-active')?.focus({preventScroll:true})});
+$('#guide-reopen').addEventListener('click',()=>{guideManual=beginnerGuide(state,PACK_PRICE).complete;rememberGuideDismissal(false);navigate('jouer');$('#guide-title').focus({preventScroll:true});$('#beginner-guide').scrollIntoView({block:'nearest',behavior:'auto'})});
+$('#booster-funds-action').addEventListener('click',()=>navigate('jouer'));
+$('#booster-codex-action').addEventListener('click',()=>{
+ if(boosterBusy||!currentDraw.length)return;
+ const chapter=collectionForCard(currentDraw[0].card);
+ if(chapter){activeSeason=chapter.season.id;activeCollection=chapter.collection.id;selectedCard=null;}
+ navigate('collection');
 });
 revealAllButton.addEventListener('click',revealBoosterAll);
 nextPullButton.addEventListener('click',advanceBoosterCard);
@@ -2654,7 +2697,7 @@ backupRestore.addEventListener('click',()=>{
     syncBackupRestore();
   }
 });
-$('#reset').addEventListener('click',()=>{if(!confirm('Effacer définitivement les cartes et la progression sauvegardées sur cet appareil ?'))return;try{saveSession.write(fresh(),{replace:true})}catch(error){showSaveWarning(error.message);return}clearBoosterScene();enableHolographicInspection(null);try{localStorage.removeItem(PREVIOUS_SAVE_KEY)}catch{}state=fresh();state.trialStats=sanitizedTrialStats(state.trialStats);trialStarters.forEach(start=>start());renderTrialMastery();renderDifficultyChoice();renderExpedition();selectedCard=null;forgeSelectedId=null;forgeFilter='all';forgeMode='discovery';$('#atelier-mode').value=forgeMode;$('#atelier-filter').value='all';$('#atelier-result').hidden=true;$('#inspector').replaceChildren(el('p','muted','Sélectionne une carte découverte pour l’admirer.'));$('#pulls').replaceChildren();$('#pack-title').textContent='Les archives attendent leur voyageur.';$('#pack-msg').textContent='Gagne des Couronnes en jouant pour ouvrir des boosters.';update();renderCollection();notify('Progression réinitialisée.')});
+$('#reset').addEventListener('click',()=>{if(!confirm('Effacer définitivement les cartes et la progression sauvegardées sur cet appareil ?'))return;try{saveSession.write(fresh(),{replace:true})}catch(error){showSaveWarning(error.message);return}clearBoosterScene();enableHolographicInspection(null);try{localStorage.removeItem(PREVIOUS_SAVE_KEY)}catch{}state=fresh();guideManual=false;rememberGuideDismissal(false);state.trialStats=sanitizedTrialStats(state.trialStats);trialStarters.forEach(start=>start());renderTrialMastery();renderDifficultyChoice();renderExpedition();selectedCard=null;forgeSelectedId=null;forgeFilter='all';forgeMode='discovery';$('#atelier-mode').value=forgeMode;$('#atelier-filter').value='all';$('#atelier-result').hidden=true;$('#inspector').replaceChildren(el('p','muted','Sélectionne une carte découverte pour l’admirer.'));$('#pulls').replaceChildren();$('#pack-title').textContent='Les archives attendent leur voyageur.';$('#pack-msg').textContent='Gagne des Couronnes en jouant pour ouvrir des boosters.';update();renderCollection();notify('Progression réinitialisée.')});
 syncMobileSheets();
 selectBooster('origines');
 renderExpedition();

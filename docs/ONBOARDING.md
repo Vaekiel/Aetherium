@@ -1,0 +1,9 @@
+# Chantier 03 — Premiers pas
+
+L'écran titre et la navigation restent inchangés. Le parcours de découverte est un petit panneau facultatif sur les Épreuves, sans fenêtre modale, sans récompenses ajoutées et sans changement de la difficulté. Il indique le solde de Couronnes, le coût d'un booster et les cinq cartes, puis propose une première victoire après découverte. Un joueur peut effectuer les étapes dans n'importe quel ordre. Le panneau disparaît après acquisition d'une carte/ouverture et première victoire, ou immédiatement si masqué. Les joueurs déjà avancés ne le voient pas par défaut. Il reste accessible dans les réglages. La préférence de masquage locale est indépendante de la sauvegarde du jeu ; une réinitialisation volontaire remet le guide à disposition. En récupération de sauvegarde le panneau est masqué.
+
+Le récapitulatif de booster propose un accès direct à la collection du paquet. Un booster hors budget indique les Couronnes manquantes et propose les Épreuves, sans achat automatique. Les règles, chances, coûts, récompenses et format de sauvegarde sont intacts. Aucun spoiler ni obligation de suivre le parcours.
+
+Tests : état de progression dérivé de la sauvegarde, préférence indépendante, stockage bloqué, parcours Chromium d'un profil neuf, masquage/réouverture et profil avancé. Une validation humaine reste nécessaire pour juger la clarté et la place du panneau sur écran compact.
+
+La réouverture avant la fin ne bloque pas la disparition automatique à la première victoire ; une fois terminé, le guide peut être rouvert volontairement. En cas de booster trop cher, le focus est placé sur l’action qui permet de rejoindre les Épreuves.

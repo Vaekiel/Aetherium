@@ -53,3 +53,4 @@ jobs:
           AETHERIUM_BROWSER_TEST=1 node tests/booster-browser-smoke.mjs
           AETHERIUM_BROWSER_TEST=1 node tests/trial-responsive-browser-smoke.mjs
           AETHERIUM_BROWSER_TEST=1 node tests/chromatic-browser-smoke.mjs
+          AETHERIUM_BROWSER_TEST=1 node tests/onboarding-browser-smoke.mjs
