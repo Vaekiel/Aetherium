@@ -7,7 +7,8 @@ import {duplicateDustReward} from './duplicate-rewards.js';
 import {boosterMoment} from './booster-feedback.js?v=booster-polish-1';
 import {applyCardIllustration,hasApprovedArt,CARD_ART} from './card-art.js?v=au-dela-booster-1&chromatic=audit-1';
 import {codexProgress,filterCodex} from './codex.js';
-import {FINISHES,FINISH_KEYS,restoreFinishCounts,synchronizeFinishCounts,finishQuantity,finishUnique,finishTotal,preferredFinish} from './finishes.js?v=finish-order-2';
+import {finishObjective} from './finish-objectives.js?v=signature-targets-1';
+import {FINISHES,FINISH_KEYS,restoreFinishCounts,synchronizeFinishCounts,finishQuantity,preferredFinish} from './finishes.js?v=finish-order-2';
 import {enableHolographicInspection} from './finish-interaction.js';
 import {sanitizeRecentFinds,recordRecentFind,buildLivingArchive} from './living-archives.js?v=au-dela-booster-1';
 import {createBackup,decodeBackup,installImportedSave,restorePreviousSave,PREVIOUS_SAVE_KEY,MAX_BACKUP_SIZE} from './save-backup.js';
@@ -149,17 +150,13 @@ let toastTimer;
 function notify(message){const el=$('#toast');el.textContent=message;el.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove('show'),3000)}
 function update(){if(state.goalId&&state.owned[state.goalId])state.goalId=null;save();$('#coins').textContent=state.coins.toLocaleString('fr-FR');$('#dust').textContent=state.dust.toLocaleString('fr-FR');$('#buy').disabled=state.coins<PACK_PRICE||boosterBusy;for(const control of $$('.booster-choice'))control.disabled=boosterBusy;$('#collection-progress').textContent=Object.keys(state.owned).length+' / '+CARDS.length;
 $('#mobile-collection-progress').textContent=Object.keys(state.owned).length+' / '+CARDS.length+' obtenues';
-  const chromaticTotal=Object.keys(state.shiny).length;
   $('#codex-card-count').textContent=Object.keys(state.owned).length+' / '+CARDS.length;
-  $('#codex-chromatic-count').textContent=chromaticTotal+' / '+CARDS.length+' · '+finishTotal(state.finishCounts,'chromatic',CARDS)+' ex.';
-  $('#mobile-chromatic-count').textContent='✧ '+chromaticTotal+' / '+CARDS.length+' Chromatiques';
   for(const finish of FINISH_KEYS){
-    const unique=finishUnique(state.finishCounts,finish,CARDS);
-    const copies=finishTotal(state.finishCounts,finish,CARDS);
+    const {unique,total,copies}=finishObjective(CARDS,state.finishCounts,finish);
     const el=document.querySelector('#codex-'+finish+'-count');
-    if(el)el.textContent=unique+' / '+CARDS.length+' · '+copies+' ex.';
+    if(el)el.textContent=unique+' / '+total+' · '+copies+' ex.';
     const mobile=document.querySelector('#mobile-'+finish+'-count');
-    if(mobile)mobile.textContent=FINISHES[finish].symbol+' '+unique+' / '+CARDS.length;
+    if(mobile)mobile.textContent=FINISHES[finish].symbol+' '+unique+' / '+total+(finish==='chromatic'?' Chromatiques':'');
   }
   if($('#page-succes').classList.contains('active'))renderAchievements();
   if($('#page-atelier').classList.contains('active'))renderAtelier()}
@@ -1795,9 +1792,12 @@ function inspect(c,shiny=false,scroll=true,chromaticPreview=false,finishOverride
       'secondary finish-choice');
     selector.disabled=quantity===0;
     selector.setAttribute('aria-pressed',String(selected));
+    const unavailable=c.signature&&(finish==='calligraphic'||finish==='holographic');
+    const evolved=c.signature&&finish==='normal'&&state.shiny?.[c.id]===true;
+    const lockedLabel=unavailable?'Non disponible pour la Signature':evolved?'Évoluée en Chromatique':'Non possédée · verrouillée';
     selector.setAttribute('aria-label',FINISHES[finish].label+
-      (quantity?' · Possédée, '+quantity+' exemplaire(s)':' · Non possédée, finition verrouillée'));
-    selector.append(el('span','finish-state',quantity?'Possédée · ×'+quantity:'Non possédée · verrouillée'));
+      (quantity?' · Possédée, '+quantity+' exemplaire(s)':' · '+lockedLabel));
+    selector.append(el('span','finish-state',quantity?'Possédée · ×'+quantity:lockedLabel));
     picker.append(selector);
   }
   copy.append(picker);
@@ -1886,22 +1886,25 @@ function renderCodexSeasons(){
   const collection=collectionById(activeSeason,activeCollection);
   $('#codex-chapter-title').textContent='Partie '+collection.number+' · '+collection.title;
   $('#codex-chapter-subtitle').textContent=collection.subtitle+(collection.id==='au-dela-du-verre'?' · 23 cartes en booster, une Signature à mériter lors du final.':'');
-  const stats=codexProgress(season.collections.flatMap(part=>cardsForCollection(CARDS,season.id,part.id)),state.owned,state.shiny);
-  $('#codex-progress-discovered').textContent=stats.discovered+' / '+stats.total;
-  $('#codex-progress-chromatic').textContent=stats.chromatic+' / '+stats.total;
   const chapterCards=season.collections.flatMap(part=>cardsForCollection(CARDS,season.id,part.id));
+  const stats=codexProgress(chapterCards,state.owned,state.shiny);
+  $('#codex-progress-discovered').textContent=stats.discovered+' / '+stats.total;
+  $('#codex-signature-note').hidden=!chapterCards.some(card=>card.signature);
   for(const finish of FINISH_KEYS){
+    const {unique,total,percent}=finishObjective(chapterCards,state.finishCounts,finish);
     const target=document.querySelector('#codex-progress-'+finish);
-    if(target)target.textContent=finishUnique(state.finishCounts,finish,chapterCards)+' / '+stats.total;
+    if(target)target.textContent=unique+' / '+total;
     const fill=document.querySelector('#codex-'+finish+'-fill');
-    if(fill)fill.style.width=(stats.total?100*finishUnique(state.finishCounts,finish,chapterCards)/stats.total:0)+'%';
+    if(fill)fill.style.width=percent+'%';
+    const track=document.querySelector('#codex-'+finish+'-track');
+    if(track){
+      track.setAttribute('aria-valuenow',String(unique));
+      track.setAttribute('aria-valuemax',String(Math.max(total,1)));
+    }
   }
   $('#codex-progress-fill').style.width=stats.percent+'%';
-  $('#codex-chromatic-fill').style.width=stats.chromaticPercent+'%';
   $('#codex-progress-track').setAttribute('aria-valuenow',String(stats.discovered));
   $('#codex-progress-track').setAttribute('aria-valuemax',String(Math.max(stats.total,1)));
-  $('#codex-chromatic-track').setAttribute('aria-valuenow',String(stats.chromatic));
-  $('#codex-chromatic-track').setAttribute('aria-valuemax',String(Math.max(stats.total,1)));
 }
 function claimDiscoveryFragment(threshold){
   const cards=cardsForCollection(CARDS,activeSeason,activeCollection);

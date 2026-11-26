@@ -156,3 +156,6 @@
  #page-collection .inspector-art-shell.is-holographic{transition:none!important;transform:none!important}
  .card.is-holographic .finish-art-window::after{animation:none!important}
 }
+
+.codex-signature-note{margin:10px 0 0;color:#c6bed4;font:12px/1.5 system-ui,sans-serif;overflow-wrap:anywhere}
+.codex-signature-note[hidden]{display:none}

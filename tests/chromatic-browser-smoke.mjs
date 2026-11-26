@@ -231,6 +231,18 @@ for(const width of [360,768,1280]){
  }
  console.log('Four-finish browser regression OK at '+width+'px (3 collections).');
 }
+// Signature's exclusive evolution does not make Normal completion impossible.
+const objectives=await evaluate("(()=>Object.fromEntries(['normal','calligraphic','chromatic','holographic'].map(f=>[f,document.querySelector('#codex-progress-'+f).textContent.split(' / ')[1]])))()");
+assert.deepEqual(objectives,{normal:'71',calligraphic:'71',chromatic:'72',holographic:'71'});
+const maxima=await evaluate("(()=>Object.fromEntries(['normal','calligraphic','chromatic','holographic'].map(f=>[f,document.querySelector('#codex-'+f+'-track').getAttribute('aria-valuemax')])))()");
+assert.deepEqual(maxima,objectives);
+await evaluate("document.querySelector('.codex-chapter[data-collection=\"au-dela-du-verre\"]').click();true");
+await evaluate("document.querySelector('#card-grid [data-card-id=\"72\"]').click()");
+const labels=await evaluate("[...document.querySelectorAll('#inspector .finish-choice')].map(b=>b.getAttribute('aria-label'))");
+assert.ok(labels[0].includes('Évoluée en Chromatique'));
+assert.ok(labels[1].includes('Non disponible pour la Signature'));
+assert.ok(labels[3].includes('Non disponible pour la Signature'));
+console.log('Signature targets and locked-finish explanations OK.');
 // Exercise a real Forge transaction, cancellation and reload on mobile.
 await command('Emulation.setDeviceMetricsOverride',{width:360,height:800,deviceScaleFactor:2,mobile:true});
 await evaluate("(()=>{const s=JSON.parse(localStorage.getItem('aetherium-save-v1'));s.dust=1000;localStorage.setItem('aetherium-save-v1',JSON.stringify(s));location.reload();return true})()");
