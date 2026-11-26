@@ -2752,8 +2752,6 @@ function openLoreBook(){
   const summary=book.querySelector('summary');
   summary.focus({preventScroll:true});summary.scrollIntoView({block:'start',behavior:'auto'});
 }
-$('#lore-from-journal').addEventListener('click',openLoreBook);
-$('#lore-from-expedition').addEventListener('click',openLoreBook);
 function renderAchievements(){
   const root=$('#achievements');
   root.replaceChildren();
@@ -2769,6 +2767,8 @@ function renderAchievements(){
   renderJourney();
   renderLoreBook();
 }
+$('#lore-from-journal').addEventListener('click',openLoreBook);
+$('#lore-from-expedition').addEventListener('click',openLoreBook);
 // Save transfer remains opt-in and cannot interfere with game loops or rewards.
 const backupDialog=$('#backup-dialog');
 const backupStatus=$('#backup-status');

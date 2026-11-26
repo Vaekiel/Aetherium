@@ -33,11 +33,12 @@ export function loreArchive(cards,state={}){
  const byId=new Map(published.flatMap(entry=>entry.cards).map(card=>[card.id,card]));
  const expedition=sanitizeExpedition(state.expedition);
  const completed=new Set(expedition.completedRoutes);
- const finale=completed.has(FINALE_ID)&&canStartFinale(expedition)&&owns(owned,72)&&byId.has(72);
+ const finaleCompleted=completed.has(FINALE_ID)&&canStartFinale(expedition);
+ const finale=finaleCompleted&&owns(owned,72)&&byId.has(72);
  const echoes=LORE_ECHOES.filter(e=>e.cards.every(id=>byId.has(id))).map((e,index)=>{
   const progress=e.cards.filter(id=>owns(owned,id)).length;
   if(progress!==e.cards.length||(e.finale&&!finale))
-   return locked(e.id,'Écho scellé '+String(index+1).padStart(2,'0'),progress+' / '+e.cards.length+' archives liées retrouvées'+(e.finale?' · récit d’expédition à achever':''));
+   return locked(e.id,'Écho scellé '+String(index+1).padStart(2,'0'),progress+' / '+e.cards.length+' archives liées retrouvées'+(e.finale&&!finaleCompleted?' · récit d’expédition à achever':''));
   const part=published.find(p=>p.part.id===e.chapter);
   return revealed(e.id,e.title,e.body,part?.part.title||'Les Marches de Verre',e.cards.map(id=>({id,name:byId.get(id).name})));
  });
