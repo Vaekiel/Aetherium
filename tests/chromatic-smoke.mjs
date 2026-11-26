@@ -1,3 +1,4 @@
+import {createSaveSession} from '../src/save-session.js';
 import {readFileSync} from 'node:fs';
 import assert from 'node:assert/strict';
 import vm from 'node:vm';
@@ -80,7 +81,7 @@ const legacy={
  owned:{1:2,22:1},shiny:{22:true,12:true},goalId:3
 };
 const state=vm.runInNewContext(freshCode+loadCode+'load()',{
- localStorage:{getItem:key=>key==='aetherium-save-v1'?JSON.stringify(legacy):null},
+ saveSession:createSaveSession(()=>({getItem:()=>JSON.stringify(legacy)}),CARDS.map(c=>c.id)),
  CARDS,SAVE:'aetherium-save-v1',sanitizeMilestoneClaims
 });
 assert.equal(state.coins,225,'Coins retained');

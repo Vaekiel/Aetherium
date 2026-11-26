@@ -1,3 +1,4 @@
+import {createSaveSession} from '../src/save-session.js';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {runInNewContext} from 'node:vm';
@@ -107,7 +108,7 @@ const {CARDS}=await import('data:text/javascript;charset=utf-8,'+
  encodeURIComponent(read('src/data.js')));
 function restore(save){
  const sandbox={SAVE:'aetherium-save-v1',CARDS,sanitizeMilestoneClaims,sanitizeAlchemyKnown,
-  sanitizedTrialRecords,localStorage:{getItem:()=>JSON.stringify(save)}};
+  sanitizedTrialRecords,saveSession:createSaveSession(()=>({getItem:()=>JSON.stringify(save)}),CARDS.map(c=>c.id))};
  return runInNewContext(freshCode+loadCode+'load()',sandbox);
 }
 const migrated=restore(legacy);

@@ -1,3 +1,4 @@
+import {createSaveSession} from '../src/save-session.js';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {runInNewContext} from 'node:vm';
@@ -67,7 +68,7 @@ const asState=(values)=>{
  return runInNewContext(start+loader+'load()',{
    CARDS:[],SAVE:'aetherium-save-v1',
    sanitizeMilestoneClaims:raw=>raw??{},sanitizeAlchemyKnown,
-   localStorage:{getItem:()=>JSON.stringify(values)}
+   saveSession:createSaveSession(()=>({getItem:()=>JSON.stringify({owned:{},...values})}),[1])
  });
 };
 const legacy=asState({coins:192,dust:44,wins:3,earned:200,opened:8,owned:{},

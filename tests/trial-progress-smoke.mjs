@@ -1,3 +1,4 @@
+import {createSaveSession} from '../src/save-session.js';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {runInNewContext} from 'node:vm';
@@ -81,7 +82,7 @@ const freshCode=main.slice(main.indexOf('const fresh='),main.indexOf('function l
 const loadCode=main.slice(main.indexOf('function load(){'),main.indexOf('let state=load();'));
 const legacy={coins:75,dust:23,wins:7,earned:890,opened:4,owned:{1:2},shiny:{1:true},goalId:2};
 const loaded=runInNewContext(freshCode+loadCode+'load()',{
- localStorage:{getItem:key=>key==='aetherium-save-v1'?JSON.stringify(legacy):null},
+ saveSession:createSaveSession(()=>({getItem:()=>JSON.stringify(legacy)}),[1,2]),
  CARDS:await import('data:text/javascript;charset=utf-8,'+encodeURIComponent(read('src/data.js'))).then(m=>m.CARDS),
  SAVE:'aetherium-save-v1',sanitizeMilestoneClaims
 });

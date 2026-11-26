@@ -10,6 +10,7 @@ import {FINISHES,FINISH_KEYS,restoreFinishCounts,synchronizeFinishCounts,finishQ
 import {enableHolographicInspection} from './finish-interaction.js';
 import {sanitizeRecentFinds,recordRecentFind,buildLivingArchive} from './living-archives.js?v=au-dela-booster-1';
 import {createBackup,decodeBackup,installImportedSave,restorePreviousSave,PREVIOUS_SAVE_KEY,MAX_BACKUP_SIZE} from './save-backup.js';
+import {createSaveSession,parseStoredSave} from './save-session.js?v=save-safety-1';
 import {SEASONS,seasonById,collectionById,cardsForCollection,collectionForCard,seasonProgress} from './seasons.js?v=au-dela-booster-1';
 import {mountRefletsGallery} from './reflets-gallery.js?v=reflets-final-24';
 import {mountAuDelaGallery} from './au-dela-gallery.js?v=au-dela-lot-3';
@@ -31,9 +32,10 @@ const mobileView=window.matchMedia('(max-width:850px)');
 const sheetScrim=$('#sheet-scrim'), filterDrawer=$('#collection-filters'), inspectorShell=$('#inspector-shell');
 let sheetReturnFocus=null;
 function closeSheets(restoreFocus=true){
+  if(restoreFocus&&mobileView.matches)enableHolographicInspection(null);
   // A mobile Codex inspection lives in the browser top layer, not inside
   // the animated page stacking context beneath the blurred scrim.
-  if(inspectorShell.matches(':popover-open'))inspectorShell.hidePopover();
+  if(typeof inspectorShell.hidePopover==='function'&&inspectorShell.matches(':popover-open'))inspectorShell.hidePopover();
   document.body.classList.remove('sheet-open');
   sheetScrim.hidden=true;
   filterDrawer.classList.remove('is-open');
@@ -106,16 +108,19 @@ mobileView.addEventListener('change',syncMobileSheets);
 // approved Collection mockup. These are *visual placeholders*, not final art
 // for the corresponding 24 catalogue entries. All gameplay/save data is unchanged.
 const SAVE='aetherium-save-v1';
+const saveCardIds=CARDS.map(card=>card.id);
+const saveSession=createSaveSession(()=>localStorage,saveCardIds);
 const fresh=()=>({coins:300,dust:0,owned:{},shiny:{},wins:0,earned:0,opened:0,goalId:null,difficulty:'aventure',trialStats:[],collectionMilestones:{},recentFinds:[],alchemyKnown:[],trialRecords:[],titleId:null,expedition:{route:null,step:0,mode:null,armed:false,completedRoutes:[]}});
-function load(){try{const raw=JSON.parse(localStorage.getItem(SAVE));if(!raw||typeof raw!=='object')return fresh();const s=fresh();for(const field of ['coins','dust','wins','earned','opened'])if(Number.isSafeInteger(raw[field])&&raw[field]>=0&&raw[field]<1e9)s[field]=raw[field];for(const c of CARDS){const n=raw.owned?.[c.id];if(Number.isSafeInteger(n)&&n>0&&n<1e6)s.owned[c.id]=n;if(raw.shiny?.[c.id]===true&&s.owned[c.id])s.shiny[c.id]=true}if(Number.isSafeInteger(raw.goalId)&&CARDS.some(c=>c.id===raw.goalId&&c.signature!==true)&&!s.owned[raw.goalId])s.goalId=raw.goalId;if(['initiation','aventure','maitrise'].includes(raw.difficulty))s.difficulty=raw.difficulty;if(Array.isArray(raw.trialStats))s.trialStats=raw.trialStats;if(Array.isArray(raw.trialRecords))s.trialRecords=sanitizedTrialRecords(raw.trialRecords);s.collectionMilestones=sanitizeMilestoneClaims(raw.collectionMilestones);if(Array.isArray(raw.recentFinds))s.recentFinds=sanitizeRecentFinds(raw.recentFinds);if(Array.isArray(raw.alchemyKnown))s.alchemyKnown=sanitizeAlchemyKnown(raw.alchemyKnown);if(Number.isInteger(raw.titleId)&&raw.titleId>=0&&raw.titleId<5)s.titleId=raw.titleId;if(raw.expedition)s.expedition=sanitizeExpedition(raw.expedition);return s}catch{return fresh()}}
+function load(){try{const raw=saveSession.rawState;if(!raw||typeof raw!=='object')return fresh();const s=fresh();for(const field of ['coins','dust','wins','earned','opened'])if(Number.isSafeInteger(raw[field])&&raw[field]>=0&&raw[field]<1e9)s[field]=raw[field];for(const c of CARDS){const n=raw.owned?.[c.id];if(Number.isSafeInteger(n)&&n>0&&n<1e6)s.owned[c.id]=n;if(raw.shiny?.[c.id]===true&&s.owned[c.id])s.shiny[c.id]=true}if(Number.isSafeInteger(raw.goalId)&&CARDS.some(c=>c.id===raw.goalId&&c.signature!==true)&&!s.owned[raw.goalId])s.goalId=raw.goalId;if(['initiation','aventure','maitrise'].includes(raw.difficulty))s.difficulty=raw.difficulty;if(Array.isArray(raw.trialStats))s.trialStats=raw.trialStats;if(Array.isArray(raw.trialRecords))s.trialRecords=sanitizedTrialRecords(raw.trialRecords);s.collectionMilestones=sanitizeMilestoneClaims(raw.collectionMilestones);if(Array.isArray(raw.recentFinds))s.recentFinds=sanitizeRecentFinds(raw.recentFinds);if(Array.isArray(raw.alchemyKnown))s.alchemyKnown=sanitizeAlchemyKnown(raw.alchemyKnown);if(Number.isInteger(raw.titleId)&&raw.titleId>=0&&raw.titleId<5)s.titleId=raw.titleId;if(raw.expedition)s.expedition=sanitizeExpedition(raw.expedition);return s}catch{saveSession.block();return fresh()}}
 let state=load();
 // Adopt legacy cards without altering the original key or owned quantities.
 // Existing 'shiny' booleans map to at least one Chromatique; new saves have
 // exact quantities per finish and are restored without guessing.
 try{
-  const old=JSON.parse(localStorage.getItem(SAVE)||'null');
+  const old=saveSession.rawState;
   state.finishCounts=restoreFinishCounts(state.owned,state.shiny,old?.finishCounts);
 }catch{
+  saveSession.block();
   state.finishCounts=restoreFinishCounts(state.owned,state.shiny);
 }
 synchronizeFinishCounts(state);
@@ -124,7 +129,21 @@ state.trialRecords=sanitizedTrialRecords(state.trialRecords);
 state.titleId=validEquippedTitle(state.titleId,state.trialStats,state.trialRecords);
 state.expedition=sanitizeExpedition(state.expedition);
 let boosterBusy=false;
-function save(){synchronizeFinishCounts(state);try{localStorage.setItem(SAVE,JSON.stringify(state))}catch{notify('Sauvegarde indisponible dans ce navigateur.')}}
+function showSaveWarning(message=''){
+  const warning=$('#save-warning');
+  warning.textContent=message;
+  warning.hidden=!message;
+}
+function save(){
+  synchronizeFinishCounts(state);
+  try{saveSession.write(state);showSaveWarning()}
+  catch(error){showSaveWarning(error.message)}
+}
+window.addEventListener('storage',event=>{
+  if(event.key!==null&&event.key!==SAVE)return;
+  try{saveSession.assertCurrent()}
+  catch(error){showSaveWarning(error.message)}
+});
 let toastTimer;
 function notify(message){const el=$('#toast');el.textContent=message;el.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove('show'),3000)}
 function update(){if(state.goalId&&state.owned[state.goalId])state.goalId=null;save();$('#coins').textContent=state.coins.toLocaleString('fr-FR');$('#dust').textContent=state.dust.toLocaleString('fr-FR');$('#buy').disabled=state.coins<PACK_PRICE||boosterBusy;for(const control of $$('.booster-choice'))control.disabled=boosterBusy;$('#collection-progress').textContent=Object.keys(state.owned).length+' / '+CARDS.length;
@@ -317,6 +336,7 @@ $('#atelier-confirm-accept').addEventListener('click',completeCraft);
 $('#atelier-confirm').addEventListener('close',()=>{pendingCraftId=null});
 function navigate(page){
   if(!APP_PAGES.includes(page))return;
+  if(page!=='collection')enableHolographicInspection(null);
   closeSheets(false);
   if(typeof boosterDialog!=='undefined'&&boosterDialog.open)closeBoosterDialog();
   $$('.page').forEach(el=>el.classList.toggle('active',el.id==='page-'+page));
@@ -1993,6 +2013,7 @@ function renderCollection(){
   if(showRefletsPreview)mountRefletsGallery($('#reflets-gallery-grid'));
   $('#collection-layout').hidden=isUpcoming;
   if(isUpcoming){
+    enableHolographicInspection(null);
     $('#codex-milestones').hidden=true;
     $('#codex-living').hidden=true;
     $('#codex-upcoming-title').textContent='Partie '+selectedPart.number+' · '+selectedPart.title;
@@ -2046,6 +2067,7 @@ function renderCollection(){
       inspect(next,chromatic,false,false,finish);
     }
   }else{
+    enableHolographicInspection(null);
     selectedCard=null;
     const panel=$('#inspector');
     panel.classList.remove('is-chromatic','is-holographic','is-calligraphic');
@@ -2485,7 +2507,8 @@ function syncBackupRestore(){
   catch{backupRestore.disabled=true}
 }
 $('#backup-open').addEventListener('click',()=>{
-  backupMessage('');
+  backupMessage(saveSession.problem,!!saveSession.problem);
+  $('#backup-export').textContent=saveSession.needsRecovery?'Télécharger les données brutes':'Télécharger ma sauvegarde';
   syncBackupRestore();
   backupDialog.showModal();
 });
@@ -2497,20 +2520,21 @@ $('#backup-export').addEventListener('click',async()=>{
   control.disabled=true;
   backupMessage('Préparation du fichier de sauvegarde…');
   try{
-    const json=await createBackup(state,CARDS.map(card=>card.id));
+    const recovery=saveSession.needsRecovery;
+    const json=recovery?saveSession.raw:await createBackup(state,CARDS.map(card=>card.id));
     const file=new Blob([json],{type:'application/json;charset=utf-8'});
     const url=URL.createObjectURL(file);
     try{
       const link=document.createElement('a');
       link.href=url;
-      link.download='Aetherium-sauvegarde-'+new Date().toISOString().slice(0,10)+'.json';
+      link.download=(recovery?'Aetherium-recuperation-brute-':'Aetherium-sauvegarde-')+new Date().toISOString().slice(0,10)+(recovery?'.txt':'.json');
       document.body.append(link);
       link.click();
       link.remove();
     }finally{
       setTimeout(()=>URL.revokeObjectURL(url),60000);
     }
-    backupMessage('Fichier préparé. Conserve-le dans un emplacement sûr.');
+    backupMessage(recovery?'Données brutes conservées. Ce fichier est destiné à la récupération technique, pas à l’import direct.':'Fichier préparé. Conserve-le dans un emplacement sûr.');
   }catch(error){
     backupMessage(error?.message||'Exportation impossible dans ce navigateur.',true);
   }finally{
@@ -2545,6 +2569,7 @@ backupFile.addEventListener('change',async()=>{
       backupMessage('Importation annulée : ta progression n’a pas été modifiée.');
       return;
     }
+    saveSession.assertCurrent();
     installImportedSave(localStorage,parsed.state);
     window.location.reload(); // Reload the normal, already-tested game loader.
   }catch(error){
@@ -2559,6 +2584,8 @@ backupRestore.addEventListener('click',()=>{
   if(backupBusy||backupRestore.disabled)return;
   if(!window.confirm('Restaurer la sauvegarde d’avant le dernier import ? La progression actuelle sera remplacée.'))return;
   try{
+    saveSession.assertCurrent();
+    parseStoredSave(localStorage.getItem(PREVIOUS_SAVE_KEY),saveCardIds);
     restorePreviousSave(localStorage);
     window.location.reload();
   }catch(error){
@@ -2566,7 +2593,7 @@ backupRestore.addEventListener('click',()=>{
     syncBackupRestore();
   }
 });
-$('#reset').addEventListener('click',()=>{if(!confirm('Effacer définitivement les cartes et la progression sauvegardées sur cet appareil ?'))return;clearBoosterScene();try{localStorage.removeItem(PREVIOUS_SAVE_KEY)}catch{}state=fresh();state.trialStats=sanitizedTrialStats(state.trialStats);trialStarters.forEach(start=>start());renderTrialMastery();renderDifficultyChoice();renderExpedition();selectedCard=null;forgeSelectedId=null;forgeFilter='all';$('#atelier-filter').value='all';$('#atelier-result').hidden=true;$('#inspector').replaceChildren(el('p','muted','Sélectionne une carte découverte pour l’admirer.'));$('#pulls').replaceChildren();$('#pack-title').textContent='Les archives attendent leur voyageur.';$('#pack-msg').textContent='Gagne des Couronnes en jouant pour ouvrir des boosters.';update();renderCollection();notify('Progression réinitialisée.')});
+$('#reset').addEventListener('click',()=>{if(!confirm('Effacer définitivement les cartes et la progression sauvegardées sur cet appareil ?'))return;try{saveSession.write(fresh(),{replace:true})}catch(error){showSaveWarning(error.message);return}clearBoosterScene();enableHolographicInspection(null);try{localStorage.removeItem(PREVIOUS_SAVE_KEY)}catch{}state=fresh();state.trialStats=sanitizedTrialStats(state.trialStats);trialStarters.forEach(start=>start());renderTrialMastery();renderDifficultyChoice();renderExpedition();selectedCard=null;forgeSelectedId=null;forgeFilter='all';$('#atelier-filter').value='all';$('#atelier-result').hidden=true;$('#inspector').replaceChildren(el('p','muted','Sélectionne une carte découverte pour l’admirer.'));$('#pulls').replaceChildren();$('#pack-title').textContent='Les archives attendent leur voyageur.';$('#pack-msg').textContent='Gagne des Couronnes en jouant pour ouvrir des boosters.';update();renderCollection();notify('Progression réinitialisée.')});
 syncMobileSheets();
 selectBooster('origines');
 renderExpedition();

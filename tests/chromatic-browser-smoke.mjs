@@ -165,8 +165,10 @@ for(const width of [360,768,1280]){
 // Verify Calligraphique against the real browser cascade, including inline art style.
 await evaluate(`(()=>{
  const save=JSON.parse(localStorage.getItem('aetherium-save-v1'));
- save.owned[8]=4;
- for(const f of ['normal','calligraphic','chromatic','holographic'])save.finishCounts[f][8]=1;
+ for(const id of [8,36,60]){
+  save.owned[id]=4;
+  for(const f of ['normal','calligraphic','chromatic','holographic'])save.finishCounts[f][id]=1;
+ }
  localStorage.setItem('aetherium-save-v1',JSON.stringify(save));
  location.reload();return true;
 })()`);
@@ -185,5 +187,49 @@ const finishes=await evaluate(`(()=>{
 })()`);
 assert.deepEqual(finishes.labels.map(s=>s.split(' · ')[0]),['Normale','Calligraphique','Chromatique','Holographique']);
 assert.ok(finishes.filter?.includes('grayscale(1)'), 'Calligraphic grayscale wins over inline filter');
+// Check all four finishes in the actual official recto, one representative
+// per collection, across phone, tablet and desktop layouts.
+for(const width of [360,768,1280]){
+ await command('Emulation.setDeviceMetricsOverride',{
+  width,height:Math.max(730,Math.round(width*.9)),deviceScaleFactor:width<=768?2:1,mobile:width<=850
+ });
+ await sleep(180);
+ let reference=null;
+ for(const [collection,id,lockedId] of [['origines',8,7],['reflets-brises',36,35],['au-dela-du-verre',60,59]]){
+  await evaluate("(()=>{const close=document.querySelector('#inspect-close');if(document.body.classList.contains('sheet-open'))close.click();return true})()");
+  await evaluate("document.querySelector('.codex-chapter[data-collection=\""+collection+"\"]').click();true");
+  await until(()=>evaluate("Boolean(document.querySelector('#card-grid [data-card-id=\""+id+"\"]'))"),collection+' grid');
+  await evaluate("document.querySelector('#card-grid [data-card-id=\""+id+"\"]').click()");
+  for(const [index,finish] of ['normal','calligraphic','chromatic','holographic'].entries()){
+   const info=await evaluate("(async()=>{"+
+    "const button=document.querySelectorAll('#inspector .finish-choice')["+index+"];"+
+    "if(button.disabled)throw Error('Owned finish incorrectly locked');button.click();"+
+    "const front=document.querySelector('#inspector .recto-lab-"+finish+"');"+
+    "if(!front)throw Error('Wrong official recto');const image=front.querySelector('.recto-lab-illustration');"+
+    "await image.decode();const r=front.getBoundingClientRect();const art=front.querySelector('.recto-lab-art');"+
+    "let pointer=null;"+
+    (finish==='holographic'?
+     "front.dispatchEvent(new PointerEvent('pointermove',{clientX:r.left+r.width*.8,clientY:r.top+r.height*.3,pointerType:'"+(width<=850?"touch":"mouse")+"'}));"+
+     "await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));pointer=parseFloat(front.style.getPropertyValue('--holo-x'));":"")+
+    "return {width:r.width,height:r.height,source:image.currentSrc,filter:getComputedStyle(image).filter,rim:getComputedStyle(art,'::before').animationName,pointer,selected:[...document.querySelectorAll('#inspector .finish-choice')].filter(b=>b.getAttribute('aria-pressed')==='true').length};})()");
+   assert.ok(info.width>0&&info.height>0,collection+' '+finish+' visible');
+   assert.ok(info.source.includes('/assets/cards/'),'Authored art retained');
+   assert.equal(info.selected,1,'Exactly one selected finish');
+   if(!reference)reference=[info.width,info.height];
+   assert.ok(Math.abs(info.width-reference[0])<=2&&Math.abs(info.height-reference[1])<=2,
+      collection+' '+finish+' shares common card dimensions at '+width+'px');
+   if(finish==='calligraphic')assert.ok(info.filter.includes('grayscale(1)'));
+   else assert.ok(!info.filter.includes('grayscale(1)'),'Only Calligraphique is monochrome');
+   if(finish==='chromatic')assert.equal(info.rim,'chromatic-rim-orbit');
+   if(finish==='holographic')assert.ok(info.pointer>65,'Holographic pointer/touch changes highlight');
+  }
+  if(width<=850)await evaluate("document.querySelector('#inspect-close').click()");
+  await evaluate("document.querySelector('#card-grid [data-card-id=\""+lockedId+"\"]').click()");
+  const availability=await evaluate("[...document.querySelectorAll('#inspector .finish-choice')].map(b=>b.disabled)");
+  assert.deepEqual(availability,[true,true,false,true],'Only the owned Chromatique may be previewed');
+  if(width<=850)await evaluate("document.querySelector('#inspect-close').click()");
+ }
+ console.log('Four-finish browser regression OK at '+width+'px (3 collections).');
+}
 ws.close();
-console.log('Chromatique browser audit: 72 cards across 3 collections, 3 viewports, approved art, CSS layers, rarity and inspector OK');
+console.log('Chromatique and four-finish browser audit: 72-card catalog, 3 collections, 3 viewports, approved art, ownership, CSS and pointer interaction OK');
