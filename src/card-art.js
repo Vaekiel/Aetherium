@@ -8,36 +8,35 @@ import {AU_DELA_GALLERY_ART} from './au-dela-gallery.js';
 export const CARD_ART = Object.freeze({
   1: Object.freeze({
     thumbnail: './assets/cards/veilleuse-de-nacre-thumb.webp',
-    full: './assets/cards/veilleuse-de-nacre.webp'
-  }),
-  2: Object.freeze({thumbnail: './assets/cards/sylve-eclaireuse-thumb.webp', full: './assets/cards/sylve-eclaireuse.webp'}),
-  3: Object.freeze({thumbnail: './assets/cards/golem-de-rouille-thumb.webp', full: './assets/cards/golem-de-rouille.webp'}),
-  4: Object.freeze({thumbnail: './assets/cards/floraison-cendree-thumb.webp', full: './assets/cards/floraison-cendree.webp'}),
-  5: Object.freeze({thumbnail: './assets/cards/epee-de-brume-thumb.webp', full: './assets/cards/epee-de-brume.webp'}),
-  6: Object.freeze({thumbnail: './assets/cards/feu-follet-thumb.webp', full: './assets/cards/feu-follet.webp'}),
-  7: Object.freeze({thumbnail: './assets/cards/archiviste-nocturne-thumb.webp', full: './assets/cards/archiviste-nocturne.webp'}),
-  8: Object.freeze({thumbnail: './assets/cards/cerf-des-lueurs-thumb.webp', full: './assets/cards/cerf-des-lueurs.webp'}),
-  9: Object.freeze({thumbnail: './assets/cards/meduse-d-ether-thumb.webp', full: './assets/cards/meduse-d-ether.webp'}),
-  10: Object.freeze({thumbnail: './assets/cards/lame-prismatique-thumb.webp', full: './assets/cards/lame-prismatique.webp'}),
-  11: Object.freeze({thumbnail: './assets/cards/chant-des-cendres-thumb.webp', full: './assets/cards/chant-des-cendres.webp'}),
-  12: Object.freeze({thumbnail: './assets/cards/gardienne-de-jade-thumb.webp', full: './assets/cards/gardienne-de-jade.webp'}),
-  13: Object.freeze({thumbnail: './assets/cards/roi-des-lucioles-thumb.webp', full: './assets/cards/roi-des-lucioles.webp'}),
-  14: Object.freeze({thumbnail: './assets/cards/horloge-du-neant-thumb.webp', full: './assets/cards/horloge-du-neant.webp'}),
-  15: Object.freeze({thumbnail: './assets/cards/dragon-de-cristal-thumb.webp', full: './assets/cards/dragon-de-cristal.webp'}),
-  16: Object.freeze({thumbnail: './assets/cards/oracle-des-marees-thumb.webp', full: './assets/cards/oracle-des-marees.webp'}),
-  17: Object.freeze({thumbnail: './assets/cards/pluie-astrale-thumb.webp', full: './assets/cards/pluie-astrale.webp'}),
-  18: Object.freeze({thumbnail: './assets/cards/lion-d-obsidienne-thumb.webp', full: './assets/cards/lion-d-obsidienne.webp'}),
-  19: Object.freeze({thumbnail: './assets/cards/eclipse-vivante-thumb.webp', full: './assets/cards/eclipse-vivante.webp'}),
-  20: Object.freeze({thumbnail: './assets/cards/reine-des-ronces-thumb.webp', full: './assets/cards/reine-des-ronces.webp'}),
-  21: Object.freeze({thumbnail: './assets/cards/coeur-du-colosse-thumb.webp', full: './assets/cards/coeur-du-colosse.webp'}),
-  22: Object.freeze({thumbnail: './assets/cards/astra-reine-fractale-thumb.webp', full: './assets/cards/astra-reine-fractale.webp'}),
-  23: Object.freeze({thumbnail: './assets/cards/vyrath-fleau-celeste-thumb.webp', full: './assets/cards/vyrath-fleau-celeste.webp'}),
-  24: Object.freeze({thumbnail: './assets/cards/derniere-etoile-thumb.webp', full: './assets/cards/derniere-etoile.webp'}),
+    full: './assets/cards/veilleuse-de-nacre.webp', thumbnailWidth:350, fullWidth:1138, version:'20261116-unframed'}),
+  2: Object.freeze({thumbnail: './assets/cards/sylve-eclaireuse-thumb.webp', full: './assets/cards/sylve-eclaireuse.webp', thumbnailWidth:350, fullWidth:1138, version:'20261116-unframed'}),
+  3: Object.freeze({thumbnail: './assets/cards/golem-de-rouille-thumb.webp', full: './assets/cards/golem-de-rouille.webp', thumbnailWidth:350, fullWidth:1138, version:'20261116-unframed'}),
+  4: Object.freeze({thumbnail: './assets/cards/floraison-cendree-thumb.webp', full: './assets/cards/floraison-cendree.webp', thumbnailWidth:350, fullWidth:1138, version:'20261116-unframed'}),
+  5: Object.freeze({thumbnail: './assets/cards/epee-de-brume-thumb.webp', full: './assets/cards/epee-de-brume.webp', thumbnailWidth:350, fullWidth:1138, version:'20261116-unframed'}),
+  6: Object.freeze({thumbnail: './assets/cards/feu-follet-thumb.webp', full: './assets/cards/feu-follet.webp', thumbnailWidth:350, fullWidth:1138, version:'20261116-unframed'}),
+  7: Object.freeze({thumbnail: './assets/cards/archiviste-nocturne-thumb.webp', full: './assets/cards/archiviste-nocturne.webp', thumbnailWidth:350, fullWidth:1138, version:'20261116-unframed'}),
+  8: Object.freeze({thumbnail: './assets/cards/cerf-des-lueurs-thumb.webp', full: './assets/cards/cerf-des-lueurs.webp', thumbnailWidth:350, fullWidth:1138, version:'20261116-unframed'}),
+  9: Object.freeze({thumbnail: './assets/cards/meduse-d-ether-thumb.webp', full: './assets/cards/meduse-d-ether.webp', thumbnailWidth:350, fullWidth:1138, version:'20261116-unframed'}),
+  10: Object.freeze({thumbnail: './assets/cards/lame-prismatique-thumb.webp', full: './assets/cards/lame-prismatique.webp', thumbnailWidth:350, fullWidth:1138, version:'20261116-unframed'}),
+  11: Object.freeze({thumbnail: './assets/cards/chant-des-cendres-thumb.webp', full: './assets/cards/chant-des-cendres.webp', thumbnailWidth:350, fullWidth:1138, version:'20261116-unframed'}),
+  12: Object.freeze({thumbnail: './assets/cards/gardienne-de-jade-thumb.webp', full: './assets/cards/gardienne-de-jade.webp', thumbnailWidth:350, fullWidth:1138, version:'origines-b02'}),
+  13: Object.freeze({thumbnail: './assets/cards/roi-des-lucioles-thumb.webp', full: './assets/cards/roi-des-lucioles.webp', thumbnailWidth:350, fullWidth:1138, version:'origines-b02'}),
+  14: Object.freeze({thumbnail: './assets/cards/horloge-du-neant-thumb.webp', full: './assets/cards/horloge-du-neant.webp', thumbnailWidth:350, fullWidth:1138, version:'origines-b02'}),
+  15: Object.freeze({thumbnail: './assets/cards/dragon-de-cristal-thumb.webp', full: './assets/cards/dragon-de-cristal.webp', thumbnailWidth:350, fullWidth:1138, version:'origines-b02'}),
+  16: Object.freeze({thumbnail: './assets/cards/oracle-des-marees-thumb.webp', full: './assets/cards/oracle-des-marees.webp', thumbnailWidth:350, fullWidth:1138, version:'origines-b02'}),
+  17: Object.freeze({thumbnail: './assets/cards/pluie-astrale-thumb.webp', full: './assets/cards/pluie-astrale.webp', thumbnailWidth:350, fullWidth:1138, version:'origines-b02'}),
+  18: Object.freeze({thumbnail: './assets/cards/lion-d-obsidienne-thumb.webp', full: './assets/cards/lion-d-obsidienne.webp', thumbnailWidth:350, fullWidth:1138, version:'origines-b02'}),
+  19: Object.freeze({thumbnail: './assets/cards/eclipse-vivante-thumb.webp', full: './assets/cards/eclipse-vivante.webp', thumbnailWidth:350, fullWidth:1138, version:'origines-b02'}),
+  20: Object.freeze({thumbnail: './assets/cards/reine-des-ronces-thumb.webp', full: './assets/cards/reine-des-ronces.webp', thumbnailWidth:350, fullWidth:1138, version:'origines-b02'}),
+  21: Object.freeze({thumbnail: './assets/cards/coeur-du-colosse-thumb.webp', full: './assets/cards/coeur-du-colosse.webp', thumbnailWidth:350, fullWidth:1138, version:'origines-b02'}),
+  22: Object.freeze({thumbnail: './assets/cards/astra-reine-fractale-thumb.webp', full: './assets/cards/astra-reine-fractale.webp', thumbnailWidth:350, fullWidth:1138, version:'origines-b03'}),
+  23: Object.freeze({thumbnail: './assets/cards/vyrath-fleau-celeste-thumb.webp', full: './assets/cards/vyrath-fleau-celeste.webp', thumbnailWidth:350, fullWidth:1138, version:'origines-b03'}),
+  24: Object.freeze({thumbnail: './assets/cards/derniere-etoile-thumb.webp', full: './assets/cards/derniere-etoile.webp', thumbnailWidth:350, fullWidth:1138, version:'origines-b03'}),
   ...Object.fromEntries(REFLETS_GALLERY_ART.map(card=>[
-    card.id,Object.freeze({thumbnail:card.thumb,full:card.hd})
+    card.id,Object.freeze({thumbnail:card.thumb,full:card.hd,thumbnailWidth:350,fullWidth:1138,version:'reflets-release-1'})
   ])),
   ...Object.fromEntries(AU_DELA_GALLERY_ART.map(card=>[
-    card.id,Object.freeze({thumbnail:card.thumb,full:card.hd})
+    card.id,Object.freeze({thumbnail:card.thumb,full:card.hd,thumbnailWidth:350,fullWidth:1024,version:'au-dela-release-1'})
   ]))
 });
 
@@ -87,16 +86,17 @@ export function applyCardIllustration(img,card,{shiny=false,size='thumbnail',del
   img.removeAttribute('sizes');
   const approved=CARD_ART[card.id];
   if(approved){
-    const version=card.id>=49?'?v=au-dela-release-1':card.id>=25?'?v=reflets-release-1':card.id>=22?'?v=origines-b03':card.id>=12?'?v=origines-b02':'?v=20261116-unframed';
+    const version='?v='+approved.version;
+    const candidates=approved.thumbnail+version+' '+approved.thumbnailWidth+'w, '+approved.full+version+' '+approved.fullWidth+'w';
     if(size==='thumbnail'){
       // Mobile cards can occupy ~150–220 CSS pixels at 3x density.
       // Let the browser select the original 1138px illustration when a
       // 350px miniature would otherwise appear soft or pixelated.
       img.sizes='(max-width: 589px) calc((100vw - 56px) / 2), (max-width: 850px) calc((100vw - 80px) / 3), (max-width: 1200px) 175px, 220px';
       if(delivery==='codex'){
-        codexCandidates.set(img,approved.thumbnail+version+' 350w, '+approved.full+version+(card.id>=49?' 1024w':' 1138w'));
+        codexCandidates.set(img,candidates);
         img.removeAttribute('sizes');
-      }else img.srcset=approved.thumbnail+version+' 350w, '+approved.full+version+(card.id>=49?' 1024w':' 1138w');
+      }else img.srcset=candidates;
     }
     img.src=(size==='full'?approved.full:approved.thumbnail)+version;
     img.onerror=()=>{

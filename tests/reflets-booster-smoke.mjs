@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import {boosterView} from '../src/booster-views.js';
 import {readFileSync} from 'node:fs';
 import {runInNewContext} from 'node:vm';
 import {CARDS as ORIGINES_CARDS,PACK_PRICE,CHROMATIC_RATE,drawPack} from '../src/data.js';
@@ -61,7 +62,7 @@ assert.ok(start>0&&end>start);
 const handler=source.slice(start,end);
 assert.ok(source.includes("selectedBooster='origines'"));
 assert.ok(source.includes("control.dataset.booster"));
-assert.ok(handler.includes("edition==='origines'?drawPack():drawRefletsPack()"));
+assert.ok(handler.includes("drawCollectionPack(edition)"));
 assert.ok(source.includes('const chapter=collectionForCard(c)'),'Card result opens its own Codex chapter');
 const box=()=>({
  hidden:false,textContent:'',style:{width:''},
@@ -72,9 +73,8 @@ const live={coins:300,dust:0,opened:0,owned:{},shiny:{},recentFinds:[]};
 const pack=box(),opening=box(),grid=box(),progress=box(),summary=box(),
  actions=box(),next=box(),step=box(),fill=box(),title=box(),message=box(),page=box();
 const ctx={
- selectedBooster:'reflets-brises',boosterBusy:false,state:live,CARDS,PACK_PRICE,
- drawPack(){originesDraws++;return drawPack(()=>0.5)},
- drawRefletsPack(){refletsDraws++;return drawRefletsPack(()=>0.5)},
+ selectedBooster:'reflets-brises',boosterBusy:false,state:live,CARDS,CARD_BY_ID,PACK_PRICE,boosterView,
+ drawCollectionPack(id){if(id==='origines'){originesDraws++;return drawPack(()=>.5)}assert.equal(id,'reflets-brises');refletsDraws++;return drawRefletsPack(()=>.5)},
  duplicateDustReward:()=>5,
  recordRecentFind:(entries,id,kind)=>[{id,kind},...entries].slice(0,6),
  cancelBoosterTimers(){},update(){saves++},
@@ -127,13 +127,13 @@ const choices=['origines','reflets-brises'].map(booster=>({
  addEventListener(name,fn){if(name==='click')this.activate=fn}
 }));
 const fields=Object.fromEntries([
- '#booster-pack .pack-title','#booster-pack .pack-edition',
+ '#booster-pack .pack-title','#booster-pack .pack-edition','#booster-pack .pack-collection',
  '#booster-collection-kicker','#booster-family-title',
  '#booster-family-description','#pack-title','#pack-msg'
 ].map(id=>[id,{textContent:''}]));
 let refreshed=0,cleared=0;
 const selectorContext={
- boosterBusy:false,selectedBooster:'origines',
+ boosterBusy:false,selectedBooster:'origines',boosterView,
  boosterArt:{classList:{toggle(){}}},
  clearBoosterScene(){cleared++},
  update(){refreshed++},

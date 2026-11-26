@@ -39,7 +39,7 @@ assert.ok(css.includes('prefers-reduced-motion:reduce'));
 assert.ok(css.includes('aetherium-foil-unseal'),'Existing opening animation gains a short foil unseal');
 assert.ok(legacyCss.includes('.pack.is-opening'),'Unseal class remains driven by validated controller');
 for(const token of ['const boosterArt=','boosterArt.classList.add(\'is-opening\')',
-  'state.coins-=PACK_PRICE','drawPack()','state.opened++','state.dust+=dustGain',
+  'state.coins-=PACK_PRICE','drawCollectionPack(edition)','state.opened++','state.dust+=dustGain',
   'update(); // Persists the purchase','showBoosterCard(0,false)',
   'boosterGrid.classList.add(\'booster-gallery\')']){
  assert.ok(main.includes(token),'Purchase, reveals and local save remain untouched: '+token);

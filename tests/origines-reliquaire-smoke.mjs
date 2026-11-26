@@ -22,8 +22,8 @@ assert.ok(css.includes('#booster-pack.reliquaire-origines .pack-scene'));
 assert.ok(css.includes('inset:0;')&&css.includes('object-fit:cover;')&&css.includes('transform:none;'));
 assert.ok(css.includes('.pack-wordmark')&&css.includes('.pack-title')&&css.includes('opacity:0;'),
  'Do not overlay CSS titles atop lettering already embossed in HD artwork');
-assert.ok(main.includes("boosterArt.classList.toggle('reliquaire-origines',!isReflets&&!isAuDela);"),
- 'Only the Origines edition uses the new full-wrapper treatment');
+assert.ok(main.includes("boosterArt.classList.toggle('reliquaire-origines',view.theme==='origines'||view.theme==='standard');"),
+ 'Origines keeps its full-wrapper treatment; future standard packs reuse it');
 for(const edition of ['reflets-brises','au-dela-du-verre']){
  assert.ok(html.includes('data-booster="'+edition+'"'),'Other boosters remain available');
 }

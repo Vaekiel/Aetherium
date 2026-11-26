@@ -39,7 +39,7 @@ for(const duplicate of ['.pack-wordmark','.pack-collection','.pack-title','.pack
 }
 assert.ok(css.includes('.pack-seal')&&css.includes('.pack-rip')===false,
   'Existing seal/rip structure stays owned by the animation layer');
-assert.ok(js.includes("boosterArt.classList.toggle('pack-reflets',isReflets);"),
+assert.ok(js.includes("boosterArt.classList.toggle('pack-reflets',view.theme==='reflets');"),
   'Selecting the edition switches the correct artwork without touching save state');
 assert.ok(packaging.includes('aetherium-pack-rupture 980ms'),
   'The original one-purchase wrapper opening sequence still runs');
@@ -48,13 +48,13 @@ assert.ok(auDela.includes('.pack-artwork-au-dela')&&auDela.includes('grid-templa
  'Third illustrated foil wrapper and responsive edition selector are visible');
 assert.ok(html.includes('data-booster="au-dela-du-verre"'));
 assert.ok(html.includes('au-dela-booster.css?v=au-dela-booster-1'));
-assert.ok(js.includes("boosterArt.classList.toggle('pack-au-dela',isAuDela);"));
+assert.ok(js.includes("boosterArt.classList.toggle('pack-au-dela',view.theme==='au-dela');"));
 assert.ok(!js.includes('origines-pack-pixel-hd-v2.webp'),'Artwork switching does not couple gameplay to image paths');
 const refletsFullPack=read('src/reflets-reliquaire.css');
 const harmony=read('src/ui-harmony.css');
 assert.ok(html.includes('class="booster-tile-pack reliquaire-reflets"'),
   'Reflets gallery displays the approved entire packet, not the old inset art window');
-assert.ok(js.includes("boosterArt.classList.toggle('reliquaire-reflets',isReflets);"),
+assert.ok(js.includes("boosterArt.classList.toggle('reliquaire-reflets',view.theme==='reflets');"),
   'Reflets dialog switches to its full-packet layout only for the Reflets edition');
 assert.ok(harmony.includes('@import "./reflets-reliquaire.css?v=1";'),
   'New full-packet styles are loaded after the shared gallery and Origines styles');
@@ -79,7 +79,7 @@ assert.ok(cleanPack.includes('content:none!important')&&cleanPack.includes('.pac
 assert.ok(cleanPack.includes(':not(.is-opening)'),'The original tear animation remains available');
 assert.ok(cleanPack.includes('.reliquaire-au-dela'),'Third envelope uses the same geometry and alpha edge treatment');
 assert.ok(html.includes('class="booster-tile-pack reliquaire-au-dela"'),'Third gallery pack is premium');
-assert.ok(js.includes("boosterArt.classList.toggle('reliquaire-au-dela',isAuDela);"),
+assert.ok(js.includes("boosterArt.classList.toggle('reliquaire-au-dela',view.theme==='au-dela');"),
  'The third booster dialog selects the correct image without old wrappers');
 assert.equal((html.match(/src="\.\/assets\/boosters\/au-dela-du-verre-unified-v5\.webp"/g)||[]).length,2);
 assert.equal((html.match(/src="\.\/assets\/boosters\/origines-unified-v5\.webp"/g)||[]).length,2);

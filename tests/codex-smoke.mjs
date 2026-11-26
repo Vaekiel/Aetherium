@@ -75,7 +75,7 @@ assert.ok(main.includes('renderCollectionMilestones(availableCards)'),
  'Season collections render actual unique-card milestones');
 assert.ok(html.includes('src/codex.css?v=au-dela-pilot-49'),'Season CSS is cache-busted');
 assert.ok(html.includes('src/main.js?v='),'Season JS is cache-busted');
-assert.ok(main.includes("from './seasons.js?v=au-dela-booster-1'"),'Main imports season catalogue');
+assert.ok(main.includes("from './seasons.js?v=seasons-09'"),'Main imports season catalogue');
 assert.ok(main.includes("from './codex.js'"),'Main imports filtering and counts');
 assert.ok(main.includes('function renderCodexSeasons()'),'Season controls are wired');
 assert.ok(main.includes('function renderCollection()'),'Collection panel remains reactive');
@@ -107,8 +107,16 @@ assert.ok(!html.includes('</main><div id="sheet-scrim"'),
 assert.ok(!read('src/seasons.js').includes('localStorage'),'Season metadata cannot mutate saves');
 assert.ok(!read('src/codex.js').includes('localStorage'),'Codex helpers cannot mutate saves');
 const artSource=read('src/card-art.js');
-assert.ok(artSource.includes("img.srcset=approved.thumbnail+version+' 350w, '+approved.full+version+(card.id>=49?' 1024w':' 1138w')"),
-  'Gallery thumbnails use the original HD dimensions for each collection without downsampling the new cards');
+const {CARD_ART,applyCardIllustration}=await import('../src/card-art.js');
+for(const card of CARDS){
+  const approved=CARD_ART[card.id],expectedFull=card.id>=49?1024:1138;
+  assert.equal(approved.thumbnailWidth,350);
+  assert.equal(approved.fullWidth,expectedFull);
+  const img={style:{},removeAttribute(name){delete this[name]}};
+  applyCardIllustration(img,card);
+  assert.equal(img.srcset,approved.thumbnail+'?v='+approved.version+' 350w, '+approved.full+'?v='+approved.version+' '+expectedFull+'w',
+    'Gallery retains original HD dimensions: '+card.id);
+}
 assert.ok(artSource.includes("(max-width: 589px)")&&artSource.includes("(max-width: 850px)"),
   'Source selection respects the mobile two- and three-column layouts');
 assert.ok(artSource.includes("img.removeAttribute('srcset')"),

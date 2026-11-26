@@ -112,9 +112,9 @@ for(let i=0;i<12000;i++){
 const js=readFileSync('src/main.js','utf8');
 const html=readFileSync('index.html','utf8');
 assert.ok(js.includes("from './data.js?v=booster-variety-1'"));
-assert.ok(js.includes("from './collection-data.js?v=au-dela-booster-1'"));
+assert.ok(js.includes("from './collection-data.js?v=seasons-09'"));
 assert.ok(html.includes('main.js?v=au-dela-lot-3'));
-assert.ok(js.includes("edition==='au-dela-du-verre'?drawAuDelaPack():edition==='origines'?drawPack():drawRefletsPack()"),
+assert.ok(js.includes("drawCollectionPack(edition)"),
  'The purchase and reveal handler still chooses the correct booster');
 assert.ok(js.includes('state.coins-=PACK_PRICE')&&js.includes('state.dust+=dustGain'),
  'Pack purchases and duplicate rewards are unchanged');

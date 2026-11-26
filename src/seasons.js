@@ -20,9 +20,9 @@ export const SEASONS=Object.freeze([
     ]),
   season('plateau-nebuleux',2,'Le Plateau Nébuleux',
     'Un autre horizon d’Aetherium, encore inexploré.',[
-      part('plateau-1','I','Collection I','Les légendes de cette région seront dévoilées ultérieurement.'),
-      part('plateau-2','II','Collection II','Une deuxième collection à découvrir.'),
-      part('plateau-3','III','Collection III','La conclusion de cette future saison.',{signature:true})
+      part('plateau-1','I','Collection I','Les légendes de cette région seront dévoilées ultérieurement.',{first:73,last:96}),
+      part('plateau-2','II','Collection II','Une deuxième collection à découvrir.',{first:97,last:120}),
+      part('plateau-3','III','Collection III','La conclusion de cette future saison.',{first:121,last:144,signature:true})
     ])
 ]);
 export const seasonById=id=>SEASONS.find(s=>s.id===id)??null;

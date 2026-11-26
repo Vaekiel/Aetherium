@@ -20,7 +20,9 @@ for(const [booster,filename] of [
 assert.equal(html.split('SAISON 1 · 5 CARTES').length-1,4,
  'Three catalogue packs and the opening dialog carry identical metadata');
 assert.ok(!html.includes('SAISON II')&&!html.includes('SAISON III'));
-assert.ok(js.includes("textContent='SAISON 1 · 5 CARTES'"));
+const {boosterView}=await import('../src/booster-views.js');
+for(const id of ['origines','reflets-brises','au-dela-du-verre'])assert.equal(boosterView(id).edition,'SAISON 1 · 5 CARTES');
+assert.ok(js.includes('textContent=view.edition'));
 assert.ok(script.includes('master.copy()')&&script.includes('art_mask(master)')&&script.includes('title_image(title)'),
  'Three pack designs use the same master foil, mask and title typography');
 assert.ok(!html.includes('origines-reliquaire-normalized-v2.webp')&&
