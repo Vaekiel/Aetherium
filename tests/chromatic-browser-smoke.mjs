@@ -339,8 +339,9 @@ assert.ok(!reading.text.includes('Une page encore blanche')&&!reading.text.inclu
 for(const [width,height] of [[320,740],[390,844],[768,1024],[1280,900]]){
  await command('Emulation.setDeviceMetricsOverride',{width,height,deviceScaleFactor:1,mobile:width<=850});
  await sleep(120);
- const fit=await evaluate("(()=>{const b=document.querySelector('#lore-book');b.querySelectorAll('details').forEach(d=>d.open=true);return b.getBoundingClientRect().right<=innerWidth+2&&document.documentElement.scrollWidth<=innerWidth+2&&[...b.querySelectorAll('.lore-card-link')].every(x=>x.getBoundingClientRect().height>=44)})()");
- assert.ok(fit,'Annales fits '+width);
+ const fit=await evaluate("(()=>{const b=document.querySelector('#lore-book');b.querySelectorAll('details').forEach(d=>d.open=true);const r=b.getBoundingClientRect();return {right:r.right,left:r.left,viewport:innerWidth,docWidth:document.documentElement.scrollWidth,buttons:[...b.querySelectorAll('.lore-card-link')].map(x=>({text:x.textContent,height:x.getBoundingClientRect().height,right:x.getBoundingClientRect().right})),overflow:[...document.querySelectorAll('#page-succes *')].filter(x=>x.getBoundingClientRect().width>0&&x.getBoundingClientRect().right>innerWidth+2).slice(0,12).map(x=>({tag:x.tagName,cls:x.className,right:x.getBoundingClientRect().right}))}})()");
+ console.log('Annales responsive '+width,JSON.stringify(fit));
+ assert.ok(fit.right<=fit.viewport+2&&fit.docWidth<=fit.viewport+2&&fit.buttons.every(x=>x.height>=44&&x.right<=fit.viewport+2),'Annales fits '+width);
 }
 assert.equal(await evaluate("localStorage.getItem('aetherium-save-v1')"),reading.save,'Reading does not modify the save');
 await command('Emulation.setDeviceMetricsOverride',{width:390,height:844,deviceScaleFactor:3,mobile:true});
