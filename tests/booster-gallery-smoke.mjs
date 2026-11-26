@@ -66,6 +66,7 @@ const context={
  button:(label,handler,cls)=>{
   const tab=ev({textContent:label,className:cls,dataset:{}});tab.listeners.click=handler;return tab
  },
+ boosterView:id=>choices.some(choice=>choice.dataset.booster===id)?{collection:{id}}:null,
  selectBooster:edition=>{selected=edition},
  clearBoosterScene:()=>{cleared++},
  completeBoosterReveal:()=>{completed++;context.boosterBusy=false},
@@ -79,6 +80,8 @@ tabs.children[1].click();
 assert.equal(choices.filter(x=>!x.hidden).length,1,'One future season only shows its own pack');
 assert.equal(choices[2].hidden,false);
 assert.equal(tabs.children[1].attributes['aria-pressed'],'true');
+context.__openBoosterDialog({dataset:{booster:'not-published'}});
+assert.equal(dialog.open,false,'Unregistered booster cannot open a dialog');
 context.__openBoosterDialog(choices[2]);
 assert.equal(selected,'second-pack');
 assert.equal(dialog.open,true);
