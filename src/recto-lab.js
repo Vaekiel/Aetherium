@@ -31,6 +31,7 @@ function cardLabel(card){
 export function createCardFront({card,finish='normal',artwork}){
   const front=element('article','recto-lab-card recto-lab-'+finish);
   front.dataset.rarity=card.rarity;
+  front.dataset.cardId=String(card.id);
   front.style.setProperty('--recto-rarity',({
     common:'#f9fbff',uncommon:'#62dfa8',rare:'#64b9ff',epic:'#cc82ff',
     legendary:'#ffd27b'})[card.rarity]||'#f9fbff');
@@ -51,8 +52,7 @@ export function createCardFront({card,finish='normal',artwork}){
   // Reuse the image node, including its original load/error fallback.
   const image=artwork.querySelector('img');
   image.classList.add('recto-lab-illustration');
-  image.alt='Illustration de '+card.name;
-  image.decoding='async';
+  if(!image.alt)image.alt='Illustration de '+card.name;
   art.append(image);front.append(art);
 
   const footer=element('div','recto-lab-footer');
