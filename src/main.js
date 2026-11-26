@@ -1,3 +1,4 @@
+import {completionPlan,completionRecipes,filterCompletionRecipes} from './collection-completion.js?v=1';
 import {beginnerGuide,readGuideDismissal,writeGuideDismissal} from './onboarding.js?v=1';
 import {createCardFront,attachRectoLabInspector} from './recto-lab.js?v=recto-uniforme-3';
 import {RARITIES,PACK_PRICE,drawPack} from './data.js?v=booster-variety-1';
@@ -1667,7 +1668,7 @@ function makeCard(c,isShiny=false,locked=false,delivery='default'){
 }
 let filterType='all',filterRarity='all',filterFinish='all',selectedCard=null;
 let activeSeason=SEASONS[0].id,activeCollection=SEASONS[0].collections[0].id;
-let discoveryFilter='all',codexVisibleCards=[];
+let discoveryFilter='all',codexVisibleCards=[],missingFinish='all';
 const codexViewport=createCodexViewport(upgradeCodexIllustration);
 function markCodexSelected(id){
   $$('#card-grid .card').forEach(tile=>{
@@ -1826,6 +1827,18 @@ function inspect(c,shiny=false,scroll=true,chromaticPreview=false,finishOverride
     picker.append(selector);
   }
   copy.append(picker);
+  const recipes=completionRecipes(state,c);
+  if(recipes.length){
+    const plan=el('details','codex-card-recipes');
+    plan.append(el('summary','','Finitions à forger · '+recipes.length));
+    for(const recipe of recipes){
+      const label=FINISHES[recipe.finish].symbol+' '+FINISHES[recipe.finish].label+' · '+recipe.cost+' Éclats';
+      const action=button(label,()=>openCompletionRecipe(c,recipe.finish),'secondary codex-recipe-link');
+      action.setAttribute('aria-label','Voir la recette '+label+' dans l’Atelier');
+      plan.append(action);
+    }
+    copy.append(plan);
+  }
   addCodexNavigation(copy,c);
   panel.append(artwork,copy);
   const front=attachRectoLabInspector({panel,card:c,finish:activeFinish,artwork});
@@ -1835,6 +1848,53 @@ function inspect(c,shiny=false,scroll=true,chromaticPreview=false,finishOverride
     if(mobileView.matches)openSheet('inspector');
     else if(matchMedia('(max-width:1050px)').matches)panel.scrollIntoView({behavior:'smooth',block:'nearest'});
   }
+}
+function openCompletionRecipe(card,finish){
+  if(!canCraftFinish(state,card,finish))return notify('Cette recette n’est plus disponible.');
+  forgeSelectedId=card.id;
+  forgeMode=finish;forgeFilter='all';
+  $('#atelier-mode').value=finish;$('#atelier-filter').value='all';
+  navigate('atelier');
+  $('#atelier-card-details').scrollIntoView({block:'start',behavior:'auto'});
+}
+function renderCompletionPanel(cards){
+  const rows=completionPlan(cards,state);
+  const host=$('#codex-completion-rows');
+  const fragment=document.createDocumentFragment();
+  for(const row of rows){
+    const line=el('div','codex-completion-row');
+    const label=el('div','codex-completion-label');
+    label.append(el('strong','',FINISHES[row.finish].symbol+' '+FINISHES[row.finish].plural),
+      el('small','',row.unique+' / '+row.total+' obtenues'));
+    const track=el('span','codex-completion-track');
+    track.setAttribute('role','progressbar');track.setAttribute('aria-label',FINISHES[row.finish].plural+' de cette collection');
+    track.setAttribute('aria-valuemin','0');track.setAttribute('aria-valuemax',String(Math.max(1,row.total)));track.setAttribute('aria-valuenow',String(row.unique));
+    const fill=el('span');fill.style.width=row.percent+'%';track.append(fill);
+    label.append(track);
+    const info=el('div','codex-completion-info');
+    info.append(el('small','',row.recipes?row.cost.toLocaleString('fr-FR')+' Éclats pour ces recettes':row.missing?'Aucune recette accessible pour le moment':'Objectif atteint'));
+    const action=button('Voir '+row.recipes+' recette'+(row.recipes===1?'':'s'),()=>showCompletionRecipes(row.finish),'secondary codex-completion-action');
+    action.disabled=row.recipes===0;
+    action.setAttribute('aria-label','Afficher les '+row.recipes+' recettes '+FINISHES[row.finish].plural+' manquantes');
+    info.append(action);line.append(label,info);fragment.append(line);
+  }
+  host.replaceChildren(fragment);
+  $('#codex-completion-count').textContent=rows.reduce((n,r)=>n+r.recipes,0)+' recettes accessibles';
+}
+function showCompletionRecipes(finish){
+  // A completion shortcut deliberately starts with clean, compatible filters.
+  filterFinish=filterRarity=filterType=discoveryFilter='all';
+  $('#search').value='';
+  for(const attr of ['type','rarity','finish','discovery']){
+    $$('button[data-'+attr+']',attr==='discovery'?$('.codex-discovery-tabs'):$('#collection-filters')).forEach(control=>{
+      const active=control.dataset[attr]==='all';
+      control.classList.toggle(attr==='discovery'?'is-active':'active',active);
+      control.setAttribute('aria-pressed',String(active));
+    });
+  }
+  missingFinish=finish;renderCodexResults();
+  $('#codex-completion-clear').focus({preventScroll:true});
+  $('#codex-completion-clear').scrollIntoView({block:'nearest',behavior:'auto'});
 }
 function renderCodexSeasons(){
   const seasons=$('#codex-season-list');
@@ -2097,6 +2157,7 @@ function renderCollection(){
   }
   renderCollectionMilestones(availableCards);
   renderLivingArchives(availableCards);
+  renderCompletionPanel(availableCards);
   renderCodexResults();
   update();
 }
@@ -2105,9 +2166,13 @@ function renderCodexResults(){
   const availableCards=cardsForCollection(CARDS,activeSeason,activeCollection);
   const gallery=$('#card-grid');
   const q=$('#search').value.trim();
-  const cards=filterCodex(availableCards,{type:filterType,rarity:filterRarity,
+  const filtered=filterCodex(availableCards,{type:filterType,rarity:filterRarity,
     finish:filterFinish,discovery:discoveryFilter,query:q,owned:state.owned,shiny:state.shiny,
     finishCounts:state.finishCounts});
+  const cards=filterCompletionRecipes(filtered,state,missingFinish);
+  const completionFilter=$('#codex-completion-clear');
+  completionFilter.hidden=missingFinish==='all';
+  completionFilter.textContent=missingFinish==='all'?'':FINISHES[missingFinish].symbol+' '+FINISHES[missingFinish].plural+' à forger · Effacer ×';
   codexVisibleCards=cards;
   const entries=cards.map(card=>{
     const finish=filterFinish==='normal'?'normal':(FINISHES[filterFinish]?filterFinish:preferredFinish(state.finishCounts,card.id));
@@ -2121,14 +2186,14 @@ function renderCodexResults(){
   const empty=$('#empty');
   empty.classList.add('codex-empty');
   empty.hidden=cards.length>0;
-  empty.textContent=cards.length?'':filterFinish==='chromatic'?
+  empty.textContent=cards.length?'':missingFinish!=='all'?'Aucune recette accessible ne correspond à ces filtres.':filterFinish==='chromatic'?
     'Aucune Chromatique ne correspond à ces filtres. Essaie une autre rareté ou une autre collection.':
     (filterFinish==='holographic'||filterFinish==='calligraphic')?
     'Aucune '+FINISHES[filterFinish].label+' possédée pour cette collection.':
     discoveryFilter==='collected'?'Aucune carte découverte ne correspond à ces critères.':
     'Aucune archive ne correspond à cette recherche.';
   const appliedFilters=(filterType!=='all'?1:0)+(filterRarity!=='all'?1:0)+
-    (filterFinish!=='all'?1:0)+(discoveryFilter!=='all'?1:0);
+    (filterFinish!=='all'?1:0)+(discoveryFilter!=='all'?1:0)+(missingFinish!=='all'?1:0);
   const filterCount=$('#filter-count');
   filterCount.hidden=appliedFilters===0;
   filterCount.textContent=String(appliedFilters);
@@ -2158,6 +2223,7 @@ function renderCodexResults(){
   }
 }
 $('#search').addEventListener('input',renderCodexResults);
+$('#codex-completion-clear').addEventListener('click',()=>{missingFinish='all';renderCodexResults();$('#search').focus({preventScroll:true})});
 $$('[data-type]').forEach(b=>b.addEventListener('click',()=>{
   filterType=b.dataset.type;
   $$('[data-type]').forEach(x=>{x.classList.toggle('active',x===b);x.setAttribute('aria-pressed',String(x===b))});
@@ -2169,12 +2235,12 @@ $$('[data-rarity]').forEach(b=>b.addEventListener('click',()=>{
   renderCodexResults();
 }));
 $$('[data-finish]').forEach(b=>b.addEventListener('click',()=>{
-  filterFinish=b.dataset.finish;
+  missingFinish='all';filterFinish=b.dataset.finish;
   $$('[data-finish]').forEach(x=>{x.classList.toggle('active',x===b);x.setAttribute('aria-pressed',String(x===b))});
   renderCodexResults();
 }));
 $$('[data-discovery]').forEach(b=>b.addEventListener('click',()=>{
-  discoveryFilter=b.dataset.discovery;
+  missingFinish='all';discoveryFilter=b.dataset.discovery;
   $$('[data-discovery]').forEach(x=>{
     x.classList.toggle('is-active',x===b);
     x.setAttribute('aria-pressed',String(x===b));
@@ -2697,7 +2763,7 @@ backupRestore.addEventListener('click',()=>{
     syncBackupRestore();
   }
 });
-$('#reset').addEventListener('click',()=>{if(!confirm('Effacer définitivement les cartes et la progression sauvegardées sur cet appareil ?'))return;try{saveSession.write(fresh(),{replace:true})}catch(error){showSaveWarning(error.message);return}clearBoosterScene();enableHolographicInspection(null);try{localStorage.removeItem(PREVIOUS_SAVE_KEY)}catch{}state=fresh();guideManual=false;rememberGuideDismissal(false);state.trialStats=sanitizedTrialStats(state.trialStats);trialStarters.forEach(start=>start());renderTrialMastery();renderDifficultyChoice();renderExpedition();selectedCard=null;forgeSelectedId=null;forgeFilter='all';forgeMode='discovery';$('#atelier-mode').value=forgeMode;$('#atelier-filter').value='all';$('#atelier-result').hidden=true;$('#inspector').replaceChildren(el('p','muted','Sélectionne une carte découverte pour l’admirer.'));$('#pulls').replaceChildren();$('#pack-title').textContent='Les archives attendent leur voyageur.';$('#pack-msg').textContent='Gagne des Couronnes en jouant pour ouvrir des boosters.';update();renderCollection();notify('Progression réinitialisée.')});
+$('#reset').addEventListener('click',()=>{if(!confirm('Effacer définitivement les cartes et la progression sauvegardées sur cet appareil ?'))return;try{saveSession.write(fresh(),{replace:true})}catch(error){showSaveWarning(error.message);return}clearBoosterScene();enableHolographicInspection(null);try{localStorage.removeItem(PREVIOUS_SAVE_KEY)}catch{}state=fresh();missingFinish='all';guideManual=false;rememberGuideDismissal(false);state.trialStats=sanitizedTrialStats(state.trialStats);trialStarters.forEach(start=>start());renderTrialMastery();renderDifficultyChoice();renderExpedition();selectedCard=null;forgeSelectedId=null;forgeFilter='all';forgeMode='discovery';$('#atelier-mode').value=forgeMode;$('#atelier-filter').value='all';$('#atelier-result').hidden=true;$('#inspector').replaceChildren(el('p','muted','Sélectionne une carte découverte pour l’admirer.'));$('#pulls').replaceChildren();$('#pack-title').textContent='Les archives attendent leur voyageur.';$('#pack-msg').textContent='Gagne des Couronnes en jouant pour ouvrir des boosters.';update();renderCollection();notify('Progression réinitialisée.')});
 syncMobileSheets();
 selectBooster('origines');
 renderExpedition();

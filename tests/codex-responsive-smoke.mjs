@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {runInNewContext} from 'node:vm';
 import {RARITIES} from '../src/data.js';
+import {completionRecipes} from '../src/collection-completion.js';
 import {FINISHES,FINISH_KEYS,restoreFinishCounts,finishQuantity,preferredFinish} from '../src/finishes.js';
 
 const main=readFileSync('src/main.js','utf8');
@@ -84,7 +85,7 @@ let shown=0,scrolls=0,artCalls=0;
 const sandbox={
  state:saved,selectedCard:null,codexVisibleCards:cards,filterFinish:'all',
  activeSeason:'marches-de-verre',activeCollection:'origines',
- RARITIES,FINISHES,FINISH_KEYS,finishQuantity,preferredFinish,el:elem,
+ RARITIES,FINISHES,FINISH_KEYS,finishQuantity,preferredFinish,completionRecipes,el:elem,
  document:{createTextNode:text=>elem('text','',text)},
  enableHolographicInspection(){},
  attachRectoLabInspector({panel,card,finish,artwork}){
@@ -127,6 +128,7 @@ assert.equal(finishPicker.children[0].disabled,false,'Owned Normal may be select
 assert.equal(finishPicker.children[2].disabled,false,'Owned Chromatique may be selected');
 assert.equal(finishPicker.children[3].disabled,true,'Unowned Holographique is locked');
 assert.equal(finishPicker.children[1].disabled,true,'Unowned Calligraphique is locked');
+assert.equal(host.children[1].querySelector('.codex-card-recipes').children.length,3,'Only missing eligible recipes offered');
 finishPicker.children[0].click();
 assert.equal(host.children[0].className,'recto-lab-card recto-lab-normal');
 assert.equal(shown,1,'Switching visual finish never reopens or scrolls the mobile sheet');
