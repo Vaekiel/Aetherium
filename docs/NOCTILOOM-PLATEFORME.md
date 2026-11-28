@@ -21,7 +21,7 @@ https://github.com/Noctiloom-Studio/Noctiloom-Studio.github.io/blob/main/docs/FO
 
 - **Test « Verify static game » en échec depuis le 26 novembre 2026** (merge `dc00506`, chantier « saisons », dernier succès `2a8c002`). L'étape en échec est « Exercise the booster gallery in real Chromium » (`verify.yml`) : elle enchaîne quatre tests de navigateur (`booster-browser-smoke`, `trial-responsive-browser-smoke`, `chromatic-browser-smoke`, `onboarding-browser-smoke`). Les logs détaillés sont visibles dans l'onglet Actions du dépôt. À corriger : trouver lequel des quatre tests échoue et pourquoi. Ce n'est pas lié à la plateforme, et la publication du jeu n'est pas bloquée.
 - **Conflit de casse** : `docs/ECONOMY-AUDIT.md` et `docs/economy-audit.md` coexistent dans le dépôt. Windows n'en garde qu'un, ce qui provoque un faux fichier modifié. Renommer l'un des deux (par exemple `economy-audit-2.md`) puis supprimer le doublon si le contenu est identique.
-- **Anciennes adresses** : `vaekiel.github.io/Aetherium` ne fonctionne plus. Les liens du `README.md` ont été mis à jour.
+- **Ancienne adresse du jeu** : l'ancien site (avant le passage dans l'organisation du studio) ne fonctionne plus. Les liens du `README.md` et de `LICENSE` ont été mis à jour ; les liens partagés ailleurs (Discord, réseaux) sont à remplacer.
 
 ## Optimisations possibles
 
