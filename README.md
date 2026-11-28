@@ -10,7 +10,7 @@
 <p align="center"><em>Chaque carte est une histoire. Chaque découverte, un fragment de légende.</em></p>
 
 <p align="center">
-  <a href="https://vaekiel.github.io/Aetherium/"><img src="https://img.shields.io/badge/▶_JOUER-EN_LIGNE-b99af0?style=for-the-badge&labelColor=17172c" alt="Jouer gratuitement à AETHERIUM"></a>
+  <a href="https://noctiloom-studio.github.io/Aetherium/"><img src="https://img.shields.io/badge/▶_JOUER-EN_LIGNE-b99af0?style=for-the-badge&labelColor=17172c" alt="Jouer gratuitement à AETHERIUM"></a>
   &nbsp;
   <img src="https://img.shields.io/badge/100%25-GRATUIT-e3bf86?style=for-the-badge&labelColor=17172c" alt="100 % gratuit">
   &nbsp;
@@ -40,7 +40,7 @@ Certaines découvertes se font au premier regard. D'autres demandent un peu plus
 
 ## ▶ Entrer dans AETHERIUM
 
-**[✦ Ouvrir les Archives — Jouer maintenant](https://vaekiel.github.io/Aetherium/)**
+**[✦ Ouvrir les Archives — Jouer maintenant](https://noctiloom-studio.github.io/Aetherium/)**
 
 Aucune installation ni inscription. Le jeu fonctionne directement dans un navigateur moderne, sur ordinateur, tablette ou téléphone.
 
@@ -80,7 +80,7 @@ Le **Discord de Noctiloom Studio** a vocation à réunir les joueurs autour de l
 
 **Préservons la surprise des autres joueurs :** pas de solutions ni de révélations dans les titres des discussions. Privilégiez les échanges volontaires et les avertissements de spoiler.
 
-Pour signaler un problème technique en attendant, vous pouvez utiliser les [issues du dépôt](https://github.com/Vaekiel/Aetherium/issues), sans révéler de solution dans le titre.
+Pour signaler un problème technique en attendant, vous pouvez utiliser les [issues du dépôt](https://github.com/Noctiloom-Studio/Aetherium/issues), sans révéler de solution dans le titre.
 
 ## ✦ Un jeu indépendant, gratuit et en évolution
 
@@ -88,7 +88,7 @@ AETHERIUM est développé par **Noctiloom Studio**. Le jeu est **entièrement gr
 
 Le projet est encore en développement : les illustrations, l'interface, les contenus et les saisons continueront d'évoluer. Les retours des joueurs nous aident à améliorer l'expérience, tout en gardant intact le plaisir de découvrir.
 
-Vous appréciez cet univers ? Découvrez également [Last Signal](https://github.com/Vaekiel/Last-Signal), une autre création du studio.
+Vous appréciez cet univers ? Découvrez également [Last Signal](https://github.com/Noctiloom-Studio/Last-Signal), une autre création du studio.
 
 ## 📜 Droits et utilisation
 
