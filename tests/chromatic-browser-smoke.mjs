@@ -341,7 +341,8 @@ for(const [width,height] of [[320,740],[390,844],[768,1024],[1280,900]]){
  await sleep(120);
  const fit=await evaluate("(()=>{const b=document.querySelector('#lore-book');b.querySelectorAll('details').forEach(d=>d.open=true);const r=b.getBoundingClientRect();return {right:r.right,left:r.left,viewport:innerWidth,docWidth:document.documentElement.scrollWidth,buttons:[...b.querySelectorAll('.lore-card-link')].map(x=>({text:x.textContent,height:x.getBoundingClientRect().height,right:x.getBoundingClientRect().right})),overflow:[...document.querySelectorAll('#page-succes *')].filter(x=>x.getBoundingClientRect().width>0&&x.getBoundingClientRect().right>innerWidth+2).slice(0,12).map(x=>({tag:x.tagName,cls:x.className,right:x.getBoundingClientRect().right}))}})()");
  console.log('Annales responsive '+width,JSON.stringify(fit));
- assert.ok(fit.right<=fit.viewport+2&&fit.docWidth<=fit.viewport+2&&fit.buttons.every(x=>x.height>=44&&x.right<=fit.viewport+2),'Annales fits '+width);
+ // Tolérance de 0,1 px : le navigateur peut mesurer 43,9998 px un bouton réglé à min-height:44px (arrondi interne).
+ assert.ok(fit.right<=fit.viewport+2&&fit.docWidth<=fit.viewport+2&&fit.buttons.every(x=>x.height>=43.9&&x.right<=fit.viewport+2),'Annales fits '+width);
 }
 assert.equal(await evaluate("localStorage.getItem('aetherium-save-v1')"),reading.save,'Reading does not modify the save');
 await command('Emulation.setDeviceMetricsOverride',{width:390,height:844,deviceScaleFactor:3,mobile:true});
